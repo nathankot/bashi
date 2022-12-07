@@ -23,7 +23,7 @@ The available components are as follows, arguments are denoted by angle brackets
 For example, if the request is \`create event for lunch with Bob tomorrow\` respond with:
 
 \`\`\`
-Creating calendar event.
+Understood.
 $calendar "tomorrow 12PM" "lunch with Bob"
 \`\`\`
 

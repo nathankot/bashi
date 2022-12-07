@@ -6,8 +6,7 @@ const PROMPT = (
   request: string
 ) => `You are a voice assistant capable of interpreting requests.
 
-For each request respond with an acknowledgment and a structured interpretation if identified. A structured
-interpretation is composed of one or more components separated by newlines.
+For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more components separated by newlines.
 
 The available components are as follows, arguments are denoted by angle brackets and every argument is required:
 
@@ -28,8 +27,7 @@ Creating calendar event.
 $calendar "tomorrow 12PM" "lunch with Bob"
 \`\`\`
 
-If no structured interpretation is found, either respond that the request is not supported, or describe what information
-is missing from the request.
+If no structured interpretation is found, you may respond with an answer if the request is a general question. Or what information might be missing from the request. Or as a last resort, respond that the request is not supported. Keep your response concise.
 
 The request is:
 

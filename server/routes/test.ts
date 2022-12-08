@@ -61,7 +61,7 @@ export const handler = async (
 
   const openai = new OpenAIApi(
     new Configuration({
-      apiKey: Deno.env.get("OPENAPI_KEY"),
+      apiKey: Deno.env.get("OPENAI_KEY"),
     })
   );
 

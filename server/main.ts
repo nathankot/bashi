@@ -12,6 +12,10 @@ import manifest from "./fresh.gen.ts";
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
 
+if (Deno.env.get("OPENAI_KEY") == null) {
+  throw new Error("OPENAI_KEY must be set");
+}
+
 await start(manifest, {
   plugins: [twindPlugin(twindConfig)],
 });

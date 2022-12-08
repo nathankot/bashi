@@ -64,7 +64,6 @@ export const handler = async (
       apiKey: Deno.env.get("OPENAPI_KEY"),
     })
   );
-  const model = await openai.retrieveModel("text-davinci-003");
 
   const completion = await openai.createCompletion({
     model: "text-davinci-003",

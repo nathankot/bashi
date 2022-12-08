@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 export default function Prompt(props: {}) {
   const [prompt, setPrompt] = useState("");

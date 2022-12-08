@@ -1,0 +1,43 @@
+---
+version: "3.5"
+
+networks:
+  aiassist:
+
+services:
+  # While the server is accessible, it is best to run the server
+  # locally during development in order to get file watching and
+  # auto reloading.
+  aiassist-server:
+    build:
+      context: ./server
+      args:
+        GIT_REVISION: "${commit}"
+    ports:
+      - "8003:8000"
+    environment:
+      OPENAI_KEY: "${openai_key}"
+      WHISPER_TRANSCRIBE_ENDPOINT: http://aiassist-whisper:9000/asr
+
+  aiassist-whisper:
+    restart: always
+    build:
+      context: ./whisper-asr-webservice
+      args:
+        ASR_MODEL: tiny
+    ports:
+      - "9000:9000"
+    networks:
+      - aiassist
+
+  aiassist-postgres:
+    image: "postgres:14"
+    restart: always
+    stop_signal: SIGINT
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=assist
+      - POSTGRES_USER=assist
+      - POSTGRES_PASSWORD=assist
+    networks:
+      - aiassist

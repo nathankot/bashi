@@ -33,11 +33,10 @@ kill_timeout = 5
     timeout = "2s"
 
   [[services.http_checks]]
-    interval = 60000
+    interval = "1m"
     grace_period = "10s"
     method = "get"
     path = "/"
-    protocol = "https"
+    protocol = "http"
     restart_limit = 5
     timeout = 2000
-    tls_skip_verify = true

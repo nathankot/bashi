@@ -8,3 +8,7 @@ else
 	commit=$(shell git rev-parse head) \
 	openai_key=${OPENAI_KEY} docker-compose up
 endif
+
+build:
+	commit=$(shell git rev-parse head) \
+	docker-compose build

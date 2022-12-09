@@ -8,36 +8,45 @@ services:
   # While the server is accessible, it is best to run the server
   # locally during development in order to get file watching and
   # auto reloading.
-  aiassist-server:
+  server:
     build:
       context: ./server
       args:
         GIT_REVISION: "${commit}"
     ports:
-      - "8003:8000"
+      - "8003:8080"
     environment:
       OPENAI_KEY: "${openai_key}"
-      WHISPER_TRANSCRIBE_ENDPOINT: http://aiassist-whisper:9000/asr
+      WHISPER_TRANSCRIBE_ENDPOINT: http://whisper:8080/asr
+    networks:
+      - aiassist
 
-  aiassist-whisper:
+  whisper:
     restart: always
     build:
       context: ./whisper-asr-webservice
       args:
         ASR_MODEL: tiny
     ports:
-      - "9000:9000"
+      - "9000:8080"
     networks:
       - aiassist
+    entrypoint:
+      [
+        "gunicorn",
+        "--bind",
+        "0.0.0.0:8080",
+        "--workers",
+        "1",
+        "--timeout",
+        "0",
+        "app.webservice:app",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+      ]
 
-  aiassist-postgres:
-    image: "postgres:14"
+  redis:
+    image: "redis:7-alpine"
     restart: always
-    stop_signal: SIGINT
-    environment:
-      - POSTGRES_INITDB_ARGS=--data-checksums
-      - POSTGRES_DB=assist
-      - POSTGRES_USER=assist
-      - POSTGRES_PASSWORD=assist
     networks:
       - aiassist

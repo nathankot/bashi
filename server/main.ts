@@ -17,5 +17,6 @@ if (Deno.env.get("OPENAI_KEY") == null) {
 }
 
 await start(manifest, {
+  port: 8080,
   plugins: [twindPlugin(twindConfig)],
 });

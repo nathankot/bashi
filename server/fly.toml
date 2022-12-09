@@ -1,0 +1,43 @@
+# fly.toml file generated for weathered-pine-4648 on 2022-12-09T10:57:01+08:00
+
+app = "weathered-pine-4648"
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[env]
+  WHISPER_TRANSCRIBE_ENDPOINT = "http://top2.nearest.of.winter-frog-3008.internal:8080/asr"
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "10s"
+    interval = "1m"
+    restart_limit = 0
+    timeout = "2s"
+
+  [[services.http_checks]]
+    interval = 60000
+    grace_period = "10s"
+    method = "get"
+    path = "/"
+    protocol = "https"
+    restart_limit = 5
+    timeout = 2000
+    tls_skip_verify = true

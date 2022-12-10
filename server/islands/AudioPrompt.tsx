@@ -6,7 +6,6 @@ export default function AudioPrompt(props: {}) {
     return <div></div>;
   }
 
-  const [mediaStream, setMediaStream] = useState<null | MediaStream>(null);
   const [mediaRecorder, setMediaRecorder] = useState<null | MediaRecorder>(
     null
   );
@@ -16,6 +15,10 @@ export default function AudioPrompt(props: {}) {
   const [result, setResult] = useState("");
 
   useEffect(() => {
+    if (mediaRecorder == null) {
+      return;
+    }
+
     let buffers: Blob[] = [];
 
     const onDataAvailable = async (event: BlobEvent) =>
@@ -36,34 +39,31 @@ export default function AudioPrompt(props: {}) {
       buffers = [];
     };
 
-    mediaRecorder?.addEventListener("dataavailable", onDataAvailable);
-    mediaRecorder?.addEventListener("stop", onStop);
-    mediaRecorder?.addEventListener("start", onStart);
+    mediaRecorder.addEventListener("dataavailable", onDataAvailable);
+    mediaRecorder.addEventListener("stop", onStop);
+    mediaRecorder.addEventListener("start", onStart);
 
     return () => {
-      mediaRecorder?.removeEventListener("dataavailable", onDataAvailable);
-      mediaRecorder?.removeEventListener("stop", onStop);
-      mediaRecorder?.removeEventListener("start", onStart);
+      mediaRecorder.removeEventListener("dataavailable", onDataAvailable);
+      mediaRecorder.removeEventListener("stop", onStop);
+      mediaRecorder.removeEventListener("start", onStart);
     };
   }, [mediaRecorder]);
 
-  const record = () => mediaRecorder?.start();
-  const stop = () => mediaRecorder?.stop();
+  const record = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: false,
+      audio: true,
+    });
+    const recorder = new MediaRecorder(stream);
+    setMediaRecorder(recorder);
+    recorder.start();
+  };
 
-  if (mediaStream == null) {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: false,
-        audio: true,
-      })
-      .then(setMediaStream);
-    return <div>Waiting for access to audio device.</div>;
-  }
-
-  if (mediaRecorder == null) {
-    setMediaRecorder(new MediaRecorder(mediaStream));
-    return <div>Waiting for access to audio device.</div>;
-  }
+  const stop = () => {
+    mediaRecorder?.stop();
+    setMediaRecorder(null);
+  };
 
   return (
     <div>

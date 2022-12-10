@@ -8,33 +8,28 @@ export const handler = async (
   req: Request,
   _ctx: HandlerContext
 ): Promise<Response> => {
-  const demoFile = Deno.readFileSync("./demo.m4a");
-
-  let audio = await req.arrayBuffer();
-
-  if (audio == null) {
-    audio = demoFile;
+  let json = await req.json();
+  if (json == null) {
+    return new Response(JSON.stringify({ error: "could not parse json" }), {
+      status: 400,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
+  const request = json.request;
 
-  const whisperRequest = new FormData();
-  whisperRequest.append("audio_file", new Blob([audio]), "audio.m4a");
-  const whisperResponse = await fetch(
-    Deno.env.get("WHISPER_TRANSCRIBE_ENDPOINT") + "?language=en",
-    {
-      method: "POST",
-      body: whisperRequest,
-    }
-  );
-  const whisperBody = await whisperResponse.json();
-  const request = whisperBody.text;
-
-  // Remove open ai for now
-  // TODO removeme
-  return new Response(
-    JSON.stringify({
-      request,
-    })
-  );
+  if (request == null || typeof request !== "string") {
+    return new Response(
+      JSON.stringify({ error: "could not find request string" }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
 
   const openai = new OpenAIApi(
     new Configuration({

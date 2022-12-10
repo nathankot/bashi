@@ -1,4 +1,4 @@
-.PHONY: up
+.PHONY: up dev build
 
 up:
 ifndef OPENAI_KEY
@@ -12,3 +12,6 @@ endif
 build:
 	commit=$(shell git rev-parse head) \
 	docker-compose build
+
+dev:
+	deno task --cwd ./server -c ./server/deno.json start

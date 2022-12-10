@@ -28,7 +28,7 @@ export default function AudioPrompt(props: {}) {
 
     const onStop = async () => {
       setStatus("processing");
-      const result = await fetch("/audio-request", {
+      const result = await fetch("/api/audio-request", {
         method: "POST",
         body: new Blob(buffers),
       });

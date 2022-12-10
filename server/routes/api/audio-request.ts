@@ -61,6 +61,14 @@ export const handler = async (
   const whisperBody = await whisperResponse.json();
   const request = whisperBody.text;
 
+  // Remove open ai for now
+  // TODO removeme
+  return new Response(
+    JSON.stringify({
+      request,
+    })
+  );
+
   const openai = new OpenAIApi(
     new Configuration({
       apiKey: Deno.env.get("OPENAI_KEY"),
@@ -69,7 +77,7 @@ export const handler = async (
 
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
-    max_tokens: 500, // TODO return error if completion tokens has reached this limit
+    max_tokens: 1000, // TODO return error if completion tokens has reached this limit
     best_of: 1,
     echo: false,
     prompt: [PROMPT(request)],

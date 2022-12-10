@@ -10,21 +10,21 @@ export default function AudioPrompt(props: {}) {
   const [mediaRecorder, setMediaRecorder] = useState<null | MediaRecorder>(
     null
   );
-  const [isRecording, setIsRecording] = useState(false);
+  const [status, setStatus] = useState<"recording" | "processing" | "inactive">(
+    "inactive"
+  );
   const [result, setResult] = useState("");
 
   useEffect(() => {
     let buffers: Blob[] = [];
 
-    const onDataAvailable = async (event: BlobEvent) => {
-      console.log("got data", event.data);
+    const onDataAvailable = async (event: BlobEvent) =>
       buffers.push(event.data);
-    };
-    const onStart = () => {
-      setIsRecording(true);
-    };
+
+    const onStart = () => setStatus("recording");
+
     const onStop = async () => {
-      console.log("BUFFERS", buffers);
+      setStatus("processing");
       const result = await fetch("/audio-request", {
         method: "POST",
         body: new Blob(buffers),
@@ -32,8 +32,7 @@ export default function AudioPrompt(props: {}) {
 
       const resultBody = await result.text();
       setResult(resultBody);
-
-      setIsRecording(false);
+      setStatus("inactive");
       buffers = [];
     };
 
@@ -68,16 +67,23 @@ export default function AudioPrompt(props: {}) {
 
   return (
     <div>
-      <p>Hold to record.</p>
+      <p>Press to record</p>
       <button
         class="ring(2 black) rounded bg-red-500 text-white p-1"
         onClick={(e) => {
-          console.log("mouse down");
           e.preventDefault();
-          isRecording ? stop() : record();
+          if (status === "inactive") {
+            record();
+          } else if (status === "recording") {
+            stop();
+          }
         }}
       >
-        {isRecording ? "stop" : "record"}
+        {status === "inactive"
+          ? "record"
+          : status === "recording"
+          ? "stop"
+          : "processing"}
       </button>
 
       <div>

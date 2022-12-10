@@ -43,21 +43,23 @@ export const handler = async (
 ): Promise<Response> => {
   const demoFile = Deno.readFileSync("./demo.m4a");
 
-  let request = await req.text();
+  let audio = await req.arrayBuffer();
 
-  if (request == null || request.length === 0) {
-    const whisperRequest = new FormData();
-    whisperRequest.append("audio_file", new Blob([demoFile]), "demo.m4a");
-    const whisperResponse = await fetch(
-      Deno.env.get("WHISPER_TRANSCRIBE_ENDPOINT") + "?language=en",
-      {
-        method: "POST",
-        body: whisperRequest,
-      }
-    );
-    const whisperBody = await whisperResponse.json();
-    request = whisperBody.text;
+  if (audio == null) {
+    audio = demoFile;
   }
+
+  const whisperRequest = new FormData();
+  whisperRequest.append("audio_file", new Blob([audio]), "audio.m4a");
+  const whisperResponse = await fetch(
+    Deno.env.get("WHISPER_TRANSCRIBE_ENDPOINT") + "?language=en",
+    {
+      method: "POST",
+      body: whisperRequest,
+    }
+  );
+  const whisperBody = await whisperResponse.json();
+  const request = whisperBody.text;
 
   const openai = new OpenAIApi(
     new Configuration({
@@ -73,5 +75,10 @@ export const handler = async (
     prompt: [PROMPT(request)],
   });
 
-  return new Response(request + `\n` + JSON.stringify(completion.data));
+  return new Response(
+    JSON.stringify({
+      request,
+      completion: completion.data,
+    })
+  );
 };

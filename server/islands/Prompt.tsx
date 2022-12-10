@@ -5,7 +5,7 @@ export default function Prompt(props: {}) {
   const [result, setResult] = useState("");
 
   const submit = async () => {
-    const result = await fetch("/test", {
+    const result = await fetch("/audio-request", {
       method: "POST",
       body: prompt,
     });

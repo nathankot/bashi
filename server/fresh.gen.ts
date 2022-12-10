@@ -5,7 +5,8 @@
 import config from "./deno.json" assert { type: "json" };
 import * as $0 from "./routes/audio-request.ts";
 import * as $1 from "./routes/index.tsx";
-import * as $$0 from "./islands/Prompt.tsx";
+import * as $$0 from "./islands/AudioPrompt.tsx";
+import * as $$1 from "./islands/Prompt.tsx";
 
 const manifest = {
   routes: {
@@ -13,7 +14,8 @@ const manifest = {
     "./routes/index.tsx": $1,
   },
   islands: {
-    "./islands/Prompt.tsx": $$0,
+    "./islands/AudioPrompt.tsx": $$0,
+    "./islands/Prompt.tsx": $$1,
   },
   baseUrl: import.meta.url,
   config,

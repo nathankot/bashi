@@ -1,4 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
+import { renderError } from "@/util.ts";
 
 interface PostTranscribeResponse {
   text: string;
@@ -8,15 +9,7 @@ export const handler: Handlers<PostTranscribeResponse> = {
   async POST(req, ctx) {
     let audio = await req.arrayBuffer();
     if (audio == null) {
-      return new Response(
-        JSON.stringify({ error: "no audio found in the request body" }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return renderError(400, "no audio found in the request body");
     }
 
     const whisperRequest = new FormData();

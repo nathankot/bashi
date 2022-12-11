@@ -2,6 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 
 import { Configuration, OpenAIApi } from "openai";
 
+import { renderError } from "@/util.ts";
 import PROMPT from "@/prompt.ts";
 
 interface PostRequestResponse {
@@ -16,25 +17,13 @@ export const handler: Handlers<PostRequestResponse> = {
   async POST(req, ctx) {
     let json = await req.json();
     if (json == null) {
-      return new Response(JSON.stringify({ error: "could not parse json" }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      return renderError(400, "could not parse json");
     }
+
     const request = json.request;
 
     if (request == null || typeof request !== "string") {
-      return new Response(
-        JSON.stringify({ error: "could not find request string" }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return renderError(400, "could not find request string");
     }
 
     const openai = new OpenAIApi(

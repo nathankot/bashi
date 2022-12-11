@@ -64,7 +64,7 @@ A JSON object is returned with the following shape:
 
 ```json
 {
-  "result": "the result of the transcription"
+  "text": "the result of the transcription"
 }
 ```
 
@@ -93,6 +93,7 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
+  "text": "",
   "commands": [
     {
       "name": "insert-text",

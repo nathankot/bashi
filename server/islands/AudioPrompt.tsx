@@ -36,7 +36,7 @@ export default function AudioPrompt(props: {}) {
       const result = await fetch("/api/request", {
         method: "POST",
         body: JSON.stringify({
-          request: transcribeResult.result,
+          request: transcribeResult.text,
         }),
       });
 

@@ -40,7 +40,7 @@ The response body is a JSON object with the following shape:
 
 ```json
 {
-  "session_id": "123e4567-e89b-12d3-a456-426614174000"
+  "sessionId": "123e4567-e89b-12d3-a456-426614174000"
 }
 ```
 

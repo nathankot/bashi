@@ -2,7 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 
 import { Configuration, OpenAIApi } from "openai";
 
-import { renderError } from "@/util.ts";
+import { renderError, renderJSON } from "@/util.ts";
 import PROMPT from "@/prompt.ts";
 
 interface PostRequestResponse {
@@ -40,7 +40,7 @@ export const handler: Handlers<PostRequestResponse> = {
       prompt: [PROMPT(request)],
     });
 
-    return ctx.render({
+    return renderJSON<PostRequestResponse>({
       text: completion.data.choices[0]?.text ?? "",
       commands: [],
     });

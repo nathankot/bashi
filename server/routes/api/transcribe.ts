@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { renderError } from "@/util.ts";
+import { renderError, renderJSON } from "@/util.ts";
 
 interface PostTranscribeResponse {
   text: string;
@@ -24,6 +24,6 @@ export const handler: Handlers<PostTranscribeResponse> = {
     const whisperBody = await whisperResponse.json();
     const text = whisperBody.text;
 
-    return ctx.render({ text });
+    return renderJSON<PostTranscribeResponse>({ text });
   },
 };

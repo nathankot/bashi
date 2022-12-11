@@ -7,5 +7,8 @@ import "preact/hooks";
 import "@preact/signals";
 import "@preact/signals-core";
 import "https://deno.land/x/dotenv/load.ts";
+import "io-ts";
+import "fp-ts";
+import "redis";
 import "$fresh/server.ts";
 import "$fresh/plugins/twind.ts";

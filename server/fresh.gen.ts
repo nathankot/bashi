@@ -4,16 +4,18 @@
 
 import config from "./deno.json" assert { type: "json" };
 import * as $0 from "./routes/api/request.ts";
-import * as $1 from "./routes/api/transcribe.ts";
-import * as $2 from "./routes/index.tsx";
+import * as $1 from "./routes/api/session.ts";
+import * as $2 from "./routes/api/transcribe.ts";
+import * as $3 from "./routes/index.tsx";
 import * as $$0 from "./islands/AudioPrompt.tsx";
 import * as $$1 from "./islands/TextPrompt.tsx";
 
 const manifest = {
   routes: {
     "./routes/api/request.ts": $0,
-    "./routes/api/transcribe.ts": $1,
-    "./routes/index.tsx": $2,
+    "./routes/api/session.ts": $1,
+    "./routes/api/transcribe.ts": $2,
+    "./routes/index.tsx": $3,
   },
   islands: {
     "./islands/AudioPrompt.tsx": $$0,

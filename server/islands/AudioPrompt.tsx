@@ -28,9 +28,16 @@ export default function AudioPrompt(props: {}) {
 
     const onStop = async () => {
       setStatus("processing");
-      const result = await fetch("/api/audio-request", {
+      const transcribeResponse = await fetch("/api/transcribe", {
         method: "POST",
         body: new Blob(buffers),
+      });
+      const transcribeResult = await transcribeResponse.json();
+      const result = await fetch("/api/request", {
+        method: "POST",
+        body: JSON.stringify({
+          request: transcribeResult.result,
+        }),
       });
 
       const resultBody = await result.text();

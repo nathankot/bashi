@@ -5,9 +5,10 @@ export default function Prompt(props: {}) {
   const [result, setResult] = useState("");
 
   const submit = async () => {
-    const result = await fetch("/api/audio-request", {
+    const result = await fetch("/api/request", {
       method: "POST",
-      body: prompt,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ request: prompt }),
     });
 
     const resultBody = await result.text();

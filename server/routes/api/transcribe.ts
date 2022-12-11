@@ -1,9 +1,5 @@
 import { HandlerContext } from "$fresh/server.ts";
 
-import { Configuration, OpenAIApi } from "openai";
-
-import PROMPT from "@/prompt.ts";
-
 export const handler = async (
   req: Request,
   _ctx: HandlerContext
@@ -26,34 +22,11 @@ export const handler = async (
     }
   );
   const whisperBody = await whisperResponse.json();
-  const request = whisperBody.text;
-
-  // Remove open ai for now
-  // TODO removeme
-  return new Response(
-    JSON.stringify({
-      request,
-    })
-  );
-
-  const openai = new OpenAIApi(
-    new Configuration({
-      apiKey: Deno.env.get("OPENAI_KEY"),
-    })
-  );
-
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    max_tokens: 1000, // TODO return error if completion tokens has reached this limit
-    best_of: 1,
-    echo: false,
-    prompt: [PROMPT(request)],
-  });
+  const result = whisperBody.text;
 
   return new Response(
     JSON.stringify({
-      request,
-      completion: completion.data,
+      result,
     })
   );
 };

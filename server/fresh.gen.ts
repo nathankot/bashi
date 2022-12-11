@@ -7,7 +7,7 @@ import * as $0 from "./routes/api/request.ts";
 import * as $1 from "./routes/api/transcribe.ts";
 import * as $2 from "./routes/index.tsx";
 import * as $$0 from "./islands/AudioPrompt.tsx";
-import * as $$1 from "./islands/Prompt.tsx";
+import * as $$1 from "./islands/TextPrompt.tsx";
 
 const manifest = {
   routes: {
@@ -17,7 +17,7 @@ const manifest = {
   },
   islands: {
     "./islands/AudioPrompt.tsx": $$0,
-    "./islands/Prompt.tsx": $$1,
+    "./islands/TextPrompt.tsx": $$1,
   },
   baseUrl: import.meta.url,
   config,

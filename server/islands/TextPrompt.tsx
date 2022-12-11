@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-export default function Prompt(props: {}) {
+export default function TextPrompt(props: {}) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
 

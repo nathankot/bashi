@@ -1,4 +1,5 @@
-.PHONY: up dev build
+.PHONY: up up-all dev build
+up_command = docker-compose up
 
 up:
 ifndef OPENAI_KEY
@@ -6,8 +7,11 @@ ifndef OPENAI_KEY
 	@exit 1
 else
 	commit=$(shell git rev-parse head) \
-	openai_key=${OPENAI_KEY} docker-compose up
+	openai_key=${OPENAI_KEY} ${up_command}
 endif
+
+up-all: up_command = docker-compose -f docker-compose.yml -f server.docker-compose.yml up
+up-all: up
 
 build:
 	commit=$(shell git rev-parse head) \

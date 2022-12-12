@@ -5,23 +5,6 @@ networks:
   aiassist:
 
 services:
-  # While the server is accessible, it is best to run the server
-  # locally during development in order to get file watching and
-  # auto reloading.
-  server:
-    build:
-      context: ./server
-      args:
-        GIT_REVISION: "${commit}"
-    ports:
-      - "8003:8080"
-    environment:
-      OPENAI_KEY: "${openai_key}"
-      WHISPER_TRANSCRIBE_ENDPOINT: http://whisper:8080/asr
-      REDIS_URL: redis://redis:6379
-    networks:
-      - aiassist
-
   whisper:
     restart: always
     build:

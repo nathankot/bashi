@@ -27,8 +27,7 @@ export const handler: Handlers<PostRequestResponse> = {
       return renderError(400, "could not find request string");
     }
 
-    const client = await openai;
-    const completion = await client.createCompletion({
+    const completion = await openai.createCompletion({
       model: "text-davinci-003",
       max_tokens: 1000, // TODO return error if completion tokens has reached this limit
       best_of: 1,

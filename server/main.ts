@@ -4,7 +4,7 @@
 /// <reference lib="dom.asynciterable" />
 /// <reference lib="deno.ns" />
 
-import { signal } from "https://deno.land/std@0.117.0/signal/mod.ts";
+import { signal } from "$std/signal/mod.ts";
 
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";

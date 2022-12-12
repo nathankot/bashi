@@ -12,8 +12,16 @@ import manifest from "./fresh.gen.ts";
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
 
-if (Deno.env.get("OPENAI_KEY") == null) {
-  throw new Error("OPENAI_KEY must be set");
+const requiredEnvvars = [
+  "OPENAI_KEY",
+  "REDIS_URL",
+  "WHISPER_TRANSCRIBE_ENDPOINT",
+];
+
+for (const envvar of requiredEnvvars) {
+  if (Deno.env.get(envvar) == null) {
+    throw new Error(`${envvar} must be set`);
+  }
 }
 
 await start(manifest, {

@@ -1,7 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 
-import { Configuration, OpenAIApi } from "openai";
-
+import { openai } from "@/clients.ts";
 import { renderError, renderJSON } from "@/util.ts";
 import PROMPT from "@/prompt.ts";
 
@@ -15,8 +14,10 @@ interface PostRequestResponse {
 
 export const handler: Handlers<PostRequestResponse> = {
   async POST(req, ctx) {
-    let json = await req.json();
-    if (json == null) {
+    let json;
+    try {
+      json = await req.json();
+    } catch {
       return renderError(400, "could not parse json");
     }
 
@@ -26,13 +27,8 @@ export const handler: Handlers<PostRequestResponse> = {
       return renderError(400, "could not find request string");
     }
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: Deno.env.get("OPENAI_KEY"),
-      })
-    );
-
-    const completion = await openai.createCompletion({
+    const client = await openai;
+    const completion = await client.createCompletion({
       model: "text-davinci-003",
       max_tokens: 1000, // TODO return error if completion tokens has reached this limit
       best_of: 1,

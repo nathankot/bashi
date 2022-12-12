@@ -1,5 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
+
 import { renderError, renderJSON } from "@/util.ts";
+import { whisper } from "@/clients.ts";
 
 interface PostTranscribeResponse {
   text: string;
@@ -12,18 +14,8 @@ export const handler: Handlers<PostTranscribeResponse> = {
       return renderError(400, "no audio found in the request body");
     }
 
-    const whisperRequest = new FormData();
-    whisperRequest.append("audio_file", new Blob([audio]), "audio.m4a");
-    const whisperResponse = await fetch(
-      Deno.env.get("WHISPER_TRANSCRIBE_ENDPOINT") + "?language=en",
-      {
-        method: "POST",
-        body: whisperRequest,
-      }
-    );
-    const whisperBody = await whisperResponse.json();
-    const text = whisperBody.text;
-
+    const client = await whisper;
+    const text = await client.transcribe(audio);
     return renderJSON<PostTranscribeResponse>({ text });
   },
 };

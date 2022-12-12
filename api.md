@@ -47,7 +47,7 @@ The response body is a JSON object with the following shape:
 
 ---
 
-## `POST /api/transcribe`
+## `POST /api/session/transcribe`
 
 ### Headers
 
@@ -71,7 +71,7 @@ A JSON object is returned with the following shape:
 
 ---
 
-## `POST /api/request`
+## `POST /api/session/request`
 
 Typically called after transcribing audio data into textual representation of
 the request.

@@ -4,6 +4,8 @@ import { openai } from "@/clients.ts";
 import { renderError, renderJSON } from "@/util.ts";
 import PROMPT from "@/prompt.ts";
 
+import { State } from "./_middleware.ts";
+
 interface PostRequestResponse {
   text: string;
   commands: {
@@ -12,7 +14,7 @@ interface PostRequestResponse {
   }[];
 }
 
-export const handler: Handlers<PostRequestResponse> = {
+export const handler: Handlers<PostRequestResponse, State> = {
   async POST(req, ctx) {
     let json;
     try {

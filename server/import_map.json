@@ -10,7 +10,7 @@
     "twind": "https://esm.sh/twind@0.16.17",
     "twind/": "https://esm.sh/twind@0.16.17/",
     "openai": "npm:openai@^3.1.0",
-    "redis": "https://esm.sh/@redis/client@1.4.2",
+    "redis": "npm:@redis/client@1.4.2",
     "io-ts": "https://esm.sh/io-ts@2.2.20",
     "fp-ts": "https://esm.sh/fp-ts@2.13.1",
     "msgpack": "https://esm.sh/@ygoe/msgpack@1.0.3",

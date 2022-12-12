@@ -1,9 +1,14 @@
-import { Handlers } from "$fresh/server.ts";
-import { renderError, renderJSON } from "@/util.ts";
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
-// import { renderError } from "@/util.ts";
+import { Handlers } from "$fresh/server.ts";
+import { Buffer } from "std/node/buffer.ts";
+
+import { renderError, renderJSON } from "@/util.ts";
+import { redis } from "@/clients.ts";
+
+// @deno-types="msgpack/msgpack.d.ts"
+import msgpack from "msgpack";
 
 const PostSessionRequest = t.type({
   commands: t.array(
@@ -24,13 +29,17 @@ const PostSessionRequest = t.type({
   ),
 });
 
+type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
+
 interface PostSessionResponse {
   sessionId: string;
+  expiresAt: string;
 }
 
 export const handler: Handlers<PostSessionResponse> = {
   async POST(req, ctx) {
-    // TODO validate api key, for now just require it in the header.
+    const now = new Date();
+    // TODO validate api key, for now just require it in the
 
     let json;
     try {
@@ -38,19 +47,27 @@ export const handler: Handlers<PostSessionResponse> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const decodeResult = PostSessionRequest.decode(json);
-    if (f.either.isLeft(decodeResult)) {
+    const reqDecodeResult = PostSessionRequest.decode(json);
+    if (f.either.isLeft(reqDecodeResult)) {
       return renderError(400, "malformed request");
     }
 
-    // DONT TRUST THE USER.
-
-    const decoded = decodeResult.right;
-    console.log(decoded);
-
     const sessionId = crypto.randomUUID();
+    const reqDecoded = reqDecodeResult.right as PostSessionRequest;
+    const encodedSession = msgpack.encode({
+      settings: reqDecoded,
+    });
+
+    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 3);
+    await redis
+      .multi()
+      .set("s:" + sessionId, Buffer.from(encodedSession))
+      .expireAt("s:" + sessionId, expiresAt)
+      .exec();
+
     return renderJSON<PostSessionResponse>({
       sessionId,
+      expiresAt: expiresAt.toISOString(),
     });
   },
 };

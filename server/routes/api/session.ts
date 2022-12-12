@@ -4,31 +4,14 @@ import * as f from "fp-ts";
 import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
-import { renderError, renderJSON } from "@/util.ts";
+import { renderError, renderJSON, iotsPick } from "@/util.ts";
 import { redis } from "@/clients.ts";
+import { Session } from "@/types.ts";
 
 // @deno-types="msgpack/msgpack.d.ts"
 import msgpack from "msgpack";
 
-const PostSessionRequest = t.type({
-  commands: t.array(
-    t.type({
-      name: t.string,
-      description: t.string,
-      args: t.array(
-        t.type({
-          name: t.string,
-          type: t.keyof({
-            string: null,
-            number: null,
-            boolean: null,
-          }),
-        })
-      ),
-    })
-  ),
-});
-
+const PostSessionRequest = iotsPick(Session, ["commands"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
 
 interface PostSessionResponse {

@@ -12,6 +12,7 @@
     "openai": "npm:openai@^3.1.0",
     "redis": "npm:@redis/client@1.4.2",
     "io-ts": "https://esm.sh/io-ts@2.2.20",
+    "io-ts-types": "https://esm.sh/io-ts-types@0.5.19",
     "fp-ts": "https://esm.sh/fp-ts@2.13.1",
     "msgpack": "https://esm.sh/@ygoe/msgpack@1.0.3",
     "msgpack/": "https://esm.sh/@ygoe/msgpack@1.0.3/",

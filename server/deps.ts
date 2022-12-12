@@ -8,6 +8,7 @@ import "@preact/signals";
 import "@preact/signals-core";
 import "https://deno.land/x/dotenv/load.ts";
 import "io-ts";
+import "io-ts-types";
 import "fp-ts";
 import "redis";
 import "$fresh/server.ts";

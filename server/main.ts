@@ -12,10 +12,6 @@ import manifest from "./fresh.gen.ts";
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
 
-// Load clients
-import { gracefulStop, setup } from "@/clients.ts";
-await setup();
-
 const abortController = new AbortController();
 
 start(manifest, {
@@ -28,6 +24,5 @@ const sig = signal("SIGTERM", "SIGINT");
 for await (const _ of sig) {
   console.log("SIGINT or SIGTERM received");
   abortController.abort("closing");
-  await gracefulStop();
   Deno.exit(0);
 }

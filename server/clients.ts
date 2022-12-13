@@ -8,9 +8,28 @@ if (whisperEndpoint == null || whisperEndpoint.length === 0) {
   throw new Error("WHISPER_TRANSCRIBE_ENDPOINT must be declared");
 }
 
-export const redis = r.createClient({
-  url: Deno.env.get("REDIS_URL"),
-});
+const redisUrl = Deno.env.get("REDIS_URL");
+if (redisUrl == null || redisUrl.length === 0) {
+  throw new Error("REDIS_URL must be declared");
+}
+
+export async function withRedis<T>(
+  f: (client: ReturnType<typeof r.createClient>) => Promise<T>
+): Promise<T> {
+  const client = r.createClient({
+    url: Deno.env.get("REDIS_URL"),
+  });
+
+  let result: T;
+  await client.connect();
+  try {
+    result = await f(client);
+  } finally {
+    await client.disconnect();
+  }
+
+  return result;
+}
 
 export const openai = new OpenAIApi(
   new Configuration({
@@ -29,20 +48,9 @@ export const whisper = {
     const whisperBody = await whisperResponse.json();
     const text = whisperBody.text;
     if (typeof text !== "string") {
+      console.error({ ...whisperBody, error: "failed to transcribe" });
       throw new Error("expected whisper response body to be string");
     }
     return text;
   },
 };
-
-export async function setup() {
-  console.log("connecting redis client");
-  await redis.connect();
-}
-
-export async function gracefulStop() {
-  console.log("disconnecting redis");
-  const rc = await redis;
-  await rc.quit();
-  return;
-}

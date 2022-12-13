@@ -1,4 +1,4 @@
-## `POST /api/session`
+## `POST /api/sessions`
 
 Create a session with the given configuration. A session is required in order to
 make requests. For now requests do not share context however in the future
@@ -47,13 +47,13 @@ The response body is a JSON object with the following shape:
 
 ---
 
-## `POST /api/session/transcribe`
+## `POST /api/session/transcriptions`
 
 ### Headers
 
-| Name                                 | Required? | Description                                       |
-| ------------------------------------ | --------- | ------------------------------------------------- |
-| `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/session` |
+| Name                                 | Required? | Description                                        |
+| ------------------------------------ | --------- | -------------------------------------------------- |
+| `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/sessions` |
 
 ### Request body
 
@@ -71,16 +71,16 @@ A JSON object is returned with the following shape:
 
 ---
 
-## `POST /api/session/request`
+## `POST /api/session/requests`
 
 Typically called after transcribing audio data into textual representation of
 the request.
 
 ### Headers
 
-| Name                                 | Required? | Description                                       |
-| ------------------------------------ | --------- | ------------------------------------------------- |
-| `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/session` |
+| Name                                 | Required? | Description                                        |
+| ------------------------------------ | --------- | -------------------------------------------------- |
+| `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/sessions` |
 
 ### Request body
 

@@ -5,7 +5,7 @@ export default function TextPrompt(props: {}) {
   const [result, setResult] = useState("");
 
   const submit = async () => {
-    const result = await fetch("/api/request", {
+    const result = await fetch("/api/session/requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ request: prompt }),

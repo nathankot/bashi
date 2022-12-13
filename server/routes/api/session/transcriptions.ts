@@ -13,7 +13,12 @@ export const handler: Handlers<PostTranscribeResponse> = {
     if (audio == null) {
       return renderError(400, "no audio found in the request body");
     }
-    const text = await whisper.transcribe(audio);
+    let text: string;
+    try {
+      text = await whisper.transcribe(audio);
+    } catch {
+      return renderError(500, "unknown transcription error");
+    }
     return renderJSON<PostTranscribeResponse>({ text });
   },
 };

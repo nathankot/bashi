@@ -5,11 +5,10 @@ import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
 import { renderError, renderJSON, iotsPick } from "@/util.ts";
-import { redis } from "@/clients.ts";
+import { withRedis } from "@/clients.ts";
 import { Session } from "@/types.ts";
 
-// @deno-types="msgpack/msgpack.d.ts"
-import msgpack from "msgpack";
+import msgpack from "@/msgpack.ts";
 
 const PostSessionRequest = iotsPick(Session, ["commands"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
@@ -37,16 +36,24 @@ export const handler: Handlers<PostSessionResponse> = {
 
     const sessionId = crypto.randomUUID();
     const reqDecoded = reqDecodeResult.right as PostSessionRequest;
-    const encodedSession = msgpack.encode({
-      settings: reqDecoded,
-    });
 
     const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 3);
-    await redis
-      .multi()
-      .set("s:" + sessionId, Buffer.from(encodedSession))
-      .expireAt("s:" + sessionId, expiresAt)
-      .exec();
+
+    const session: Session = {
+      ...reqDecoded,
+      expiresAt: expiresAt,
+      sessionId,
+    };
+
+    const sessionSerialized = msgpack.serialize(session);
+
+    await withRedis((client) =>
+      client
+        .multi()
+        .set("s:" + sessionId, Buffer.from(sessionSerialized))
+        .expireAt("s:" + sessionId, expiresAt)
+        .exec()
+    );
 
     return renderJSON<PostSessionResponse>({
       sessionId,

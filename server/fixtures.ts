@@ -19,7 +19,17 @@ export const handlerCtx: HandlerContext<{}> = {
 };
 
 export const session: Session = {
-  commands: [],
+  commands: [
+    {
+      name: "send_email",
+      args: [
+        { name: "recipient_email", type: "string" },
+        { name: "email_subject", type: "string" },
+        { name: "email_body", type: "string" },
+      ],
+      description: `Send an email`,
+    },
+  ],
   expiresAt: new Date(new Date().getTime() + 60000),
   sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
 };

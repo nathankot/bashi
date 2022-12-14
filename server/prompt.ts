@@ -1,4 +1,7 @@
-export const PROMPT = (
+import { Session } from "@/types.ts";
+
+export const makePrompt = (
+  session: Session,
   request: string
 ) => `You are a voice assistant capable of interpreting requests.
 
@@ -33,4 +36,4 @@ ${request}
 
 Write your response below:`;
 
-export default PROMPT;
+export default makePrompt;

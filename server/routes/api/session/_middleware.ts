@@ -9,7 +9,7 @@ import { Session } from "@/types.ts";
 import { renderError } from "@/util.ts";
 
 export interface State {
-  session?: Session;
+  session: Session;
 }
 
 export async function handler(

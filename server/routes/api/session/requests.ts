@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 
 import { renderError, renderJSON } from "@/util.ts";
-import PROMPT from "@/prompt.ts";
+import makePrompt from "@/prompt.ts";
 
 import { State as ApiState } from "@/routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
@@ -35,7 +35,7 @@ export const handler: Handlers<PostRequestResponse, State & ApiState> = {
         max_tokens: 1000, // TODO return error if completion tokens has reached this limit
         best_of: 1,
         echo: false,
-        prompt: [PROMPT(request)],
+        prompt: [makePrompt(ctx.state.session, request)],
       });
 
       return renderJSON<PostRequestResponse>({

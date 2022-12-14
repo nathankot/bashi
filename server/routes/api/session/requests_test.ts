@@ -5,7 +5,9 @@ import { handlerCtx, session } from "@/fixtures.ts";
 import * as clients from "@/clients.ts";
 import { handler } from "./requests.ts";
 
-Deno.test("valid completion request", async (t) => {
+const nowFixture = new Date();
+
+Deno.test("/requests - valid completion request", async (t) => {
   const openAiStub = stub(
     clients.openai,
     "createCompletion",
@@ -30,6 +32,7 @@ Deno.test("valid completion request", async (t) => {
     const response = await handler.POST!(req, {
       ...handlerCtx,
       state: {
+        now: nowFixture,
         clients,
         session,
       },

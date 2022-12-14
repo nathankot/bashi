@@ -20,7 +20,6 @@ interface PostSessionResponse {
 
 export const handler: Handlers<PostSessionResponse, State> = {
   async POST(req, ctx) {
-    const now = new Date();
     // TODO validate api key, for now just require it in the
 
     let json;
@@ -37,7 +36,7 @@ export const handler: Handlers<PostSessionResponse, State> = {
     const sessionId = crypto.randomUUID();
     const reqDecoded = reqDecodeResult.right as PostSessionRequest;
 
-    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 3);
+    const expiresAt = new Date(ctx.state.now.getTime() + 1000 * 60 * 60 * 3);
 
     const session: Session = {
       ...reqDecoded,

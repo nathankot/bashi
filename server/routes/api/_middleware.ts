@@ -3,6 +3,7 @@ import * as clients from "@/clients.ts";
 
 export interface State {
   clients: typeof clients;
+  now: Date;
 }
 
 export async function handler(
@@ -10,6 +11,7 @@ export async function handler(
   ctx: MiddlewareHandlerContext<State>
 ) {
   ctx.state.clients = clients;
+  ctx.state.now = new Date();
   const resp = await ctx.next();
   return resp;
 }

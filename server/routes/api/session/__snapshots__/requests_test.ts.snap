@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`/requests - valid completion request 1`] = `
+snapshot[`POST /api/session/requests: success 1`] = `
 {
   commands: [
   ],

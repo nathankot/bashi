@@ -1,13 +1,16 @@
 import { useState } from "preact/hooks";
 
-export default function TextPrompt(props: {}) {
+export default function TextPrompt(props: { sessionId: string }) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
 
   const submit = async () => {
     const result = await fetch("/api/session/requests", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${props.sessionId}`,
+      },
       body: JSON.stringify({ request: prompt }),
     });
 

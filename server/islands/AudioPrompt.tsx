@@ -1,7 +1,7 @@
 import { IS_BROWSER } from "https://deno.land/x/fresh@1.1.2/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
 
-export default function AudioPrompt(props: {}) {
+export default function AudioPrompt(props: { sessionId: string }) {
   if (!IS_BROWSER) {
     return <div></div>;
   }
@@ -31,6 +31,10 @@ export default function AudioPrompt(props: {}) {
       const transcribeResponse = await fetch("/api/session/transcriptions", {
         method: "POST",
         body: new Blob(buffers),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${props.sessionId}`,
+        },
       });
       const transcribeResult = await transcribeResponse.json();
       const result = await fetch("/api/session/requests", {
@@ -38,6 +42,10 @@ export default function AudioPrompt(props: {}) {
         body: JSON.stringify({
           request: transcribeResult.text,
         }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${props.sessionId}`,
+        },
       });
 
       const resultBody = await result.text();

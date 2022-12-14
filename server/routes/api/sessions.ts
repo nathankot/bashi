@@ -12,11 +12,7 @@ import msgpack from "@/msgpack.ts";
 
 const PostSessionRequest = iotsPick(Session, ["commands"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
-
-interface PostSessionResponse {
-  sessionId: string;
-  expiresAt: string;
-}
+type PostSessionResponse = Session;
 
 export const handler: Handlers<PostSessionResponse, State> = {
   async POST(req, ctx) {
@@ -54,9 +50,6 @@ export const handler: Handlers<PostSessionResponse, State> = {
         .exec()
     );
 
-    return renderJSON<PostSessionResponse>({
-      sessionId,
-      expiresAt: expiresAt.toISOString(),
-    });
+    return renderJSON<PostSessionResponse>(session);
   },
 };

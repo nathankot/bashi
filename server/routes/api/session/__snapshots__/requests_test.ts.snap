@@ -7,3 +7,9 @@ snapshot[`POST /api/session/requests: success 1`] = `
   text: "fake response",
 }
 `;
+
+snapshot[`POST /api/session/requests: openai errors 1`] = `
+{
+  error: "internal server error",
+}
+`;

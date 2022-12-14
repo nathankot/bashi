@@ -23,11 +23,16 @@ for (const test of [
         },
       } as any),
   },
-  // invalid session
-  // invalid request
+  {
+    description: "openai errors",
+    request: `{ "request": "a mock request" }`,
+    session: fixtures.session,
+    openAiFn: async () => {
+      throw new Error("mock error");
+    },
+  },
   // too many tokens
-  // rate limited
-  // openai error
+  // rate limited (or maybe handled by middleware?)
 ]) {
   Deno.test("POST /api/session/requests: " + test.description, async (t) => {
     const openAiStub = stub(clients.openai, "createCompletion", test.openAiFn);

@@ -29,17 +29,22 @@ export const handler: Handlers<PostRequestResponse, State & ApiState> = {
       return renderError(400, "could not find request string");
     }
 
-    const completion = await ctx.state.clients.openai.createCompletion({
-      model: "text-davinci-003",
-      max_tokens: 1000, // TODO return error if completion tokens has reached this limit
-      best_of: 1,
-      echo: false,
-      prompt: [PROMPT(request)],
-    });
+    try {
+      const completion = await ctx.state.clients.openai.createCompletion({
+        model: "text-davinci-003",
+        max_tokens: 1000, // TODO return error if completion tokens has reached this limit
+        best_of: 1,
+        echo: false,
+        prompt: [PROMPT(request)],
+      });
 
-    return renderJSON<PostRequestResponse>({
-      text: completion.data.choices[0]?.text ?? "",
-      commands: [],
-    });
+      return renderJSON<PostRequestResponse>({
+        text: completion.data.choices[0]?.text ?? "",
+        commands: [],
+      });
+    } catch (e) {
+      console.error("could not communicated with openai", e);
+      return renderError(500, "internal server error");
+    }
   },
 };

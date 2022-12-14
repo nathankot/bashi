@@ -3,9 +3,9 @@ import * as f from "fp-ts";
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
+import { State as ApiState } from "@/routes/api/_middleware.ts";
 import msgpack from "@/msgpack.ts";
 import { Session } from "@/types.ts";
-import { withRedis } from "@/clients.ts";
 import { renderError } from "@/util.ts";
 
 export interface State {
@@ -14,7 +14,7 @@ export interface State {
 
 export async function handler(
   req: Request,
-  ctx: MiddlewareHandlerContext<State>
+  ctx: MiddlewareHandlerContext<State & ApiState>
 ) {
   const authorization = req.headers.get("Authorization");
   if (authorization == null) {
@@ -27,7 +27,7 @@ export async function handler(
 
   const sessionId = authorization.substring("Bearer ".length);
 
-  const bin: Buffer | null = await withRedis((client) =>
+  const bin: Buffer | null = await ctx.state.clients.withRedis((client) =>
     client.get(
       client.commandOptions({
         returnBuffers: true,

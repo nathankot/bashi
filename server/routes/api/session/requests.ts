@@ -1,9 +1,9 @@
 import { Handlers } from "$fresh/server.ts";
 
-import { openai } from "@/clients.ts";
 import { renderError, renderJSON } from "@/util.ts";
 import PROMPT from "@/prompt.ts";
 
+import { State as ApiState } from "@/routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 
 interface PostRequestResponse {
@@ -14,7 +14,7 @@ interface PostRequestResponse {
   }[];
 }
 
-export const handler: Handlers<PostRequestResponse, State> = {
+export const handler: Handlers<PostRequestResponse, State & ApiState> = {
   async POST(req, ctx) {
     let json;
     try {
@@ -29,7 +29,7 @@ export const handler: Handlers<PostRequestResponse, State> = {
       return renderError(400, "could not find request string");
     }
 
-    const completion = await openai.createCompletion({
+    const completion = await ctx.state.clients.openai.createCompletion({
       model: "text-davinci-003",
       max_tokens: 1000, // TODO return error if completion tokens has reached this limit
       best_of: 1,

@@ -4,8 +4,8 @@ import * as f from "fp-ts";
 import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
+import { State } from "@/routes/api/_middleware.ts";
 import { renderError, renderJSON, iotsPick } from "@/util.ts";
-import { withRedis } from "@/clients.ts";
 import { Session } from "@/types.ts";
 
 import msgpack from "@/msgpack.ts";
@@ -18,7 +18,7 @@ interface PostSessionResponse {
   expiresAt: string;
 }
 
-export const handler: Handlers<PostSessionResponse> = {
+export const handler: Handlers<PostSessionResponse, State> = {
   async POST(req, ctx) {
     const now = new Date();
     // TODO validate api key, for now just require it in the
@@ -47,7 +47,7 @@ export const handler: Handlers<PostSessionResponse> = {
 
     const sessionSerialized = msgpack.serialize(session);
 
-    await withRedis((client) =>
+    await ctx.state.clients.withRedis((client) =>
       client
         .multi()
         .set("s:" + sessionId, Buffer.from(sessionSerialized))

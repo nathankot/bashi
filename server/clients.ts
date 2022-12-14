@@ -48,7 +48,7 @@ export const whisper = {
     const whisperBody = await whisperResponse.json();
     const text = whisperBody.text;
     if (typeof text !== "string") {
-      console.error({ ...whisperBody, error: "failed to transcribe" });
+      console.error("failed to transcribe", whisperBody);
       throw new Error("expected whisper response body to be string");
     }
     return text;

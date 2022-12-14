@@ -6,9 +6,10 @@ import config from "./deno.json" assert { type: "json" };
 import * as $0 from "./routes/api/_middleware.ts";
 import * as $1 from "./routes/api/session/_middleware.ts";
 import * as $2 from "./routes/api/session/requests.ts";
-import * as $3 from "./routes/api/session/transcriptions.ts";
-import * as $4 from "./routes/api/sessions.ts";
-import * as $5 from "./routes/index.tsx";
+import * as $3 from "./routes/api/session/requests_test.ts";
+import * as $4 from "./routes/api/session/transcriptions.ts";
+import * as $5 from "./routes/api/sessions.ts";
+import * as $6 from "./routes/index.tsx";
 import * as $$0 from "./islands/AudioPrompt.tsx";
 import * as $$1 from "./islands/TextPrompt.tsx";
 
@@ -17,9 +18,10 @@ const manifest = {
     "./routes/api/_middleware.ts": $0,
     "./routes/api/session/_middleware.ts": $1,
     "./routes/api/session/requests.ts": $2,
-    "./routes/api/session/transcriptions.ts": $3,
-    "./routes/api/sessions.ts": $4,
-    "./routes/index.tsx": $5,
+    "./routes/api/session/requests_test.ts": $3,
+    "./routes/api/session/transcriptions.ts": $4,
+    "./routes/api/sessions.ts": $5,
+    "./routes/index.tsx": $6,
   },
   islands: {
     "./islands/AudioPrompt.tsx": $$0,

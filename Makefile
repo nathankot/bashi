@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build
+.PHONY: up up-all dev build test test-update
 up_command = docker-compose up
 
 up:
@@ -19,3 +19,9 @@ build:
 
 dev:
 	deno task --cwd ./server -c ./server/deno.json start
+
+test:
+	cd ./server && deno test --allow-env --allow-read
+
+test-update:
+	cd ./server && deno test --allow-env --allow-read --allow-write -- --update

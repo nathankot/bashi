@@ -1,4 +1,4 @@
-import { Session } from "@/types.ts";
+import { Session } from "@lib/types.ts";
 import { HandlerContext } from "$fresh/server.ts";
 
 export const handlerCtx: HandlerContext<{}> = {
@@ -21,7 +21,7 @@ export const handlerCtx: HandlerContext<{}> = {
 export const session: Session = {
   commands: [
     {
-      name: "send_email",
+      name: "email",
       args: [
         { name: "recipient_email", type: "string" },
         { name: "email_subject", type: "string" },

@@ -13,4 +13,6 @@ import "fp-ts";
 import "redis";
 import "$fresh/server.ts";
 import "$fresh/plugins/twind.ts";
-import "msgpack";
+
+// @deno-types="https://esm.sh/@ygoe/msgpack@1.0.3/msgpack.d.ts"
+export { default as msgpack } from "https://esm.sh/@ygoe/msgpack@1.0.3/msgpack.js";

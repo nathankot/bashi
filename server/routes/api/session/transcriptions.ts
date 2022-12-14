@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 
-import { State } from "@/routes/api/_middleware.ts";
-import { renderError, renderJSON } from "@/util.ts";
+import { State } from "@routes/api/_middleware.ts";
+import { renderError, renderJSON } from "@lib/util.ts";
 
 interface PostTranscribeResponse {
   text: string;

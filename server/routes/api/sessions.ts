@@ -4,11 +4,10 @@ import * as f from "fp-ts";
 import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
-import { State } from "@/routes/api/_middleware.ts";
-import { renderError, renderJSON, iotsPick } from "@/util.ts";
-import { Session } from "@/types.ts";
-
-import msgpack from "@/msgpack.ts";
+import { State } from "./_middleware.ts";
+import { renderError, renderJSON, iotsPick } from "@lib/util.ts";
+import { Session } from "@lib/types.ts";
+import { msgpack } from "@lib/deps.ts";
 
 const PostSessionRequest = iotsPick(Session, ["commands"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;

@@ -1,8 +1,8 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import { stub } from "std/testing/mock.ts";
 
-import * as fixtures from "@/fixtures.ts";
-import * as clients from "@/clients.ts";
+import * as fixtures from "@lib/fixtures.ts";
+import * as clients from "@lib/clients.ts";
 import { handler } from "./requests.ts";
 
 const nowFixture = new Date();

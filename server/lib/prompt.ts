@@ -1,4 +1,4 @@
-import { Session } from "@/types.ts";
+import { Session } from "@lib/types.ts";
 
 export const makePrompt = (
   session: Session,

@@ -3,10 +3,10 @@ import * as f from "fp-ts";
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
-import { State as ApiState } from "@/routes/api/_middleware.ts";
-import msgpack from "@/msgpack.ts";
-import { Session } from "@/types.ts";
-import { renderError } from "@/util.ts";
+import { State as ApiState } from "../_middleware.ts";
+import { msgpack } from "@lib/deps.ts";
+import { Session } from "@lib/types.ts";
+import { renderError } from "@lib/util.ts";
 
 export interface State {
   session: Session;

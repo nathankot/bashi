@@ -1,9 +1,9 @@
 import { Handlers } from "$fresh/server.ts";
 
-import { renderError, renderJSON } from "@/util.ts";
-import makePrompt from "@/prompt.ts";
+import { renderError, renderJSON } from "@lib/util.ts";
+import makePrompt from "@lib/prompt.ts";
 
-import { State as ApiState } from "@/routes/api/_middleware.ts";
+import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 
 interface PostRequestResponse {

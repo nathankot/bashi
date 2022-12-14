@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { Session } from "@/types.ts";
+import { Session } from "@lib/types.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 

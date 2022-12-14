@@ -1,5 +1,5 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import * as clients from "@/clients.ts";
+import * as clients from "@lib/clients.ts";
 
 export interface State {
   clients: typeof clients;

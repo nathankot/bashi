@@ -14,9 +14,8 @@ export default function TextPrompt(props: { sessionId: string }) {
       body: JSON.stringify({ request: prompt }),
     });
 
-    const resultBody = await result.text();
-    console.log(resultBody);
-    setResult(resultBody);
+    const resultJson = await result.json();
+    setResult(JSON.stringify(resultJson, undefined, " "));
   };
 
   return (

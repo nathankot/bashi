@@ -48,8 +48,8 @@ export default function AudioPrompt(props: { sessionId: string }) {
         },
       });
 
-      const resultBody = await result.text();
-      setResult(resultBody);
+      const resultJson = await result.json();
+      setResult(JSON.stringify(resultJson, undefined, " "));
       setStatus("inactive");
       buffers = [];
     };

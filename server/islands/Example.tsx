@@ -32,19 +32,30 @@ const defaultCommands: CommandList = [
     description: `insert text into the cursor location`,
     args: [{ name: "text", type: "string" }],
   },
+  {
+    name: "reminder",
+    description: `create a reminder on a certain date and time`,
+    args: [
+      { name: "relative time", type: "string" },
+      { name: "reminder name", type: "string" },
+    ],
+  },
+  {
+    name: "math",
+    description: `compute a math formula`,
+    args: [{ name: "formula", type: "string" }],
+  },
+  {
+    name: "weather",
+    description: `check the weather in the given location`,
+    args: [{ name: "location", type: "string" }],
+  },
+  {
+    name: "time",
+    description: `check the time in the given location`,
+    args: [{ name: "location", type: "string" }],
+  },
 ];
-
-/* - \`$calendar "<relative time>" "<event name>"\`: create a calendar event on a certain date with a certain name
- * - \`$email "<recipient>" "<subject>" "<contents>"\`: send an email
- * - \`$call "<contact name>"\`: initiate a phone call to the given contact
-
- * - \`$reminder "<relative time>" "<reminder name>"\`: create a reminder on a certain date
- * - \`$lights-off "<room name>"\`: turn lights off in the given room
- * - \`$lights-on "<room name>"\`: turn lights on in the given room
- * - \`$math "<formula>"\`: compute a math formula
- * - \`$weather "<location>"\`: check the weather in the given location
- * - \`$time "<location>"\`: check the time in the given location, omit location for the current location
- *  */
 
 export default function Example() {
   const [error, setError] = useState<string | null>(null);

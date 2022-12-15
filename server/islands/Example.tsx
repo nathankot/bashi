@@ -29,7 +29,7 @@ const defaultCommands: CommandList = [
   },
   {
     name: "insert",
-    description: `insert text into the cursor location`,
+    description: `insert text into the current location`,
     args: [{ name: "text", type: "string" }],
   },
   {

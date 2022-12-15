@@ -25,7 +25,7 @@ Understood.
 calendar("tomorrow 12PM", "lunch with Bob")
 \`\`\`
 
-If no structured interpretation is found, answer the request if it is a question. Or ask for information that might be missing from the request. Or as a last resort, respond that the request is not supported. Keep your response concise.
+If no structured interpretation is found, answer the request if it is a question. Or ask for information that might be missing from the request. Or as a last resort, respond that the request is not supported.
 
 The request is:
 

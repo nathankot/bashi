@@ -19,6 +19,9 @@ export const handlerCtx: HandlerContext<{}> = {
 };
 
 export const session: Session = {
+  expiresAt: new Date(new Date().getTime() + 60000),
+  sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
+  model: "assist-davinci-003",
   functions: [
     {
       name: "email",
@@ -30,6 +33,4 @@ export const session: Session = {
       description: `Send an email`,
     },
   ],
-  expiresAt: new Date(new Date().getTime() + 60000),
-  sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
 };

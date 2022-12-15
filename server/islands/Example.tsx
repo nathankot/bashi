@@ -1,10 +1,10 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { Session, CommandList } from "@lib/types.ts";
+import { Session, FunctionList } from "@lib/types.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
-const defaultCommands: CommandList = [
+const defaultFunctions: FunctionList = [
   {
     name: "calendar",
     description: `create a calendar event for some time relative to now`,
@@ -59,7 +59,7 @@ const defaultCommands: CommandList = [
 
 export default function Example() {
   const [error, setError] = useState<string | null>(null);
-  const [commands, setCommands] = useState<CommandList>(defaultCommands);
+  const [functions, setFunctions] = useState<FunctionList>(defaultFunctions);
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
@@ -69,22 +69,22 @@ export default function Example() {
         Authorization: "Bearer fake-api-key",
       },
       body: JSON.stringify({
-        commands,
-      } as Pick<Session, "commands">),
+        functions,
+      } as Pick<Session, "functions">),
     })
       .then((sessResp) => sessResp.json())
       .then((sessJson: Session) => setSessionId(sessJson.sessionId));
-  }, [commands]);
+  }, [functions]);
 
-  const onCommandsChange = (t: string) => {
+  const onFunctionsChange = (t: string) => {
     try {
-      const decoded = CommandList.decode(JSON.parse(t));
+      const decoded = FunctionList.decode(JSON.parse(t));
       if (decoded.right == null) {
-        setError("could not decode commands");
+        setError("could not decode functions");
         return;
       }
       setError(null);
-      setCommands(decoded.right);
+      setFunctions(decoded.right);
     } catch {
       setError("could not parse json");
     }
@@ -109,7 +109,7 @@ export default function Example() {
       <hr />
 
       <div class="my-8">
-        <h2 class="text-lg mb-2">Command configuration</h2>
+        <h2 class="text-lg mb-2">Function configuration</h2>
 
         {error == null ? null : (
           <p class="bg-red-400 text-white my-2 p-2 rounded-sm">
@@ -118,9 +118,9 @@ export default function Example() {
         )}
         <textarea
           class="block w-full h-96 font-mono text-xs"
-          onChange={(e) => onCommandsChange(e.currentTarget.value)}
+          onChange={(e) => onFunctionsChange(e.currentTarget.value)}
         >
-          {JSON.stringify(commands, undefined, "  ")}
+          {JSON.stringify(functions, undefined, "  ")}
         </textarea>
       </div>
     </div>

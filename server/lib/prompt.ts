@@ -1,14 +1,14 @@
 import { Session } from "@lib/types.ts";
 
-export function makeCommandList(commands: Session["commands"]): string[] {
-  return commands.map((c) => {
+export function makeFunctionList(functions: Session["functions"]): string[] {
+  return functions.map((c) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
     return `\`${c.name}(${args.join(", ")})\` - ${c.description}`;
   });
 }
 
 export default function makePrompt(session: Session, request: string): string {
-  const commandsList = makeCommandList(session.commands);
+  const functionsList = makeFunctionList(session.functions);
 
   return `You are a voice assistant capable of interpreting requests.
 
@@ -16,7 +16,7 @@ For each request respond with an acknowledgment and a structured interpretation 
 
 The available functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
 
-${commandsList.join("\n")}
+${functionsList.join("\n")}
 
 For example, if the request is \`create event for lunch with Bob tomorrow\` respond with:
 

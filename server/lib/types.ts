@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import { date } from "io-ts-types";
 
-export const CommandDefinition = t.type({
+export const FunctionDefinition = t.type({
   name: t.string,
   description: t.string,
   args: t.array(
@@ -16,16 +16,16 @@ export const CommandDefinition = t.type({
   ),
 });
 
-export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
+export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
-export const CommandList = t.array(CommandDefinition);
+export const FunctionList = t.array(FunctionDefinition);
 
-export type CommandList = t.TypeOf<typeof CommandList>;
+export type FunctionList = t.TypeOf<typeof FunctionList>;
 
 export const Session = t.type({
   sessionId: t.string,
   expiresAt: date,
-  commands: CommandList,
+  functions: FunctionList,
 });
 
 export type Session = t.TypeOf<typeof Session>;

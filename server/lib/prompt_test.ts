@@ -1,14 +1,14 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
 
-import { makeCommandList } from "./prompt.ts";
+import { makeFunctionList } from "./prompt.ts";
 
-Deno.test("makeCommandList", (t) => {
-  assertSnapshot(t, makeCommandList([]));
+Deno.test("makeFunctionList", (t) => {
+  assertSnapshot(t, makeFunctionList([]));
   assertSnapshot(
     t,
-    makeCommandList([
+    makeFunctionList([
       {
-        name: "example_command",
+        name: "example_function",
         description: "some example description",
         args: [
           { name: "arg1", type: "string" },

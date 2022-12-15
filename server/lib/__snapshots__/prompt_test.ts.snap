@@ -1,13 +1,13 @@
 export const snapshot = {};
 
-snapshot[`makeCommandList 1`] = `
+snapshot[`makeFunctionList 1`] = `
 [
 ]
 `;
 
-snapshot[`makeCommandList 2`] = `
+snapshot[`makeFunctionList 2`] = `
 [
-  "- \`\$example_command <arg1: string> <arg2: number> <arg3: boolean>\`: some example description",
-  "- \`\$blah\`: some example description",
+  "\`example_function(arg1: string, arg2: number, arg3: boolean)\` - some example description",
+  "\`blah()\` - some example description",
 ]
 `;

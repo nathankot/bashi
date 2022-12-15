@@ -9,7 +9,7 @@ import { State } from "./_middleware.ts";
 interface PostRequestResponse {
   request: string;
   text: string;
-  commands: {
+  functions: {
     name: string;
     args: (string | number | boolean)[];
   }[];
@@ -44,7 +44,7 @@ export const handler: Handlers<PostRequestResponse, State & ApiState> = {
       return renderJSON<PostRequestResponse>({
         request,
         text: completion.data.choices[0]?.text ?? "",
-        commands: [],
+        functions: [],
       });
     } catch (e) {
       console.error("could not communicated with openai", e);

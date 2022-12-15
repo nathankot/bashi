@@ -9,7 +9,7 @@ import { renderError, renderJSON, iotsPick } from "@lib/util.ts";
 import { Session } from "@lib/types.ts";
 import { msgpack } from "@lib/deps.ts";
 
-const PostSessionRequest = iotsPick(Session, ["commands"]);
+const PostSessionRequest = iotsPick(Session, ["functions"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
 type PostSessionResponse = Session;
 

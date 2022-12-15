@@ -16,9 +16,10 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "commands": [
+  "model": "assist-davinci-003",
+  "functions": [
     {
-      "name": "insert-text",
+      "name": "insertText",
       "description": "insert text under the current caret location",
       "args": [{ "name": "text", "type": "string" }]
     },
@@ -31,7 +32,7 @@ The request body should be a JSON object with the following shape:
 }
 ```
 
-- `commands` - a list of commands supported by the client, that the model should
+- `functions` - a list of functions supported by the client, that the model should
   be aware of.
 
 ### Response body
@@ -42,9 +43,10 @@ The response body is a JSON object with the following shape:
 {
   "sessionId": "123e4567-e89b-12d3-a456-426614174000",
   "expiresAt": "2023-05-05T00:00:00Z",
-  "commands": [
+  "model": "assist-davinci-003",
+  "functions": [
     {
-      "name": "insert-text",
+      "name": "insertText",
       "description": "insert text under the current caret location",
       "args": [{ "name": "text", "type": "string" }]
     },
@@ -110,7 +112,7 @@ The request body should be a JSON object with the following shape:
   "text": "",
   "commands": [
     {
-      "name": "insert-text",
+      "name": "insertText",
       "args": ["some text to insert"]
     }
   ]

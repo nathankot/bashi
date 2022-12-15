@@ -19,7 +19,7 @@ export const handlerCtx: HandlerContext<{}> = {
 };
 
 export const session: Session = {
-  commands: [
+  functions: [
     {
       name: "email",
       args: [

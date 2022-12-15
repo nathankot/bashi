@@ -2,8 +2,9 @@ export const snapshot = {};
 
 snapshot[`POST /api/session/requests: success 1`] = `
 {
-  commands: [
+  functions: [
   ],
+  request: "a mock request",
   text: "fake response",
 }
 `;

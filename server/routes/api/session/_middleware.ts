@@ -4,7 +4,7 @@ import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
 import { State as ApiState } from "../_middleware.ts";
-import { msgpack } from "@lib/deps.ts";
+import { msgpack } from "@/deps.ts";
 import { Session } from "@lib/types.ts";
 import { renderError } from "@lib/util.ts";
 

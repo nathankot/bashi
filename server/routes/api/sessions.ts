@@ -7,7 +7,7 @@ import { Buffer } from "std/node/buffer.ts";
 import { State } from "./_middleware.ts";
 import { renderError, renderJSON, iotsPick } from "@lib/util.ts";
 import { Session } from "@lib/types.ts";
-import { msgpack } from "@lib/deps.ts";
+import { msgpack } from "@/deps.ts";
 
 const PostSessionRequest = iotsPick(Session, ["functions"]);
 type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;

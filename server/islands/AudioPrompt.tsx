@@ -82,7 +82,6 @@ export default function AudioPrompt(props: { sessionId: string }) {
 
   return (
     <div>
-      <p>Press to record</p>
       <button
         class="ring(2 black) rounded bg-red-500 text-white p-1"
         onClick={(e) => {

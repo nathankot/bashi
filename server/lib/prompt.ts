@@ -15,7 +15,7 @@ export default function makePrompt(session: Session, request: string): string {
 
 For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more components separated by newlines.
 
-The available components are as follows, arguments are denoted by angle brackets and every argument is required:
+The available components are as follows, arguments are denoted by angle brackets and every argument is required. Arguments have types. All arguments must be quoted with \`"\` and any quote marks must be escaped.
 
 ${commandsList.join("\n")}
 

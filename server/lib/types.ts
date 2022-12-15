@@ -18,10 +18,14 @@ export const CommandDefinition = t.type({
 
 export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
 
+export const CommandList = t.array(CommandDefinition);
+
+export type CommandList = t.TypeOf<typeof CommandList>;
+
 export const Session = t.type({
   sessionId: t.string,
   expiresAt: date,
-  commands: t.array(CommandDefinition),
+  commands: CommandList,
 });
 
 export type Session = t.TypeOf<typeof Session>;

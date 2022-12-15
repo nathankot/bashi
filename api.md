@@ -106,6 +106,7 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
+  "request": "your request here",
   "text": "",
   "commands": [
     {

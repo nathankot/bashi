@@ -7,6 +7,7 @@ import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 
 interface PostRequestResponse {
+  request: string;
   text: string;
   commands: {
     name: string;
@@ -30,15 +31,18 @@ export const handler: Handlers<PostRequestResponse, State & ApiState> = {
     }
 
     try {
+      const prompt = makePrompt(ctx.state.session, request);
+
       const completion = await ctx.state.clients.openai.createCompletion({
         model: "text-davinci-003",
         max_tokens: 1000, // TODO return error if completion tokens has reached this limit
         best_of: 1,
         echo: false,
-        prompt: [makePrompt(ctx.state.session, request)],
+        prompt: [prompt],
       });
 
       return renderJSON<PostRequestResponse>({
+        request,
         text: completion.data.choices[0]?.text ?? "",
         commands: [],
       });

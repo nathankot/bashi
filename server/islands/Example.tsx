@@ -6,6 +6,14 @@ import AudioPrompt from "./AudioPrompt.tsx";
 
 const defaultCommands: CommandList = [
   {
+    name: "calendar",
+    description: `create a calendar event for some time relative to now`,
+    args: [
+      { name: "relative time", type: "string" },
+      { name: "event name", type: "string" },
+    ],
+  },
+  {
     name: "email",
     description: `send an email`,
     args: [
@@ -14,15 +22,26 @@ const defaultCommands: CommandList = [
       { name: "contents", type: "string" },
     ],
   },
+  {
+    name: "call",
+    description: `initiate a phone call`,
+    args: [{ name: "contact name", type: "string" }],
+  },
+  {
+    name: "insert",
+    description: `insert text into the cursor location`,
+    args: [{ name: "text", type: "string" }],
+  },
 ];
 
 /* - \`$calendar "<relative time>" "<event name>"\`: create a calendar event on a certain date with a certain name
- * - \`$reminder "<relative time>" "<reminder name>"\`: create a reminder on a certain date
  * - \`$email "<recipient>" "<subject>" "<contents>"\`: send an email
+ * - \`$call "<contact name>"\`: initiate a phone call to the given contact
+
+ * - \`$reminder "<relative time>" "<reminder name>"\`: create a reminder on a certain date
  * - \`$lights-off "<room name>"\`: turn lights off in the given room
  * - \`$lights-on "<room name>"\`: turn lights on in the given room
  * - \`$math "<formula>"\`: compute a math formula
- * - \`$call "<contact name>"\`: initiate a phone call to the given contact
  * - \`$weather "<location>"\`: check the weather in the given location
  * - \`$time "<location>"\`: check the time in the given location, omit location for the current location
  *  */
@@ -39,7 +58,7 @@ export default function Example() {
         Authorization: "Bearer fake-api-key",
       },
       body: JSON.stringify({
-        commands: [],
+        commands,
       } as Pick<Session, "commands">),
     })
       .then((sessResp) => sessResp.json())

@@ -1,2 +1,2 @@
-export { Session } from "./session.ts";
-export { FunctionList, FunctionDefinition } from "./function.ts";
+export * from "./session.ts";
+export * from "./function.ts";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { Session, FunctionList } from "@lib/types.ts";
+import { FunctionList, Session, ModelConfiguration } from "@lib/types.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
@@ -63,14 +63,17 @@ export default function Example() {
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
+    let body: ModelConfiguration = {
+      model: "assist-davinci-003",
+      functions,
+    };
+
     fetch("/api/sessions", {
       method: "POST",
       headers: {
         Authorization: "Bearer fake-api-key",
       },
-      body: JSON.stringify({
-        functions,
-      } as Pick<Session, "functions">),
+      body: JSON.stringify(body),
     })
       .then((sessResp) => sessResp.json())
       .then((sessJson: Session) => setSessionId(sessJson.sessionId));

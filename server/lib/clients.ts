@@ -40,7 +40,7 @@ export const openai = new OpenAIApi(
 export const whisper = {
   async transcribe(audio: ArrayBuffer) {
     const whisperRequest = new FormData();
-    whisperRequest.append("audio", new Blob([audio]));
+    whisperRequest.append("audio_file", new Blob([audio]), "audio_file");
     const whisperResponse = await fetch(whisperEndpoint + "?language=en", {
       method: "POST",
       body: whisperRequest,

@@ -25,14 +25,14 @@ export const handler: Handlers<PostSessionResponse, State> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const reqDecodeResult: f.either.Either<t.Errors, PostSessionRequest> =
+    const reqDecodeResult: t.Validation<PostSessionRequest> =
       PostSessionRequest.decode(json);
     if (!f.either.isRight(reqDecodeResult)) {
       return renderError(400, "malformed request");
     }
 
     const sessionId = crypto.randomUUID();
-    const reqDecoded: PostSessionRequest = reqDecodeResult.right;
+    const reqDecoded: PostSessionRequest = reqDecodeResult.right as any;
 
     const expiresAt = new Date(ctx.state.now.getTime() + 1000 * 60 * 60 * 3);
 

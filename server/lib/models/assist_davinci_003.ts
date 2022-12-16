@@ -73,7 +73,7 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
   return `You are a voice assistant capable of interpreting requests.
 
-For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
+For each request respond with an acknowledgment and an interpretation if identified. An interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
 
 The available functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
 
@@ -86,7 +86,7 @@ Understood.
 time("America/Los_Angeles")
 \`\`\`
 
-If no structured interpretation is found, ask for information that might be missing from the request. Or as a last
+If no interpretation is found, ask for information that might be missing from the request. Or as a last
 resort, respond that the request is not supported.
 
 The request is:

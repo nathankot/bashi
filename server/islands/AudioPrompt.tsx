@@ -1,6 +1,8 @@
 import { IS_BROWSER } from "https://deno.land/x/fresh@1.1.2/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
 
+import { PostRequestsRequest } from "@routes/api/session/requests.ts";
+
 export default function AudioPrompt(props: { sessionId: string }) {
   if (!IS_BROWSER) {
     return <div></div>;
@@ -37,11 +39,13 @@ export default function AudioPrompt(props: { sessionId: string }) {
         },
       });
       const transcribeResult = await transcribeResponse.json();
+      const request: PostRequestsRequest = {
+        model: "assist-davinci-003",
+        request: transcribeResult.text,
+      };
       const result = await fetch("/api/session/requests", {
         method: "POST",
-        body: JSON.stringify({
-          request: transcribeResult.text,
-        }),
+        body: JSON.stringify(request),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${props.sessionId}`,

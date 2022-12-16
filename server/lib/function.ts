@@ -19,7 +19,10 @@ export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 export const FunctionList = t.array(FunctionDefinition);
 export type FunctionList = t.TypeOf<typeof FunctionList>;
 
-export type FunctionCalls = {
-  name: string;
-  args: (string | number | boolean)[];
-}[];
+export const FunctionCalls = t.array(
+  t.type({
+    name: t.string,
+    args: t.array(t.union([t.string, t.number, t.boolean])),
+  })
+);
+export type FunctionCalls = t.TypeOf<typeof FunctionCalls>;

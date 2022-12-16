@@ -1,6 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { FunctionList, Session, ModelConfiguration } from "@lib/types.ts";
+import { FunctionList, Session } from "@lib/types.ts";
+import { PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
@@ -63,9 +64,13 @@ export default function Example() {
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
-    let body: ModelConfiguration = {
-      model: "assist-davinci-003",
-      functions,
+    let body: PostSessionRequest = {
+      modelConfigurations: [
+        {
+          model: "assist-davinci-003",
+          functions,
+        },
+      ],
     };
 
     fetch("/api/sessions", {

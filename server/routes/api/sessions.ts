@@ -5,13 +5,13 @@ import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
 import { State } from "./_middleware.ts";
-import { renderError, renderJSON } from "@lib/util.ts";
-import { Session, ModelConfiguration } from "@lib/types.ts";
+import { renderError, renderJSON, iotsPick } from "@lib/util.ts";
+import { Session } from "@lib/types.ts";
 import { msgpack } from "@/deps.ts";
 
-const PostSessionRequest = ModelConfiguration;
-type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
-type PostSessionResponse = Session;
+const PostSessionRequest = iotsPick(Session, ["modelConfigurations"]);
+export type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
+export type PostSessionResponse = Session;
 
 export const handler: Handlers<PostSessionResponse, State> = {
   async POST(req, ctx) {

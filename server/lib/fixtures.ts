@@ -21,16 +21,20 @@ export const handlerCtx: HandlerContext<{}> = {
 export const session: Session = {
   expiresAt: new Date(new Date().getTime() + 60000),
   sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
-  model: "assist-davinci-003",
-  functions: [
+  modelConfigurations: [
     {
-      name: "email",
-      args: [
-        { name: "recipient_email", type: "string" },
-        { name: "email_subject", type: "string" },
-        { name: "email_body", type: "string" },
+      model: "assist-davinci-003",
+      functions: [
+        {
+          name: "email",
+          args: [
+            { name: "recipient_email", type: "string" },
+            { name: "email_subject", type: "string" },
+            { name: "email_body", type: "string" },
+          ],
+          description: `Send an email`,
+        },
       ],
-      description: `Send an email`,
     },
   ],
 };

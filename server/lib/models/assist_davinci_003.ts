@@ -53,8 +53,16 @@ export async function run(
   };
 }
 
+const defaultFunctions: FunctionList = [
+  {
+    name: "time",
+    description: `check the time for the given timezone`,
+    args: [{ name: "tz database timezone name", type: "string" }],
+  },
+];
+
 function makePrompt(functions: FunctionList, request: string): string {
-  const functionsList = makeFunctionList(functions);
+  const functionsList = makeFunctionList([...defaultFunctions, ...functions]);
 
   return `You are a voice assistant capable of interpreting requests.
 
@@ -64,11 +72,11 @@ The available functions are as follows, denoted in typescript function notation.
 
 ${functionsList.join("\n")}
 
-For example, if the request is \`create event for lunch with Bob tomorrow\` respond with:
+For example, if the request is \`whats the time in Los Angeles\` respond with:
 
 \`\`\`
 Understood.
-calendar("tomorrow 12PM", "lunch with Bob")
+time("America/Los_Angeles")
 \`\`\`
 
 If no structured interpretation is found, answer the request if it is a question. Or ask for information that might be missing from the request. Or as a last resort, respond that the request is not supported.

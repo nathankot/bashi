@@ -52,11 +52,6 @@ const defaultFunctions: FunctionList = [
     description: `check the weather in the given location`,
     args: [{ name: "location", type: "string" }],
   },
-  {
-    name: "time",
-    description: `check the time in the given location`,
-    args: [{ name: "location", type: "string" }],
-  },
 ];
 
 export default function Example() {

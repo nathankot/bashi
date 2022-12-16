@@ -1,4 +1,4 @@
-import { openai } from "@lib/clients.ts";
+import { openai } from "./clients.ts";
 
 export type ModelDeps = {
   openai: typeof openai;

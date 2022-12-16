@@ -4,8 +4,8 @@ import * as f from "fp-ts";
 import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
 import { ModelDeps } from "./model_deps.ts";
-import * as assistDavinci003 from "./assist_davinci_003.ts";
-import * as noop from "./noop.ts";
+import * as assistDavinci003 from "./models/assist_davinci_003.ts";
+import * as noop from "./models/noop.ts";
 
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models

@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "@lib/model_deps.ts";
 import { FunctionList, FunctionCalls } from "@lib/function.ts";
 
 export const Name = t.literal("assist-davinci-003");

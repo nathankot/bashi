@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import { date } from "io-ts-types";
 
-import { Configuration } from "./models/mod.ts";
+import { Configuration } from "./models.ts";
 
 export const Session = t.type({
   sessionId: t.string,

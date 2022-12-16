@@ -4,25 +4,13 @@
 /// <reference lib="dom.asynciterable" />
 /// <reference lib="deno.ns" />
 
-import { signal } from "std/signal/mod.ts";
-
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
 
-const abortController = new AbortController();
-
-start(manifest, {
+await start(manifest, {
   port: 8080,
   plugins: [twindPlugin(twindConfig)],
-  signal: abortController.signal,
 });
-
-const sig = signal("SIGTERM", "SIGINT");
-for await (const _ of sig) {
-  console.log("SIGINT or SIGTERM received");
-  abortController.abort("closing");
-  Deno.exit(0);
-}

@@ -1,6 +1,6 @@
 import HTTPError from "./http_error.ts";
 
-export function handleError(e: Error): Response {
+export function handleError(e: unknown): Response {
   if (e instanceof HTTPError) {
     return e.render();
   }

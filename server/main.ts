@@ -10,7 +10,10 @@ import manifest from "./fresh.gen.ts";
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
 
+import { handleError } from "@lib/util.ts";
+
 await start(manifest, {
   port: 8080,
   plugins: [twindPlugin(twindConfig)],
+  onError: handleError,
 });

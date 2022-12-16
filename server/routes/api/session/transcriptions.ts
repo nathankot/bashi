@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 
 import { State } from "@routes/api/_middleware.ts";
-import { renderError, renderJSON } from "@lib/util.ts";
+import { handleError, renderJSON, renderError } from "@lib/util.ts";
 
 interface PostTranscriptionsResponse {
   text: string;
@@ -16,8 +16,8 @@ export const handler: Handlers<PostTranscriptionsResponse, State> = {
     let text: string;
     try {
       text = await ctx.state.clients.whisper.transcribe(audio);
-    } catch {
-      return renderError(500, "unknown transcription error");
+    } catch (e) {
+      return handleError(e);
     }
     return renderJSON<PostTranscriptionsResponse>({ text });
   },

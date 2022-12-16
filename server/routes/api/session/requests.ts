@@ -2,8 +2,7 @@ import * as f from "fp-ts";
 
 import { Handlers } from "$fresh/server.ts";
 
-import { renderError, renderJSON } from "@lib/util.ts";
-import HTTPError from "@lib/http_error.ts";
+import { renderError, renderJSON, handleError } from "@lib/util.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
@@ -45,11 +44,7 @@ export const handler: Handlers<Output, State & ApiState> = {
           throw new Error(`model ${exhaustiveCheck} not found`);
       }
     } catch (e) {
-      if (e instanceof HTTPError) {
-        return e.render();
-      }
-      console.error(e);
-      return renderError(500, "internal server error");
+      return handleError(e);
     }
   },
 };

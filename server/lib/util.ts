@@ -1,3 +1,13 @@
+import HTTPError from "./http_error.ts";
+
+export function handleError(e: Error): Response {
+  if (e instanceof HTTPError) {
+    return e.render();
+  }
+  console.error(e);
+  return renderError(500, "internal server error");
+}
+
 export function renderError<T extends {}>(
   statusCode: 400 | 404 | 401 | 500,
   message: string,

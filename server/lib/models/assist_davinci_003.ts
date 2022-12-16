@@ -59,6 +59,11 @@ const defaultFunctions: FunctionList = [
     description: `check the time for the given timezone`,
     args: [{ name: "tz database timezone name", type: "string" }],
   },
+  {
+    name: "math",
+    description: `compute a math formula`,
+    args: [{ name: "a math.js expression", type: "string" }],
+  },
 ];
 
 function makePrompt(functions: FunctionList, request: string): string {

@@ -42,16 +42,6 @@ const defaultFunctions: FunctionList = [
       { name: "reminder name", type: "string" },
     ],
   },
-  {
-    name: "math",
-    description: `compute a math formula`,
-    args: [{ name: "formula", type: "string" }],
-  },
-  {
-    name: "weather",
-    description: `check the weather in the given location`,
-    args: [{ name: "location", type: "string" }],
-  },
 ];
 
 export default function Example() {

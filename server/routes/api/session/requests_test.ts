@@ -33,6 +33,7 @@ for (const test of [
   },
   // too many tokens
   // rate limited (or maybe handled by middleware?)
+  // mismatch input for the chosen model
 ]) {
   Deno.test("POST /api/session/requests: " + test.description, async (t) => {
     const openAiStub = stub(clients.openai, "createCompletion", test.openAiFn);

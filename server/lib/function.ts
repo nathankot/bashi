@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 
 export const FunctionDefinition = t.type({
-  name: t.string,
   description: t.string,
   args: t.array(
     t.type({
@@ -16,8 +15,8 @@ export const FunctionDefinition = t.type({
 });
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
-export const FunctionList = t.array(FunctionDefinition);
-export type FunctionList = t.TypeOf<typeof FunctionList>;
+export const FunctionSet = t.record(t.string, FunctionDefinition);
+export type FunctionSet = t.TypeOf<typeof FunctionSet>;
 
 export const FunctionCalls = t.array(
   t.type({

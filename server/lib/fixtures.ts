@@ -24,9 +24,8 @@ export const session: Session = {
   modelConfigurations: [
     {
       model: "assist-davinci-003",
-      functions: [
-        {
-          name: "email",
+      functions: {
+        email: {
           args: [
             { name: "recipient_email", type: "string" },
             { name: "email_subject", type: "string" },
@@ -34,7 +33,7 @@ export const session: Session = {
           ],
           description: `Send an email`,
         },
-      ],
+      },
     },
   ],
 };

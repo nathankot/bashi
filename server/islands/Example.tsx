@@ -1,22 +1,20 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { FunctionList } from "@lib/function.ts";
+import { FunctionSet } from "@lib/function.ts";
 import { Session } from "@lib/session.ts";
 import { PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
-const defaultFunctions: FunctionList = [
-  {
-    name: "calendar",
+const defaultFunctions: FunctionSet = {
+  calendar: {
     description: `create a calendar event for some time relative to now`,
     args: [
       { name: "relative time", type: "string" },
       { name: "event name", type: "string" },
     ],
   },
-  {
-    name: "email",
+  email: {
     description: `send an email`,
     args: [
       { name: "recipient", type: "string" },
@@ -24,29 +22,26 @@ const defaultFunctions: FunctionList = [
       { name: "contents", type: "string" },
     ],
   },
-  {
-    name: "call",
+  call: {
     description: `initiate a phone call`,
     args: [{ name: "contact name", type: "string" }],
   },
-  {
-    name: "insert",
+  insert: {
     description: `insert text into the current location`,
     args: [{ name: "text", type: "string" }],
   },
-  {
-    name: "reminder",
+  reminder: {
     description: `create a reminder on a certain date and time`,
     args: [
       { name: "relative time", type: "string" },
       { name: "reminder name", type: "string" },
     ],
   },
-];
+};
 
 export default function Example() {
   const [error, setError] = useState<string | null>(null);
-  const [functions, setFunctions] = useState<FunctionList>(defaultFunctions);
+  const [functions, setFunctions] = useState<FunctionSet>(defaultFunctions);
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
@@ -72,7 +67,7 @@ export default function Example() {
 
   const onFunctionsChange = (t: string) => {
     try {
-      const decoded = FunctionList.decode(JSON.parse(t));
+      const decoded = FunctionSet.decode(JSON.parse(t));
       if (decoded.right == null) {
         setError("could not decode functions");
         return;

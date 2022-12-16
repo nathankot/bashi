@@ -1,14 +1,14 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "@lib/model_deps.ts";
-import { FunctionList, FunctionCalls } from "@lib/function.ts";
+import { FunctionSet, FunctionCalls } from "@lib/function.ts";
 
 export const Name = t.literal("assist-davinci-003");
 export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
   model: Name,
-  functions: FunctionList,
+  functions: FunctionSet,
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
@@ -53,21 +53,19 @@ export async function run(
   };
 }
 
-const defaultFunctions: FunctionList = [
-  {
-    name: "time",
+const defaultFunctions: FunctionSet = {
+  time: {
     description: `check the time for the given timezone`,
     args: [{ name: "tz database timezone name", type: "string" }],
   },
-  {
-    name: "math",
+  math: {
     description: `compute a math formula`,
     args: [{ name: "a math.js expression", type: "string" }],
   },
-];
+};
 
-function makePrompt(functions: FunctionList, request: string): string {
-  const functionsList = makeFunctionList([...defaultFunctions, ...functions]);
+function makePrompt(functions: FunctionSet, request: string): string {
+  const functionsList = makeFunctionSet({ ...defaultFunctions, ...functions });
 
   return `You are a voice assistant capable of interpreting requests.
 
@@ -95,9 +93,9 @@ ${request}
 Write your response below:`;
 }
 
-function makeFunctionList(functions: FunctionList): string[] {
-  return functions.map((c) => {
+function makeFunctionSet(functions: FunctionSet): string[] {
+  return Object.entries(functions).map(([name, c]) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
-    return `\`${c.name}(${args.join(", ")})\` - ${c.description}`;
+    return `\`${name}(${args.join(", ")})\` - ${c.description}`;
   });
 }

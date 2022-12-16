@@ -69,10 +69,19 @@ function getConfiguration<N extends ModelName>(
   modelName: N,
   session: Session
 ): null | t.TypeOf<typeof models[N]["Configuration"]> {
-  for (const conf of session.modelConfigurations) {
-    if (conf.model === modelName && validateConfiguration(modelName, conf)) {
-      return conf;
-    }
+  const conf: any = {
+    ...models[modelName].defaultConfiguration,
+    ...(() => {
+      for (const conf of session.modelConfigurations) {
+        if (conf.model === modelName) {
+          return conf;
+        }
+      }
+      return {};
+    })(),
+  };
+  if (validateConfiguration(modelName, conf)) {
+    return conf;
   }
   return null;
 }

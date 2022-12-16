@@ -31,12 +31,20 @@ for (const test of [
       throw new Error("mock error");
     },
   },
+  {
+    description: "noop model works",
+    request: `{ "model": "noop" }`,
+    session: fixtures.session,
+    openAiFn: null,
+  },
   // too many tokens
   // rate limited (or maybe handled by middleware?)
-  // mismatch input for the chosen model
 ]) {
   Deno.test("POST /api/session/requests: " + test.description, async (t) => {
-    const openAiStub = stub(clients.openai, "createCompletion", test.openAiFn);
+    const openAiStub =
+      test.openAiFn == null
+        ? null
+        : stub(clients.openai, "createCompletion", test.openAiFn);
 
     try {
       const enc = new TextEncoder();
@@ -56,7 +64,9 @@ for (const test of [
       const responseJson = await response.json();
       await assertSnapshot(t, responseJson);
     } finally {
-      openAiStub.restore();
+      if (openAiStub != null) {
+        openAiStub.restore();
+      }
     }
   });
 }

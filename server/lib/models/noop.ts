@@ -11,6 +11,10 @@ export type Input = t.TypeOf<typeof Input>;
 export const Output = t.type({ model: t.literal("noop") });
 export type Output = t.TypeOf<typeof Output>;
 
+export const defaultConfiguration: Partial<Configuration> = {
+  model: "noop",
+};
+
 export async function run(
   deps: ModelDeps,
   configuration: Configuration,

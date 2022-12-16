@@ -26,6 +26,10 @@ export const Output = t.type({
 });
 export type Output = t.TypeOf<typeof Output>;
 
+export const defaultConfiguration: Partial<Configuration> = {
+  model: "assist-davinci-003",
+};
+
 export async function run(
   deps: ModelDeps,
   configuration: Configuration,

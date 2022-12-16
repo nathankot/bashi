@@ -15,3 +15,9 @@ snapshot[`POST /api/session/requests: openai errors 1`] = `
   error: "internal server error",
 }
 `;
+
+snapshot[`POST /api/session/requests: noop model works 1`] = `
+{
+  model: "noop",
+}
+`;

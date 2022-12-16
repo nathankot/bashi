@@ -1,21 +1,13 @@
 import { Handlers } from "$fresh/server.ts";
 
 import { renderError, renderJSON } from "@lib/util.ts";
-import makePrompt from "@lib/prompt.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 
-interface PostRequestResponse {
-  request: string;
-  text: string;
-  functions: {
-    name: string;
-    args: (string | number | boolean)[];
-  }[];
-}
+import Model, { Output } from "@lib/models/assist_davinci_003.ts";
 
-export const handler: Handlers<PostRequestResponse, State & ApiState> = {
+export const handler: Handlers<Output, State & ApiState> = {
   async POST(req, ctx) {
     let json;
     try {
@@ -31,21 +23,13 @@ export const handler: Handlers<PostRequestResponse, State & ApiState> = {
     }
 
     try {
-      const prompt = makePrompt(ctx.state.session, request);
-
-      const completion = await ctx.state.clients.openai.createCompletion({
-        model: "text-davinci-003",
-        max_tokens: 1000, // TODO return error if completion tokens has reached this limit
-        best_of: 1,
-        echo: false,
-        prompt: [prompt],
-      });
-
-      return renderJSON<PostRequestResponse>({
+      const model = new Model(ctx.state.clients.openai, ctx.state.session);
+      const result = model.run({
+        model: "assist-davinci-003",
         request,
-        text: completion.data.choices[0]?.text ?? "",
-        functions: [],
       });
+
+      return renderJSON(result);
     } catch (e) {
       console.error("could not communicated with openai", e);
       return renderError(500, "internal server error");

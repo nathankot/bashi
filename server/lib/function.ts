@@ -14,9 +14,12 @@ export const FunctionDefinition = t.type({
     })
   ),
 });
-
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
 export const FunctionList = t.array(FunctionDefinition);
-
 export type FunctionList = t.TypeOf<typeof FunctionList>;
+
+export type FunctionCalls = {
+  name: string;
+  args: (string | number | boolean)[];
+}[];

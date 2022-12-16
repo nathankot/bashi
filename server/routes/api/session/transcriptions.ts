@@ -3,11 +3,11 @@ import { Handlers } from "$fresh/server.ts";
 import { State } from "@routes/api/_middleware.ts";
 import { renderError, renderJSON } from "@lib/util.ts";
 
-interface PostTranscribeResponse {
+interface PostTranscriptionsResponse {
   text: string;
 }
 
-export const handler: Handlers<PostTranscribeResponse, State> = {
+export const handler: Handlers<PostTranscriptionsResponse, State> = {
   async POST(req, ctx) {
     let audio = await req.arrayBuffer();
     if (audio == null) {
@@ -19,6 +19,6 @@ export const handler: Handlers<PostTranscribeResponse, State> = {
     } catch {
       return renderError(500, "unknown transcription error");
     }
-    return renderJSON<PostTranscribeResponse>({ text });
+    return renderJSON<PostTranscriptionsResponse>({ text });
   },
 };

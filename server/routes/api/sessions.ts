@@ -6,7 +6,7 @@ import { Buffer } from "std/node/buffer.ts";
 
 import { State } from "./_middleware.ts";
 import { renderError, renderJSON } from "@lib/util.ts";
-import { Session } from "@lib/types.ts";
+import { Session } from "@lib/session.ts";
 import { msgpack } from "@/deps.ts";
 
 const PostSessionRequest = t.type({

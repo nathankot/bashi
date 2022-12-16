@@ -1,4 +1,4 @@
-import { Session } from "@lib/types.ts";
+import { Session } from "@lib/session.ts";
 import { HandlerContext } from "$fresh/server.ts";
 
 export const handlerCtx: HandlerContext<{}> = {

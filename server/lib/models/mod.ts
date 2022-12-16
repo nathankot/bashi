@@ -14,7 +14,6 @@ export const Configuration = t.union([
   assistDavinci003.Configuration,
   noop.Configuration,
 ]);
-
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.union([assistDavinci003.Input, noop.Input]);

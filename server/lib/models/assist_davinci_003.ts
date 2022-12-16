@@ -56,7 +56,7 @@ function makePrompt(functions: FunctionList, request: string): string {
 
 For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. You may only use function calls that are made available below.
 
-The arailable functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
+The available functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
 
 ${functionsList.join("\n")}
 

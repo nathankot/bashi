@@ -7,7 +7,7 @@ import { renderError, renderJSON } from "@lib/util.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
-import { models, Input, Output } from "@lib/models/all.ts";
+import { models, Input, Output } from "@lib/models/mod.ts";
 
 export type PostRequestsRequest = Input;
 export type PostRequestsResponse = Output;

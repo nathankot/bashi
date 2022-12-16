@@ -35,23 +35,20 @@ export const handler: Handlers<Output, State & ApiState> = {
         case "assist-davinci-003":
         case "noop":
           if (!validateInput(modelName, input)) {
-            throw new HTTPError(
-              `mismatched input, expected input for '${modelName}'`,
-              400
-            );
+            throw new Error("input could not be verified");
           }
           return renderJSON(
             await run(modelName, modelDeps, ctx.state.session, input)
           );
         default:
           const exhaustiveCheck: never = modelName;
-          throw new Error(`internal error, ${exhaustiveCheck} not found`);
+          throw new Error(`model ${exhaustiveCheck} not found`);
       }
     } catch (e) {
       if (e instanceof HTTPError) {
         return e.render();
       }
-      console.error("could not communicated with openai", e);
+      console.error(e);
       return renderError(500, "internal server error");
     }
   },

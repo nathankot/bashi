@@ -6,11 +6,11 @@ import * as clients from "@lib/clients.ts";
 const Name = t.literal("assist-davinci-003");
 type Name = t.TypeOf<typeof Name>;
 
-export const Options = t.type({
+export const Configuration = t.type({
   model: Name,
   functions: FunctionList,
 });
-export type Options = t.TypeOf<typeof Options>;
+export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
   model: Name,
@@ -27,13 +27,13 @@ export type Output = {
 
 export default class Model {
   static inputCodec = Input;
-  static optionsCodec = Options;
+  static configurationCodec = Configuration;
 
-  options: Options;
+  configuration: Configuration;
   openai: typeof clients.openai;
 
-  constructor(openai: typeof clients.openai, options: Options) {
-    this.options = options;
+  constructor(openai: typeof clients.openai, configuration: Configuration) {
+    this.configuration = configuration;
     this.openai = openai;
   }
 
@@ -57,7 +57,7 @@ export default class Model {
   }
 
   private makePrompt(request: string): string {
-    const functionsList = makeFunctionList(this.options.functions);
+    const functionsList = makeFunctionList(this.configuration.functions);
 
     return `You are a voice assistant capable of interpreting requests.
 

@@ -62,6 +62,10 @@ const defaultFunctions: FunctionSet = {
     description: `compute a math formula`,
     args: [{ name: "a math.js expression", type: "string" }],
   },
+  respond: {
+    description: `respond to a general question`,
+    args: [{ name: "the concrete answer to the question", type: "string" }],
+  },
 };
 
 function makePrompt(functions: FunctionSet, request: string): string {
@@ -69,7 +73,7 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
   return `You are a voice assistant capable of interpreting requests.
 
-For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. You may only use function calls that are made available below.
+For each request respond with an acknowledgment and a structured interpretation if identified. A structured interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
 
 The available functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
 
@@ -82,7 +86,8 @@ Understood.
 time("America/Los_Angeles")
 \`\`\`
 
-If no structured interpretation is found, answer the request if it is a question. Or ask for information that might be missing from the request. Or as a last resort, respond that the request is not supported.
+If no structured interpretation is found, ask for information that might be missing from the request. Or as a last
+resort, respond that the request is not supported.
 
 The request is:
 

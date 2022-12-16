@@ -5,17 +5,19 @@ import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
 import { State } from "./_middleware.ts";
-import { renderError, renderJSON, iotsPick } from "@lib/util.ts";
+import { renderError, renderJSON } from "@lib/util.ts";
 import { Session } from "@lib/types.ts";
 import { msgpack } from "@/deps.ts";
 
-const PostSessionRequest = iotsPick(Session, ["modelConfigurations"]);
+const PostSessionRequest = t.type({
+  modelConfigurations: Session.props.modelConfigurations,
+});
 export type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
 export type PostSessionResponse = Session;
 
 export const handler: Handlers<PostSessionResponse, State> = {
   async POST(req, ctx) {
-    // TODO validate api key, for now just require it in the
+    // TODO validate the api key
 
     let json;
     try {
@@ -23,13 +25,14 @@ export const handler: Handlers<PostSessionResponse, State> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const reqDecodeResult = PostSessionRequest.decode(json);
-    if (f.either.isLeft(reqDecodeResult)) {
+    const reqDecodeResult: f.either.Either<t.Errors, PostSessionRequest> =
+      PostSessionRequest.decode(json);
+    if (!f.either.isRight(reqDecodeResult)) {
       return renderError(400, "malformed request");
     }
 
     const sessionId = crypto.randomUUID();
-    const reqDecoded = reqDecodeResult.right as PostSessionRequest;
+    const reqDecoded: PostSessionRequest = reqDecodeResult.right;
 
     const expiresAt = new Date(ctx.state.now.getTime() + 1000 * 60 * 60 * 3);
 

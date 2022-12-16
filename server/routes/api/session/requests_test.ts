@@ -10,7 +10,7 @@ const nowFixture = new Date();
 for (const test of [
   {
     description: "success",
-    request: `{ "request": "a mock request" }`,
+    request: `{ "model": "assist-davinci-003", "request": "a mock request" }`,
     session: fixtures.session,
     openAiFn: async () =>
       ({
@@ -25,7 +25,7 @@ for (const test of [
   },
   {
     description: "openai errors",
-    request: `{ "request": "a mock request" }`,
+    request: `{ "model": "assist-davinci-003", "request": "a mock request" }`,
     session: fixtures.session,
     openAiFn: async () => {
       throw new Error("mock error");

@@ -2,8 +2,9 @@ export const snapshot = {};
 
 snapshot[`POST /api/session/requests: success 1`] = `
 {
-  functions: [
+  functionCalls: [
   ],
+  model: "assist-davinci-003",
   request: "a mock request",
   text: "fake response",
 }

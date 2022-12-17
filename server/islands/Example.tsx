@@ -62,7 +62,9 @@ export default function Example() {
       body: JSON.stringify(body),
     })
       .then((sessResp) => sessResp.json())
-      .then((sessJson: Session) => setSessionId(sessJson.sessionId));
+      .then((sessJson: { session: Session }) =>
+        setSessionId(sessJson.session.sessionId)
+      );
   }, [functions]);
 
   const onFunctionsChange = (t: string) => {

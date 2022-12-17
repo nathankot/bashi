@@ -1,8 +1,8 @@
 import {
-  KnownFunctionDefinitionArgs,
+  BuiltinFunctionDefinitionArgs,
   FunctionReturnValue,
   checkArgumentsValid,
-  defaultFunctions,
+  builtinFunctions,
 } from "@lib/function.ts";
 import { Output } from "@lib/models.ts";
 
@@ -18,10 +18,10 @@ export const interceptors: OutputInterceptor[] = [
 
 export default interceptors;
 
-function interceptFunctionCall<N extends keyof typeof defaultFunctions>(
+function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
   fnName: N,
   fn: (
-    args: KnownFunctionDefinitionArgs<typeof defaultFunctions[N]["args"]>
+    args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
   ) => Promise<FunctionReturnValue | null>
 ): OutputInterceptor {
   return async (output) => {
@@ -29,7 +29,7 @@ function interceptFunctionCall<N extends keyof typeof defaultFunctions>(
       return output;
     }
 
-    const fnDef = defaultFunctions[fnName];
+    const fnDef = builtinFunctions[fnName];
     const newFunctionCalls = [...output.functionCalls];
     for (let i = 0; i < newFunctionCalls.length; i++) {
       const call = newFunctionCalls[i]!;
@@ -42,8 +42,8 @@ function interceptFunctionCall<N extends keyof typeof defaultFunctions>(
       if (!checkArgumentsValid(fnDef, call.args)) {
         continue;
       }
-      const args = call.args as KnownFunctionDefinitionArgs<
-        typeof defaultFunctions[N]["args"]
+      const args = call.args as BuiltinFunctionDefinitionArgs<
+        typeof builtinFunctions[N]["args"]
       >;
       const maybeReturnValue = await fn(args);
       if (maybeReturnValue == null) {

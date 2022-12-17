@@ -5,7 +5,7 @@ import {
   FunctionSet,
   FunctionCalls,
   parseFromModelResult,
-  defaultFunctions,
+  builtinFunctions,
 } from "@lib/function.ts";
 
 export const Name = t.literal("assist-davinci-003");
@@ -39,7 +39,7 @@ export async function run(
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
-  const functionsSet = { ...defaultFunctions, ...configuration.functions };
+  const functionsSet = { ...configuration.functions, ...builtinFunctions };
   const prompt = makePrompt(functionsSet, input.request);
 
   const completion = await deps.openai.createCompletion({

@@ -20,21 +20,22 @@ export const FunctionDefinition = t.type({
 });
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
-export type KnownFunctionDefinition<A extends FunctionDefinitionArgTypes[]> =
+export type BuiltinFunctionDefinition<A extends FunctionDefinitionArgTypes[]> =
   Omit<FunctionDefinition, "args"> & {
     args: { [K in keyof A]: { type: A[K]; name: string } };
   };
 
-export type KnownFunctionDefinitionArgs<A extends FunctionDefinition["args"]> =
-  {
-    [K in keyof A]: A[K]["type"] extends "string"
-      ? string
-      : A[K]["type"] extends "number"
-      ? number
-      : A[K]["type"] extends "boolean"
-      ? boolean
-      : never;
-  };
+export type BuiltinFunctionDefinitionArgs<
+  A extends FunctionDefinition["args"]
+> = {
+  [K in keyof A]: A[K]["type"] extends "string"
+    ? string
+    : A[K]["type"] extends "number"
+    ? number
+    : A[K]["type"] extends "boolean"
+    ? boolean
+    : never;
+};
 
 export const FunctionSet = t.record(t.string, FunctionDefinition);
 export type FunctionSet = t.TypeOf<typeof FunctionSet>;

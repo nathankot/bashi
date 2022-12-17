@@ -16,20 +16,26 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "modelConfigurations": {
-    "assist-davinci-003": {
-      "functions": [
-        {
-          "name": "insertText",
-          "description": "insert text under the current caret location",
-          "args": [{ "name": "text", "type": "string" }]
-        },
-        {
-          "name": "webSearch",
-          "description": "search the internet or the given string",
-          "args": [{ "name": "search string", "type": "string" }]
+  "session": {
+    "modelConfigurations": {
+      "assist-davinci-003": {
+        "functions": {
+          "insertText": {
+            "description": "insert text under the current caret location",
+            "args": [{ "name": "text", "type": "string" }]
+          },
+          "webSearch": {
+            "description": "search the internet or the given string",
+            "args": [{ "name": "search string", "type": "string" }]
+          }
         }
-      ]
+      }
+    }
+  },
+  "knownFunctions": {
+    "time": {
+      "description": `check the time for the given timezone`,
+      "args": [{ "name": "tz database timezone name", "type": "string" }]
     }
   }
 }
@@ -48,18 +54,16 @@ The response body is a JSON object with the following shape:
   "expiresAt": "2023-05-05T00:00:00Z",
   "modelConfigurations": {
     "assist-davinci-003": {
-      "functions": [
-        {
-          "name": "insertText",
+      "functions": {
+        "insertText": {
           "description": "insert text under the current caret location",
           "args": [{ "name": "text", "type": "string" }]
         },
-        {
-          "name": "webSearch",
+        "webSearch": {
           "description": "search the internet or the given string",
           "args": [{ "name": "search string", "type": "string" }]
         }
-      ]
+      }
     }
   }
 }

@@ -16,7 +16,38 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
+  "globalConfiguration": {
+    "locale": "en-US"
+  },
+  "modelConfigurations": {
+    "assist-davinci-003": {
+      "functions": {
+        "insertText": {
+          "description": "insert text under the current caret location",
+          "args": [{ "name": "text", "type": "string" }]
+        },
+        "webSearch": {
+          "description": "search the internet or the given string",
+          "args": [{ "name": "search string", "type": "string" }]
+        }
+      }
+    }
+  }
+}
+```
+
+- `functions` - a list of functions supported by the client, that the model should
+  be aware of.
+
+### Response body
+
+The response body is a JSON object with the following shape:
+
+```json
+{
   "session": {
+    "sessionId": "123e4567-e89b-12d3-a456-426614174000",
+    "expiresAt": "2023-05-05T00:00:00Z",
     "globalConfiguration": {
       "locale": "en-US"
     },
@@ -39,34 +70,6 @@ The request body should be a JSON object with the following shape:
     "time": {
       "description": `check the time for the given timezone`,
       "args": [{ "name": "tz database timezone name", "type": "string" }]
-    }
-  }
-}
-```
-
-- `functions` - a list of functions supported by the client, that the model should
-  be aware of.
-
-### Response body
-
-The response body is a JSON object with the following shape:
-
-```json
-{
-  "sessionId": "123e4567-e89b-12d3-a456-426614174000",
-  "expiresAt": "2023-05-05T00:00:00Z",
-  "modelConfigurations": {
-    "assist-davinci-003": {
-      "functions": {
-        "insertText": {
-          "description": "insert text under the current caret location",
-          "args": [{ "name": "text", "type": "string" }]
-        },
-        "webSearch": {
-          "description": "search the internet or the given string",
-          "args": [{ "name": "search string", "type": "string" }]
-        }
-      }
     }
   }
 }
@@ -132,11 +135,17 @@ The request body should be a JSON object with the following shape:
 {
   "model": "assist-davinci-003",
   "request": "your request here",
-  "text": "",
-  "commands": [
+  "functionCalls": [
     {
+      "type": "parsed",
       "name": "insertText",
       "args": ["some text to insert"]
+    },
+    {
+      "type": "parsed_and_executed",
+      "name": "time",
+      "args": ["America/New_York"],
+      "returnValue": "12/17/2022, 10:05:53 AM"
     }
   ]
 }

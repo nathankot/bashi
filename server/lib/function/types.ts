@@ -21,8 +21,8 @@ export type FunctionSet = t.TypeOf<typeof FunctionSet>;
 export const FunctionCallArgument = t.union([t.string, t.number, t.boolean]);
 export type FunctionCallArgument = t.TypeOf<typeof FunctionCallArgument>;
 
-export const ReturnValue = t.union([t.string, t.number, t.boolean]);
-export type ReturnValue = t.TypeOf<typeof ReturnValue>;
+export const FunctionReturnValue = t.union([t.string, t.number, t.boolean]);
+export type FunctionReturnValue = t.TypeOf<typeof FunctionReturnValue>;
 
 export const FunctionCall = t.union([
   t.type({
@@ -48,7 +48,7 @@ export const FunctionCall = t.union([
     type: t.literal("parsed_and_executed"),
     name: t.string,
     args: t.array(FunctionCallArgument),
-    returnValue: ReturnValue,
+    returnValue: FunctionReturnValue,
   }),
 ]);
 export type FunctionCall = t.TypeOf<typeof FunctionCall>;

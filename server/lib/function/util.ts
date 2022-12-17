@@ -32,7 +32,7 @@ export function parseFromModelResult(
         });
         continue;
       }
-      if (!checkArgumentTypes(knownFunction, parsed.args)) {
+      if (!checkArgumentsValid(knownFunction, parsed.args)) {
         result.push({
           ...parsed,
           type: "parsed_but_invalid",
@@ -53,7 +53,7 @@ export function parseFromModelResult(
   return result;
 }
 
-export function checkArgumentTypes(
+export function checkArgumentsValid(
   knownFunction: FunctionDefinition,
   args: FunctionCallArgument[]
 ): boolean {
@@ -63,25 +63,8 @@ export function checkArgumentTypes(
   for (let i = 0; i < knownFunction.args.length; i++) {
     const argDef = knownFunction.args[i]!;
     const arg = args[i]!;
-    switch (argDef.type) {
-      case "boolean":
-        if (typeof arg !== "boolean") {
-          return false;
-        }
-        continue;
-      case "number":
-        if (typeof arg !== "number") {
-          return false;
-        }
-        continue;
-      case "string":
-        if (typeof arg !== "string") {
-          return false;
-        }
-        continue;
-      default:
-        const exhaustiveCheck: never = argDef.type;
-        throw new Error(`unexpected arg type: ${exhaustiveCheck}`);
+    if (typeof arg !== argDef.type) {
+      return false;
     }
   }
   return true;

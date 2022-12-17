@@ -1,19 +1,40 @@
 import * as t from "io-ts";
 
+export const FunctionDefinitionArgTypes = t.keyof({
+  string: null,
+  number: null,
+  boolean: null,
+});
+export type FunctionDefinitionArgTypes = t.TypeOf<
+  typeof FunctionDefinitionArgTypes
+>;
+
 export const FunctionDefinition = t.type({
   description: t.string,
   args: t.array(
     t.type({
       name: t.string,
-      type: t.keyof({
-        string: null,
-        number: null,
-        boolean: null,
-      }),
+      type: FunctionDefinitionArgTypes,
     })
   ),
 });
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
+
+export type KnownFunctionDefinition<A extends FunctionDefinitionArgTypes[]> =
+  Omit<FunctionDefinition, "args"> & {
+    args: { [K in keyof A]: { type: A[K]; name: string } };
+  };
+
+export type KnownFunctionDefinitionArgs<A extends FunctionDefinition["args"]> =
+  {
+    [K in keyof A]: A[K]["type"] extends "string"
+      ? string
+      : A[K]["type"] extends "number"
+      ? number
+      : A[K]["type"] extends "boolean"
+      ? boolean
+      : never;
+  };
 
 export const FunctionSet = t.record(t.string, FunctionDefinition);
 export type FunctionSet = t.TypeOf<typeof FunctionSet>;

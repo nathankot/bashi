@@ -7,6 +7,7 @@ import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 import { Input, Output, run, validateInput } from "@lib/models.ts";
+import interceptors from "@lib/output_interceptors.ts";
 
 export type PostRequestsRequest = Input;
 export type PostRequestsResponse = Output;
@@ -36,9 +37,18 @@ export const handler: Handlers<Output, State & ApiState> = {
           if (!validateInput(modelName, input)) {
             throw new Error("input could not be verified");
           }
-          return renderJSON(
-            await run(modelName, modelDeps, ctx.state.session, input)
+          let output = await run(
+            modelName,
+            modelDeps,
+            ctx.state.session,
+            input
           );
+
+          for (const interceptor of interceptors) {
+            output = await interceptor(output);
+          }
+
+          return renderJSON(output);
         default:
           const exhaustiveCheck: never = modelName;
           throw new Error(`model ${exhaustiveCheck} not found`);

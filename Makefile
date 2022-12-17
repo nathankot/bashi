@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build test test-update check
+.PHONY: up up-all dev build test test-update bench check
 up_command = docker-compose up
 
 up:
@@ -25,6 +25,9 @@ test:
 
 test-update:
 	cd ./server && deno test --allow-env --allow-read --allow-write -- --update
+
+bench:
+	cd ./server && deno bench --allow-env --allow-read
 
 check:
 	cd ./server && deno check ./main.ts

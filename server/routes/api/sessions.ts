@@ -4,6 +4,7 @@ import * as f from "fp-ts";
 import { Handlers } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
+import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { State } from "./_middleware.ts";
 import { renderError, renderJSON } from "@lib/util.ts";
 import { Session } from "@lib/session.ts";
@@ -34,7 +35,7 @@ export const handler: Handlers<PostSessionResponse, State> = {
     const sessionId = crypto.randomUUID();
     const reqDecoded: PostSessionRequest = reqDecodeResult.right as any;
 
-    const expiresAt = new Date(ctx.state.now.getTime() + 1000 * 60 * 60 * 3);
+    const expiresAt = new Date(ctx.state.now.getTime() + SESSION_EXPIRY_MS);
 
     const session: Session = {
       ...reqDecoded,

@@ -105,7 +105,9 @@ export default function AudioPrompt(props: { sessionId: string }) {
       </button>
 
       <div>
-        <pre>{result}</pre>
+        <textarea class="block w-full h-96 font-mono text-xs">
+          {result}
+        </textarea>
       </div>
     </div>
   );

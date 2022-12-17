@@ -24,7 +24,7 @@ export default function TextPrompt(props: { sessionId: string }) {
   };
 
   return (
-    <>
+    <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -40,7 +40,11 @@ export default function TextPrompt(props: { sessionId: string }) {
         <input type="submit" value="submit" />
       </form>
 
-      <pre>{result}</pre>
-    </>
+      <div>
+        <textarea class="block w-full h-96 font-mono text-xs">
+          {result}
+        </textarea>
+      </div>
+    </div>
   );
 }

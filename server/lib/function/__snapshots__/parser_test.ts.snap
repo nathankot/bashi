@@ -1,0 +1,139 @@
+export const snapshot = {};
+
+snapshot[`someCall() 1`] = `
+{
+  args: [
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall('a', 111) 1`] = `
+{
+  args: [
+    "a",
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall('a \\'ha\\'', 111) 1`] = `
+{
+  args: [
+    "a 'ha'",
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall(\`a\`, 111) 1`] = `
+{
+  args: [
+    "a",
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
+{
+  args: [
+    "a \`ha\`",
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall("a", 111) 1`] = `
+{
+  args: [
+    "a",
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall("a \\"ha\\"", 111) 1`] = `
+{
+  args: [
+    'a "ha"',
+    111,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall("a", 111,true) 1`] = `
+{
+  args: [
+    "a",
+    111,
+    true,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall("a", 111, false) 1`] = `
+{
+  args: [
+    "a",
+    111,
+    false,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`someCall(-123) 1`] = `
+{
+  args: [
+    -123,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`some_call() 1`] = `
+{
+  args: [
+  ],
+  name: "some_call",
+}
+`;
+
+snapshot[`some-call() 1`] = `
+{
+  args: [
+  ],
+  name: "some-call",
+}
+`;
+
+snapshot[`SOMECALL() 1`] = `
+{
+  args: [
+  ],
+  name: "SOMECALL",
+}
+`;
+
+snapshot[`malformed("a" 1`] = `"undefined: Unable to consume token: <END-OF-FILE>"`;
+
+snapshot[`someCall(-123.500) 1`] = `
+{
+  args: [
+    -123.5,
+  ],
+  name: "someCall",
+}
+`;
+
+snapshot[`testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
+
+snapshot[`empty string 1`] = `"undefined: Unable to consume token: <END-OF-FILE>"`;

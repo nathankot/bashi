@@ -11,6 +11,7 @@ import "io-ts";
 import "io-ts-types";
 import "fp-ts";
 import "redis";
+import "typescript-parsec";
 import "$fresh/server.ts";
 import "$fresh/plugins/twind.ts";
 

@@ -6,7 +6,7 @@ import { PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
-const defaultFunctions: FunctionSet = {
+const exampleFunctions: FunctionSet = {
   calendar: {
     description: `create a calendar event for some time relative to now`,
     args: [
@@ -41,7 +41,7 @@ const defaultFunctions: FunctionSet = {
 
 export default function Example() {
   const [error, setError] = useState<string | null>(null);
-  const [functions, setFunctions] = useState<FunctionSet>(defaultFunctions);
+  const [functions, setFunctions] = useState<FunctionSet>(exampleFunctions);
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {

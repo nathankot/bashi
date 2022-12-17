@@ -41,7 +41,7 @@ export default function TextPrompt(props: { sessionId: string }) {
       </form>
 
       <div>
-        <textarea class="block w-full h-96 font-mono text-xs">
+        <textarea readOnly class="block w-full h-96 font-mono text-xs">
           {result}
         </textarea>
       </div>

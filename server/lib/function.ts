@@ -19,6 +19,9 @@ export function parseFromModelResult(
     if (line.trim() === "") {
       continue;
     }
+    if (line === "```") {
+      continue;
+    }
     try {
       const parsed = evaluate(line);
       const knownFunction = knownFunctions[parsed.name];

@@ -8,6 +8,7 @@ import { evaluate } from "./function/parser.ts";
 
 export * from "./function/types.ts";
 export * from "./function/parser.ts";
+export * from "./function/default_functions.ts";
 
 export function parseFromModelResult(
   knownFunctions: FunctionSet,

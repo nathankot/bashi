@@ -21,6 +21,9 @@ export const handlerCtx: HandlerContext<{}> = {
 export const session: Session = {
   expiresAt: new Date(new Date().getTime() + 60000),
   sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
+  globalConfiguration: {
+    locale: "en-US",
+  },
   modelConfigurations: [
     {
       model: "assist-davinci-003",

@@ -45,7 +45,7 @@ export const handler: Handlers<Output, State & ApiState> = {
           );
 
           for (const interceptor of interceptors) {
-            output = await interceptor(output);
+            output = await interceptor(ctx.state.session, output);
           }
 
           return renderJSON(output);

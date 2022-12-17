@@ -4,13 +4,15 @@ import {
   checkArgumentsValid,
   builtinFunctions,
 } from "@lib/function.ts";
+
+import { Session } from "@lib/session.ts";
 import { Output } from "@lib/models.ts";
 
-type OutputInterceptor = (output: Output) => Promise<Output>;
+type OutputInterceptor = (session: Session, output: Output) => Promise<Output>;
 
 export const interceptors: OutputInterceptor[] = [
-  interceptFunctionCall("time", async ([timeZone]) => {
-    return new Date().toLocaleString("en-US", {
+  interceptFunctionCall("time", async (session, [timeZone]) => {
+    return new Date().toLocaleString(session.globalConfiguration.locale, {
       timeZone,
     });
   }),
@@ -21,10 +23,11 @@ export default interceptors;
 function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
   fnName: N,
   fn: (
+    session: Session,
     args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
   ) => Promise<FunctionReturnValue | null>
 ): OutputInterceptor {
-  return async (output) => {
+  return async (session, output) => {
     if (!("functionCalls" in output)) {
       return output;
     }
@@ -45,7 +48,7 @@ function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
       const args = call.args as BuiltinFunctionDefinitionArgs<
         typeof builtinFunctions[N]["args"]
       >;
-      const maybeReturnValue = await fn(args);
+      const maybeReturnValue = await fn(session, args);
       if (maybeReturnValue == null) {
         continue;
       }

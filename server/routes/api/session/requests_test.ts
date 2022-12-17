@@ -17,7 +17,11 @@ for (const test of [
         data: {
           choices: [
             {
-              text: "fake response",
+              text: `
+respond("mock response")
+   unknownCall(123)
+unparseable(
+time("America/New_York")`,
             },
           ],
         },

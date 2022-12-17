@@ -11,6 +11,7 @@ for (const expr of [
   `someCall("a \\"ha\\"", 111)`,
   `someCall("a", 111,true)`,
   `someCall("a", 111, false)`,
+  `someCall("a false true 123 b", 111, false)`,
   `someCall(-123)`,
   `some_call()`,
   `some-call()`,

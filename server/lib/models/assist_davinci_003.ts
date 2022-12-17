@@ -1,7 +1,11 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "@lib/model_deps.ts";
-import { FunctionSet, FunctionCalls } from "@lib/function.ts";
+import {
+  FunctionSet,
+  FunctionCalls,
+  parseFromModelResult,
+} from "@lib/function.ts";
 
 export const Name = t.literal("assist-davinci-003");
 export type Name = t.TypeOf<typeof Name>;
@@ -21,7 +25,6 @@ export type Input = t.TypeOf<typeof Input>;
 export const Output = t.type({
   model: Name,
   request: t.string,
-  text: t.string,
   functionCalls: FunctionCalls,
 });
 export type Output = t.TypeOf<typeof Output>;
@@ -35,7 +38,8 @@ export async function run(
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
-  const prompt = makePrompt(configuration.functions, input.request);
+  const functionsSet = { ...defaultFunctions, ...configuration.functions };
+  const prompt = makePrompt(functionsSet, input.request);
 
   const completion = await deps.openai.createCompletion({
     model: "text-davinci-003",
@@ -45,11 +49,12 @@ export async function run(
     prompt: [prompt],
   });
 
+  const text = completion.data.choices[0]?.text ?? "";
+
   return {
     model: "assist-davinci-003",
     request: input.request,
-    text: completion.data.choices[0]?.text ?? "",
-    functionCalls: [],
+    functionCalls: parseFromModelResult(functionsSet, text),
   };
 }
 
@@ -69,7 +74,7 @@ const defaultFunctions: FunctionSet = {
 };
 
 function makePrompt(functions: FunctionSet, request: string): string {
-  const functionsList = makeFunctionSet({ ...defaultFunctions, ...functions });
+  const functionsList = makeFunctionSet(functions);
 
   return `You are a voice assistant capable of interpreting requests.
 

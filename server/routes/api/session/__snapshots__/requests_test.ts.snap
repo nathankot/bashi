@@ -3,10 +3,36 @@ export const snapshot = {};
 snapshot[`POST /api/session/requests: success 1`] = `
 {
   functionCalls: [
+    {
+      args: [
+        "mock response",
+      ],
+      name: "respond",
+      type: "parsed",
+    },
+    {
+      args: [
+        123,
+      ],
+      invalid_reason: "unknown_function",
+      name: "unknownCall",
+      type: "parsed_but_invalid",
+    },
+    {
+      error: "undefined: Unable to consume token: <END-OF-FILE>",
+      line: "unparseable(",
+      type: "parse_error",
+    },
+    {
+      args: [
+        "America/New_York",
+      ],
+      name: "time",
+      type: "parsed",
+    },
   ],
   model: "assist-davinci-003",
   request: "a mock request",
-  text: "fake response",
 }
 `;
 

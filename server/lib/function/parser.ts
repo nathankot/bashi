@@ -79,9 +79,13 @@ function applyCall(
     undefined | FunctionCallArgument[],
     Token<TokenKind.RParen>
   ]
-): FunctionCall {
+): FunctionCall & { type: "parsed" } {
   const [{ text: name }, , maybeArgs] = toks;
-  return { name, args: maybeArgs ?? [] };
+  return {
+    type: "parsed",
+    name,
+    args: maybeArgs ?? [],
+  };
 }
 
 const ARG = rule<TokenKind, FunctionCallArgument>();
@@ -99,7 +103,7 @@ ARG.setPattern(
   )
 );
 
-const CALL = rule<TokenKind, FunctionCall>();
+const CALL = rule<TokenKind, FunctionCall & { type: "parsed" }>();
 CALL.setPattern(
   p.apply(
     p.seq(
@@ -112,6 +116,6 @@ CALL.setPattern(
   )
 );
 
-export function evaluate(expr: string): any {
+export function evaluate(expr: string): FunctionCall & { type: "parsed" } {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
 }

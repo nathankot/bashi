@@ -7,7 +7,7 @@ import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
 import { Input, Output, run, validateInput } from "@lib/models.ts";
-import interceptors from "@lib/output_interceptors.ts";
+import interceptors from "@lib/interceptors.ts";
 
 export type PostRequestsRequest = Input;
 export type PostRequestsResponse = Output;

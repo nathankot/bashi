@@ -421,6 +421,7 @@
     "https://esm.sh/fp-ts@2.13.1": "4841fc41f24b3976d1db23920725d3e8faea1ec08b133af05922bf99dae8f7a8",
     "https://esm.sh/io-ts-types@0.5.19": "7d4d6954c8521d72878fd5924d942bf35f3b76f6f72a19722cf7b86c65770f27",
     "https://esm.sh/io-ts@2.2.20": "93e109dbec0dee1e13fd159fc3d3340997f0e78eda3296a2ef23779da731a39f",
+    "https://esm.sh/mathjs@11.5.0": "75d2067e3245c74e96856da2174a969e6566fd92cb6091033066aea6e093c244",
     "https://esm.sh/preact@10.11.0": "e888b244446037c56f1881173fb51d1f5fa7aae5599e6c5154619346a6a5094e",
     "https://esm.sh/preact@10.11.0/hooks": "2b8ec155eb8b87501663f074acff1d55a9114fa7d88f0b39da06c940af1ff736",
     "https://esm.sh/preact@10.11.0/jsx-runtime": "5c123264f19799ab243211132dded45f6d42d594b5c78dd585f947d07bf20eae",
@@ -430,6 +431,8 @@
     "https://esm.sh/twind@0.16.17": "18d47be2022b148a89572378cf12a6e9b2fed041a0b11129c64af1b4186af0a2",
     "https://esm.sh/twind@0.16.17/sheets": "9da51c2715b8f78e3fc8cbc89183d10ca64e31d95f1fcacc333236c190454103",
     "https://esm.sh/v87/@ygoe/msgpack@1.0.3/deno/msgpack.js": "4dee63808f2c180a9104544855a7a7aaab63aaeaad1bd7184ab39c853934b8f7",
+    "https://esm.sh/v99/@babel/runtime@7.20.6/deno/helpers/defineProperty.js": "c6c2b6f59d9d11c5d4607cb6075fb9dc38247767ab59b903391cc9f9521abed2",
+    "https://esm.sh/v99/@babel/runtime@7.20.6/deno/helpers/extends.js": "f5889ba3a444e051da4a86fa558dd0c179012cf779f8d325d3cd6a650e0754d2",
     "https://esm.sh/v99/@preact/signals-core@1.0.1/X-ZS8q/deno/signals-core.js": "cceff90da93a32d4885f394e83c5073b124c455e08cd95a8167503d7f962a743",
     "https://esm.sh/v99/@preact/signals-core@1.0.1/X-ZS8q/dist/signals-core.d.ts": "7a2bc0ea4bb4197fe888236017e1429cb3129ca64eb37146f11f102d9513c54d",
     "https://esm.sh/v99/@preact/signals@1.0.3/X-ZS8q/deno/signals.js": "464a574f4493b079bcc66c1518968c4da2c81e2fbe2ab05b6aa10836d8b7c60d",
@@ -790,7 +793,11 @@
     "https://esm.sh/v99/@types/node@16.18.3/tls.d.ts": "73fc4146121c45b223923b93ef5a95162107f520a449fbcace75767e366dea96",
     "https://esm.sh/v99/@ygoe/msgpack@1.0.3/es2022/msgpack.js": "707e50257704c2573fdada46e26f5419248626ba61231958fdcfb9f9c636e1ef",
     "https://esm.sh/v99/cluster-key-slot@1.1.1/deno/cluster-key-slot.js": "d1dffed07240ee5bbd2d2be96253c9e4a2c371ef861590fb16ce68711d04a863",
+    "https://esm.sh/v99/complex.js@2.1.1/deno/complex.js": "481e26eca312dae28d5a33878bff2715b8237f16f546e2206a950ea0d91e69f8",
     "https://esm.sh/v99/csstype@3.1.1/index.d.ts": "1c29793071152b207c01ea1954e343be9a44d85234447b2b236acae9e709a383",
+    "https://esm.sh/v99/decimal.js@10.4.3/decimal.d.ts": "ab36d275321433fe3d1d7f21ff0a45e064d867fa66e05130a6888efc4d811a0f",
+    "https://esm.sh/v99/decimal.js@10.4.3/deno/decimal.js": "eeddec0c4bec03d9291fe300c9f4357dc8c3c9dfc29444555b5e2f6ab9809cf8",
+    "https://esm.sh/v99/escape-latex@1.2.0/deno/escape-latex.js": "043a78d5d537384f4fb4452fbe0e9ac3fcf580315beb51de6834b44c7a83fefb",
     "https://esm.sh/v99/fp-ts@2.13.1/Ord/lib/index.d.ts": "854cdc32752c20a63ea380b17a93c803d6d1e06fa939fdc231732a7b35e8a906",
     "https://esm.sh/v99/fp-ts@2.13.1/deno/Either.js": "1c0c69fc8f36dd8d184805dbd32abecc6d2b0318401b5826d5c611413db84713",
     "https://esm.sh/v99/fp-ts@2.13.1/deno/es6/Applicative.js": "5e2300e020e453b9c572e2dbbcb62257f89787df3163d84786ddd99c093fc856",
@@ -971,6 +978,7 @@
     "https://esm.sh/v99/fp-ts@2.13.1/lib/string.d.ts": "a63815c9dd430a42b2c9a1b1d43c8fbb2d763d2d9d00beeb0cd2fa7d8c1f6313",
     "https://esm.sh/v99/fp-ts@2.13.1/lib/struct.d.ts": "71d7a4621afa1ed59b29d7f7b41438b376b8d7b872c7922ad209cae51a173f9e",
     "https://esm.sh/v99/fp-ts@2.13.1/lib/void.d.ts": "ac067893f6dd7780108fcc282ac6b5305a4bbd183bc50e0dd5b1669c9b64dda8",
+    "https://esm.sh/v99/fraction.js@4.2.0/deno/fraction.js": "5e66a554439e8cab028cfd2aac73a8213d9544128a0538d60f17ff0fae25fbd5",
     "https://esm.sh/v99/generic-pool@3.9.0/deno/generic-pool.js": "a7294e71498a4f49345b8904dea12864bda21173e4151b93e68129ba3a202fca",
     "https://esm.sh/v99/io-ts-types@0.5.19/deno/io-ts-types.js": "f8e6b2817cbf49d7bc2fdce8068aa65d01bde47b88e5ac592e85b13af954fa5e",
     "https://esm.sh/v99/io-ts-types@0.5.19/lib/BigIntFromString.d.ts": "ac2dadd56567c270ed6cb47d9685a8b891088588d8635389b5886311f5c2e077",
@@ -1009,6 +1017,9 @@
     "https://esm.sh/v99/io-ts@2.2.19/deno/io-ts.js": "2e0a99e62d843c9408bd10364424ce3cd3073ac5256f76fe233568a96b711489",
     "https://esm.sh/v99/io-ts@2.2.20/deno/io-ts.js": "0b82038bba1444c3e0ab320264e69c7a81831913fae1b72107311354fb0ee002",
     "https://esm.sh/v99/io-ts@2.2.20/lib/index.d.ts": "ba2e13d3542a9f171af876718a95bbd25a4d941b20a262bb980f0d4bf72d2a70",
+    "https://esm.sh/v99/javascript-natural-sort@0.7.1/deno/javascript-natural-sort.js": "7e0b9084f1ef108933781d4260e5c43a2a55df4e80a2bd5eb383673dd69f3e41",
+    "https://esm.sh/v99/mathjs@11.5.0/deno/mathjs.js": "69e5811336acd528560db0487eaa53971eeb8e636b10374ff6743cc64de25aa0",
+    "https://esm.sh/v99/mathjs@11.5.0/types/index.d.ts": "d40e267dd700ca4ff09323986d24253bdf15117f7d5e7784c7d0e83b17c1cea7",
     "https://esm.sh/v99/monocle-ts@2.3.13/deno/monocle-ts.js": "ff1635575e6d077a39a2a94be7cefa688d545a0c776902f4f16a2942604c2ab2",
     "https://esm.sh/v99/monocle-ts@2.3.13/lib/At.d.ts": "79b14917ab17b6af4c8ec03cb28b2e93c41f8e8a4d375d75e0e51f51abc8f161",
     "https://esm.sh/v99/monocle-ts@2.3.13/lib/Iso.d.ts": "6fab82e8a715f9e83cff47f5c67cdd4db32f4e43c25343159f90cb2608d3d560",
@@ -1027,20 +1038,28 @@
     "https://esm.sh/v99/preact@10.11.0/jsx-runtime/src/index.d.ts": "e153460ed2b3fe2ad8b93696ecd48fbf73cd628b0b0ea6692b71804a3af69dfd",
     "https://esm.sh/v99/preact@10.11.0/src/index.d.ts": "1a5c331227be54be6515b0c92a469d352834fa413963ae84a39a05a3177111f6",
     "https://esm.sh/v99/preact@10.11.0/src/jsx.d.ts": "c423715fd7992b2e1446fea11d2d04e8adbd66c1edca1ce5e85f90e0d26a2eb2",
+    "https://esm.sh/v99/seedrandom@3.0.5/deno/seedrandom.js": "3210dcdf80f6a7de628b30d35e0a25d0f4ccd985862adc037da66586e4bc925b",
     "https://esm.sh/v99/style-vendorizer@2.2.3/deno/style-vendorizer.js": "bacdb96f034bbdae11a8d90427a6d49270d28d5939f02dbf0e7d0e52491ff9e3",
+    "https://esm.sh/v99/tiny-emitter@2.1.0/deno/tiny-emitter.js": "88e17b547b7a1635d3edebb3c12973c24514675302ee9634a3de4e08867e301b",
     "https://esm.sh/v99/twind@0.16.17/deno/sheets.js": "f75586c3a778278f99ca9e6761e8c8a2089c66d6a503bb25e3bba38597fe1e30",
     "https://esm.sh/v99/twind@0.16.17/deno/twind.js": "8fec4504ce1bb9a4876b4420826e6c3c49e68493f2723483aad09ea240aa0850",
     "https://esm.sh/v99/twind@0.16.17/sheets/sheets.d.ts": "795aa19124fe8a61cf0f3833aac4d30c63273ca049bd91f010565c9e1c9225a3",
     "https://esm.sh/v99/twind@0.16.17/twind.d.ts": "168e8aeafcf13cfa02fbdd6fd2c1cc374784af6ddbf3c0e07db0b4199c4bf5f6",
+    "https://esm.sh/v99/typed-function@4.1.0/deno/typed-function.js": "6935b464a8132d496175f004df55d78741ac9f0c815aa28783fc84eb47ca5b2f",
     "https://esm.sh/v99/yallist@4.0.0/deno/yallist.js": "ee7c980421622395582e1807c4ab3aaf9748e1fcb251316eb5256eb9923a8146"
   },
   "npm": {
     "specifiers": {
       "@redis/client@1.4.2": "@redis/client@1.4.2",
+      "mathjs@11.5.0": "mathjs@11.5.0",
       "openai@^3.1.0": "openai@3.1.0",
       "typescript-parsec@0.1.0": "typescript-parsec@0.1.0"
     },
     "packages": {
+      "@babel/runtime@7.20.6": {
+        "integrity": "sha512-Q+8MqP7TiHMWzSfwiJwXCjyf4GYA4Dgw3emg/7xmwsdLJOZUp+nMqcOwOzzYheuM1rhDu8FSj2l0aoMygEuXuA==",
+        "dependencies": { "regenerator-runtime": "regenerator-runtime@0.13.11" }
+      },
       "@redis/client@1.4.2": {
         "integrity": "sha512-oUdEjE0I7JS5AyaAjkD3aOXn9NhO7XKyPyXEyrgFDu++VrVBHUPnV6dgEya9TcMuj5nIJRuCzCm8ZP+c9zCHPw==",
         "dependencies": {
@@ -1065,8 +1084,20 @@
         "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
         "dependencies": { "delayed-stream": "delayed-stream@1.0.0" }
       },
+      "complex.js@2.1.1": {
+        "integrity": "sha512-8njCHOTtFFLtegk6zQo0kkVX1rngygb/KQI6z1qZxlFI3scluC+LVTCFbrkWjBv4vvLlbQ9t88IPMC6k95VTTg==",
+        "dependencies": {}
+      },
+      "decimal.js@10.4.3": {
+        "integrity": "sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==",
+        "dependencies": {}
+      },
       "delayed-stream@1.0.0": {
         "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
+        "dependencies": {}
+      },
+      "escape-latex@1.2.0": {
+        "integrity": "sha512-nV5aVWW1K0wEiUIEdZ4erkGGH8mDxGyxSeqPzRNtWP7ataw+/olFObw7hujFWlVjNsaDFw5VZ5NzVSIqRgfTiw==",
         "dependencies": {}
       },
       "follow-redirects@1.15.2": {
@@ -1081,9 +1112,31 @@
           "mime-types": "mime-types@2.1.35"
         }
       },
+      "fraction.js@4.2.0": {
+        "integrity": "sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==",
+        "dependencies": {}
+      },
       "generic-pool@3.9.0": {
         "integrity": "sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==",
         "dependencies": {}
+      },
+      "javascript-natural-sort@0.7.1": {
+        "integrity": "sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==",
+        "dependencies": {}
+      },
+      "mathjs@11.5.0": {
+        "integrity": "sha512-vJ/+SqWtxjW6/aeDRt8xL3TlOVKqwN15BIyTGVqGbIWuiqgY4SxZ0yLuna82YH9CB757iFP7uJ4m3KvVBX7Qcg==",
+        "dependencies": {
+          "@babel/runtime": "@babel/runtime@7.20.6",
+          "complex.js": "complex.js@2.1.1",
+          "decimal.js": "decimal.js@10.4.3",
+          "escape-latex": "escape-latex@1.2.0",
+          "fraction.js": "fraction.js@4.2.0",
+          "javascript-natural-sort": "javascript-natural-sort@0.7.1",
+          "seedrandom": "seedrandom@3.0.5",
+          "tiny-emitter": "tiny-emitter@2.1.0",
+          "typed-function": "typed-function@4.1.0"
+        }
       },
       "mime-db@1.52.0": {
         "integrity": "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==",
@@ -1099,6 +1152,22 @@
           "axios": "axios@0.26.1",
           "form-data": "form-data@4.0.0"
         }
+      },
+      "regenerator-runtime@0.13.11": {
+        "integrity": "sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==",
+        "dependencies": {}
+      },
+      "seedrandom@3.0.5": {
+        "integrity": "sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==",
+        "dependencies": {}
+      },
+      "tiny-emitter@2.1.0": {
+        "integrity": "sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==",
+        "dependencies": {}
+      },
+      "typed-function@4.1.0": {
+        "integrity": "sha512-DGwUl6cioBW5gw2L+6SMupGwH/kZOqivy17E4nsh1JI9fKF87orMmlQx3KISQPmg3sfnOUGlwVkroosvgddrlg==",
+        "dependencies": {}
       },
       "typescript-parsec@0.1.0": {
         "integrity": "sha512-0DAOW4PEi5kK3bntgKY8T+D2qzJR2D2rfgWmoaTzkdEsOrkBhk2N2yvdwNDGxcfHxRhLF7mvGr1O2G+kW7Akqg==",

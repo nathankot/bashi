@@ -15,6 +15,7 @@
     "io-ts-types": "https://esm.sh/io-ts-types@0.5.19",
     "fp-ts": "https://esm.sh/fp-ts@2.13.1",
     "typescript-parsec": "npm:typescript-parsec@0.1.0",
+    "mathjs": "https://esm.sh/mathjs@11.5.0",
     "@/": "./",
     "@lib/": "./lib/",
     "@routes/": "./routes/"

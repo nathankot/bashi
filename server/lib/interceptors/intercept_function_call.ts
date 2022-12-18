@@ -6,21 +6,10 @@ import {
 } from "@lib/function.ts";
 
 import { Session } from "@lib/session.ts";
-import { Output } from "@lib/models.ts";
 
-type OutputInterceptor = (session: Session, output: Output) => Promise<Output>;
+import { OutputInterceptor } from "./type.ts";
 
-export const interceptors: OutputInterceptor[] = [
-  interceptFunctionCall("time", async (session, [timeZone]) => {
-    return new Date().toLocaleString(session.globalConfiguration.locale, {
-      timeZone,
-    });
-  }),
-];
-
-export default interceptors;
-
-function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
+export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
   fnName: N,
   fn: (
     session: Session,

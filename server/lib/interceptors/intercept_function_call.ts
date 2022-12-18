@@ -16,7 +16,7 @@ export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
     args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
   ) => Promise<FunctionReturnValue | null>
 ): OutputInterceptor {
-  return async (session, output) => {
+  return async (log, session, output) => {
     if (!("functionCalls" in output)) {
       return output;
     }
@@ -48,7 +48,7 @@ export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
           returnValue: maybeReturnValue,
         };
       } catch (e) {
-        console.error(e);
+        log("error", e);
         newFunctionCalls[i] = {
           ...call,
           type: "invalid",

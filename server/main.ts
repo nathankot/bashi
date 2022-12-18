@@ -9,6 +9,9 @@ import manifest from "./fresh.gen.ts";
 
 import twindPlugin from "$fresh/plugins/twind.ts";
 import twindConfig from "./twind.config.ts";
+import { setup as setupLogger } from "@lib/log.ts";
+
+await setupLogger();
 
 await start(manifest, {
   port: 8080,

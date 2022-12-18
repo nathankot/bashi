@@ -63,6 +63,7 @@ time("America/New_York")`,
           now: nowFixture,
           clients,
           session: test.session,
+          log: () => {},
         },
       });
       const responseJson = await response.json();

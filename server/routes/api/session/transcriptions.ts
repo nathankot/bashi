@@ -15,7 +15,7 @@ export const handler: Handlers<PostTranscriptionsResponse, State> = {
     }
     let text: string;
     try {
-      text = await ctx.state.clients.whisper.transcribe(audio);
+      text = await ctx.state.clients.whisper.transcribe(ctx.state.log, audio);
     } catch (e) {
       return handleError(e);
     }

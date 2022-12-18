@@ -13,6 +13,7 @@ import "openai";
 import "preact";
 import "preact/hooks";
 import "redis";
+import "std/log/mod.ts";
 import "twind";
 import "typescript-parsec";
 

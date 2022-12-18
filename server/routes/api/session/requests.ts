@@ -26,7 +26,7 @@ export const handler: Handlers<Output, State & ApiState> = {
     }
 
     const input: Input = inputDecodeResult.right as any;
-    const modelDeps = { openai: ctx.state.clients.openai };
+    const modelDeps = { openai: ctx.state.clients.openai, log: ctx.state.log };
     const modelName = input.model;
 
     try {
@@ -35,13 +35,7 @@ export const handler: Handlers<Output, State & ApiState> = {
         case "translate-davinci-003":
         case "noop":
           return renderJSON(
-            await run(
-              ctx.state.log,
-              ctx.state.session,
-              modelName,
-              modelDeps,
-              input
-            )
+            await run(modelDeps, ctx.state.session, modelName, input)
           );
 
         default:

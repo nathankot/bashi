@@ -45,6 +45,11 @@ export async function run(
     prompt: [prompt],
   });
 
+  deps.log("info", {
+    message: "tokens used",
+    total_tokens: completion.data.usage?.total_tokens,
+  });
+
   const result = completion.data.choices[0]?.text ?? "";
 
   return {

@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
-import { LogFn } from "@lib/log.ts";
 import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
 import { functionCallInterceptors } from "@lib/interceptors.ts";
@@ -46,10 +45,9 @@ export type Output = t.TypeOf<typeof Output>;
 export type ModelName = keyof typeof models;
 
 export async function run<N extends ModelName>(
-  log: LogFn,
+  modelDeps: ModelDeps,
   session: Session,
   modelName: N,
-  modelDeps: ModelDeps,
   input: t.TypeOf<typeof models[N]["Input"]>
 ): Promise<t.TypeOf<typeof models[N]["Output"]>> {
   if (!validateInput(modelName, input)) {
@@ -72,7 +70,7 @@ export async function run<N extends ModelName>(
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {
-      output = await interceptor(log, session, output as any);
+      output = await interceptor(modelDeps.log, session, output as any);
     }
   }
 

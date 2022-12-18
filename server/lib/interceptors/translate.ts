@@ -7,10 +7,9 @@ const interceptor = interceptFunctionCall(
   "translate",
   async (log, session, [targetLanguage, request]) => {
     const output = await run(
-      log,
+      { openai, log },
       session,
       "translate-davinci-003",
-      { openai },
       {
         model: "translate-davinci-003",
         request,

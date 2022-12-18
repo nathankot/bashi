@@ -26,10 +26,6 @@ const exampleFunctions: FunctionSet = {
     description: `initiate a phone call`,
     args: [{ name: "contact name", type: "string" }],
   },
-  insert: {
-    description: `insert text into the current location`,
-    args: [{ name: "text", type: "string" }],
-  },
   reminder: {
     description: `create a reminder on a certain date and time`,
     args: [

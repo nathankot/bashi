@@ -19,8 +19,18 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
 };
 
 const respond: BuiltinFunctionDefinition<["string"]> = {
-  description: `respond to a general question`,
+  description: `specify the response to a question`,
   args: [{ name: "the concrete answer to the question", type: "string" }],
+};
+
+const write: BuiltinFunctionDefinition<[]> = {
+  description: `write the result of the function in the line above into the current context`,
+  args: [],
+};
+
+const say: BuiltinFunctionDefinition<[]> = {
+  description: `speak the result of the function in the line above`,
+  args: [],
 };
 
 export const builtinFunctions = {
@@ -28,4 +38,6 @@ export const builtinFunctions = {
   math,
   respond,
   translate,
+  write,
+  say,
 };

@@ -53,6 +53,11 @@ export async function run(
     prompt: [prompt],
   });
 
+  deps.log("info", {
+    message: "tokens used",
+    total_tokens: completion.data.usage?.total_tokens,
+  });
+
   const text = completion.data.choices[0]?.text ?? "";
 
   return {
@@ -67,9 +72,9 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
   return `You are a voice assistant capable of interpreting requests.
 
-For each request respond with an interpretation. An interpretation is composed of one or more lines of function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
+For each request respond with an interpretation. An interpretation is composed of one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
 
-The available functions are as follows, denoted in typescript function notation. When responding make sure that any quotes inside function string arguments are escaped.
+The available functions are as follows, denoted in typescript function notation. When responding, string arguments MUST be quoted and any quotes inside strings MUST be escaped.
 
 ${functionsList.join("\n")}
 
@@ -79,8 +84,7 @@ For example, if the request is \`whats the time in Los Angeles\` respond with:
 time("America/Los_Angeles")
 \`\`\`
 
-If no interpretation is found, use the respond() function to ask for information that might be missing from the
-request. Or as a last resort, respond() that the request is not supported.
+If no interpretation is found, use the respond() function to ask for information that might be missing from the request. Or as a last resort, respond() that the request is not supported.
 
 The request is:
 

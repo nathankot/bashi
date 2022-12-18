@@ -39,8 +39,9 @@ export async function run(
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
+  const request = input.request.trim();
   const functionsSet = { ...configuration.functions, ...builtinFunctions };
-  const prompt = makePrompt(functionsSet, input.request);
+  const prompt = makePrompt(functionsSet, request);
 
   const completion = await deps.openai.createCompletion({
     model: "text-davinci-003",
@@ -54,7 +55,7 @@ export async function run(
 
   return {
     model: "assist-davinci-003",
-    request: input.request,
+    request,
     functionCalls: parseFromModelResult(functionsSet, text),
   };
 }

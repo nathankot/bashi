@@ -3,19 +3,26 @@ import {
   FunctionReturnValue,
   checkArgumentsValid,
   builtinFunctions,
+  FunctionCalls,
 } from "@lib/function.ts";
 
 import { Session } from "@lib/session.ts";
+import { Output } from "@lib/models.ts";
+import { LogFn } from "@lib/log.ts";
 
 import { OutputInterceptor } from "./type.ts";
 
-export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
+export function interceptFunctionCall<
+  O extends Output & { functionCalls: FunctionCalls },
+  N extends keyof typeof builtinFunctions
+>(
   fnName: N,
   fn: (
+    log: LogFn,
     session: Session,
     args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
   ) => Promise<FunctionReturnValue | null>
-): OutputInterceptor {
+): OutputInterceptor<O> {
   return async (log, session, output) => {
     if (!("functionCalls" in output)) {
       return output;
@@ -38,7 +45,7 @@ export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
         typeof builtinFunctions[N]["args"]
       >;
       try {
-        const maybeReturnValue = await fn(session, args);
+        const maybeReturnValue = await fn(log, session, args);
         if (maybeReturnValue == null) {
           continue;
         }

@@ -1,8 +1,10 @@
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
+import { LogFn } from "@lib/log.ts";
 import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
+import { functionCallInterceptors } from "@lib/interceptors.ts";
 import { ModelDeps } from "./model_deps.ts";
 import * as assistDavinci003 from "./models/assist_davinci_003.ts";
 import * as translateDavinci003 from "./models/translate_davinci_003.ts";
@@ -43,28 +45,16 @@ export type Output = t.TypeOf<typeof Output>;
 
 export type ModelName = keyof typeof models;
 
-export function validateInput<N extends ModelName>(
-  modelName: N,
-  input: t.TypeOf<typeof models[ModelName]["Input"]>
-): input is t.TypeOf<typeof models[N]["Input"]> {
-  return f.either.isRight(models[modelName].Input.decode(input));
-}
-
-export function validateConfiguration<N extends ModelName>(
-  modelName: N,
-  configuration: t.TypeOf<typeof models[ModelName]["Configuration"]>
-): configuration is t.TypeOf<typeof models[N]["Configuration"]> {
-  return f.either.isRight(
-    models[modelName].Configuration.decode(configuration)
-  );
-}
-
 export async function run<N extends ModelName>(
+  log: LogFn,
+  session: Session,
   modelName: N,
   modelDeps: ModelDeps,
-  session: Session,
   input: t.TypeOf<typeof models[N]["Input"]>
 ): Promise<t.TypeOf<typeof models[N]["Output"]>> {
+  if (!validateInput(modelName, input)) {
+    throw new Error("could not validate input");
+  }
   const configuration = getConfiguration(modelName, session);
   if (configuration == null) {
     throw new HTTPError(
@@ -73,7 +63,22 @@ export async function run<N extends ModelName>(
     );
   }
   const runFn: typeof models[N]["run"] = models[modelName].run;
-  return runFn(modelDeps, configuration as any, input as any);
+  let output = await runFn(modelDeps, configuration as any, input as any);
+
+  if ("functionCalls" in output) {
+    for (const interceptor of functionCallInterceptors) {
+      output = await interceptor(log, session, output as any);
+    }
+  }
+
+  return output;
+}
+
+function validateInput<N extends ModelName>(
+  modelName: N,
+  input: t.TypeOf<typeof models[ModelName]["Input"]>
+): input is t.TypeOf<typeof models[N]["Input"]> {
+  return f.either.isRight(models[modelName].Input.decode(input));
 }
 
 function getConfiguration<N extends ModelName>(
@@ -95,4 +100,13 @@ function getConfiguration<N extends ModelName>(
     return conf;
   }
   return null;
+}
+
+function validateConfiguration<N extends ModelName>(
+  modelName: N,
+  configuration: t.TypeOf<typeof models[ModelName]["Configuration"]>
+): configuration is t.TypeOf<typeof models[N]["Configuration"]> {
+  return f.either.isRight(
+    models[modelName].Configuration.decode(configuration)
+  );
 }

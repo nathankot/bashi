@@ -5,12 +5,18 @@ import { openai } from "@lib/clients.ts";
 
 const interceptor = interceptFunctionCall(
   "translate",
-  async (session, [targetLanguage, request]) => {
-    const output = await run("translate-davinci-003", { openai }, session, {
-      model: "translate-davinci-003",
-      request,
-      targetLanguage,
-    });
+  async (log, session, [targetLanguage, request]) => {
+    const output = await run(
+      log,
+      session,
+      "translate-davinci-003",
+      { openai },
+      {
+        model: "translate-davinci-003",
+        request,
+        targetLanguage,
+      }
+    );
     return output.result.trim();
   }
 );

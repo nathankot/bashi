@@ -6,8 +6,7 @@ import { renderError, renderJSON, handleError } from "@lib/util.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "./_middleware.ts";
-import { Input, Output, run, validateInput } from "@lib/models.ts";
-import interceptors from "@lib/interceptors.ts";
+import { Input, Output, run } from "@lib/models.ts";
 
 export type PostRequestsRequest = Input;
 export type PostRequestsResponse = Output;
@@ -35,25 +34,16 @@ export const handler: Handlers<Output, State & ApiState> = {
         case "assist-davinci-003":
         case "translate-davinci-003":
         case "noop":
-          if (!validateInput(modelName, input)) {
-            throw new Error("input could not be verified");
-          }
-          let output = await run(
-            modelName,
-            modelDeps,
-            ctx.state.session,
-            input
-          );
-
-          for (const interceptor of interceptors) {
-            output = await interceptor(
+          return renderJSON(
+            await run(
               ctx.state.log,
               ctx.state.session,
-              output
-            );
-          }
+              modelName,
+              modelDeps,
+              input
+            )
+          );
 
-          return renderJSON(output);
         default:
           const exhaustiveCheck: never = modelName;
           throw new Error(`model ${exhaustiveCheck} not found`);

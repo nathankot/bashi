@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "@lib/model_deps.ts";
+import { Configuration as SessionConfiguration } from "@lib/session/configuration.ts";
 
 export const Name = t.literal("translate-davinci-003");
 export type Name = t.TypeOf<typeof Name>;
@@ -30,6 +31,7 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 export async function run(
   deps: ModelDeps,
+  sessionConfiguration: SessionConfiguration,
   configuration: Configuration,
   input: Input
 ): Promise<Output> {

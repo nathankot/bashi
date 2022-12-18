@@ -2,16 +2,14 @@ import * as t from "io-ts";
 import { date } from "io-ts-types";
 
 import { DEFAULT_MAX_RESPONSE_TOKENS } from "@lib/constants.ts";
-import { Configuration } from "@lib/models.ts";
+import { Configuration as ModelConfiguration } from "@lib/models.ts";
+import { Configuration } from "@lib/session/configuration.ts";
 
 export const Session = t.type({
   sessionId: t.string,
   expiresAt: date,
-  configuration: t.type({
-    locale: t.string,
-    maxResponseTokens: t.number,
-  }),
-  modelConfigurations: t.array(Configuration),
+  configuration: Configuration,
+  modelConfigurations: t.array(ModelConfiguration),
 });
 
 export type Session = t.TypeOf<typeof Session>;

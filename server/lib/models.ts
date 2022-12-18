@@ -63,7 +63,12 @@ export async function run<N extends ModelName>(
     );
   }
   const runFn: typeof models[N]["run"] = models[modelName].run;
-  let output = await runFn(modelDeps, configuration as any, input as any);
+  let output = await runFn(
+    modelDeps,
+    session.configuration,
+    configuration as any,
+    input as any
+  );
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {

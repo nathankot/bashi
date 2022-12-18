@@ -53,12 +53,13 @@ export const FunctionCall = t.union([
     error: t.string,
   }),
   t.type({
-    type: t.literal("parsed_but_invalid"),
+    type: t.literal("invalid"),
     name: t.string,
     args: t.array(FunctionCallArgument),
     invalid_reason: t.union([
       t.literal("unknown_function"),
-      t.literal("invalid arguments"),
+      t.literal("invalid_arguments"),
+      t.literal("failed_execution"),
     ]),
   }),
   t.type({
@@ -67,7 +68,7 @@ export const FunctionCall = t.union([
     args: t.array(FunctionCallArgument),
   }),
   t.type({
-    type: t.literal("parsed_and_executed"),
+    type: t.literal("executed"),
     name: t.string,
     args: t.array(FunctionCallArgument),
     returnValue: FunctionReturnValue,

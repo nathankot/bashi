@@ -16,7 +16,7 @@ snapshot[`POST /api/session/requests: success 1`] = `
       ],
       invalid_reason: "unknown_function",
       name: "unknownCall",
-      type: "parsed_but_invalid",
+      type: "invalid",
     },
     {
       error: "undefined: Unable to consume token: <END-OF-FILE>",

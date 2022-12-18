@@ -37,15 +37,24 @@ export function interceptFunctionCall<N extends keyof typeof builtinFunctions>(
       const args = call.args as BuiltinFunctionDefinitionArgs<
         typeof builtinFunctions[N]["args"]
       >;
-      const maybeReturnValue = await fn(session, args);
-      if (maybeReturnValue == null) {
-        continue;
+      try {
+        const maybeReturnValue = await fn(session, args);
+        if (maybeReturnValue == null) {
+          continue;
+        }
+        newFunctionCalls[i] = {
+          ...call,
+          type: "executed",
+          returnValue: maybeReturnValue,
+        };
+      } catch (e) {
+        console.error(e);
+        newFunctionCalls[i] = {
+          ...call,
+          type: "invalid",
+          invalid_reason: "failed_execution",
+        };
       }
-      newFunctionCalls[i] = {
-        ...call,
-        type: "parsed_and_executed",
-        returnValue: maybeReturnValue,
-      };
     }
 
     return {

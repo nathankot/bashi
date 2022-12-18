@@ -27,7 +27,7 @@ export function parseFromModelResult(
       if (knownFunction == null) {
         result.push({
           ...parsed,
-          type: "parsed_but_invalid",
+          type: "invalid",
           invalid_reason: "unknown_function",
         });
         continue;
@@ -35,8 +35,8 @@ export function parseFromModelResult(
       if (!checkArgumentsValid(knownFunction, parsed.args)) {
         result.push({
           ...parsed,
-          type: "parsed_but_invalid",
-          invalid_reason: "invalid arguments",
+          type: "invalid",
+          invalid_reason: "invalid_arguments",
         });
         continue;
       }

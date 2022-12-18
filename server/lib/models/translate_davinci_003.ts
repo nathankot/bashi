@@ -39,7 +39,7 @@ export async function run(
   const prompt = makePrompt(input.targetLanguage, request);
   const completion = await deps.openai.createCompletion({
     model: "text-davinci-003",
-    max_tokens: 1000, // TODO return error if completion tokens has reached this limit
+    max_tokens: sessionConfiguration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
     best_of: 1,
     echo: false,
     prompt: [prompt],

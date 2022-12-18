@@ -32,6 +32,7 @@ export default function TextPrompt(props: { sessionId: string }) {
         }}
       >
         <textarea
+          class="block w-full h-12 font-mono text-xs"
           onInput={(e) => setPrompt(e.currentTarget.value)}
           placeholder="enter your request"
         >

@@ -8,7 +8,7 @@ import HTTPError from "@lib/http_error.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { State } from "./_middleware.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
-import { Session, defaultGlobalConfiguration } from "@lib/session.ts";
+import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/deps.ts";
 
@@ -17,7 +17,7 @@ const PostSessionRequest = t.intersection([
     modelConfigurations: Session.props.modelConfigurations,
   }),
   t.partial({
-    globalConfiguration: Session.props.globalConfiguration,
+    configuration: Session.props.configuration,
   }),
 ]);
 export type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
@@ -52,9 +52,9 @@ export const handler: Handlers<PostSessionResponse, State> = {
 
       const session: Session = {
         modelConfigurations: reqDecoded.modelConfigurations,
-        globalConfiguration: {
-          ...defaultGlobalConfiguration,
-          ...reqDecoded.globalConfiguration,
+        configuration: {
+          ...defaultConfiguration,
+          ...reqDecoded.configuration,
         },
         expiresAt: expiresAt,
         sessionId,

@@ -16,8 +16,9 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "globalConfiguration": {
-    "locale": "en-US"
+  "configuration": {
+    "locale": "en-US",
+    "defaultMaxResponseTokens": 1000
   },
   "modelConfigurations": {
     "assist-davinci-003": {
@@ -48,7 +49,7 @@ The response body is a JSON object with the following shape:
   "session": {
     "sessionId": "123e4567-e89b-12d3-a456-426614174000",
     "expiresAt": "2023-05-05T00:00:00Z",
-    "globalConfiguration": {
+    "configuration": {
       "locale": "en-US"
     },
     "modelConfigurations": {

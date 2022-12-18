@@ -90,6 +90,7 @@ export const handler: Handlers<PostSessionResponse, State> = {
         builtinFunctions,
       });
     } catch (e) {
+      ctx.state.log("error", e);
       return handleError(e);
     }
   },

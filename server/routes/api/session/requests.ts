@@ -33,6 +33,7 @@ export const handler: Handlers<Output, State & ApiState> = {
     try {
       switch (modelName) {
         case "assist-davinci-003":
+        case "translate-davinci-003":
         case "noop":
           if (!validateInput(modelName, input)) {
             throw new Error("input could not be verified");
@@ -58,6 +59,7 @@ export const handler: Handlers<Output, State & ApiState> = {
           throw new Error(`model ${exhaustiveCheck} not found`);
       }
     } catch (e) {
+      ctx.state.log("error", e);
       return handleError(e);
     }
   },

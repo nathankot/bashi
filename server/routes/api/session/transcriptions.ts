@@ -17,6 +17,7 @@ export const handler: Handlers<PostTranscriptionsResponse, State> = {
     try {
       text = await ctx.state.clients.whisper.transcribe(ctx.state.log, audio);
     } catch (e) {
+      ctx.state.log("error", e);
       return handleError(e);
     }
     return renderJSON<PostTranscriptionsResponse>({ text });

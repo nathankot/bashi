@@ -5,6 +5,7 @@ import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
 import { ModelDeps } from "./model_deps.ts";
 import * as assistDavinci003 from "./models/assist_davinci_003.ts";
+import * as translateDavinci003 from "./models/translate_davinci_003.ts";
 import * as noop from "./models/noop.ts";
 
 ////////////////////////////////////////////////////
@@ -12,19 +13,29 @@ import * as noop from "./models/noop.ts";
 
 export const models = {
   "assist-davinci-003": assistDavinci003,
+  "translate-davinci-003": translateDavinci003,
   noop: noop,
 };
 
 export const Configuration = t.union([
   assistDavinci003.Configuration,
   noop.Configuration,
+  translateDavinci003.Configuration,
 ]);
 export type Configuration = t.TypeOf<typeof Configuration>;
 
-export const Input = t.union([assistDavinci003.Input, noop.Input]);
+export const Input = t.union([
+  assistDavinci003.Input,
+  noop.Input,
+  translateDavinci003.Input,
+]);
 export type Input = t.TypeOf<typeof Input>;
 
-export const Output = t.union([assistDavinci003.Output, noop.Output]);
+export const Output = t.union([
+  assistDavinci003.Output,
+  noop.Output,
+  translateDavinci003.Output,
+]);
 export type Output = t.TypeOf<typeof Output>;
 
 // END section to edit when adding new models

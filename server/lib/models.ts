@@ -4,7 +4,7 @@ import * as f from "fp-ts";
 import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
 import { functionCallInterceptors } from "@lib/interceptors.ts";
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "./models/model_deps.ts";
 import * as assistDavinci003 from "./models/assist_davinci_003.ts";
 import * as translateDavinci003 from "./models/translate_davinci_003.ts";
 import * as noop from "./models/noop.ts";

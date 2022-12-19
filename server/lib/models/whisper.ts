@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "@lib/model_deps.ts";
+import { ModelDeps } from "./model_deps.ts";
 import { Configuration as SessionConfiguration } from "@lib/session/configuration.ts";
 
 const model = "whisper";

@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "./model_deps.ts";
-import { Configuration as SessionConfiguration } from "@lib/session/configuration.ts";
+
 import {
   FunctionSet,
   FunctionCalls,
@@ -38,7 +38,6 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 export async function run(
   deps: ModelDeps,
-  sessionConfiguration: SessionConfiguration,
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
@@ -51,8 +50,8 @@ export async function run(
 
   const completion = await deps.openai.createCompletion({
     model: "text-davinci-003",
-    max_tokens: sessionConfiguration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-    best_of: sessionConfiguration.bestOf,
+    max_tokens: deps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
+    best_of: deps.session.configuration.bestOf,
     echo: false,
     prompt: [prompt],
   });

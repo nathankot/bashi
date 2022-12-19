@@ -24,6 +24,8 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
       openai: ctx.state.clients.openai,
       log: ctx.state.log,
       whisperEndpoint: ctx.state.clients.whisperEndpoint,
+      session: ctx.state.session,
+      now: ctx.state.now,
     };
 
     const log = wrap({ model }, ctx.state.log);
@@ -40,9 +42,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
             arrayBuffer,
           };
 
-          return renderJSON(
-            await run(modelDeps, ctx.state.session, model, arrayBufferInput)
-          );
+          return renderJSON(await run(modelDeps, model, arrayBufferInput));
 
         case "assist-davinci-003":
         case "translate-davinci-003":
@@ -63,9 +63,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
           const requestInput: InputFor<typeof model> =
             inputDecodeResult.right as any;
 
-          return renderJSON(
-            await run(modelDeps, ctx.state.session, model, requestInput)
-          );
+          return renderJSON(await run(modelDeps, model, requestInput));
 
         default:
           const exhaustiveCheck: never = model;

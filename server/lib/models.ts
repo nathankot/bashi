@@ -56,14 +56,13 @@ export type InputFor<M extends ModelName> = t.TypeOf<typeof models[M]["Input"]>;
 
 export async function run<N extends ModelName>(
   modelDeps: ModelDeps,
-  session: Session,
   modelName: N,
   input: t.TypeOf<typeof models[N]["Input"]>
 ): Promise<t.TypeOf<typeof models[N]["Output"]>> {
   if (!validateInput(modelName, input)) {
     throw new Error("could not validate input");
   }
-  const configuration = getConfiguration(modelName, session);
+  const configuration = getConfiguration(modelName, modelDeps.session);
   if (configuration == null) {
     throw new HTTPError(
       `the model '${modelName}' has not been configured`,
@@ -71,19 +70,11 @@ export async function run<N extends ModelName>(
     );
   }
   const runFn: typeof models[N]["run"] = models[modelName].run;
-  let output = await runFn(
-    modelDeps,
-    session.configuration,
-    configuration as any,
-    input as any
-  );
+  let output = await runFn(modelDeps, configuration as any, input as any);
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {
-      output = await interceptor(
-        { modelDeps, log: modelDeps.log, session },
-        output as any
-      );
+      output = await interceptor(modelDeps, output as any);
     }
   }
 

@@ -17,4 +17,4 @@ export const Session = t.type({
 
 export type Session = t.TypeOf<typeof Session>;
 
-export { defaultConfiguration };
+export { Configuration, defaultConfiguration };

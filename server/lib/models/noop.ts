@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "./model_deps.ts";
-import { Configuration as SessionConfiguration } from "@lib/session/configuration.ts";
 
 export const Name = t.literal("noop");
 export type Name = t.TypeOf<typeof Name>;
@@ -18,7 +17,6 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 export async function run(
   deps: ModelDeps,
-  sessionConfiguration: SessionConfiguration,
   configuration: Configuration,
   input: Input
 ): Promise<Output> {

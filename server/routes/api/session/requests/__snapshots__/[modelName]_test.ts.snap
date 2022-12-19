@@ -28,7 +28,7 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
         "America/New_York",
       ],
       name: "time",
-      returnValue: "12/18/2022, 10:23:00 PM",
+      returnValue: "12/19/2022, 3:25:18 AM",
       type: "executed",
     },
     {
@@ -39,7 +39,7 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
     },
   ],
   model: "assist-davinci-003",
-  request: "a mock request",
+  request: "whats the time in new york?",
 }
 `;
 

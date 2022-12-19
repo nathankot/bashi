@@ -9,15 +9,20 @@ export type FunctionDefinitionArgTypes = t.TypeOf<
   typeof FunctionDefinitionArgTypes
 >;
 
-export const FunctionDefinition = t.type({
-  description: t.string,
-  args: t.array(
-    t.type({
-      name: t.string,
-      type: FunctionDefinitionArgTypes,
-    })
-  ),
-});
+export const FunctionDefinition = t.intersection([
+  t.type({
+    description: t.string,
+    args: t.array(
+      t.type({
+        name: t.string,
+        type: FunctionDefinitionArgTypes,
+      })
+    ),
+  }),
+  t.partial({
+    triggerTokens: t.array(t.string),
+  }),
+]);
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
 export type BuiltinFunctionDefinition<A extends FunctionDefinitionArgTypes[]> =

@@ -1,0 +1,43 @@
+export const snapshot = {};
+
+snapshot[`<empty> 1`] = `{}`;
+
+snapshot[`hello jsd1231!@#!)@!^%!^% there my name is nathan 1`] = `
+{
+  "^": true,
+  hello: true,
+  is: true,
+  jsd: true,
+  name: true,
+  nathan: true,
+  there: true,
+}
+`;
+
+snapshot[`boo 1`] = `
+{
+  boo: true,
+}
+`;
+
+snapshot[`a 1`] = `{}`;
+
+snapshot[`this UPPER CASE should be lower cased 1`] = `
+{
+  case: true,
+  cased: true,
+  lower: true,
+  should: true,
+  upper: true,
+}
+`;
+
+snapshot[`whats the time in new york? 1`] = `
+{
+  in: true,
+  new: true,
+  time: true,
+  whats: true,
+  york: true,
+}
+`;

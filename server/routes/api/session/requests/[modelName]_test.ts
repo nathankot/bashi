@@ -11,7 +11,7 @@ for (const test of [
   {
     description: "success",
     model: "assist-davinci-003",
-    request: `{ "request": "a mock request" }`,
+    request: `{ "request": "whats the time in new york?" }`,
     session: fixtures.session,
     openAiFn: async () =>
       ({
@@ -32,7 +32,7 @@ say()`,
   {
     description: "openai errors",
     model: "assist-davinci-003",
-    request: `{ "request": "a mock request" }`,
+    request: `{ "request": "whats the time in new york?" }`,
     session: fixtures.session,
     openAiFn: async () => {
       throw new Error("mock error");

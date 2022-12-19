@@ -3,6 +3,7 @@ import { BuiltinFunctionDefinition } from "./types.ts";
 const time: BuiltinFunctionDefinition<["string"]> = {
   description: `check the time for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
+  triggerTokens: ["time", "hour", "clock"],
 };
 
 const math: BuiltinFunctionDefinition<["string"]> = {

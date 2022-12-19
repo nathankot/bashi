@@ -7,6 +7,7 @@ import {
   FunctionCalls,
   parseFromModelResult,
   builtinFunctions,
+  filterUnnecessary,
 } from "@lib/function.ts";
 
 export const Name = t.literal("assist-davinci-003");
@@ -42,7 +43,10 @@ export async function run(
   input: Input
 ): Promise<Output> {
   const request = input.request.trim();
-  const functionsSet = { ...configuration.functions, ...builtinFunctions };
+  const functionsSet = filterUnnecessary(request, {
+    ...configuration.functions,
+    ...builtinFunctions,
+  });
   const prompt = makePrompt(functionsSet, request);
 
   const completion = await deps.openai.createCompletion({
@@ -68,7 +72,7 @@ export async function run(
 }
 
 function makePrompt(functions: FunctionSet, request: string): string {
-  const functionsList = makeFunctionList(functions);
+  const functionSet = makeFunctionSet(functions);
 
   return `You are a voice assistant capable of interpreting requests.
 
@@ -76,7 +80,7 @@ For each request respond with an interpretation. An interpretation is composed o
 
 The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped.
 
-${functionsList.join("\n")}
+${functionSet.join("\n")}
 
 For example, if the request is \`whats the time in Los Angeles\` respond with:
 
@@ -98,7 +102,7 @@ ${request}
 Write your response below:`;
 }
 
-function makeFunctionList(functions: FunctionSet): string[] {
+function makeFunctionSet(functions: FunctionSet): string[] {
   return Object.entries(functions).map(([name, c]) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
     return `\`${name}(${args.join(", ")})\` - ${c.description}`;

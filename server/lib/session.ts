@@ -17,4 +17,5 @@ export type Session = t.TypeOf<typeof Session>;
 export const defaultConfiguration: Session["configuration"] = {
   locale: "en-US",
   maxResponseTokens: DEFAULT_MAX_RESPONSE_TOKENS,
+  bestOf: 1,
 };

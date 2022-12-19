@@ -48,7 +48,7 @@ export async function run(
   const completion = await deps.openai.createCompletion({
     model: "text-davinci-003",
     max_tokens: sessionConfiguration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-    best_of: 1,
+    best_of: sessionConfiguration.bestOf,
     echo: false,
     prompt: [prompt],
   });

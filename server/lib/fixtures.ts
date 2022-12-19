@@ -24,6 +24,7 @@ export const session: Session = {
   configuration: {
     locale: "en-US",
     maxResponseTokens: 1000,
+    bestOf: 1,
   },
   modelConfigurations: [
     {

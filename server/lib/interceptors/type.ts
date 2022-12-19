@@ -1,9 +1,12 @@
 import { Session } from "@lib/session.ts";
-import { Output } from "@lib/models.ts";
+import { AllOutput, ModelDeps } from "@lib/models.ts";
 import { LogFn } from "@lib/log.ts";
 
-export type OutputInterceptor<O extends Output> = (
-  log: LogFn,
-  session: Session,
+export type OutputInterceptor<O extends AllOutput> = (
+  deps: {
+    log: LogFn;
+    session: Session;
+    modelDeps: ModelDeps;
+  },
   output: O
 ) => Promise<O>;

@@ -26,21 +26,31 @@ export function log(level: Level, v: unknown): void {
   return;
 }
 
-export function wrap<V extends { message: string }>(
-  wrapObj: V,
-  wrappedLog: LogFn
-): LogFn {
-  return (level: Level, v: unknown) => {
-    if (level === "error" && v instanceof Error) {
+export function wrap<V extends {}>(wrapObj: V, wrappedLog: LogFn): LogFn {
+  return (level: Level, v: { message: string } | Error) => {
+    if (level === "error") {
+      if (!(v instanceof Error)) {
+        throw new Error("must use 'error' log type to log errors");
+      }
       return wrappedLog("error", {
         ...wrapObj,
+        message: "error",
         error: v.message,
         stack: v.stack,
       });
     }
+    if (v instanceof Error) {
+      throw new Error("must use 'error' log type to log errors");
+    }
+    if (v == null || typeof v !== "object") {
+      throw new Error("log expects an object");
+    }
+    if (!("message" in v)) {
+      throw new Error("log has no message");
+    }
     return wrappedLog(level, {
       ...wrapObj,
-      v,
+      ...v,
     });
   };
 }

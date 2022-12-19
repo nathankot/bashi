@@ -8,6 +8,7 @@ import { ModelDeps } from "./model_deps.ts";
 import * as assistDavinci003 from "./models/assist_davinci_003.ts";
 import * as translateDavinci003 from "./models/translate_davinci_003.ts";
 import * as noop from "./models/noop.ts";
+import * as whisper from "./models/whisper.ts";
 
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models
@@ -15,34 +16,43 @@ import * as noop from "./models/noop.ts";
 export const models = {
   "assist-davinci-003": assistDavinci003,
   "translate-davinci-003": translateDavinci003,
+  whisper: whisper,
   noop: noop,
 };
 
-export const Configuration = t.union([
+export const AllConfiguration = t.union([
   assistDavinci003.Configuration,
   noop.Configuration,
   translateDavinci003.Configuration,
+  whisper.Configuration,
 ]);
-export type Configuration = t.TypeOf<typeof Configuration>;
+export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
-export const Input = t.union([
+export const AllInput = t.union([
   assistDavinci003.Input,
   noop.Input,
   translateDavinci003.Input,
+  whisper.Input,
 ]);
-export type Input = t.TypeOf<typeof Input>;
+export type AllInput = t.TypeOf<typeof AllInput>;
 
-export const Output = t.union([
+export const AllOutput = t.union([
   assistDavinci003.Output,
   noop.Output,
   translateDavinci003.Output,
+  whisper.Output,
 ]);
-export type Output = t.TypeOf<typeof Output>;
+export type AllOutput = t.TypeOf<typeof AllOutput>;
 
 // END section to edit when adding new models
 ////////////////////////////////////////////////////
 
-export type ModelName = keyof typeof models;
+export type { ModelDeps };
+
+export const ModelName = t.keyof(models);
+export type ModelName = t.TypeOf<typeof ModelName>;
+
+export type InputFor<M extends ModelName> = t.TypeOf<typeof models[M]["Input"]>;
 
 export async function run<N extends ModelName>(
   modelDeps: ModelDeps,
@@ -70,7 +80,10 @@ export async function run<N extends ModelName>(
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {
-      output = await interceptor(modelDeps.log, session, output as any);
+      output = await interceptor(
+        { modelDeps, log: modelDeps.log, session },
+        output as any
+      );
     }
   }
 

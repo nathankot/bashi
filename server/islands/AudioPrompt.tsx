@@ -1,7 +1,7 @@
 import { IS_BROWSER } from "https://deno.land/x/fresh@1.1.2/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
 
-import { PostRequestsRequest } from "@routes/api/session/requests.ts";
+import { Request } from "@routes/api/session/requests/[modelName].ts";
 
 export default function AudioPrompt(props: { sessionId: string }) {
   if (!IS_BROWSER) {
@@ -30,7 +30,7 @@ export default function AudioPrompt(props: { sessionId: string }) {
 
     const onStop = async () => {
       setStatus("processing");
-      const transcribeResponse = await fetch("/api/session/transcriptions", {
+      const transcribeResponse = await fetch("/api/session/requests/whisper", {
         method: "POST",
         body: new Blob(buffers),
         headers: {
@@ -39,11 +39,10 @@ export default function AudioPrompt(props: { sessionId: string }) {
         },
       });
       const transcribeResult = await transcribeResponse.json();
-      const request: PostRequestsRequest = {
-        model: "assist-davinci-003",
-        request: transcribeResult.text,
+      const request: Request = {
+        request: transcribeResult.transcribed,
       };
-      const result = await fetch("/api/session/requests", {
+      const result = await fetch("/api/session/requests/assist-davinci-003", {
         method: "POST",
         body: JSON.stringify(request),
         headers: {

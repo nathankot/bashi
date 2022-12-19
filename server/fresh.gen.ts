@@ -6,11 +6,10 @@ import config from "./deno.json" assert { type: "json" };
 import * as $0 from "./routes/_500.tsx";
 import * as $1 from "./routes/api/_middleware.ts";
 import * as $2 from "./routes/api/session/_middleware.ts";
-import * as $3 from "./routes/api/session/requests.ts";
-import * as $4 from "./routes/api/session/requests_test.ts";
-import * as $5 from "./routes/api/session/transcriptions.ts";
-import * as $6 from "./routes/api/sessions.ts";
-import * as $7 from "./routes/index.tsx";
+import * as $3 from "./routes/api/session/requests/[modelName].ts";
+import * as $4 from "./routes/api/session/requests/[modelName]_test.ts";
+import * as $5 from "./routes/api/sessions.ts";
+import * as $6 from "./routes/index.tsx";
 import * as $$0 from "./islands/AudioPrompt.tsx";
 import * as $$1 from "./islands/Example.tsx";
 import * as $$2 from "./islands/TextPrompt.tsx";
@@ -20,11 +19,10 @@ const manifest = {
     "./routes/_500.tsx": $0,
     "./routes/api/_middleware.ts": $1,
     "./routes/api/session/_middleware.ts": $2,
-    "./routes/api/session/requests.ts": $3,
-    "./routes/api/session/requests_test.ts": $4,
-    "./routes/api/session/transcriptions.ts": $5,
-    "./routes/api/sessions.ts": $6,
-    "./routes/index.tsx": $7,
+    "./routes/api/session/requests/[modelName].ts": $3,
+    "./routes/api/session/requests/[modelName]_test.ts": $4,
+    "./routes/api/sessions.ts": $5,
+    "./routes/index.tsx": $6,
   },
   islands: {
     "./islands/AudioPrompt.tsx": $$0,

@@ -12,7 +12,7 @@ import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/deps.ts";
 
-const PostSessionRequest = t.intersection([
+const Request = t.intersection([
   t.type({
     modelConfigurations: Session.props.modelConfigurations,
   }),
@@ -20,15 +20,15 @@ const PostSessionRequest = t.intersection([
     configuration: Session.props.configuration,
   }),
 ]);
-export type PostSessionRequest = t.TypeOf<typeof PostSessionRequest>;
+export type Request = t.TypeOf<typeof Request>;
 
-export const PostSessionResponse = t.type({
+export const Response = t.type({
   session: Session,
   builtinFunctions: FunctionSet,
 });
-export type PostSessionResponse = t.TypeOf<typeof PostSessionResponse>;
+export type Response = t.TypeOf<typeof Response>;
 
-export const handler: Handlers<PostSessionResponse, State> = {
+export const handler: Handlers<Response, State> = {
   async POST(req, ctx) {
     // TODO validate the api key
 
@@ -38,15 +38,14 @@ export const handler: Handlers<PostSessionResponse, State> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const reqDecodeResult: t.Validation<PostSessionRequest> =
-      PostSessionRequest.decode(json);
+    const reqDecodeResult: t.Validation<Request> = Request.decode(json);
     if (!f.either.isRight(reqDecodeResult)) {
       return renderError(400, "malformed request");
     }
 
     try {
       const sessionId = crypto.randomUUID();
-      const reqDecoded: PostSessionRequest = reqDecodeResult.right as any;
+      const reqDecoded: Request = reqDecodeResult.right as any;
 
       const expiresAt = new Date(ctx.state.now.getTime() + SESSION_EXPIRY_MS);
 
@@ -85,7 +84,7 @@ export const handler: Handlers<PostSessionResponse, State> = {
           .exec()
       );
 
-      return renderJSON<PostSessionResponse>({
+      return renderJSON<Response>({
         session,
         builtinFunctions,
       });

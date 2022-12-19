@@ -78,34 +78,16 @@ The response body is a JSON object with the following shape:
 
 ---
 
-## `POST /api/session/transcriptions`
-
-### Headers
-
-| Name                                 | Required? | Description                                        |
-| ------------------------------------ | --------- | -------------------------------------------------- |
-| `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/sessions` |
-
-### Request body
-
-The request body should be raw audio waveform data that ffmpeg can recognize. This is transcribed by the API.
-
-### Response body
-
-A JSON object is returned with the following shape:
-
-```json
-{
-  "text": "the result of the transcription"
-}
-```
-
----
-
-## `POST /api/session/requests`
+## `POST /api/session/requests/{modelName}`
 
 Typically called after transcribing audio data into textual representation of
 the request.
+
+### Url params
+
+| Name        | Description                                                                                                 |
+| ----------- | ----------------------------------------------------------------------------------------------------------- |
+| `modelName` | The name of the model to use, this dictates the input format. For example, `assist-davinci-003`, `whisper`. |
 
 ### Headers
 
@@ -125,7 +107,6 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "model": "assist-davinci-003",
   "request": "your request here"
 }
 ```
@@ -134,7 +115,6 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "model": "assist-davinci-003",
   "request": "your request here",
   "functionCalls": [
     {
@@ -149,5 +129,21 @@ The request body should be a JSON object with the following shape:
       "returnValue": "12/17/2022, 10:05:53 AM"
     }
   ]
+}
+```
+
+#### `whisper`
+
+##### Request body
+
+The request body should be raw audio waveform data that ffmpeg can recognize. This is transcribed by the API.
+
+##### Response body
+
+A JSON object is returned with the following shape:
+
+```json
+{
+  "transcribed": "the result of the transcription"
 }
 ```

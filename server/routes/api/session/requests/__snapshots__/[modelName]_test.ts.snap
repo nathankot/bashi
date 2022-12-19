@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`POST /api/session/requests: success 1`] = `
+snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
 {
   functionCalls: [
     {
@@ -28,7 +28,7 @@ snapshot[`POST /api/session/requests: success 1`] = `
         "America/New_York",
       ],
       name: "time",
-      returnValue: "12/18/2022, 7:40:03 PM",
+      returnValue: "12/18/2022, 10:23:00 PM",
       type: "executed",
     },
     {
@@ -43,13 +43,13 @@ snapshot[`POST /api/session/requests: success 1`] = `
 }
 `;
 
-snapshot[`POST /api/session/requests: openai errors 1`] = `
+snapshot[`POST /api/session/requests/assist-davinci-003: openai errors 1`] = `
 {
   error: "internal server error",
 }
 `;
 
-snapshot[`POST /api/session/requests: noop model works 1`] = `
+snapshot[`POST /api/session/requests/noop: noop model works 1`] = `
 {
   model: "noop",
 }

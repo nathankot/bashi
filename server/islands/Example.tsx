@@ -2,7 +2,7 @@ import { useState, useEffect } from "preact/hooks";
 
 import { FunctionSet } from "@lib/function/types.ts";
 import { Session } from "@lib/session.ts";
-import { PostSessionRequest } from "@routes/api/sessions.ts";
+import { Request as PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 

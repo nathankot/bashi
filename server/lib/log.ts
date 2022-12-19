@@ -7,7 +7,15 @@ export type LogFn = typeof log;
 export async function setup() {
   await stdLog.setup({
     handlers: {
-      console: new stdLog.handlers.ConsoleHandler("DEBUG"),
+      console: new stdLog.handlers.ConsoleHandler("DEBUG", {
+        formatter: "{msg}",
+      }),
+    },
+    loggers: {
+      default: {
+        level: "DEBUG",
+        handlers: ["console"],
+      },
     },
   });
   log("info", { message: "logger is set up" });
@@ -15,19 +23,22 @@ export async function setup() {
 
 export function log<E extends Error>(level: "error", e: E): void;
 export function log<V extends { message: string }>(level: Level, v: V): void;
-export function log(l: Level, v: unknown): void {
+export function log(l: Level, v: any): void {
   const logger = stdLog.getLogger();
 
   if (v instanceof Error && l === "error") {
     logger["error"]({
-      message: "error",
-      error: v.message,
+      level: "error",
+      message: v.message,
       stack: v.stack,
     });
     return;
   }
 
-  logger[l](v);
+  logger[l]({
+    ...v,
+    level: l,
+  });
   return;
 }
 

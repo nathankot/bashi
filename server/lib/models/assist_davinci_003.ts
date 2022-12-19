@@ -68,13 +68,13 @@ export async function run(
 }
 
 function makePrompt(functions: FunctionSet, request: string): string {
-  const functionsList = makeFunctionSet(functions);
+  const functionsList = makeFunctionList(functions);
 
   return `You are a voice assistant capable of interpreting requests.
 
 For each request respond with an interpretation. An interpretation is composed of one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
 
-The available functions are as follows, denoted in typescript function notation. When responding, string arguments MUST be quoted and any quotes inside strings MUST be escaped.
+The available functions are as follows, denoted in Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside strings MUST be escaped.
 
 ${functionsList.join("\n")}
 
@@ -82,9 +82,12 @@ For example, if the request is \`whats the time in Los Angeles\` respond with:
 
 \`\`\`
 time("America/Los_Angeles")
+say()
 \`\`\`
 
-If no interpretation is found, use the respond() function to ask for information that might be missing from the request. Or as a last resort, respond() that the request is not supported.
+Aim to use the minimal number of functions to satisfy the request.
+If the request is unclear, use the ask() function to ask for information that might be missing from the request.
+As a last resort, use notSupported() to indicate that the request is not supported.
 
 The request is:
 
@@ -95,7 +98,7 @@ ${request}
 Write your response below:`;
 }
 
-function makeFunctionSet(functions: FunctionSet): string[] {
+function makeFunctionList(functions: FunctionSet): string[] {
   return Object.entries(functions).map(([name, c]) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
     return `\`${name}(${args.join(", ")})\` - ${c.description}`;

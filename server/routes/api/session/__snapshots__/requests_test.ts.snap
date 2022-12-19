@@ -7,7 +7,7 @@ snapshot[`POST /api/session/requests: success 1`] = `
       args: [
         "mock response",
       ],
-      name: "respond",
+      name: "fact",
       type: "parsed",
     },
     {
@@ -28,8 +28,14 @@ snapshot[`POST /api/session/requests: success 1`] = `
         "America/New_York",
       ],
       name: "time",
-      returnValue: "12/18/2022, 3:48:12 AM",
+      returnValue: "12/18/2022, 7:40:03 PM",
       type: "executed",
+    },
+    {
+      args: [
+      ],
+      name: "say",
+      type: "parsed",
     },
   ],
   model: "assist-davinci-003",

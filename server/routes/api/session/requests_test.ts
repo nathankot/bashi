@@ -18,10 +18,11 @@ for (const test of [
           choices: [
             {
               text: `
-respond("mock response")
+fact("mock response")
    unknownCall(123)
 unparseable(
-time("America/New_York")`,
+time("America/New_York")
+say()`,
             },
           ],
         },

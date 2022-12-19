@@ -18,9 +18,9 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const respond: BuiltinFunctionDefinition<["string"]> = {
-  description: `specify the response to a question`,
-  args: [{ name: "the concrete answer to the question", type: "string" }],
+const fact: BuiltinFunctionDefinition<["string"]> = {
+  description: `set the answer if you know the answer to the request as a fact`,
+  args: [{ name: "answer", type: "string" }],
 };
 
 const write: BuiltinFunctionDefinition<[]> = {
@@ -33,11 +33,23 @@ const say: BuiltinFunctionDefinition<[]> = {
   args: [],
 };
 
+const ask: BuiltinFunctionDefinition<["string"]> = {
+  description: `ask a clarifying question about the request`,
+  args: [{ name: "question", type: "string" }],
+};
+
+const notSupported: BuiltinFunctionDefinition<["string"]> = {
+  description: `indicate why the request is not supported`,
+  args: [{ name: "reason", type: "string" }],
+};
+
 export const builtinFunctions = {
-  time,
+  ask,
   math,
-  respond,
+  notSupported,
+  fact,
+  say,
+  time,
   translate,
   write,
-  say,
 };

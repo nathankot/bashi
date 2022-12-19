@@ -3,10 +3,11 @@ import * as f from "fp-ts";
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { Buffer } from "std/node/buffer.ts";
 
-import { State as ApiState } from "../_middleware.ts";
+import { State as ApiState } from "@routes/api/_middleware.ts";
 import { msgpack } from "@/deps.ts";
 import { Session } from "@lib/session.ts";
 import { renderError } from "@lib/util.ts";
+import { wrap } from "@lib/log.ts";
 
 export interface State {
   session: Session;
@@ -52,6 +53,7 @@ export async function handler(
     return renderError(401, "session not found or expired");
   }
 
+  ctx.state.log = wrap({ sessionId }, ctx.state.log);
   ctx.state.session = session;
 
   const resp = await ctx.next();

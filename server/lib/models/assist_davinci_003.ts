@@ -74,7 +74,7 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
 For each request respond with an interpretation. An interpretation is composed of one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
 
-The available functions are as follows, denoted in Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside strings MUST be escaped.
+The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped.
 
 ${functionsList.join("\n")}
 
@@ -85,9 +85,9 @@ time("America/Los_Angeles")
 say()
 \`\`\`
 
-Aim to use the minimal number of functions to satisfy the request.
 If the request is unclear, use the ask() function to ask for information that might be missing from the request.
 As a last resort, use notSupported() to indicate that the request is not supported.
+Aim to use the minimal number of functions to satisfy the request.
 
 The request is:
 

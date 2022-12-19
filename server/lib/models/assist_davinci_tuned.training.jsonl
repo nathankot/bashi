@@ -1,4 +1,5 @@
 { "functions": [], "prompt": "What is pi squared?", completion: "" }
+{ "functions": [], "prompt": "What is the time in New York?", completion: "" }
 { "functions": [], "prompt": "Say you are my best friend in Japanese.", completion: "" }
 { "functions": [], "prompt": "Write you are my best friend in Japanese.", completion: "" }
 { "functions": [], "prompt": "Who is george lucas the director?", completion: "" }

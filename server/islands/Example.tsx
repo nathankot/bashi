@@ -53,7 +53,7 @@ export default function Example() {
     fetch("/api/sessions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer fake-api-key",
+        Authorization: "Bearer 0000000000000000",
       },
       body: JSON.stringify(body),
     })

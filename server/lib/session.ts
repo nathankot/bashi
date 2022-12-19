@@ -8,6 +8,7 @@ import {
 } from "@lib/session/configuration.ts";
 
 export const Session = t.type({
+  accountNumber: t.string,
   sessionId: t.string,
   expiresAt: date,
   configuration: Configuration,

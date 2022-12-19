@@ -53,7 +53,13 @@ export async function handler(
     return renderError(401, "session not found or expired");
   }
 
-  ctx.state.log = wrap({ sessionId }, ctx.state.log);
+  ctx.state.log = wrap(
+    {
+      sessionId,
+      accountNumber: session.accountNumber,
+    },
+    ctx.state.log
+  );
   ctx.state.session = session;
 
   const resp = await ctx.next();

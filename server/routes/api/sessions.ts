@@ -30,6 +30,11 @@ export type Response = t.TypeOf<typeof Response>;
 
 export const handler: Handlers<Response, State> = {
   async POST(req, ctx) {
+    const authorization = req.headers.get("Authorization");
+    if (authorization == null) {
+      return renderError(401, "no Authorization header found");
+    }
+    const accountNumber = authorization.substring("Bearer ".length);
     // TODO validate the api key
 
     let json;
@@ -57,6 +62,7 @@ export const handler: Handlers<Response, State> = {
         },
         expiresAt: expiresAt,
         sessionId,
+        accountNumber,
       };
 
       // Ensure no builtin functions are being specified:

@@ -5,15 +5,16 @@ import { LogFn, log } from "@lib/log.ts";
 export interface State {
   clients: typeof clients;
   log: LogFn;
-  now: Date;
+  now: () => Date;
 }
 
 export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>
 ) {
+  const now = new Date();
   ctx.state.clients = clients;
-  ctx.state.now = new Date();
+  ctx.state.now = () => new Date(now);
   ctx.state.log = log;
   const resp = await ctx.next();
   return resp;

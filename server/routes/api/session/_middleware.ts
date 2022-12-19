@@ -49,7 +49,7 @@ export async function handler(
   }
 
   const session: Session = decoded.right;
-  if (session.expiresAt.getTime() < ctx.state.now.getTime()) {
+  if (session.expiresAt.getTime() < ctx.state.now().getTime()) {
     return renderError(401, "session not found or expired");
   }
 

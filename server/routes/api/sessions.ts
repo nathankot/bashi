@@ -52,7 +52,7 @@ export const handler: Handlers<Response, State> = {
       const sessionId = crypto.randomUUID();
       const reqDecoded: Request = reqDecodeResult.right as any;
 
-      const expiresAt = new Date(ctx.state.now.getTime() + SESSION_EXPIRY_MS);
+      const expiresAt = new Date(ctx.state.now().getTime() + SESSION_EXPIRY_MS);
 
       const session: Session = {
         modelConfigurations: reqDecoded.modelConfigurations,

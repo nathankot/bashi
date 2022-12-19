@@ -7,6 +7,6 @@ export type ModelDeps = {
   openai: typeof openai;
   log: LogFn;
   whisperEndpoint: string;
-  now: Date;
+  now: () => Date;
   session: Session;
 };

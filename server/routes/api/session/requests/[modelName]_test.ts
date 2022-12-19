@@ -72,7 +72,7 @@ say()`,
             modelName: test.model,
           },
           state: {
-            now: nowFixture,
+            now: () => nowFixture,
             clients,
             session: test.session,
             log: () => {},

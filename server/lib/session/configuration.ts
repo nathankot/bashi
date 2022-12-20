@@ -13,5 +13,5 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 export const defaultConfiguration: Configuration = {
   locale: "en-US",
   maxResponseTokens: DEFAULT_MAX_RESPONSE_TOKENS,
-  bestOf: 1,
+  bestOf: 2,
 };

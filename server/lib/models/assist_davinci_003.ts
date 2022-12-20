@@ -84,20 +84,18 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
   return `You are a voice assistant capable of interpreting requests.
 
-For each request respond with an interpretation. An interpretation is composed of one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request. ONLY use function calls that are referenced below.
+For each request respond with one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request.
 
-The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped.
+The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. And ONLY functions specified below may be used.
 
 ${functionSet.join("\n")}
 
 For example, if the request is "Whats the time in Los Angeles?", respond with:
 
 time("America/Los_Angeles")
-say()
+flushToSpeech()
 
-If the request cannot be understood, use a single ask() function to ask for information that might be missing from the request.
-Aim to use the minimal number of functions to satisfy the request.
-As a last resort, use notSupported() to indicate that the request is not supported.
+If the request could not be understood, use the fail() function to indicate why or what might be missing from the request. Aim to use the minimal number of functions to satisfy the request.
 
 The request is:
 

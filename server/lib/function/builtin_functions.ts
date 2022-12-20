@@ -19,38 +19,32 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const fact: BuiltinFunctionDefinition<["string"]> = {
-  description: `set the answer if you know the answer to the request as a fact`,
+const answer: BuiltinFunctionDefinition<["string"]> = {
+  description: `store an answer that is readily available if the request is a question`,
   args: [{ name: "answer", type: "string" }],
 };
 
-const write: BuiltinFunctionDefinition<[]> = {
-  description: `write the result of the function in the line above into the current context`,
+const flushToSpeech: BuiltinFunctionDefinition<[]> = {
+  description: `the results above should be communicated by speech`,
   args: [],
 };
 
-const say: BuiltinFunctionDefinition<[]> = {
-  description: `speak the result of the function in the line above`,
+const flushToText: BuiltinFunctionDefinition<[]> = {
+  description: `the results above should be written/inserted into the current context`,
   args: [],
 };
 
-const ask: BuiltinFunctionDefinition<["string"]> = {
-  description: `ask a clarifying question about the request`,
-  args: [{ name: "question", type: "string" }],
-};
-
-const notSupported: BuiltinFunctionDefinition<["string"]> = {
-  description: `indicate why the request is not supported`,
+const fail: BuiltinFunctionDefinition<["string"]> = {
+  description: `indicate the request could not be interpreted`,
   args: [{ name: "reason", type: "string" }],
 };
 
 export const builtinFunctions = {
-  ask,
+  answer,
   math,
-  notSupported,
-  fact,
-  say,
   time,
   translate,
-  write,
+  fail,
+  flushToSpeech,
+  flushToText,
 };

@@ -30,12 +30,16 @@ export type Response = t.TypeOf<typeof Response>;
 
 export const handler: Handlers<Response, State> = {
   async POST(req, ctx) {
+    let log = ctx.state.log;
+
     const authorization = req.headers.get("Authorization");
     if (authorization == null) {
       return renderError(401, "no Authorization header found");
     }
     const accountNumber = authorization.substring("Bearer ".length);
     // TODO validate the api key
+
+    log = wrap({ accountNumber }, log);
 
     let json;
     try {
@@ -95,8 +99,7 @@ export const handler: Handlers<Response, State> = {
         builtinFunctions,
       });
     } catch (e) {
-      ctx.state.log("error", e);
-      return handleError(e);
+      return handleError(log, e);
     }
   },
 };

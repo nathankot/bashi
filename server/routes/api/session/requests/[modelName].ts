@@ -14,21 +14,22 @@ export type Request = FormData | Omit<AllInput, "model">;
 
 export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {
+    let log = ctx.state.log;
+
     const modelNameDecodeResult = ModelName.decode(ctx.params["modelName"]);
     if (!f.either.isRight(modelNameDecodeResult)) {
-      return handleError(new HTTPError(`model name invalid`, 400));
+      return handleError(log, new HTTPError(`model name invalid`, 400));
     }
     const model: ModelName = modelNameDecodeResult.right as any;
+    log = wrap({ model }, ctx.state.log);
 
     const modelDeps = {
+      log,
       openai: ctx.state.clients.openai,
-      log: ctx.state.log,
       whisperEndpoint: ctx.state.clients.whisperEndpoint,
       session: ctx.state.session,
       now: ctx.state.now,
     };
-
-    const log = wrap({ model }, ctx.state.log);
 
     try {
       switch (model) {
@@ -71,7 +72,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
       }
     } catch (e) {
       log("error", e);
-      return handleError(e);
+      return handleError(log, e);
     }
   },
 };

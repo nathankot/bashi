@@ -24,6 +24,34 @@ const answer: BuiltinFunctionDefinition<["string"]> = {
   args: [{ name: "answer", type: "string" }],
 };
 
+const generateCode: BuiltinFunctionDefinition<["string", "string"]> = {
+  description: `generate code for the given request`,
+  args: [
+    { name: "full name of the target programming language", type: "string" },
+    { name: "original request/description", type: "string" },
+  ],
+  triggerTokens: [
+    "generate",
+    "code",
+    "programming",
+    "program",
+    "write",
+    "python",
+    "javascript",
+    "typescript",
+    "swift",
+    "html",
+    "css",
+    "go",
+    "haskell",
+    "java",
+    "php",
+    "ruby",
+    "c",
+    "lang",
+  ],
+};
+
 const flushToSpeech: BuiltinFunctionDefinition<[]> = {
   description: `the results above should be communicated by speech`,
   args: [],
@@ -43,6 +71,7 @@ export const builtinFunctions = {
   answer,
   math,
   time,
+  generateCode,
   translate,
   fail,
   flushToSpeech,

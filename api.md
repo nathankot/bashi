@@ -67,7 +67,7 @@ The response body is a JSON object with the following shape:
       }
     }
   },
-  "knownFunctions": {
+  "builtinFunctions": {
     "time": {
       "description": `check the time for the given timezone`,
       "args": [{ "name": "tz database timezone name", "type": "string" }]

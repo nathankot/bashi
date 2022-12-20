@@ -93,6 +93,12 @@ snapshot[`POST /api/session/requests/assist-davinci-003: openai errors 1`] = `
 }
 `;
 
+snapshot[`POST /api/session/requests/assist-davinci-003: empty request 1`] = `
+{
+  error: "request must not be empty",
+}
+`;
+
 snapshot[`POST /api/session/requests/noop: noop model works 1`] = `
 {
   model: "noop",

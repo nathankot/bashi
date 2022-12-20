@@ -73,6 +73,13 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
           const requestInput: InputFor<typeof model> =
             inputDecodeResult.right as any;
 
+          if (
+            "request" in requestInput &&
+            requestInput.request.trim().length === 0
+          ) {
+            return renderError(400, "request must not be empty");
+          }
+
           return renderJSON(await run(modelDeps, model, requestInput));
 
         default:

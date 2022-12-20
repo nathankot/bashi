@@ -90,18 +90,14 @@ The available functions are as follows, denoted in a Typescript-like function no
 
 ${functionSet.join("\n")}
 
-For example, if the request is:
-
-whats the time in Los Angeles
-
-Respond with:
+For example, if the request is "Whats the time in Los Angeles?", respond with:
 
 time("America/Los_Angeles")
 say()
 
-If the request is unclear, use the ask() function to ask for information that might be missing from the request.
-As a last resort, use notSupported() to indicate that the request is not supported.
+If the request cannot be understood, use a single ask() function to ask for information that might be missing from the request.
 Aim to use the minimal number of functions to satisfy the request.
+As a last resort, use notSupported() to indicate that the request is not supported.
 
 The request is:
 

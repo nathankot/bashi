@@ -42,6 +42,12 @@ reminder("in 5 days", "some reminder name")`,
     },
   },
   {
+    description: "empty request",
+    model: "assist-davinci-003",
+    request: `{ "request": "" }`,
+    session: fixtures.session,
+  },
+  {
     description: "noop model works",
     model: "noop",
     request: `{}`,

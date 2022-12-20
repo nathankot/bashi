@@ -23,6 +23,8 @@ fact("mock response")
    unknownCall(123)
 unparseable(
 time("America/New_York")
+email("not enough args")
+email("blah@blah.com", "some subject", "some body")
 say()`,
             },
           ],

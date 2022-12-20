@@ -7,6 +7,9 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       args: [
         "mock response",
       ],
+      argsParsed: [
+        {},
+      ],
       name: "fact",
       type: "parsed",
     },
@@ -27,12 +30,39 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       args: [
         "America/New_York",
       ],
+      argsParsed: [
+        {},
+      ],
       name: "time",
       returnValue: "12/19/2022, 3:41:10 AM",
       type: "executed",
     },
     {
       args: [
+        "not enough args",
+      ],
+      invalid_reason: "invalid_arguments",
+      name: "email",
+      type: "invalid",
+    },
+    {
+      args: [
+        "blah@blah.com",
+        "some subject",
+        "some body",
+      ],
+      argsParsed: [
+        {},
+        {},
+        {},
+      ],
+      name: "email",
+      type: "parsed",
+    },
+    {
+      args: [
+      ],
+      argsParsed: [
       ],
       name: "say",
       type: "parsed",

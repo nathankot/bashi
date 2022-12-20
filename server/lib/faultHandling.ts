@@ -1,11 +1,9 @@
 import {
   ExponentialBackoff,
   SamplingBreaker,
-  TimeoutStrategy,
   retry,
   circuitBreaker,
   handleWhen,
-  timeout,
   wrap,
 } from "cockatiel";
 
@@ -15,8 +13,13 @@ const handleInternalError = handleWhen(
   (e) => !(e instanceof HTTPError) || e.statusCode >= 500
 );
 
+export const retryPolicy = retry(handleInternalError, {
+  maxAttempts: 3,
+  backoff: new ExponentialBackoff(),
+});
+
 // circuit breaker object needs to be re-used.
-const cb =
+export const circuitBreakerPolicy =
   // if more than 20% of at least 20
   // requests fail in a 10s time window,
   // wait 10 seconds before attempting again:
@@ -29,14 +32,6 @@ const cb =
     }),
   });
 
-export const defaultPolicy = wrap(
-  retry(handleInternalError, {
-    maxAttempts: 3,
-    backoff: new ExponentialBackoff(),
-  }),
-  cb,
-  // note that the underlying executed function needs
-  // to respect the passed in AbortSignal in order for
-  // this to work.
-  timeout(5000, TimeoutStrategy.Cooperative)
-);
+export const defaultPolicy = wrap(retryPolicy, circuitBreakerPolicy);
+
+export default defaultPolicy;

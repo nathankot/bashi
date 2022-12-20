@@ -21,6 +21,7 @@ export async function setup() {
   log("info", { message: "logger is set up" });
 }
 
+export function log(level: Level, v: string): void;
 export function log<E extends Error>(level: "error", e: E): void;
 export function log<V extends { message: string }>(level: Level, v: V): void;
 export function log(l: Level, v: any): void {
@@ -35,6 +36,13 @@ export function log(l: Level, v: any): void {
     return;
   }
 
+  if (typeof v === "string") {
+    logger[l]({
+      level: l,
+      message: v,
+    });
+  }
+
   logger[l]({
     ...v,
     level: l,
@@ -46,6 +54,12 @@ export function wrap<V extends {}>(wrapObj: V, wrappedLog: LogFn): LogFn {
   return (l: Level, v: any) => {
     if (v instanceof Error) {
       return wrappedLog(l, v);
+    }
+    if (typeof v === "string") {
+      return wrappedLog(l, {
+        ...wrapObj,
+        message: v,
+      });
     }
     return wrappedLog(l, {
       ...wrapObj,

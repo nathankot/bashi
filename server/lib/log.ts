@@ -18,7 +18,7 @@ export async function setup() {
       },
     },
   });
-  log("info", { message: "logger is set up" });
+  log("info", "logger is set up");
 }
 
 export function log(level: Level, v: string): void;
@@ -41,6 +41,7 @@ export function log(l: Level, v: any): void {
       level: l,
       message: v,
     });
+    return;
   }
 
   logger[l]({

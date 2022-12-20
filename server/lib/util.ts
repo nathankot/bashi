@@ -14,7 +14,7 @@ export function handleError(log: LogFn, e: unknown): Response {
   if (typeof e === "string") {
     log("error", { message: e });
   }
-  log("error", { message: "got error with unexpected type" });
+  log("error", "got error with unexpected type");
   return renderError(500, "internal server error");
 }
 

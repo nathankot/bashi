@@ -45,6 +45,7 @@ export async function run(
   const whisperResponse = await fetch(whisperEndpoint + "?language=en", {
     method: "POST",
     body: whisperRequest,
+    signal: deps.signal,
   });
   const whisperBody = await whisperResponse.json();
   const transcribed = whisperBody.text;

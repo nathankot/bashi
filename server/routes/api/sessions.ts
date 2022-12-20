@@ -6,11 +6,13 @@ import { Buffer } from "std/node/buffer.ts";
 
 import HTTPError from "@lib/http_error.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
-import { State } from "./_middleware.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
+import { wrap } from "@lib/log.ts";
 import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/deps.ts";
+
+import { State } from "./_middleware.ts";
 
 const Request = t.intersection([
   t.type({

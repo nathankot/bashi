@@ -5,9 +5,17 @@ import { Handlers } from "$fresh/server.ts";
 import HTTPError from "@lib/http_error.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
+import { defaultPolicy } from "@lib/faultHandling.ts";
+import {
+  AllInput,
+  AllOutput,
+  ModelName,
+  InputFor,
+  ModelDeps,
+  run,
+} from "@lib/models.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
-import { AllInput, AllOutput, ModelName, InputFor, run } from "@lib/models.ts";
 import { State } from "../_middleware.ts";
 
 export type Request = FormData | Omit<AllInput, "model">;
@@ -23,12 +31,13 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
     const model: ModelName = modelNameDecodeResult.right as any;
     log = wrap({ model }, ctx.state.log);
 
-    const modelDeps = {
+    const modelDeps: Omit<ModelDeps, "signal"> = {
       log,
       openai: ctx.state.clients.openai,
       whisperEndpoint: ctx.state.clients.whisperEndpoint,
       session: ctx.state.session,
       now: ctx.state.now,
+      faultHandlingPolicy: defaultPolicy,
     };
 
     try {

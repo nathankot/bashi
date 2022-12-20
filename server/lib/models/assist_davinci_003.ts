@@ -40,6 +40,7 @@ export async function run(
   deps: ModelDeps,
   configuration: Configuration,
   input: Input
+  // todo inject abort signal
 ): Promise<Output> {
   const request = input.request.trim();
   const functionsSet = filterUnnecessary(request, {
@@ -48,13 +49,18 @@ export async function run(
   });
   const prompt = makePrompt(functionsSet, request);
 
-  const completion = await deps.openai.createCompletion({
-    model: "text-davinci-003",
-    max_tokens: deps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-    best_of: deps.session.configuration.bestOf,
-    echo: false,
-    prompt: [prompt],
-  });
+  const completion = await deps.openai.createCompletion(
+    {
+      model: "text-davinci-003",
+      max_tokens: deps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
+      best_of: deps.session.configuration.bestOf,
+      echo: false,
+      prompt: [prompt],
+    },
+    {
+      signal: deps.signal,
+    }
+  );
 
   deps.log("info", {
     message: "tokens used",

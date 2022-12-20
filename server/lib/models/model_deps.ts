@@ -1,6 +1,7 @@
+import { IPolicy } from "cockatiel";
+
 import { LogFn } from "@lib/log.ts";
 import { openai } from "@lib/clients.ts";
-
 import { Session } from "@lib/session.ts";
 
 export type ModelDeps = {
@@ -9,4 +10,6 @@ export type ModelDeps = {
   whisperEndpoint: string;
   now: () => Date;
   session: Session;
+  faultHandlingPolicy: IPolicy;
+  signal: AbortSignal;
 };

@@ -55,7 +55,7 @@ export type ModelName = t.TypeOf<typeof ModelName>;
 export type InputFor<M extends ModelName> = t.TypeOf<typeof models[M]["Input"]>;
 
 export async function run<N extends ModelName>(
-  modelDeps: ModelDeps,
+  modelDeps: Omit<ModelDeps, "signal">,
   modelName: N,
   input: t.TypeOf<typeof models[N]["Input"]>
 ): Promise<t.TypeOf<typeof models[N]["Output"]>> {
@@ -70,11 +70,16 @@ export async function run<N extends ModelName>(
     );
   }
   const runFn: typeof models[N]["run"] = models[modelName].run;
-  let output = await runFn(modelDeps, configuration as any, input as any);
+  let output: t.TypeOf<typeof models[N]["Output"]> =
+    await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
+      runFn({ ...modelDeps, signal }, configuration as any, input as any)
+    );
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {
-      output = await interceptor(modelDeps, output as any);
+      output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
+        interceptor({ ...modelDeps, signal }, output as any)
+      );
     }
   }
 

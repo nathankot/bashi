@@ -2,7 +2,7 @@ import * as t from "io-ts";
 
 export type ArgumentParserContext = {
   now: Date;
-  chronoParseDate: (str: string) => null | Date;
+  chronoParseDate: (str: string, ref?: Date) => null | Date;
 };
 
 export const argumentParsers = {
@@ -10,7 +10,7 @@ export const argumentParsers = {
     inputType: "string" as "string",
     outputType: "string" as "string",
     fn: function (ctx: ArgumentParserContext, arg: string): null | string {
-      const d = ctx.chronoParseDate(arg);
+      const d = ctx.chronoParseDate(arg, ctx.now);
       if (d == null) {
         return null;
       }

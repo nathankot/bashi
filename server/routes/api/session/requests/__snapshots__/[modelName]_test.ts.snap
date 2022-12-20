@@ -67,6 +67,20 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       name: "say",
       type: "parsed",
     },
+    {
+      args: [
+        "in 5 days",
+        "some reminder name",
+      ],
+      argsParsed: [
+        {
+          naturalLanguageDateTime: "2022-12-24T08:41:10.000Z",
+        },
+        {},
+      ],
+      name: "reminder",
+      type: "parsed",
+    },
   ],
   model: "assist-davinci-003",
   request: "whats the time in new york?",

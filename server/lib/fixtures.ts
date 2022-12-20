@@ -39,6 +39,17 @@ export const session: Session = {
           ],
           description: `Send an email`,
         },
+        reminder: {
+          args: [
+            {
+              name: "relative_time",
+              type: "string",
+              parse: ["naturalLanguageDateTime"],
+            },
+            { name: "name", type: "string" },
+          ],
+          description: `make a reminder`,
+        },
       },
     },
   ],

@@ -25,7 +25,8 @@ unparseable(
 time("America/New_York")
 email("not enough args")
 email("blah@blah.com", "some subject", "some body")
-say()`,
+say()
+reminder("in 5 days", "some reminder name")`,
             },
           ],
         },

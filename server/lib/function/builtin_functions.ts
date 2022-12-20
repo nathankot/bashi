@@ -8,7 +8,7 @@ const time: BuiltinFunctionDefinition<["string"]> = {
 
 const math: BuiltinFunctionDefinition<["string"]> = {
   description: `compute a math formula`,
-  args: [{ name: "a math.js expression", type: "string" }],
+  args: [{ name: "a mathjs expression ", type: "string" }],
 };
 
 const translate: BuiltinFunctionDefinition<["string", "string"]> = {

@@ -72,7 +72,10 @@ export async function run(
   return {
     model: "assist-davinci-003",
     request,
-    functionCalls: parseFromModelResult(functionsSet, text),
+    functionCalls: parseFromModelResult(
+      { log: deps.log, now: deps.now(), knownFunctions: functionsSet },
+      text
+    ),
   };
 }
 

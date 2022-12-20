@@ -63,5 +63,5 @@ export async function run(
 }
 
 function makePrompt(targetLanguage: string, request: string): string {
-  return `Translate this into ${targetLanguage}:\n${request}`;
+  return `Translate this into ${targetLanguage}:\n${request}\n\nTranslation:\n`;
 }

@@ -23,13 +23,19 @@ The request body should be a JSON object with the following shape:
   "modelConfigurations": {
     "assist-davinci-003": {
       "functions": {
-        "insertText": {
-          "description": "insert text under the current caret location",
-          "args": [{ "name": "text", "type": "string" }]
-        },
         "webSearch": {
           "description": "search the internet or the given string",
           "args": [{ "name": "search string", "type": "string" }]
+        },
+        "createCalendarEvent": {
+          "description": "create a calendar event for some time relative to now",
+          "args": [
+            {
+              "name": "relative time",
+              "type": "string",
+              "parse": ["naturalLanguageDateTime"]
+            }
+          ]
         }
       }
     }
@@ -55,13 +61,19 @@ The response body is a JSON object with the following shape:
     "modelConfigurations": {
       "assist-davinci-003": {
         "functions": {
-          "insertText": {
-            "description": "insert text under the current caret location",
-            "args": [{ "name": "text", "type": "string" }]
-          },
           "webSearch": {
             "description": "search the internet or the given string",
             "args": [{ "name": "search string", "type": "string" }]
+          },
+          "createCalendarEvent": {
+            "description": "create a calendar event for some time relative to now",
+            "args": [
+              {
+                "name": "relative time or absolute date and time",
+                "type": "string",
+                "parse": ["relativeTime"]
+              }
+            ]
           }
         }
       }
@@ -71,6 +83,10 @@ The response body is a JSON object with the following shape:
     "time": {
       "description": `check the time for the given timezone`,
       "args": [{ "name": "tz database timezone name", "type": "string" }]
+    },
+    "write": {
+      "description": "write the result of the function in the line above into the current context",
+      "args": []
     }
   }
 }
@@ -115,18 +131,24 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "request": "your request here",
+  "request": "whats the time in new york? and make a calendar event for dinner with wife 5 days from now",
   "functionCalls": [
-    {
-      "type": "parsed",
-      "name": "insertText",
-      "args": ["some text to insert"]
-    },
     {
       "type": "parsed_and_executed",
       "name": "time",
       "args": ["America/New_York"],
       "returnValue": "12/17/2022, 10:05:53 AM"
+    },
+    {
+      "type": "parsed_and_executed",
+      "name": "write",
+      "args": []
+    },
+    {
+      "type": "parsed_and_executed",
+      "name": "createCalendarEvent",
+      "args": ["5 days from now", "dinner with wife"],
+      "argsParsed": [{ "naturalLanguageDateTime": "2022-12-22T18:00:00Z" }, {}]
     }
   ]
 }

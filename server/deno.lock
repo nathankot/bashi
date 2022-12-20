@@ -569,6 +569,7 @@
   "npm": {
     "specifiers": {
       "@redis/client@1.4.2": "@redis/client@1.4.2",
+      "chrono-node@2.4.2": "chrono-node@2.4.2",
       "cockatiel@3.0.0": "cockatiel@3.0.0",
       "openai@^3.1.0": "openai@3.1.0",
       "typescript-parsec@0.1.0": "typescript-parsec@0.1.0"
@@ -590,6 +591,10 @@
         "integrity": "sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==",
         "dependencies": { "follow-redirects": "follow-redirects@1.15.2" }
       },
+      "chrono-node@2.4.2": {
+        "integrity": "sha512-M55ndjyorMF0ZapxcGiSPj98lmdWTMpRLP5dfQ99SSzYSxan6Sc5G4aIBgZkx2u7Tc+0msiSbeqOyEMCpwh//g==",
+        "dependencies": { "dayjs": "dayjs@1.11.7" }
+      },
       "cluster-key-slot@1.1.1": {
         "integrity": "sha512-rwHwUfXL40Chm1r08yrhU3qpUvdVlgkKNeyeGPOxnW8/SyVDvgRaed/Uz54AqWNaTCAThlj6QAs3TZcKI0xDEw==",
         "dependencies": {}
@@ -601,6 +606,10 @@
       "combined-stream@1.0.8": {
         "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
         "dependencies": { "delayed-stream": "delayed-stream@1.0.0" }
+      },
+      "dayjs@1.11.7": {
+        "integrity": "sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==",
+        "dependencies": {}
       },
       "delayed-stream@1.0.0": {
         "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",

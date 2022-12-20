@@ -7,12 +7,32 @@ import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
 const exampleFunctions: FunctionSet = {
-  calendar: {
-    description: `create a calendar event for some time relative to now`,
+  createCalendarEvent: {
+    description: "create a calendar event on a certain date and time",
     args: [
-      { name: "relative time", type: "string" },
-      { name: "event name", type: "string" },
+      {
+        name: "relative time",
+        type: "string",
+        parse: ["naturalLanguageDateTime"],
+      },
+      {
+        name: "name",
+        type: "string",
+      },
     ],
+    triggerTokens: ["calendar", "event"],
+  },
+  createReminder: {
+    description: "create a reminder on a certain date and time",
+    args: [
+      {
+        name: "relative time",
+        type: "string",
+        parse: ["naturalLanguageDateTime"],
+      },
+      { name: "name", type: "string" },
+    ],
+    triggerTokens: ["remind", "reminder"],
   },
   email: {
     description: `send an email`,
@@ -21,18 +41,12 @@ const exampleFunctions: FunctionSet = {
       { name: "subject", type: "string" },
       { name: "contents", type: "string" },
     ],
+    triggerTokens: ["email"],
   },
-  call: {
-    description: `initiate a phone call`,
-    args: [{ name: "contact name", type: "string" }],
-  },
-  reminder: {
-    description: `create a reminder on a certain date and time`,
-    args: [
-      { name: "relative time", type: "string" },
-      { name: "reminder name", type: "string" },
-    ],
-  },
+  // call: {
+  // description: `initiate a phone call`,
+  // args: [{ name: "contact name", type: "string" }],
+  // },
 };
 
 export default function Example() {

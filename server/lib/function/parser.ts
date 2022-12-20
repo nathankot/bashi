@@ -1,4 +1,5 @@
 import * as p from "typescript-parsec";
+import { parseDate } from "chrono";
 
 import {
   Token,
@@ -8,11 +9,15 @@ import {
   expectSingleResult,
 } from "typescript-parsec";
 
+import { LogFn } from "@lib/log.ts";
+
+import argumentParsers from "./argument_parsers.ts";
+
 import {
   FunctionCall,
   FunctionSet,
   FunctionDefinition,
-  FunctionCallArgument,
+  Argument,
 } from "./types.ts";
 
 enum TokenKind {
@@ -55,7 +60,7 @@ function applyLiteral(
     | Token<TokenKind.SingleQuoteStringLiteral>
     | Token<TokenKind.DoubleQuoteStringLiteral>
     | Token<TokenKind.BackQuoteStringLiteral>
-): FunctionCallArgument {
+): Argument {
   switch (tok.kind) {
     case TokenKind.TrueLiteral:
       return true;
@@ -81,7 +86,7 @@ function applyCall(
   toks: [
     Token<TokenKind.Identifier>,
     Token<TokenKind.LParen>,
-    undefined | FunctionCallArgument[],
+    undefined | Argument[],
     Token<TokenKind.RParen>
   ]
 ): FunctionCall & { type: "parsed" } {
@@ -93,7 +98,7 @@ function applyCall(
   };
 }
 
-const ARG = rule<TokenKind, FunctionCallArgument>();
+const ARG = rule<TokenKind, Argument>();
 ARG.setPattern(
   p.apply(
     p.alt(
@@ -126,13 +131,25 @@ export function evaluate(expr: string): FunctionCall & { type: "parsed" } {
 }
 
 export function parseFromModelResult(
-  knownFunctions: FunctionSet,
+  {
+    log,
+    now,
+    knownFunctions,
+  }: {
+    log: LogFn;
+    now: Date;
+    knownFunctions: FunctionSet;
+  },
   text: string
 ): FunctionCall[] {
   let result: FunctionCall[] = [];
 
   for (const line of text.split("\n")) {
     if (line.trim() === "") {
+      continue;
+    }
+    if (line.length < 3) {
+      // min number of chars for a valid function is 3
       continue;
     }
     if (line === "```") {
@@ -158,6 +175,44 @@ export function parseFromModelResult(
         });
         continue;
       }
+
+      // Do any additional argument parsing:
+      parsed.argsParsed = knownFunction.args.map((argDef, i) =>
+        (argDef.parse ?? []).reduce((a, e) => {
+          const rawValue = parsed.args[i];
+          if (rawValue == null) {
+            return a;
+          }
+          try {
+            const argParser = argumentParsers[e];
+            switch (argParser.inputType) {
+              case "string":
+                if (typeof rawValue !== "string") {
+                  throw new Error(
+                    `expected parser input to be string got ${typeof rawValue}`
+                  );
+                }
+                return {
+                  ...a,
+                  [e]: argParser.fn(
+                    { now, chronoParseDate: parseDate },
+                    rawValue
+                  ),
+                };
+
+              default:
+                const exhaustiveCheck: never = argParser.inputType;
+                throw new Error(
+                  `unexpected parser input type: ${exhaustiveCheck}`
+                );
+            }
+          } catch (e) {
+            log("error", e);
+            return a;
+          }
+        }, {})
+      );
+
       result.push(parsed);
     } catch (e) {
       result.push({
@@ -173,7 +228,7 @@ export function parseFromModelResult(
 
 export function checkArgumentsValid(
   knownFunction: FunctionDefinition,
-  args: FunctionCallArgument[]
+  args: Argument[]
 ): boolean {
   if (knownFunction.args.length !== args.length) {
     return false;

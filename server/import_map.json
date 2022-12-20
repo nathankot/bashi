@@ -17,6 +17,7 @@
     "typescript-parsec": "npm:typescript-parsec@0.1.0",
     "mathjs": "https://esm.sh/mathjs@11.5.0",
     "cockatiel": "npm:cockatiel@3.0.0",
+    "chrono": "npm:chrono-node@2.4.2",
     "@/": "./",
     "@lib/": "./lib/",
     "@routes/": "./routes/"

@@ -14,6 +14,7 @@ import "preact";
 import "preact/hooks";
 import "redis";
 import "cockatiel";
+import "chrono";
 import "std/log/mod.ts";
 import "twind";
 import "typescript-parsec";

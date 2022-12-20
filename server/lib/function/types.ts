@@ -1,22 +1,28 @@
 import * as t from "io-ts";
 
-export const FunctionDefinitionArgTypes = t.keyof({
+import { Argument, ArgumentParser } from "./argument_parsers.ts";
+export { Argument, ArgumentParser };
+
+export const ArgumentType = t.keyof({
   string: null,
   number: null,
   boolean: null,
 });
-export type FunctionDefinitionArgTypes = t.TypeOf<
-  typeof FunctionDefinitionArgTypes
->;
+export type ArgumentType = t.TypeOf<typeof ArgumentType>;
 
 export const FunctionDefinition = t.intersection([
   t.type({
     description: t.string,
     args: t.array(
-      t.type({
-        name: t.string,
-        type: FunctionDefinitionArgTypes,
-      })
+      t.intersection([
+        t.type({
+          name: t.string,
+          type: ArgumentType,
+        }),
+        t.partial({
+          parse: t.array(ArgumentParser),
+        }),
+      ])
     ),
   }),
   t.partial({
@@ -25,10 +31,12 @@ export const FunctionDefinition = t.intersection([
 ]);
 export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
 
-export type BuiltinFunctionDefinition<A extends FunctionDefinitionArgTypes[]> =
-  Omit<FunctionDefinition, "args"> & {
-    args: { [K in keyof A]: { type: A[K]; name: string } };
-  };
+export type BuiltinFunctionDefinition<A extends ArgumentType[]> = Omit<
+  FunctionDefinition,
+  "args"
+> & {
+  args: { [K in keyof A]: { type: A[K]; name: string } };
+};
 
 export type BuiltinFunctionDefinitionArgs<
   A extends FunctionDefinition["args"]
@@ -45,9 +53,6 @@ export type BuiltinFunctionDefinitionArgs<
 export const FunctionSet = t.record(t.string, FunctionDefinition);
 export type FunctionSet = t.TypeOf<typeof FunctionSet>;
 
-export const FunctionCallArgument = t.union([t.string, t.number, t.boolean]);
-export type FunctionCallArgument = t.TypeOf<typeof FunctionCallArgument>;
-
 export const FunctionReturnValue = t.union([t.string, t.number, t.boolean]);
 export type FunctionReturnValue = t.TypeOf<typeof FunctionReturnValue>;
 
@@ -60,22 +65,30 @@ export const FunctionCall = t.union([
   t.type({
     type: t.literal("invalid"),
     name: t.string,
-    args: t.array(FunctionCallArgument),
+    args: t.array(Argument),
     invalid_reason: t.union([
       t.literal("unknown_function"),
       t.literal("invalid_arguments"),
       t.literal("failed_execution"),
     ]),
   }),
-  t.type({
-    type: t.literal("parsed"),
-    name: t.string,
-    args: t.array(FunctionCallArgument),
-  }),
+  t.intersection([
+    t.type({
+      type: t.literal("parsed"),
+      name: t.string,
+      args: t.array(Argument),
+    }),
+    t.partial({
+      argsParsed: t.array(
+        // this produces a partial record:
+        t.union([t.partial({}), t.record(ArgumentParser, Argument)])
+      ),
+    }),
+  ]),
   t.type({
     type: t.literal("executed"),
     name: t.string,
-    args: t.array(FunctionCallArgument),
+    args: t.array(Argument),
     returnValue: FunctionReturnValue,
   }),
 ]);

@@ -1,6 +1,7 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import { stub } from "std/testing/mock.ts";
 
+import { Session } from "@lib/session.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import * as clients from "@lib/clients.ts";
 import { handler } from "./[modelName].ts";
@@ -12,20 +13,27 @@ for (const test of [
     description: "success",
     model: "assist-davinci-003",
     request: `{ "request": "whats the time in new york?" }`,
-    session: fixtures.session,
+    session: {
+      ...fixtures.session,
+      configuration: {
+        ...fixtures.session.configuration,
+        disabledBuiltinFunctions: ["translate"],
+      },
+    } as Session,
     openAiFn: async () =>
       ({
         data: {
           choices: [
             {
               text: `
-fact("mock response")
+answer("mock response")
    unknownCall(123)
 unparseable(
+translate("English", "should not work because disabled by conf")
 time("America/New_York")
 email("not enough args")
 email("blah@blah.com", "some subject", "some body")
-say()
+flushToSpeech()
 reminder("in 5 days", "some reminder name")`,
             },
           ],

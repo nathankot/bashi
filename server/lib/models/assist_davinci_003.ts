@@ -43,9 +43,16 @@ export async function run(
   // todo inject abort signal
 ): Promise<Output> {
   const request = input.request.trim();
+  const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {
+    ...builtinFunctions,
+  };
+  for (const disabledFn of deps.session.configuration
+    .disabledBuiltinFunctions) {
+    delete filteredBuiltinFunctions[disabledFn];
+  }
   const functionsSet = filterUnnecessary(request, {
     ...configuration.functions,
-    ...builtinFunctions,
+    ...filteredBuiltinFunctions,
   });
   const prompt = makePrompt(functionsSet, request);
 

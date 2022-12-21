@@ -10,7 +10,7 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       argsParsed: [
         {},
       ],
-      name: "fact",
+      name: "answer",
       type: "parsed",
     },
     {
@@ -25,6 +25,15 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       error: "undefined: Unable to consume token: <END-OF-FILE>",
       line: "unparseable(",
       type: "parse_error",
+    },
+    {
+      args: [
+        "English",
+        "should not work because disabled by conf",
+      ],
+      invalid_reason: "unknown_function",
+      name: "translate",
+      type: "invalid",
     },
     {
       args: [
@@ -64,7 +73,7 @@ snapshot[`POST /api/session/requests/assist-davinci-003: success 1`] = `
       ],
       argsParsed: [
       ],
-      name: "say",
+      name: "flushToSpeech",
       type: "parsed",
     },
     {

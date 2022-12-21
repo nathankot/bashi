@@ -19,11 +19,6 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const answer: BuiltinFunctionDefinition<["string"]> = {
-  description: `store an answer that is readily available if the request is a question`,
-  args: [{ name: "answer", type: "string" }],
-};
-
 const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
   {
     description: `generate code for the given request`,
@@ -62,19 +57,28 @@ const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
     ],
   };
 
+const answer: BuiltinFunctionDefinition<["string"]> = {
+  description: `store an answer that is readily available if the request is a question`,
+  args: [{ name: "answer", type: "string" }],
+  mustNotBeDisabled: true,
+};
+
 const flushToSpeech: BuiltinFunctionDefinition<[]> = {
   description: `the results above should be communicated by speech`,
   args: [],
+  mustNotBeDisabled: true,
 };
 
 const flushToText: BuiltinFunctionDefinition<[]> = {
   description: `the results above should be written/inserted into the current context`,
   args: [],
+  mustNotBeDisabled: true,
 };
 
 const fail: BuiltinFunctionDefinition<["string"]> = {
   description: `indicate the request could not be interpreted`,
   args: [{ name: "reason", type: "string" }],
+  mustNotBeDisabled: true,
 };
 
 export const builtinFunctions = {
@@ -87,3 +91,5 @@ export const builtinFunctions = {
   flushToSpeech,
   flushToText,
 };
+
+export default builtinFunctions;

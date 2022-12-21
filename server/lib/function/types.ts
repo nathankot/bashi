@@ -36,6 +36,7 @@ export type BuiltinFunctionDefinition<A extends ArgumentType[]> = Omit<
   "args"
 > & {
   args: { [K in keyof A]: { type: A[K]; name: string } };
+  mustNotBeDisabled?: boolean;
 };
 
 export type BuiltinFunctionDefinitionArgs<

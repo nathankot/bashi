@@ -22,7 +22,6 @@ export async function setup() {
 }
 
 export function log(level: Level, v: string): void;
-export function log<E extends Error>(level: "error", e: E): void;
 export function log<V extends { message: string }>(level: Level, v: V): void;
 export function log(l: Level, v: any): void {
   const logger = stdLog.getLogger();

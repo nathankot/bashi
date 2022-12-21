@@ -1,8 +1,9 @@
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
+import * as b64 from "std/encoding/base64.ts";
+
 import { Handlers } from "$fresh/server.ts";
-import { Buffer } from "std/node/buffer.ts";
 
 import HTTPError from "@lib/http_error.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
@@ -91,7 +92,10 @@ export const handler: Handlers<Response, State> = {
       await ctx.state.clients.withRedis((client) =>
         client
           .multi()
-          .set("s:" + sessionId, Buffer.from(sessionSerialized))
+          // TODO: unfortunately this uses b64 instead of
+          // raw bytes because of an incompatibility when
+          // deno imports @redis/client.
+          .set("s:" + sessionId, b64.encode(sessionSerialized))
           .expireAt("s:" + sessionId, expiresAt)
           .exec()
       );

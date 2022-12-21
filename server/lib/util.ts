@@ -8,8 +8,8 @@ export function handleError(log: LogFn, e: unknown): Response {
   if (e instanceof Error) {
     log("error", e);
   }
-  if (e instanceof Object && "message" in e) {
-    log("error", e);
+  if (e instanceof Object && "message" in e && typeof e.message === "string") {
+    log("error", { message: e.message });
   }
   if (typeof e === "string") {
     log("error", { message: e });

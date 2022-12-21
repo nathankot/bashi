@@ -1,5 +1,5 @@
-.PHONY: up up-all dev build test test-update bench check
-up_command = docker-compose up
+.PHONY: up up-all dev build test test-update bench check lock
+compose_command = docker-compose
 
 up:
 ifndef OPENAI_KEY
@@ -7,15 +7,15 @@ ifndef OPENAI_KEY
 	@exit 1
 else
 	commit=$(shell git rev-parse head) \
-	openai_key=${OPENAI_KEY} ${up_command}
+	openai_key=${OPENAI_KEY} ${compose_command} up
 endif
 
-up-all: up_command = docker-compose -f docker-compose.yml -f server.docker-compose.yml up
+up-all: compose_command = docker-compose -f docker-compose.yml -f server.docker-compose.yml
 up-all: up
 
 build:
 	commit=$(shell git rev-parse head) \
-	docker-compose build
+	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
 dev:
 	deno task --cwd ./server -c ./server/deno.json start
@@ -31,3 +31,11 @@ bench:
 
 check:
 	cd ./server && deno check ./main.ts
+
+lock:
+	rm -f ./server/deno.lock
+	cd ./server && deno cache --check --lock-write ./main.ts
+
+server/lib/models/assist_001.training.jsonl: \
+	./server/scripts/run_example_requests.ts
+	cd ./server && deno run -A ./scripts/run_example_requests.ts ./lib/models/assist_001.training.jsonl

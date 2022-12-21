@@ -56,6 +56,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
 
         case "assist-davinci-003":
         case "translate-davinci-003":
+        case "code-davinci-003":
         case "noop":
           // JSON request
           let json;

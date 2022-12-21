@@ -55,7 +55,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
           return renderJSON(await run(modelDeps, model, arrayBufferInput));
 
         case "assist-000":
-        case "translate-davinci-003":
+        case "translate-000":
         case "code-000":
         case "noop":
           // JSON request

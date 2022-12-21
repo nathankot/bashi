@@ -2,7 +2,7 @@ import * as t from "io-ts";
 
 import { ModelDeps } from "./model_deps.ts";
 
-export const Name = t.literal("translate-davinci-003");
+export const Name = t.literal("translate-000");
 export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
@@ -25,7 +25,7 @@ export const Output = t.type({
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
-  model: "translate-davinci-003",
+  model: "translate-000",
 };
 
 export async function run(
@@ -56,7 +56,7 @@ export async function run(
   const result = completion.data.choices[0]?.text ?? "";
 
   return {
-    model: "translate-davinci-003",
+    model: "translate-000",
     request,
     result,
   };

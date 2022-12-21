@@ -6,7 +6,7 @@ import HTTPError from "@lib/http_error.ts";
 import { functionCallInterceptors } from "@lib/interceptors.ts";
 import { ModelDeps } from "./models/model_deps.ts";
 import * as assist000 from "./models/assist_000.ts";
-import * as translateDavinci003 from "./models/translate_davinci_003.ts";
+import * as translate000 from "./models/translate_000.ts";
 import * as code000 from "./models/code_000.ts";
 import * as noop from "./models/noop.ts";
 import * as whisper from "./models/whisper.ts";
@@ -16,7 +16,7 @@ import * as whisper from "./models/whisper.ts";
 
 export const models = {
   "assist-000": assist000,
-  "translate-davinci-003": translateDavinci003,
+  "translate-000": translate000,
   "code-000": code000,
   whisper: whisper,
   noop: noop,
@@ -25,7 +25,7 @@ export const models = {
 export const AllConfiguration = t.union([
   assist000.Configuration,
   noop.Configuration,
-  translateDavinci003.Configuration,
+  translate000.Configuration,
   code000.Configuration,
   whisper.Configuration,
 ]);
@@ -34,7 +34,7 @@ export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 export const AllInput = t.union([
   assist000.Input,
   noop.Input,
-  translateDavinci003.Input,
+  translate000.Input,
   code000.Input,
   whisper.Input,
 ]);
@@ -43,7 +43,7 @@ export type AllInput = t.TypeOf<typeof AllInput>;
 export const AllOutput = t.union([
   assist000.Output,
   noop.Output,
-  translateDavinci003.Output,
+  translate000.Output,
   code000.Output,
   whisper.Output,
 ]);

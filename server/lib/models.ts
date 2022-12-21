@@ -9,7 +9,7 @@ import * as assist000 from "./models/assist_000.ts";
 import * as translate000 from "./models/translate_000.ts";
 import * as code000 from "./models/code_000.ts";
 import * as noop from "./models/noop.ts";
-import * as whisper from "./models/whisper.ts";
+import * as whisper000 from "./models/whisper_000.ts";
 
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models
@@ -18,7 +18,7 @@ export const models = {
   "assist-000": assist000,
   "translate-000": translate000,
   "code-000": code000,
-  whisper: whisper,
+  "whisper-000": whisper000,
   noop: noop,
 };
 
@@ -27,7 +27,7 @@ export const AllConfiguration = t.union([
   noop.Configuration,
   translate000.Configuration,
   code000.Configuration,
-  whisper.Configuration,
+  whisper000.Configuration,
 ]);
 export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
@@ -36,7 +36,7 @@ export const AllInput = t.union([
   noop.Input,
   translate000.Input,
   code000.Input,
-  whisper.Input,
+  whisper000.Input,
 ]);
 export type AllInput = t.TypeOf<typeof AllInput>;
 
@@ -45,7 +45,7 @@ export const AllOutput = t.union([
   noop.Output,
   translate000.Output,
   code000.Output,
-  whisper.Output,
+  whisper000.Output,
 ]);
 export type AllOutput = t.TypeOf<typeof AllOutput>;
 

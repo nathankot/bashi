@@ -2,7 +2,7 @@ import * as t from "io-ts";
 
 import { ModelDeps } from "./model_deps.ts";
 
-const model = "whisper";
+const model = "whisper-000";
 
 export const Name = t.literal(model);
 export type Name = t.TypeOf<typeof Name>;

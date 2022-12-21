@@ -42,7 +42,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
 
     try {
       switch (model) {
-        case "whisper":
+        case "whisper-000":
           const arrayBuffer = await req.arrayBuffer();
           if (arrayBuffer == null) {
             return renderError(400, "no audio found in the request body");

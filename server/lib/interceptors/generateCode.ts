@@ -4,8 +4,8 @@ import { run } from "@lib/models.ts";
 const interceptor = interceptFunctionCall(
   "generateCode",
   async (modelDeps, [targetLanguage, whatIsBeingGenerated, request]) => {
-    const output = await run(modelDeps, "code-davinci-003", {
-      model: "code-davinci-003",
+    const output = await run(modelDeps, "code-000", {
+      model: "code-000",
       request,
       whatIsBeingGenerated,
       targetLanguage,

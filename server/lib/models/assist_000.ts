@@ -40,7 +40,6 @@ export async function run(
   deps: ModelDeps,
   configuration: Configuration,
   input: Input
-  // todo inject abort signal
 ): Promise<Output> {
   const request = input.request.trim();
   const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {

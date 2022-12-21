@@ -9,7 +9,7 @@ export default function TextPrompt(props: { sessionId: string }) {
     const request: Request = {
       request: prompt,
     };
-    const result = await fetch("/api/session/requests/assist-davinci-003", {
+    const result = await fetch("/api/session/requests/assist-000", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

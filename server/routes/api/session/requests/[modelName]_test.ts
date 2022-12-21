@@ -11,7 +11,7 @@ const nowFixture = new Date(1671439270000);
 for (const test of [
   {
     description: "success",
-    model: "assist-davinci-003",
+    model: "assist-000",
     request: `{ "request": "whats the time in new york?" }`,
     session: {
       ...fixtures.session,
@@ -42,7 +42,7 @@ reminder("in 5 days", "some reminder name")`,
   },
   {
     description: "openai errors",
-    model: "assist-davinci-003",
+    model: "assist-000",
     request: `{ "request": "whats the time in new york?" }`,
     session: fixtures.session,
     openAiFn: async () => {
@@ -51,7 +51,7 @@ reminder("in 5 days", "some reminder name")`,
   },
   {
     description: "empty request",
-    model: "assist-davinci-003",
+    model: "assist-000",
     request: `{ "request": "" }`,
     session: fixtures.session,
   },

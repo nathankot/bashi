@@ -42,7 +42,7 @@ export default function AudioPrompt(props: { sessionId: string }) {
       const request: Request = {
         request: transcribeResult.transcribed,
       };
-      const result = await fetch("/api/session/requests/assist-davinci-003", {
+      const result = await fetch("/api/session/requests/assist-000", {
         method: "POST",
         body: JSON.stringify(request),
         headers: {

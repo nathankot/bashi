@@ -10,7 +10,7 @@ import {
   filterUnnecessary,
 } from "@lib/function.ts";
 
-export const Name = t.literal("assist-davinci-003");
+export const Name = t.literal("assist-000");
 export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
@@ -33,7 +33,7 @@ export const Output = t.type({
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
-  model: "assist-davinci-003",
+  model: "assist-000",
 };
 
 export async function run(
@@ -77,7 +77,7 @@ export async function run(
   const text = completion.data.choices[0]?.text ?? "";
 
   return {
-    model: "assist-davinci-003",
+    model: "assist-000",
     request,
     functionCalls: parseFromModelResult(
       { log: deps.log, now: deps.now(), knownFunctions: functionsSet },

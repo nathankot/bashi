@@ -58,7 +58,7 @@ export default function Example() {
     let body: PostSessionRequest = {
       modelConfigurations: [
         {
-          model: "assist-davinci-003",
+          model: "assist-000",
           functions,
         },
       ],

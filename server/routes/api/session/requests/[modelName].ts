@@ -57,6 +57,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
         case "assist-000":
         case "translate-000":
         case "code-000":
+        case "passthrough-openai-000":
         case "noop":
           // JSON request
           let json;

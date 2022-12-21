@@ -10,6 +10,7 @@ import * as translate000 from "./models/translate_000.ts";
 import * as code000 from "./models/code_000.ts";
 import * as noop from "./models/noop.ts";
 import * as whisper000 from "./models/whisper_000.ts";
+import * as passthroughOpenAi000 from "./models/passthrough_openai_000.ts";
 
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models
@@ -19,6 +20,7 @@ export const models = {
   "translate-000": translate000,
   "code-000": code000,
   "whisper-000": whisper000,
+  "passthrough-openai-000": passthroughOpenAi000,
   noop: noop,
 };
 
@@ -28,6 +30,7 @@ export const AllConfiguration = t.union([
   translate000.Configuration,
   code000.Configuration,
   whisper000.Configuration,
+  passthroughOpenAi000.Configuration,
 ]);
 export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
@@ -37,6 +40,7 @@ export const AllInput = t.union([
   translate000.Input,
   code000.Input,
   whisper000.Input,
+  passthroughOpenAi000.Input,
 ]);
 export type AllInput = t.TypeOf<typeof AllInput>;
 
@@ -46,6 +50,7 @@ export const AllOutput = t.union([
   translate000.Output,
   code000.Output,
   whisper000.Output,
+  passthroughOpenAi000.Output,
 ]);
 export type AllOutput = t.TypeOf<typeof AllOutput>;
 

@@ -1,4 +1,5 @@
 import { Session } from "@lib/session.ts";
+import { FunctionSet } from "@lib/function.ts"
 import { HandlerContext } from "$fresh/server.ts";
 
 export const handlerCtx: HandlerContext<{}> = {
@@ -18,6 +19,45 @@ export const handlerCtx: HandlerContext<{}> = {
   },
 };
 
+export const functionSet: FunctionSet = {
+  createCalendarEvent: {
+    description: "create a calendar event on a certain date and time",
+    args: [
+      {
+        name: "relative time",
+        type: "string",
+        parse: ["naturalLanguageDateTime"],
+      },
+      {
+        name: "name",
+        type: "string",
+      },
+    ],
+    triggerTokens: ["calendar", "event"],
+  },
+  createReminder: {
+    description: "create a reminder on a certain date and time",
+    args: [
+      {
+        name: "relative time",
+        type: "string",
+        parse: ["naturalLanguageDateTime"],
+      },
+      { name: "name", type: "string" },
+    ],
+    triggerTokens: ["remind", "reminder"],
+  },
+  sendEmail: {
+    description: `send an email`,
+    args: [
+      { name: "recipient", type: "string" },
+      { name: "subject", type: "string" },
+      { name: "contents", type: "string" },
+    ],
+    triggerTokens: ["email"],
+  },
+};
+
 export const session: Session = {
   expiresAt: new Date(new Date().getTime() + 60000),
   sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
@@ -31,27 +71,7 @@ export const session: Session = {
   modelConfigurations: [
     {
       model: "assist-000",
-      functions: {
-        email: {
-          args: [
-            { name: "recipient_email", type: "string" },
-            { name: "email_subject", type: "string" },
-            { name: "email_body", type: "string" },
-          ],
-          description: `Send an email`,
-        },
-        reminder: {
-          args: [
-            {
-              name: "relative_time",
-              type: "string",
-              parse: ["naturalLanguageDateTime"],
-            },
-            { name: "name", type: "string" },
-          ],
-          description: `make a reminder`,
-        },
-      },
+      functions: functionSet,
     },
   ],
 };

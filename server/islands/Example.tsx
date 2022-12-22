@@ -1,57 +1,15 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { FunctionSet } from "@lib/function/types.ts";
+import { functionSet } from "@lib/fixtures.ts";
+import { FunctionSet } from "@lib/function.ts";
 import { Session } from "@lib/session.ts";
 import { Request as PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
-const exampleFunctions: FunctionSet = {
-  createCalendarEvent: {
-    description: "create a calendar event on a certain date and time",
-    args: [
-      {
-        name: "relative time",
-        type: "string",
-        parse: ["naturalLanguageDateTime"],
-      },
-      {
-        name: "name",
-        type: "string",
-      },
-    ],
-    triggerTokens: ["calendar", "event"],
-  },
-  createReminder: {
-    description: "create a reminder on a certain date and time",
-    args: [
-      {
-        name: "relative time",
-        type: "string",
-        parse: ["naturalLanguageDateTime"],
-      },
-      { name: "name", type: "string" },
-    ],
-    triggerTokens: ["remind", "reminder"],
-  },
-  email: {
-    description: `send an email`,
-    args: [
-      { name: "recipient", type: "string" },
-      { name: "subject", type: "string" },
-      { name: "contents", type: "string" },
-    ],
-    triggerTokens: ["email"],
-  },
-  // call: {
-  // description: `initiate a phone call`,
-  // args: [{ name: "contact name", type: "string" }],
-  // },
-};
-
 export default function Example() {
   const [error, setError] = useState<string | null>(null);
-  const [functions, setFunctions] = useState<FunctionSet>(exampleFunctions);
+  const [functions, setFunctions] = useState<FunctionSet>(functionSet);
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {

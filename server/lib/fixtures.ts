@@ -1,6 +1,8 @@
-import { Session } from "@lib/session.ts";
-import { FunctionSet } from "@lib/function.ts"
-import { HandlerContext } from "$fresh/server.ts";
+import type { Session } from "@lib/session.ts";
+import type { FunctionSet } from "@lib/function/types.ts";
+import type { HandlerContext } from "$fresh/server.ts";
+
+export const now = new Date(1671439270000);
 
 export const handlerCtx: HandlerContext<{}> = {
   params: {},

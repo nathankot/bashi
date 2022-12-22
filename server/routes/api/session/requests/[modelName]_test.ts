@@ -6,7 +6,7 @@ import * as fixtures from "@lib/fixtures.ts";
 import * as clients from "@lib/clients.ts";
 import { handler } from "./[modelName].ts";
 
-const nowFixture = new Date(1671439270000);
+const nowFixture = fixtures.now;
 
 for (const test of [
   {

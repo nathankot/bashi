@@ -64,6 +64,7 @@ export const FunctionCall = t.union([
     error: t.string,
   }),
   t.type({
+    line: t.string,
     type: t.literal("invalid"),
     name: t.string,
     args: t.array(Argument),
@@ -75,6 +76,7 @@ export const FunctionCall = t.union([
   }),
   t.intersection([
     t.type({
+      line: t.string,
       type: t.literal("parsed"),
       name: t.string,
       args: t.array(Argument),
@@ -87,6 +89,7 @@ export const FunctionCall = t.union([
     }),
   ]),
   t.type({
+    line: t.string,
     type: t.literal("executed"),
     name: t.string,
     args: t.array(Argument),

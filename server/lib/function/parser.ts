@@ -93,6 +93,7 @@ function applyCall(
   const [{ text: name }, , maybeArgs] = toks;
   return {
     type: "parsed",
+    line: "",
     name,
     args: maybeArgs ?? [],
   };
@@ -156,7 +157,10 @@ export function parseFromModelResult(
       continue;
     }
     try {
-      const parsed = evaluate(line);
+      const parsed = {
+        ...evaluate(line),
+        line,
+      };
       const knownFunction = knownFunctions[parsed.name];
       // Check that the function is known
       if (knownFunction == null) {

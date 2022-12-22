@@ -18,7 +18,7 @@ build:
 	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
 dev:
-	deno task --cwd ./server -c ./server/deno.json start
+	cd ./server && deno task start
 
 test:
 	cd ./server && deno test --allow-env --allow-read
@@ -35,7 +35,3 @@ check:
 lock:
 	rm -f ./server/deno.lock
 	cd ./server && deno cache --check --lock-write ./main.ts
-
-server/lib/models/assist_001.training.jsonl: \
-	./server/scripts/run_example_requests.ts
-	cd ./server && deno run -A ./scripts/run_example_requests.ts ./lib/models/assist_001.training.jsonl

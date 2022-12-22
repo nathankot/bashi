@@ -8,14 +8,14 @@ import { FunctionCalls } from "@lib/function.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 
-const Example = t.type({
+export const Example = t.type({
   updated: t.string,
   prompt: t.string,
   functionCalls: FunctionCalls,
   completion: t.string,
 });
 
-type Example = t.TypeOf<typeof Example>;
+export type Example = t.TypeOf<typeof Example>;
 
 const EXAMPLES = `
 hello

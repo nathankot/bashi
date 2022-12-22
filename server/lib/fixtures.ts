@@ -21,7 +21,7 @@ export const handlerCtx: HandlerContext<{}> = {
   },
 };
 
-export const functionSet: FunctionSet = {
+export const functionSet = {
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
     args: [
@@ -58,7 +58,7 @@ export const functionSet: FunctionSet = {
     ],
     triggerTokens: ["email"],
   },
-};
+} satisfies FunctionSet;
 
 export const session: Session = {
   expiresAt: new Date(new Date().getTime() + 60000),

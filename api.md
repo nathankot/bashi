@@ -21,7 +21,7 @@ The request body should be a JSON object with the following shape:
     "defaultMaxResponseTokens": 1000
   },
   "modelConfigurations": {
-    "assist-davinci-003": {
+    "assist-000": {
       "functions": {
         "webSearch": {
           "description": "search the internet or the given string",
@@ -59,7 +59,7 @@ The response body is a JSON object with the following shape:
       "locale": "en-US"
     },
     "modelConfigurations": {
-      "assist-davinci-003": {
+      "assist-000": {
         "functions": {
           "webSearch": {
             "description": "search the internet or the given string",
@@ -101,9 +101,9 @@ the request.
 
 ### Url params
 
-| Name        | Description                                                                                                 |
-| ----------- | ----------------------------------------------------------------------------------------------------------- |
-| `modelName` | The name of the model to use, this dictates the input format. For example, `assist-davinci-003`, `whisper`. |
+| Name        | Description                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| `modelName` | The name of the model to use, this dictates the input format. For example, `assist-000`, `whisper-000`. |
 
 ### Headers
 
@@ -115,7 +115,7 @@ the request.
 
 Each model has it's own input/output schemas. They are listed below.
 
-#### `assist-davinci-003`
+#### `assist-*`
 
 ##### Request body
 
@@ -154,7 +154,7 @@ The request body should be a JSON object with the following shape:
 }
 ```
 
-#### `whisper`
+#### `whisper-*`
 
 ##### Request body
 

@@ -92,7 +92,7 @@ function makePrompt(functions: FunctionSet, request: string): string {
 
 For each request respond with one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request.
 
-The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. And ONLY functions specified below may be used.
+The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. And ONLY functions specified below may be used. Function arguments must be literal types and cannot be nested.
 
 ${functionSet.join("\n")}
 

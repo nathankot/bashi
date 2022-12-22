@@ -26,7 +26,7 @@ export const functionSet: FunctionSet = {
     description: "create a calendar event on a certain date and time",
     args: [
       {
-        name: "relative time",
+        name: "relative time supported by chrono-js",
         type: "string",
         parse: ["naturalLanguageDateTime"],
       },
@@ -41,7 +41,7 @@ export const functionSet: FunctionSet = {
     description: "create a reminder on a certain date and time",
     args: [
       {
-        name: "relative time",
+        name: "relative time supported by chrono-js",
         type: "string",
         parse: ["naturalLanguageDateTime"],
       },

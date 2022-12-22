@@ -1,5 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import Example from "../islands/Example.tsx";
+import PromptDev from "../islands/PromptDev.tsx";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       </Head>
 
       <div class="p-4 mx-auto max-w-screen-md">
-        <Example />
+        <PromptDev />
       </div>
     </>
   );

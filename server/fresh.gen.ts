@@ -11,7 +11,7 @@ import * as $4 from "./routes/api/session/requests/[modelName]_test.ts";
 import * as $5 from "./routes/api/sessions.ts";
 import * as $6 from "./routes/index.tsx";
 import * as $$0 from "./islands/AudioPrompt.tsx";
-import * as $$1 from "./islands/Example.tsx";
+import * as $$1 from "./islands/PromptDev.tsx";
 import * as $$2 from "./islands/TextPrompt.tsx";
 
 const manifest = {
@@ -26,7 +26,7 @@ const manifest = {
   },
   islands: {
     "./islands/AudioPrompt.tsx": $$0,
-    "./islands/Example.tsx": $$1,
+    "./islands/PromptDev.tsx": $$1,
     "./islands/TextPrompt.tsx": $$2,
   },
   baseUrl: import.meta.url,

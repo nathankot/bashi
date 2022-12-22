@@ -7,7 +7,7 @@ import { Request as PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
-export default function Example() {
+export default function PromptDev() {
   const [error, setError] = useState<string | null>(null);
   const [functions, setFunctions] = useState<FunctionSet>(functionSet);
   const [sessionId, setSessionId] = useState<null | string>(null);

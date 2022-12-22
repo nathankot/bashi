@@ -5,6 +5,6 @@ import updateExamples from "./dev/update_example_requests.ts";
 
 const srv = dev(import.meta.url, "./main.ts");
 // update the prompt examples file:
-const e = updateExamples("./lib/models/assist_examples.jsonl");
+const e = updateExamples("./static/assist_examples.jsonl");
 
 await Promise.all([srv, e]);

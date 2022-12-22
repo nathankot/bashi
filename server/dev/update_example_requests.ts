@@ -70,6 +70,7 @@ export default async function updateExamples(examplesFile: string) {
   };
 
   const newExamples: Example[] = [];
+  let hasChanges = false;
 
   for (const example of EXAMPLES) {
     const existing = existingExamples[example];
@@ -83,6 +84,7 @@ export default async function updateExamples(examplesFile: string) {
       request: example,
     });
     log("info", `got result for: ${example}`);
+    hasChanges = true;
     newExamples.push({
       updated: new Date().toISOString(),
       prompt: example,
@@ -91,8 +93,10 @@ export default async function updateExamples(examplesFile: string) {
     });
   }
 
-  Deno.writeTextFileSync(
-    examplesFile,
-    newExamples.map((e) => JSON.stringify(e)).join("\n")
-  );
+  if (hasChanges) {
+    Deno.writeTextFileSync(
+      examplesFile,
+      newExamples.map((e) => JSON.stringify(e)).join("\n")
+    );
+  }
 }

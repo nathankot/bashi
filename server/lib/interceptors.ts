@@ -1,6 +1,6 @@
-import math from "./interceptors/math.ts";
-import time from "./interceptors/time.ts";
-import translate from "./interceptors/translate.ts";
-import generateCode from "./interceptors/generateCode.ts";
+import { AllOutput, ModelDeps } from "@lib/models.ts";
 
-export const functionCallInterceptors = [math, time, translate, generateCode];
+export type OutputInterceptor<O extends AllOutput> = (
+  deps: ModelDeps,
+  output: O
+) => Promise<O>;

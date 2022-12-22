@@ -3,7 +3,7 @@ import * as f from "fp-ts";
 
 import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
-import { functionCallInterceptors } from "@lib/interceptors.ts";
+import { functionCallInterceptors } from "@lib/function.ts";
 import { ModelDeps } from "./models/model_deps.ts";
 import * as assist000 from "./models/assist_000.ts";
 import * as translate000 from "./models/translate_000.ts";
@@ -84,6 +84,10 @@ export async function run<N extends ModelName>(
     await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
       runFn({ ...modelDeps, signal }, configuration as any, input as any)
     );
+
+  // Do a 'verification round' of interceptors first, if any interceptor
+  // needs more information, return the full results so far along with
+  // what information the requestor needs to provide:
 
   if ("functionCalls" in output) {
     for (const interceptor of functionCallInterceptors) {

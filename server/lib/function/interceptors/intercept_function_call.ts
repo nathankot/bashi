@@ -1,3 +1,5 @@
+import { OutputInterceptor } from "@lib/interceptors.ts";
+
 import {
   BuiltinFunctionDefinitionArgs,
   FunctionReturnValue,
@@ -7,8 +9,6 @@ import {
 } from "@lib/function.ts";
 
 import { AllOutput } from "@lib/models.ts";
-
-import { OutputInterceptor } from "./type.ts";
 
 export function interceptFunctionCall<
   O extends AllOutput & { functionCalls: FunctionCalls },

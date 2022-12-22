@@ -1,7 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 
 import { functionSet } from "@lib/fixtures.ts";
-import { FunctionSet } from "@lib/function.ts";
+import { FunctionSet } from "@lib/function/types.ts";
 import { Session } from "@lib/session.ts";
 import { Request as PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";

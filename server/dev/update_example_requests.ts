@@ -32,6 +32,7 @@ whats the time in new york? and make a calendar event for dinner with wife 5 day
 how do you say behind the Comichi building in Japanese?
 what does the mode parameter do in the javascript fetch api?
 write an example http POST request in the browser using Javscript using the fetch api
+help me fix spelling and grammar mistakes
 `
   .split("\n")
   .filter((l) => l.trim() !== "");

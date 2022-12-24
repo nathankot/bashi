@@ -19,6 +19,22 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
+const edit: BuiltinFunctionDefinition<["string"]> = {
+  description: `edit the given text using the given requirements`,
+  args: [
+    { name: "sentence describing the editing requirements", type: "string" },
+  ],
+  triggerTokens: [
+    "edit",
+    "change",
+    "alter",
+    "fix",
+    "reword",
+    "re-word",
+    "editor",
+  ],
+};
+
 const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
   {
     description: `generate code for the given request`,
@@ -85,6 +101,7 @@ export const builtinFunctions = {
   answer,
   math,
   time,
+  edit,
   generateCode,
   translate,
   fail,

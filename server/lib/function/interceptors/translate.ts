@@ -4,8 +4,9 @@ import { run } from "@lib/models.ts";
 const interceptor = interceptFunctionCall(
   "translate",
   async (modelDeps, [targetLanguage, request]) => {
-    const output = await run(modelDeps, "translate-000", {
-      model: "translate-000",
+    const model: "translate-000" = "translate-000";
+    const output = await run(modelDeps, model, {
+      model,
       request,
       targetLanguage,
     });

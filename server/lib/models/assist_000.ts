@@ -1,14 +1,18 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "./model_deps.ts";
-
 import {
   FunctionSet,
   FunctionCalls,
   parseFromModelResult,
   builtinFunctions,
   filterUnnecessary,
+  functionCallInterceptors,
 } from "@lib/function.ts";
+
+import { RequestContext, RequestContextDef } from "@lib/request_context.ts";
+import { wrap } from "@lib/log.ts";
+
+import { ModelDeps } from "./model_deps.ts";
 
 export const Name = t.literal("assist-000");
 export type Name = t.TypeOf<typeof Name>;
@@ -19,17 +23,27 @@ export const Configuration = t.type({
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
-export const Input = t.type({
-  model: Name,
-  request: t.string,
-});
+export const Input = t.intersection([
+  t.type({
+    model: Name,
+    request: t.string,
+  }),
+  t.partial({
+    requestContext: RequestContext,
+  }),
+]);
 export type Input = t.TypeOf<typeof Input>;
 
-export const Output = t.type({
-  model: Name,
-  request: t.string,
-  functionCalls: FunctionCalls,
-});
+export const Output = t.union([
+  t.type({
+    model: Name,
+    request: t.string,
+    functionCalls: FunctionCalls,
+  }),
+  t.type({
+    missingRequestContext: RequestContextDef,
+  }),
+]);
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
@@ -37,15 +51,17 @@ export const defaultConfiguration: Partial<Configuration> = {
 };
 
 export async function run(
-  deps: ModelDeps,
+  modelDeps: ModelDeps,
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
+  let log = modelDeps.log;
+
   const request = input.request.trim();
   const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {
     ...builtinFunctions,
   };
-  for (const disabledFn of deps.session.configuration
+  for (const disabledFn of modelDeps.session.configuration
     .disabledBuiltinFunctions) {
     delete filteredBuiltinFunctions[disabledFn];
   }
@@ -55,34 +71,81 @@ export async function run(
   });
   const prompt = makePrompt(functionsSet, request);
 
-  const completion = await deps.openai.createCompletion(
+  const completion = await modelDeps.openai.createCompletion(
     {
       model: "text-davinci-003",
-      max_tokens: deps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-      best_of: deps.session.configuration.bestOf,
+      max_tokens: modelDeps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
+      best_of: modelDeps.session.configuration.bestOf,
       echo: false,
       prompt: [prompt],
     },
     {
-      signal: deps.signal,
+      signal: modelDeps.signal,
     }
   );
 
-  deps.log("info", {
-    message: "tokens used",
-    total_tokens: completion.data.usage?.total_tokens,
-  });
+  log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
+  log("info", { message: "tokens used" });
 
   const text = completion.data.choices[0]?.text ?? "";
 
-  return {
+  const functionCalls = parseFromModelResult(
+    {
+      log,
+      now: modelDeps.now(),
+      knownFunctions: functionsSet,
+    },
+    text
+  );
+
+  const requestContext: RequestContext = !("requestContext" in input)
+    ? {}
+    : input.requestContext == null
+    ? {}
+    : input.requestContext;
+
+  const fnNames = functionCalls.reduce(
+    (a: Record<string, null>, c) =>
+      c.type !== "parsed" ? a : { ...a, [c.name]: null },
+    {}
+  );
+
+  let missingRequestContext: null | RequestContextDef = null;
+
+  // First ensure that all interceptors have the request context that they need:
+  for (const interceptor of functionCallInterceptors) {
+    if (!(interceptor.fnName in fnNames)) {
+      continue;
+    }
+    const validateResult = await interceptor.validateRequestContext(
+      requestContext
+    );
+    if (validateResult === true) {
+      continue;
+    }
+    missingRequestContext = {
+      ...(missingRequestContext ?? {}),
+      ...validateResult,
+    };
+  }
+  if (missingRequestContext != null) {
+    return { missingRequestContext };
+  }
+
+  let output: Exclude<Output, { missingRequestContext: RequestContextDef }> = {
     model: "assist-000",
     request,
-    functionCalls: parseFromModelResult(
-      { log: deps.log, now: deps.now(), knownFunctions: functionsSet },
-      text
-    ),
+    functionCalls,
   };
+
+  // Then run all of the function call interceptors:
+  for (const interceptor of functionCallInterceptors) {
+    output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
+      interceptor.interceptor({ ...modelDeps, signal }, output)
+    );
+  }
+
+  return output;
 }
 
 function makePrompt(functions: FunctionSet, request: string): string {

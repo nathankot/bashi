@@ -7,6 +7,7 @@
     "lib": ["esnext", "dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
+    "noErrorTruncation":true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUncheckedIndexedAccess": true

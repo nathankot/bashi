@@ -83,6 +83,10 @@ export default async function updateExamples(examplesFile: string) {
       model: "assist-000",
       request: example,
     });
+    if (!("functionCalls" in output)) {
+      throw new Error("unexpected output: ${output}");
+    }
+
     log("info", `got result for: ${example}`);
     hasChanges = true;
     newExamples.push({

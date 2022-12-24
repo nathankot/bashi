@@ -96,8 +96,7 @@ The response body is a JSON object with the following shape:
 
 ## `POST /api/session/requests/{modelName}`
 
-Typically called after transcribing audio data into textual representation of
-the request.
+Make a request to a specific model.
 
 ### Url params
 
@@ -111,7 +110,7 @@ the request.
 | ------------------------------------ | --------- | -------------------------------------------------- |
 | `Authorization: Bearer <session id>` | yes       | The session ID retrieved from `POST /api/sessions` |
 
-### Input/output options
+### Request/Response
 
 Each model has it's own input/output schemas. They are listed below.
 
@@ -123,7 +122,8 @@ The request body should be a JSON object with the following shape:
 
 ```json
 {
-  "request": "your request here"
+  "request": "your request here",
+  "requestContext": {}
 }
 ```
 
@@ -151,6 +151,48 @@ The request body should be a JSON object with the following shape:
       "argsParsed": [{ "naturalLanguageDateTime": "2022-12-22T18:00:00Z" }, {}]
     }
   ]
+}
+```
+
+##### Additional context
+
+Some requests may require additional context to be provided to the endpoint. For
+example, if the request is to refactor code, then the code to be refactored
+needs to be provided as context.
+
+If supported by the model and known beforehand, this context can be
+pre-populated with the `requestContext` field, e.g:
+
+```json
+{
+  "request": "some request",
+  "requestContext": {
+    "text": "function() {}"
+  }
+}
+```
+
+The `requestContext` key is an arbitrary value map of `string` keys to `string |
+number | boolean`.
+
+If the required context is not known beforehand, the endpoint will respond `400
+Bad Request` and a JSON response detailing what context is required:
+
+```json
+{
+  "missingRequestContext": {
+    "text": { "type": "string" }
+  }
+}
+```
+
+You can fulfill this requirement by calling the endpoint again with:
+
+```json
+{
+  "requestContext": {
+    "text": "function() {}"
+  }
 }
 ```
 

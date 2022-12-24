@@ -12,7 +12,7 @@ for (const test of [
   {
     description: "success",
     model: "assist-000",
-    request: `{ "request": "whats the time in new york?" }`,
+    request: `{ "request": "whats the time in new york? email translate" }`,
     session: {
       ...fixtures.session,
       configuration: {
@@ -62,6 +62,8 @@ reminder("in 5 days", "some reminder name")`,
     session: fixtures.session,
     openAiFn: null,
   },
+  // missing request context
+  // adding request context
   // too many tokens
   // rate limited (or maybe handled by middleware?)
 ]) {

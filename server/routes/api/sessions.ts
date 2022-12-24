@@ -17,10 +17,10 @@ import { State } from "./_middleware.ts";
 
 const Request = t.intersection([
   t.type({
-    modelConfigurations: Session.props.modelConfigurations,
+    modelConfigurations: Session.types[0].props.modelConfigurations,
   }),
   t.partial({
-    configuration: Session.props.configuration,
+    configuration: Session.types[0].props.configuration,
   }),
 ]);
 export type Request = t.TypeOf<typeof Request>;

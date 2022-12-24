@@ -1,19 +1,18 @@
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
-import { Session } from "@lib/session.ts";
 import HTTPError from "@lib/http_error.ts";
-import { functionCallInterceptors } from "@lib/function.ts";
 import { ModelDeps } from "./models/model_deps.ts";
+
+////////////////////////////////////////////////////
+// BEGIN section to edit when adding new models
+
 import * as assist000 from "./models/assist_000.ts";
 import * as translate000 from "./models/translate_000.ts";
 import * as code000 from "./models/code_000.ts";
 import * as noop from "./models/noop.ts";
 import * as whisper000 from "./models/whisper_000.ts";
 import * as passthroughOpenAi000 from "./models/passthrough_openai_000.ts";
-
-////////////////////////////////////////////////////
-// BEGIN section to edit when adding new models
 
 export const models = {
   "assist-000": assist000,
@@ -64,40 +63,63 @@ export type ModelName = t.TypeOf<typeof ModelName>;
 
 export type InputFor<M extends ModelName> = t.TypeOf<typeof models[M]["Input"]>;
 
-export async function run<N extends ModelName>(
+export async function run<N extends keyof typeof models>(
   modelDeps: Omit<ModelDeps, "signal">,
   modelName: N,
-  input: t.TypeOf<typeof models[N]["Input"]>
+  input: t.TypeOf<typeof models[N]["Input"]> &
+    Parameters<typeof models[N]["run"]>[2]
 ): Promise<t.TypeOf<typeof models[N]["Output"]>> {
+  type C = t.TypeOf<typeof models[N]["Configuration"]> &
+    Parameters<typeof models[N]["run"]>[1];
+
+  type I = t.TypeOf<typeof models[N]["Input"]> &
+    Parameters<typeof models[N]["run"]>[2];
+
+  const model: typeof models[N] = models[modelName];
+
   if (!validateInput(modelName, input)) {
     throw new Error("could not validate input");
   }
-  const configuration = getConfiguration(modelName, modelDeps.session);
-  if (configuration == null) {
+
+  input satisfies I;
+
+  const configuration: Partial<C> = {
+    ...(model.defaultConfiguration as Partial<C>),
+    ...((): {} | C => {
+      for (const conf of modelDeps.session.modelConfigurations) {
+        if (conf.model === modelName) {
+          return conf;
+        }
+      }
+      return {};
+    })(),
+  };
+
+  if (!validateConfiguration(modelName, configuration)) {
     throw new HTTPError(
-      `the model '${modelName}' has not been configured`,
+      `the model '${modelName}' has not been fully configured`,
       400
     );
   }
-  const runFn: typeof models[N]["run"] = models[modelName].run;
-  let output: t.TypeOf<typeof models[N]["Output"]> =
-    await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
-      runFn({ ...modelDeps, signal }, configuration as any, input as any)
-    );
 
-  // Do a 'verification round' of interceptors first, if any interceptor
-  // needs more information, return the full results so far along with
-  // what information the requestor needs to provide:
+  configuration satisfies C;
 
-  if ("functionCalls" in output) {
-    for (const interceptor of functionCallInterceptors) {
-      output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
-        interceptor({ ...modelDeps, signal }, output as any)
-      );
-    }
+  let output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
+    model.run({ ...modelDeps, signal }, configuration as any, input)
+  );
+
+  if (!validateOutput(modelName, output)) {
+    throw new Error(`resulting output did not match model expectations`);
   }
 
   return output;
+}
+
+function validateOutput<N extends ModelName>(
+  modelName: N,
+  output: t.TypeOf<typeof models[ModelName]["Output"]>
+): output is t.TypeOf<typeof models[N]["Output"]> {
+  return f.either.isRight(models[modelName].Output.decode(output));
 }
 
 function validateInput<N extends ModelName>(
@@ -107,30 +129,9 @@ function validateInput<N extends ModelName>(
   return f.either.isRight(models[modelName].Input.decode(input));
 }
 
-function getConfiguration<N extends ModelName>(
-  modelName: N,
-  session: Session
-): null | t.TypeOf<typeof models[N]["Configuration"]> {
-  const conf: any = {
-    ...models[modelName].defaultConfiguration,
-    ...(() => {
-      for (const conf of session.modelConfigurations) {
-        if (conf.model === modelName) {
-          return conf;
-        }
-      }
-      return {};
-    })(),
-  };
-  if (validateConfiguration(modelName, conf)) {
-    return conf;
-  }
-  return null;
-}
-
 function validateConfiguration<N extends ModelName>(
   modelName: N,
-  configuration: t.TypeOf<typeof models[ModelName]["Configuration"]>
+  configuration: Partial<t.TypeOf<typeof models[ModelName]["Configuration"]>>
 ): configuration is t.TypeOf<typeof models[N]["Configuration"]> {
   return f.either.isRight(
     models[modelName].Configuration.decode(configuration)

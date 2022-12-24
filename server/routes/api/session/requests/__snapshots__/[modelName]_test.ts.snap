@@ -10,6 +10,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
       argsParsed: [
         {},
       ],
+      line: 'answer("mock response")',
       name: "answer",
       type: "parsed",
     },
@@ -18,6 +19,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
         123,
       ],
       invalid_reason: "unknown_function",
+      line: "   unknownCall(123)",
       name: "unknownCall",
       type: "invalid",
     },
@@ -32,6 +34,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
         "should not work because disabled by conf",
       ],
       invalid_reason: "unknown_function",
+      line: 'translate("English", "should not work because disabled by conf")',
       name: "translate",
       type: "invalid",
     },
@@ -42,6 +45,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
       argsParsed: [
         {},
       ],
+      line: 'time("America/New_York")',
       name: "time",
       returnValue: "12/19/2022, 3:41:10 AM",
       type: "executed",
@@ -51,7 +55,8 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
         "not enough args",
       ],
       invalid_reason: "invalid_arguments",
-      name: "email",
+      line: 'sendEmail("not enough args")',
+      name: "sendEmail",
       type: "invalid",
     },
     {
@@ -65,7 +70,8 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
         {},
         {},
       ],
-      name: "email",
+      line: 'sendEmail("blah@blah.com", "some subject", "some body")',
+      name: "sendEmail",
       type: "parsed",
     },
     {
@@ -73,6 +79,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
       ],
       argsParsed: [
       ],
+      line: "flushToSpeech()",
       name: "flushToSpeech",
       type: "parsed",
     },
@@ -81,18 +88,14 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
         "in 5 days",
         "some reminder name",
       ],
-      argsParsed: [
-        {
-          naturalLanguageDateTime: "2022-12-24T08:41:10.000Z",
-        },
-        {},
-      ],
+      invalid_reason: "unknown_function",
+      line: 'reminder("in 5 days", "some reminder name")',
       name: "reminder",
-      type: "parsed",
+      type: "invalid",
     },
   ],
   model: "assist-000",
-  request: "whats the time in new york?",
+  request: "whats the time in new york? email translate",
 }
 `;
 

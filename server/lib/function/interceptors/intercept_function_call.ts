@@ -10,17 +10,24 @@ import {
 
 import { AllOutput } from "@lib/models.ts";
 
+import { RequestContextDef, RequestContext } from "@lib/request_context.ts";
+
 export function interceptFunctionCall<
-  O extends AllOutput & { functionCalls: FunctionCalls },
+  O extends Extract<AllOutput, { functionCalls: FunctionCalls }>,
   N extends keyof typeof builtinFunctions
 >(
   fnName: N,
-  fn: (
+  interceptFn: (
     deps: Parameters<OutputInterceptor<O>>[0],
     args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
-  ) => Promise<FunctionReturnValue | null>
-): OutputInterceptor<O> {
-  return async (deps, output) => {
+  ) => Promise<FunctionReturnValue | null>,
+  validateFn?: (reqCtx: RequestContext) => Promise<true | RequestContextDef>
+): {
+  fnName: N;
+  interceptor: OutputInterceptor<O>;
+  validateRequestContext: NonNullable<typeof validateFn>;
+} {
+  const interceptor: OutputInterceptor<O> = async (deps, output) => {
     if (!("functionCalls" in output)) {
       return output;
     }
@@ -43,7 +50,7 @@ export function interceptFunctionCall<
         typeof builtinFunctions[N]["args"]
       >;
       try {
-        const maybeReturnValue = await fn(deps, args);
+        const maybeReturnValue = await interceptFn(deps, args);
         if (maybeReturnValue == null) {
           continue;
         }
@@ -66,5 +73,13 @@ export function interceptFunctionCall<
       ...output,
       functionCalls: newFunctionCalls,
     };
+  };
+
+  const validateRequestContext = validateFn ?? (async () => true);
+
+  return {
+    fnName,
+    interceptor,
+    validateRequestContext,
   };
 }

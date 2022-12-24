@@ -4,6 +4,7 @@ snapshot[`someCall() 1`] = `
 {
   args: [
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -15,6 +16,7 @@ snapshot[`someCall('a', 111) 1`] = `
     "a",
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -26,6 +28,7 @@ snapshot[`someCall('a \\'ha\\'', 111) 1`] = `
     "a 'ha'",
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -37,6 +40,7 @@ snapshot[`someCall(\`a\`, 111) 1`] = `
     "a",
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -48,6 +52,7 @@ snapshot[`someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
     "a \`ha\`",
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -59,6 +64,7 @@ snapshot[`someCall("a", 111) 1`] = `
     "a",
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -70,6 +76,7 @@ snapshot[`someCall("a \\"ha\\"", 111) 1`] = `
     'a "ha"',
     111,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -82,6 +89,7 @@ snapshot[`someCall("a", 111,true) 1`] = `
     111,
     true,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -94,6 +102,7 @@ snapshot[`someCall("a", 111, false) 1`] = `
     111,
     false,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -106,6 +115,7 @@ snapshot[`someCall("a false true 123 b", 111, false) 1`] = `
     111,
     false,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -116,6 +126,7 @@ snapshot[`someCall(-123) 1`] = `
   args: [
     -123,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }
@@ -125,6 +136,7 @@ snapshot[`some_call() 1`] = `
 {
   args: [
   ],
+  line: "",
   name: "some_call",
   type: "parsed",
 }
@@ -134,6 +146,7 @@ snapshot[`some-call() 1`] = `
 {
   args: [
   ],
+  line: "",
   name: "some-call",
   type: "parsed",
 }
@@ -143,6 +156,7 @@ snapshot[`SOMECALL() 1`] = `
 {
   args: [
   ],
+  line: "",
   name: "SOMECALL",
   type: "parsed",
 }
@@ -155,6 +169,7 @@ snapshot[`someCall(-123.500) 1`] = `
   args: [
     -123.5,
   ],
+  line: "",
   name: "someCall",
   type: "parsed",
 }

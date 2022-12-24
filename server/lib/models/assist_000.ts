@@ -186,9 +186,16 @@ export async function run(
 
   // Then run all of the function call interceptors:
   for (const interceptor of functionCallInterceptors) {
-    output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
-      interceptor.interceptor({ ...modelDeps, signal }, output)
+    const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
+      async ({ signal }) =>
+        interceptor.interceptor({ ...modelDeps, signal }, input, output)
     );
+    if ("missingRequestContext" in interceptedOutput) {
+      throw new Error(
+        `function intercepts must not return missinGrequestContext - this should happen at the validation step`
+      );
+    }
+    output = interceptedOutput;
   }
 
   return output;

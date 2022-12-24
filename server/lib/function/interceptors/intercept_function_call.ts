@@ -1,33 +1,39 @@
-import { OutputInterceptor } from "@lib/interceptors.ts";
+import * as t from "io-ts";
+
+import { ModelInterceptor } from "@lib/interceptors.ts";
 
 import {
   BuiltinFunctionDefinitionArgs,
   FunctionReturnValue,
+  FunctionCalls,
   checkArgumentsValid,
   builtinFunctions,
-  FunctionCalls,
 } from "@lib/function.ts";
 
-import { AllOutput } from "@lib/models.ts";
+import { ModelName, models } from "@lib/models.ts";
 
 import { RequestContextDef, RequestContext } from "@lib/request_context.ts";
 
 export function interceptFunctionCall<
-  O extends Extract<AllOutput, { functionCalls: FunctionCalls }>,
-  N extends keyof typeof builtinFunctions
+  N extends Extract<
+    t.TypeOf<typeof models[ModelName]["Output"]>,
+    { model: string; functionCalls: FunctionCalls }
+  >["model"],
+  FN extends keyof typeof builtinFunctions
 >(
-  fnName: N,
+  fnName: FN,
   interceptFn: (
-    deps: Parameters<OutputInterceptor<O>>[0],
-    args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[N]["args"]>
+    deps: Parameters<ModelInterceptor<N>>[0],
+    input: t.TypeOf<typeof models[N]["Input"]>,
+    args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[FN]["args"]>
   ) => Promise<FunctionReturnValue | null>,
   validateFn?: (reqCtx: RequestContext) => Promise<true | RequestContextDef>
 ): {
-  fnName: N;
-  interceptor: OutputInterceptor<O>;
+  fnName: FN;
+  interceptor: ModelInterceptor<N>;
   validateRequestContext: NonNullable<typeof validateFn>;
 } {
-  const interceptor: OutputInterceptor<O> = async (deps, output) => {
+  const interceptor: ModelInterceptor<N> = async (deps, input, output) => {
     if (!("functionCalls" in output)) {
       return output;
     }
@@ -47,10 +53,10 @@ export function interceptFunctionCall<
         continue;
       }
       const args = call.args as BuiltinFunctionDefinitionArgs<
-        typeof builtinFunctions[N]["args"]
+        typeof builtinFunctions[FN]["args"]
       >;
       try {
-        const maybeReturnValue = await interceptFn(deps, args);
+        const maybeReturnValue = await interceptFn(deps, input, args);
         if (maybeReturnValue == null) {
           continue;
         }

@@ -3,7 +3,7 @@ import { run } from "@lib/models.ts";
 
 const interceptor = interceptFunctionCall(
   "translate",
-  async (modelDeps, [targetLanguage, request]) => {
+  async (modelDeps, input, [targetLanguage, request]) => {
     const model: "translate-000" = "translate-000";
     const output = await run(modelDeps, model, {
       model,

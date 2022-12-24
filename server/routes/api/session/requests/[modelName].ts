@@ -38,6 +38,8 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
       session: ctx.state.session,
       now: ctx.state.now,
       faultHandlingPolicy: defaultPolicy,
+      setUpdatedSession: (newSession) =>
+        (ctx.state.updatedSession = newSession),
     };
 
     try {

@@ -67,6 +67,7 @@ export default async function updateExamples(examplesFile: string) {
     openai,
     whisperEndpoint,
     signal: abortController.signal,
+    setUpdatedSession: () => {},
   };
 
   const newExamples: Example[] = [];

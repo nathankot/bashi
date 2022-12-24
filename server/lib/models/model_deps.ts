@@ -12,4 +12,5 @@ export type ModelDeps = {
   session: Session;
   faultHandlingPolicy: IPolicy;
   signal: AbortSignal;
+  setUpdatedSession: (session: Session) => void;
 };

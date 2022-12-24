@@ -9,6 +9,7 @@ import {
   functionCallInterceptors,
 } from "@lib/function.ts";
 
+import HTTPError from "@lib/http_error.ts";
 import { RequestContext, RequestContextDef } from "@lib/request_context.ts";
 import { wrap } from "@lib/log.ts";
 
@@ -23,12 +24,17 @@ export const Configuration = t.type({
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
-export const Input = t.intersection([
+export const Input = t.union([
+  t.intersection([
+    t.type({
+      model: Name,
+      request: t.string,
+    }),
+    t.partial({
+      requestContext: RequestContext,
+    }),
+  ]),
   t.type({
-    model: Name,
-    request: t.string,
-  }),
-  t.partial({
     requestContext: RequestContext,
   }),
 ]);
@@ -57,52 +63,92 @@ export async function run(
 ): Promise<Output> {
   let log = modelDeps.log;
 
-  const request = input.request.trim();
-  const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {
-    ...builtinFunctions,
-  };
-  for (const disabledFn of modelDeps.session.configuration
-    .disabledBuiltinFunctions) {
-    delete filteredBuiltinFunctions[disabledFn];
-  }
-  const functionsSet = filterUnnecessary(request, {
-    ...configuration.functions,
-    ...filteredBuiltinFunctions,
-  });
-  const prompt = makePrompt(functionsSet, request);
-
-  const completion = await modelDeps.openai.createCompletion(
-    {
-      model: "text-davinci-003",
-      max_tokens: modelDeps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-      best_of: modelDeps.session.configuration.bestOf,
-      echo: false,
-      prompt: [prompt],
-    },
-    {
-      signal: modelDeps.signal,
-    }
-  );
-
-  log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
-  log("info", { message: "tokens used" });
-
-  const text = completion.data.choices[0]?.text ?? "";
-
-  const functionCalls = parseFromModelResult(
-    {
-      log,
-      now: modelDeps.now(),
-      knownFunctions: functionsSet,
-    },
-    text
-  );
-
   const requestContext: RequestContext = !("requestContext" in input)
     ? {}
     : input.requestContext == null
     ? {}
     : input.requestContext;
+
+  let output = await (async (): Promise<
+    Exclude<Output, { missingRequestContext: RequestContextDef }>
+  > => {
+    if (!("request" in input)) {
+      const outputAwaitingContext = modelDeps.session.outputAwaitingContext;
+      // we assume missing request context is being fulfilled:
+      if (outputAwaitingContext == null) {
+        throw new HTTPError(
+          "the request field it not populated, " +
+            "but no pending request awaiting context found",
+          400
+        );
+      }
+      if (!Output.is(outputAwaitingContext)) {
+        throw new HTTPError(
+          "pending request awaiting context was for a different model",
+          400
+        );
+      }
+      if ("missingRequestContext" in outputAwaitingContext) {
+        throw new Error(
+          `key "missingRequestContext" unexpectedly found in stored output`
+        );
+      }
+      modelDeps.setUpdatedSession({
+        ...modelDeps.session,
+        outputAwaitingContext: undefined,
+      });
+      return outputAwaitingContext;
+    }
+
+    const request = input.request.trim();
+    const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {
+      ...builtinFunctions,
+    };
+    for (const disabledFn of modelDeps.session.configuration
+      .disabledBuiltinFunctions) {
+      delete filteredBuiltinFunctions[disabledFn];
+    }
+    const functionsSet = filterUnnecessary(request, {
+      ...configuration.functions,
+      ...filteredBuiltinFunctions,
+    });
+    const prompt = makePrompt(functionsSet, request);
+
+    const completion = await modelDeps.openai.createCompletion(
+      {
+        model: "text-davinci-003",
+        max_tokens: modelDeps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
+        best_of: modelDeps.session.configuration.bestOf,
+        echo: false,
+        prompt: [prompt],
+      },
+      {
+        signal: modelDeps.signal,
+      }
+    );
+
+    log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
+    log("info", { message: "tokens used" });
+
+    const text = completion.data.choices[0]?.text ?? "";
+
+    const functionCalls = parseFromModelResult(
+      {
+        log,
+        now: modelDeps.now(),
+        knownFunctions: functionsSet,
+      },
+      text
+    );
+
+    return {
+      model: "assist-000",
+      request,
+      functionCalls,
+    };
+  })();
+
+  const functionCalls = output.functionCalls;
 
   const fnNames = functionCalls.reduce(
     (a: Record<string, null>, c) =>
@@ -111,7 +157,6 @@ export async function run(
   );
 
   let missingRequestContext: null | RequestContextDef = null;
-
   // First ensure that all interceptors have the request context that they need:
   for (const interceptor of functionCallInterceptors) {
     if (!(interceptor.fnName in fnNames)) {
@@ -128,15 +173,16 @@ export async function run(
       ...validateResult,
     };
   }
+
+  // If we have request context that is missing, update session state to
+  // keep track of what we have so far, and let the user know.
   if (missingRequestContext != null) {
+    modelDeps.setUpdatedSession({
+      ...modelDeps.session,
+      outputAwaitingContext: output,
+    });
     return { missingRequestContext };
   }
-
-  let output: Exclude<Output, { missingRequestContext: RequestContextDef }> = {
-    model: "assist-000",
-    request,
-    functionCalls,
-  };
 
   // Then run all of the function call interceptors:
   for (const interceptor of functionCallInterceptors) {

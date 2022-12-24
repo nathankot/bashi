@@ -1,16 +1,19 @@
 import * as f from "fp-ts";
 import * as b64 from "std/encoding/base64.ts";
+import { msgpack } from "@/deps.ts";
 
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
-import { msgpack } from "@/deps.ts";
+
+import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { Session } from "@lib/session.ts";
 import { renderError, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 
 export interface State {
   session: Session;
+  updatedSession?: Session;
 }
 
 export async function handler(
@@ -62,6 +65,22 @@ export async function handler(
     ctx.state.session = session;
 
     const resp = await ctx.next();
+
+    if (ctx.state.updatedSession != null) {
+      const expiresAt = new Date(ctx.state.now().getTime() + SESSION_EXPIRY_MS);
+      const sessionSerialized = msgpack.serialize(ctx.state.updatedSession);
+      await ctx.state.clients.withRedis((client) =>
+        client
+          .multi()
+          // TODO: unfortunately this uses b64 instead of
+          // raw bytes because of an incompatibility when
+          // deno imports @redis/client.
+          .set("s:" + sessionId, b64.encode(sessionSerialized))
+          .expireAt("s:" + sessionId, expiresAt)
+          .exec()
+      );
+    }
+
     return resp;
   } catch (e) {
     return handleError(ctx.state.log, e);

@@ -1,20 +1,36 @@
 import * as t from "io-ts";
 
-export const RequestContextValue = t.union([t.string, t.number, t.boolean]);
-export type RequestContextValue = t.TypeOf<typeof RequestContextValue>;
-
-export const RequestContext = t.record(t.string, RequestContextValue);
+export const RequestContext = t.partial({
+  text: t.string,
+  language: t.string,
+});
 export type RequestContext = t.TypeOf<typeof RequestContext>;
 
-export const RequestContextValueType = t.keyof({
-  string: null,
-  number: null,
-  boolean: null,
-});
-export type RequestContextValueType = t.TypeOf<typeof RequestContextValueType>;
+type RequestContextDefProps = {
+  [K in keyof Required<RequestContext>]: t.TypeC<{
+    type: t.LiteralC<"string">;
+  }>;
+};
 
-export const RequestContextDef = t.union([
-  t.type({}),
-  t.record(t.string, t.type({ type: RequestContextValueType })),
-]);
+export const RequestContextDef = t.partial<RequestContextDefProps>(
+  Object.entries(RequestContext.props).reduce(
+    (a, [key, type]) => ({
+      ...a,
+      [key]: (() => {
+        switch (type) {
+          case t.string:
+            return { type: t.literal("string") };
+          // case t.boolean:
+          //   return { type: t.literal("number") };
+          // case t.boolean:
+          //   return { type: t.literal("boolean") };
+          // default:
+          //   const _exhaustiveCheck: never = type;
+          //   throw new Error(`unexpected type: ${_exhaustiveCheck}`);
+        }
+      })(),
+    }),
+    {} as RequestContextDefProps
+  )
+);
 export type RequestContextDef = t.TypeOf<typeof RequestContextDef>;

@@ -56,6 +56,37 @@ const INPUTS: {
       text: `stp by step, heart to hard, left right left. is we all fall down..`,
     },
   },
+  {
+    prompt: "edit this function in go lang in order to make it compile",
+    requestContext: {
+      text: `
+function doSomething() int {
+  return "55"
+}
+`,
+    },
+  },
+  {
+    prompt: "edit this go lang function in order to make it compile",
+    requestContext: {
+      text: `
+function doSomething() int {
+  return "55"
+}
+`,
+    },
+  },
+  {
+    prompt: "edit this function in order to make it compile",
+    requestContext: {
+      language: "Go",
+      text: `
+function doSomething() int {
+  return "55"
+}
+`,
+    },
+  },
 ];
 
 export default async function updateExamples(examplesFile: string) {

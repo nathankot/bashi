@@ -1,3 +1,4 @@
+import { PROGRAMMING_LANGUAGES } from "@lib/constants.ts";
 import { BuiltinFunctionDefinition } from "./types.ts";
 
 const time: BuiltinFunctionDefinition<["string"]> = {
@@ -19,11 +20,9 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const edit: BuiltinFunctionDefinition<["string"]> = {
-  description: `edit the given text using the given requirements`,
-  args: [
-    { name: "sentence describing the editing requirements", type: "string" },
-  ],
+const editProse: BuiltinFunctionDefinition<["string"]> = {
+  description: `edit prose using the given requirements`,
+  args: [{ name: "sentence describing desired changes", type: "string" }],
   triggerTokens: [
     "edit",
     "change",
@@ -32,6 +31,33 @@ const edit: BuiltinFunctionDefinition<["string"]> = {
     "reword",
     "re-word",
     "editor",
+  ],
+};
+
+// TODO: maybe a code edit model will do better with this?
+const editCode: BuiltinFunctionDefinition<["string", "string"]> = {
+  description: `edit code using the given requirements`,
+  args: [
+    { name: "full name of the programming language", type: "string" },
+    { name: "sentence describing desired changes", type: "string" },
+  ],
+  triggerTokens: [
+    ...PROGRAMMING_LANGUAGES,
+    "function",
+    "compile",
+    "class",
+    "variable",
+    "code",
+    "refactor",
+    "re-factor",
+    "edit",
+    "change",
+    "alter",
+    "fix",
+    "reword",
+    "re-word",
+    "editor",
+    "lint",
   ],
 };
 
@@ -47,27 +73,17 @@ const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
       { name: "verbose description of what the code does", type: "string" },
     ],
     triggerTokens: [
+      ...PROGRAMMING_LANGUAGES,
       "generate",
       "code",
       "programming",
       "program",
       "write",
-      "python",
-      "javascript",
-      "typescript",
       "swift",
       "html",
-      "css",
-      "go",
-      "haskell",
-      "java",
-      "php",
-      "ruby",
-      "c",
       "lang",
       "function",
       "class",
-      "go",
       "language",
       "type",
     ],
@@ -101,7 +117,8 @@ export const builtinFunctions = {
   answer,
   math,
   time,
-  edit,
+  editProse,
+  editCode,
   generateCode,
   translate,
   fail,

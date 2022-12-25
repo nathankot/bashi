@@ -1,4 +1,6 @@
 // This file is used to load a subset of dependencies via `deno cache` as a early layer in the Dockerfile.
+//
+// ONLY PRODUCTION DEPS should be included here.
 
 import "$fresh/plugins/twind.ts";
 import "$fresh/server.ts";

@@ -23,6 +23,9 @@ import { State } from "../_middleware.ts";
 export const Request = AllInput;
 export type Request = t.TypeOf<typeof Request>;
 
+export const Response = AllOutput;
+export type Response = t.TypeOf<typeof Response>;
+
 export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {
     let log = ctx.state.log;

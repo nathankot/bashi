@@ -15,7 +15,7 @@ import { msgpack } from "@/deps.ts";
 
 import { State } from "./_middleware.ts";
 
-const Request = t.intersection([
+export const Request = t.intersection([
   t.type({
     modelConfigurations: Session.types[0].props.modelConfigurations,
   }),

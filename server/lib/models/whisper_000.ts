@@ -10,7 +10,6 @@ export const Configuration = t.type({ model: t.literal(model) });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
-  model: t.literal(model),
   arrayBuffer: t.any,
 });
 export type Input = t.TypeOf<typeof Input> & { arrayBuffer: ArrayBuffer };

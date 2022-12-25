@@ -27,7 +27,6 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 export const Input = t.union([
   t.intersection([
     t.type({
-      model: Name,
       request: t.string,
     }),
     t.partial({

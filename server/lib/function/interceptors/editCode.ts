@@ -9,7 +9,6 @@ const interceptor = interceptFunctionCall(
       throw new Error("context text unexpectedly null");
     }
     const output = await run(modelDeps, "passthrough-openai-000", {
-      model: "passthrough-openai-000",
       openAiModel: "text-davinci-003",
       request: `Edit or refactor the code below based on the given requirement.
 Programming language is '${input.requestContext?.language ?? language}'.

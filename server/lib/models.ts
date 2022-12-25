@@ -105,7 +105,7 @@ export async function run<N extends keyof typeof models>(
   configuration satisfies C;
 
   let output = await modelDeps.faultHandlingPolicy.execute(async ({ signal }) =>
-    model.run({ ...modelDeps, signal }, configuration as any, input)
+    model.run({ ...modelDeps, signal }, configuration as any, input as any)
   );
 
   if (!validateOutput(modelName, output)) {

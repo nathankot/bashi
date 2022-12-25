@@ -13,7 +13,6 @@ export const Configuration = t.type({
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
-  model: Name,
   openAiModel: t.string,
   request: t.string,
 });

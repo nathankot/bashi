@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import * as f from "fp-ts";
 
 import { Handlers } from "$fresh/server.ts";
@@ -18,7 +19,9 @@ import {
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "../_middleware.ts";
 
-export type Request = FormData | Omit<AllInput, "model">;
+// Note the following does not specify the binary audio/* request:
+export const Request = AllInput;
+export type Request = t.TypeOf<typeof Request>;
 
 export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {
@@ -50,7 +53,6 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
             return renderError(400, "no audio found in the request body");
           }
           const arrayBufferInput: InputFor<typeof model> = {
-            model,
             arrayBuffer,
           };
 

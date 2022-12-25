@@ -137,7 +137,6 @@ export default async function updateExamples(examplesFile: string) {
       `found new example, running model with prompt: ${input.prompt}`
     );
     const output = await run(modelDeps, "assist-000", {
-      model: "assist-000",
       request: input.prompt,
       requestContext: input.requestContext,
     });

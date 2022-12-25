@@ -6,7 +6,6 @@ const interceptor = interceptFunctionCall(
   async (modelDeps, input, [targetLanguage, request]) => {
     const model: "translate-000" = "translate-000";
     const output = await run(modelDeps, model, {
-      model,
       request,
       targetLanguage,
     });

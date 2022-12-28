@@ -1,107 +1,55 @@
-import * as t from "io-ts";
+// import * as t from "io-ts";
+import toJSONSchema, { JSONSchema7Definition } from "./to_json_schema.ts";
 
-import { JSONSchema7Definition } from "https://esm.sh/@types/json-schema";
-
+import { models } from "@lib/models.ts";
+import { Session } from "@lib/session.ts";
+import { Configuration } from "@lib/session/configuration.ts";
 import * as postSessions from "@routes/api/sessions.ts";
-// import * aj postModelName from "@routes/api/session/requests/[modelName].ts";
+// import * as postModelName from "@routes/api/session/requests/[modelName].ts";
 
-export default async function generateSwaggerSpec() {
-  console.log(JSON.stringify(toJSONSchema(postSessions.Response), null, "  "));
+// ===================================================================
+// START building up of known schema definitions, order matters here.
+
+let namedJSONSchemaObjects: Record<string, JSONSchema7Definition> = {};
+
+for (const [modelName, model] of Object.entries(models)) {
+  if (modelName === "noop") {
+    continue;
+  }
+
+  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Input`] =
+    toJSONSchema(model.Input, namedJSONSchemaObjects);
+  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Output`] =
+    toJSONSchema(model.Output, namedJSONSchemaObjects);
+  namedJSONSchemaObjects[
+    `#/components/schemas/models/${modelName}/Configuration`
+  ] = toJSONSchema(model.Configuration, namedJSONSchemaObjects);
 }
 
-type SupportedTag =
-  | "StringType"
-  | "NumberType"
-  | "BooleanType"
-  | "ArrayType"
-  | "KeyofType"
-  | "IntersectionType"
-  | "LiteralType"
-  | "UnionType"
-  | "DictionaryType"
-  | "PartialType"
-  | "InterfaceType";
+namedJSONSchemaObjects["#/components/schemas/SessionConfiguration"] =
+  toJSONSchema(Configuration, namedJSONSchemaObjects);
 
-function toJSONSchema(type: { _tag: SupportedTag }): JSONSchema7Definition {
-  switch (type._tag) {
-    case "StringType":
-      return { type: "string" };
-    case "NumberType":
-      return { type: "number" };
-    case "BooleanType":
-      return { type: "boolean" };
-    case "ArrayType":
-      return { type: "array", items: toJSONSchema((type as any).type) };
-    case "LiteralType":
-      const lit = type as t.LiteralType<any>;
-      return { const: lit.value };
-    case "IntersectionType":
-      const intersection = type as t.IntersectionType<any[]>;
-      return {
-        allOf: intersection.types.map((t) => toJSONSchema(t)),
-      };
-    case "UnionType":
-      const union = type as t.UnionType<any[]>;
-      return {
-        allOf: union.types.map((t) => toJSONSchema(t)),
-      };
-    case "DictionaryType":
-      const dict = type as t.DictionaryType<t.StringType, any>;
-      return {
-        type: "object",
-        patternProperties: {
-          "^.*$": toJSONSchema(dict.codomain),
-        },
-      };
-    case "PartialType":
-      const partial = type as t.PartialType<
-        Record<string, { _tag: SupportedTag }>
-      >;
-      return {
-        type: "object",
-        additionalProperties: Object.entries(partial.props).reduce(
-          (a, [p, t]) => ({
-            ...a,
-            [p]: toJSONSchema(
-              // The typings for io-ts is a little weird, it seems that the
-              // codomain types for partial() can be of the form { type: { _tag } }
-              // rather than { _tag }
-              !("_tag" in t) && (("type" in t) as any) ? (t as any).type : t
-            ),
-          }),
-          {}
-        ),
-      };
-    case "InterfaceType":
-      const iface = type as t.InterfaceType<
-        Record<string, { _tag: SupportedTag }>
-      >;
-      return {
-        type: "object",
-        properties: Object.entries(iface.props).reduce(
-          (a, [p, t]) => ({ ...a, [p]: toJSONSchema(t) }),
-          {}
-        ),
-      };
-    case "KeyofType":
-      const kof = type as t.KeyofType<{ [key: string]: unknown }>;
-      return {
-        oneOf: Object.keys(kof.keys).map((k) => ({
-          const: k,
-        })),
-      };
-    case undefined:
-      if ("name" in type && type.name === "Date") {
-        return {
-          type: "string",
-          format: "full-date",
-        };
-      }
-      console.debug(type);
-      throw new Error(`unsupported type`);
-    default:
-      const exhaustiveCheck: never = type._tag;
-      console.debug(type);
-      throw new Error(`unsupported type: ${exhaustiveCheck}`);
-  }
+namedJSONSchemaObjects["#/components/schemas/Session"] = toJSONSchema(
+  Session,
+  namedJSONSchemaObjects
+);
+
+// END building up of known schema definitions, order matters here.
+// ===================================================================
+
+export default async function generateSwaggerSpec() {
+  console.log(
+    JSON.stringify(
+      toJSONSchema(postSessions.Request, namedJSONSchemaObjects),
+      null,
+      "  "
+    )
+  );
+  console.log(
+    JSON.stringify(
+      toJSONSchema(postSessions.Response, namedJSONSchemaObjects),
+      null,
+      "  "
+    )
+  );
 }

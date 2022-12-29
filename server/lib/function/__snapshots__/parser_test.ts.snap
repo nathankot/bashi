@@ -162,7 +162,7 @@ snapshot[`SOMECALL() 1`] = `
 }
 `;
 
-snapshot[`malformed("a" 1`] = `"undefined: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`someCall(-123.500) 1`] = `
 {
@@ -177,4 +177,4 @@ snapshot[`someCall(-123.500) 1`] = `
 
 snapshot[`testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
 
-snapshot[`empty string 1`] = `"undefined: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;

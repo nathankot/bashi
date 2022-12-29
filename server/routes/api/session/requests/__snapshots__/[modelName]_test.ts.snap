@@ -24,7 +24,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
       type: "invalid",
     },
     {
-      error: "undefined: Unable to consume token: <END-OF-FILE>",
+      error: "<END-OF-FILE>: Unable to consume token: <END-OF-FILE>",
       line: "unparseable(",
       type: "parse_error",
     },

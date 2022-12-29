@@ -1,6 +1,6 @@
 import * as f from "fp-ts";
 import * as b64 from "std/encoding/base64.ts";
-import { msgpack } from "@/deps.ts";
+import { msgpack } from "@/msgpack.ts";
 
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 

@@ -12,7 +12,7 @@ import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
-import { msgpack } from "@/deps.ts";
+import { msgpack } from "@/msgpack.ts";
 import toJSONSchema from "@lib/to_json_schema.ts";
 
 import { State } from "./_middleware.ts";

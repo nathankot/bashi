@@ -1,4 +1,4 @@
-import { IS_BROWSER } from "https://deno.land/x/fresh@1.1.2/runtime.ts";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
 
 import { Request } from "@routes/api/session/requests/[modelName].ts";

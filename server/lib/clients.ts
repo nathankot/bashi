@@ -1,7 +1,7 @@
 import * as r from "redis";
 import { Configuration, OpenAIApi } from "openai";
 
-import "https://deno.land/x/dotenv/load.ts";
+import "dotenv/load.ts";
 
 const redisUrl = Deno.env.get("REDIS_URL");
 if (redisUrl == null || redisUrl.length === 0) {

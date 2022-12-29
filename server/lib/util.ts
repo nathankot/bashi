@@ -1,4 +1,4 @@
-import HTTPError from "./http_error.ts";
+import { HTTPError } from "./errors.ts";
 import { LogFn } from "@lib/log.ts";
 
 export function handleError(log: LogFn, e: unknown): Response {

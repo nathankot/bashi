@@ -3,7 +3,7 @@ import * as f from "fp-ts";
 
 import { Handlers } from "$fresh/server.ts";
 
-import HTTPError from "@lib/http_error.ts";
+import { HTTPError } from "@lib/errors.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { defaultPolicy } from "@lib/faultHandling.ts";

@@ -20,6 +20,7 @@ import "chrono";
 import "std/log/mod.ts";
 import "twind";
 import "typescript-parsec";
+import "openapi-types";
 
 // @deno-types="https://esm.sh/@ygoe/msgpack@1.0.3/msgpack.d.ts"
 export { default as msgpack } from "https://esm.sh/@ygoe/msgpack@1.0.3/msgpack.js";

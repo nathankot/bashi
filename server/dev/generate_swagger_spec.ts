@@ -1,55 +1,56 @@
-// import * as t from "io-ts";
-import toJSONSchema, { JSONSchema7Definition } from "./to_json_schema.ts";
+import { namedJSONSchemaObjects } from "@lib/to_json_schema.ts";
+import { OpenAPIV3 } from "openapi-types";
 
-import { models } from "@lib/models.ts";
-import { Session } from "@lib/session.ts";
-import { Configuration } from "@lib/session/configuration.ts";
 import * as postSessions from "@routes/api/sessions.ts";
 // import * as postModelName from "@routes/api/session/requests/[modelName].ts";
 
-// ===================================================================
-// START building up of known schema definitions, order matters here.
-
-let namedJSONSchemaObjects: Record<string, JSONSchema7Definition> = {};
-
-for (const [modelName, model] of Object.entries(models)) {
-  if (modelName === "noop") {
-    continue;
-  }
-
-  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Input`] =
-    toJSONSchema(model.Input, namedJSONSchemaObjects);
-  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Output`] =
-    toJSONSchema(model.Output, namedJSONSchemaObjects);
-  namedJSONSchemaObjects[
-    `#/components/schemas/models/${modelName}/Configuration`
-  ] = toJSONSchema(model.Configuration, namedJSONSchemaObjects);
-}
-
-namedJSONSchemaObjects["#/components/schemas/SessionConfiguration"] =
-  toJSONSchema(Configuration, namedJSONSchemaObjects);
-
-namedJSONSchemaObjects["#/components/schemas/Session"] = toJSONSchema(
-  Session,
-  namedJSONSchemaObjects
-);
-
-// END building up of known schema definitions, order matters here.
-// ===================================================================
-
 export default async function generateSwaggerSpec() {
-  console.log(
-    JSON.stringify(
-      toJSONSchema(postSessions.Request, namedJSONSchemaObjects),
-      null,
-      "  "
-    )
-  );
-  console.log(
-    JSON.stringify(
-      toJSONSchema(postSessions.Response, namedJSONSchemaObjects),
-      null,
-      "  "
-    )
-  );
+  // openapi.json
+  const spec: OpenAPIV3.Document = {
+    openapi: "3.0.3",
+    info: {
+      title: "Bashi",
+      version: "0.1.0",
+      description: "TODO",
+      termsOfService: "TODO",
+      license: {
+        name: "TODO",
+        url: "TODO",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:8080/api/",
+        description: "Local development server",
+      },
+    ],
+    paths: {
+      "/sessions": {
+        post: {
+          operationId: postSessions.meta.operationId,
+          summary: postSessions.meta.summary,
+          description: postSessions.meta.description,
+          requestBody: {
+            description: postSessions.meta.requestBody.description,
+            required: postSessions.meta.requestBody.required,
+            content: postSessions.meta.requestBody.content,
+          },
+          responses: {
+            ...postSessions.meta.otherResponses,
+            [postSessions.meta.responseSuccess.status]: {
+              description: postSessions.meta.responseSuccess.description,
+              content: postSessions.meta.responseSuccess.content,
+            },
+          },
+        },
+      },
+    },
+    components: {
+      schemas: Object.entries(namedJSONSchemaObjects).reduce(
+        (a, [k, t]) => ({ ...a, [k.slice("#/components/schemas/".length)]: t }),
+        {}
+      ) as any,
+    },
+  };
+  console.log(JSON.stringify(spec, null, "  "));
 }

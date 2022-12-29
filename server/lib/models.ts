@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 import * as f from "fp-ts";
 
-import HTTPError from "@lib/http_error.ts";
+import { HTTPError } from "@lib/errors.ts";
 import { ModelDeps } from "./models/model_deps.ts";
 
 ////////////////////////////////////////////////////

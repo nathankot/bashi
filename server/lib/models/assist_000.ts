@@ -9,7 +9,7 @@ import {
   functionCallInterceptors,
 } from "@lib/function.ts";
 
-import HTTPError from "@lib/http_error.ts";
+import { HTTPError } from "@lib/errors.ts";
 import { RequestContext, RequestContextDef } from "@lib/request_context.ts";
 import { wrap } from "@lib/log.ts";
 

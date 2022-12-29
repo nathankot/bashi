@@ -4,14 +4,16 @@ import * as f from "fp-ts";
 import * as b64 from "std/encoding/base64.ts";
 
 import { Handlers } from "$fresh/server.ts";
+import { OpenAPIV3 } from "openapi-types";
 
-import HTTPError from "@lib/http_error.ts";
+import { HTTPError, ResponseError } from "@lib/errors.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/deps.ts";
+import toJSONSchema from "@lib/to_json_schema.ts";
 
 import { State } from "./_middleware.ts";
 
@@ -30,6 +32,52 @@ export const Response = t.type({
   builtinFunctions: FunctionSet,
 });
 export type Response = t.TypeOf<typeof Response>;
+
+export const meta = {
+  operationId: "postSessions",
+  summary: "TODO",
+  description: "TODO",
+  requestBody: {
+    description: "TODO",
+    required: true,
+    content: {
+      "application/json": {
+        schema: toJSONSchema(Request),
+        // TODO
+        // example: {},
+      },
+    } satisfies OpenAPIV3.RequestBodyObject["content"],
+  },
+  responseSuccess: {
+    status: 200 as 200,
+    description: "TODO",
+    content: {
+      "application/json": {
+        schema: toJSONSchema(Response),
+        // TODO
+        // example: {},
+      },
+    },
+  },
+  otherResponses: {
+    "401": {
+      description: "TODO",
+      content: {
+        "application/json": {
+          schema: toJSONSchema(ResponseError),
+        },
+      },
+    },
+    "400": {
+      description: "TODO",
+      content: {
+        "application/json": {
+          schema: toJSONSchema(ResponseError),
+        },
+      },
+    },
+  } satisfies OpenAPIV3.OperationObject["responses"],
+};
 
 export const handler: Handlers<Response, State> = {
   async POST(req, ctx) {
@@ -100,10 +148,13 @@ export const handler: Handlers<Response, State> = {
           .exec()
       );
 
-      return renderJSON<Response>({
-        session,
-        builtinFunctions,
-      });
+      return renderJSON<Response>(
+        {
+          session,
+          builtinFunctions,
+        },
+        meta.responseSuccess.status
+      );
     } catch (e) {
       return handleError(log, e);
     }

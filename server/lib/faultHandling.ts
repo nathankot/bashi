@@ -7,7 +7,7 @@ import {
   wrap,
 } from "cockatiel";
 
-import HTTPError from "@lib/http_error.ts";
+import { HTTPError } from "@lib/errors.ts";
 
 const handleInternalError = handleWhen(
   (e) => !(e instanceof HTTPError) || e.statusCode >= 500

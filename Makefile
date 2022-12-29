@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build test test-update bench vendor
+.PHONY: up up-all dev build test test-update bench vendor check
 compose_command = docker-compose
 
 up:
@@ -18,17 +18,20 @@ build:
 	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
 dev:
-	cd ./server && deno run -A --check --import-map import_map.json --watch=static/,routes/ dev.ts
+	cd ./server && deno run -A --check --watch=static/,routes/ dev.ts
 
 test:
-	cd ./server && deno test --import-map import_map.json --allow-env --allow-read
+	cd ./server && deno test --allow-env --allow-read
 
 test-update:
-	cd ./server && deno test --import-map import_map.json --allow-env --allow-read --allow-write -- --update
+	cd ./server && deno test --allow-env --allow-read --allow-write -- --update
 
 bench:
-	cd ./server && deno bench --import-map import_map.json --allow-env --allow-read
+	cd ./server && deno bench --allow-env --allow-read
 
-vendor:
-	cd ./server && deno check --import-map import_map.json ./main.ts
-	cd ./server && deno vendor --import-map import_map.json --force --reload main.ts vendor_extra.ts
+check:
+	cd ./server && deno check ./main.ts
+
+vendor: check
+	cd ./server && cp ./deno.json ./deno.vendored.json
+	cd ./server && deno vendor -c ./deno.vendored.json --import-map ./import_map.json --force --reload main.ts vendor_extra.ts

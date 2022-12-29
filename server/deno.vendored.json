@@ -1,5 +1,5 @@
 {
-  "importMap": "./import_map.json",
+  "importMap": "./vendor/import_map.json",
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
     "jsx": "react-jsx",

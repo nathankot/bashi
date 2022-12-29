@@ -1,0 +1,3 @@
+import { RedisCommandArguments, RedisCommandArgument } from './index.d.ts';
+export declare function transformArguments(): RedisCommandArguments;
+export declare function transformReply(): RedisCommandArgument;

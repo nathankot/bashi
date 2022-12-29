@@ -1,0 +1,12 @@
+import { BrokenCircuitError } from './BrokenCircuitError.d.ts';
+import { BulkheadRejectedError } from './BulkheadRejectedError.d.ts';
+import { IsolatedCircuitError } from './IsolatedCircuitError.d.ts';
+import { TaskCancelledError } from './TaskCancelledError.d.ts';
+export * from './BrokenCircuitError.d.ts';
+export * from './BulkheadRejectedError.d.ts';
+export * from './IsolatedCircuitError.d.ts';
+export * from './TaskCancelledError.d.ts';
+export declare const isBrokenCircuitError: (e: unknown) => e is BrokenCircuitError;
+export declare const isBulkheadRejectedError: (e: unknown) => e is BulkheadRejectedError;
+export declare const isIsolatedCircuitError: (e: unknown) => e is IsolatedCircuitError;
+export declare const isTaskCancelledError: (e: unknown) => e is TaskCancelledError;

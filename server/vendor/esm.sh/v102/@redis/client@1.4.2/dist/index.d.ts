@@ -1,0 +1,12 @@
+import RedisClient from './lib/client/index.d.ts';
+import RedisCluster from './lib/cluster/index.d.ts';
+export { RedisClientType, RedisClientOptions } from './lib/client/index.d.ts';
+export { RedisModules, RedisFunctions, RedisScripts } from './lib/commands/index.d.ts';
+export declare const createClient: typeof RedisClient.create;
+export declare const commandOptions: typeof RedisClient.commandOptions;
+export { RedisClusterType, RedisClusterOptions } from './lib/cluster/index.d.ts';
+export declare const createCluster: typeof RedisCluster.create;
+export { defineScript } from './lib/lua-script.d.ts';
+export { GeoReplyWith } from './lib/commands/generic-transformers.d.ts';
+export * from './lib/errors.d.ts';
+export { SetOptions } from "./lib/commands/SET.d.ts";

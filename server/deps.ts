@@ -14,6 +14,7 @@ import "mathjs";
 import "openai";
 import "preact";
 import "preact/hooks";
+import "preact-render-to-string";
 import "redis";
 import "cockatiel";
 import "chrono";

@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build test test-update bench check lock
+.PHONY: up up-all dev build test test-update bench check lock re-lock
 compose_command = docker-compose
 
 up:
@@ -35,3 +35,7 @@ check:
 lock:
 	rm -f ./server/deno.lock
 	cd ./server && deno cache --check --lock-write ./main.ts
+
+re-lock:
+	rm -f ./server/deno.lock
+	cd ./server && deno cache --reload --check --lock-write ./main.ts

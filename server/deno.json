@@ -2,12 +2,11 @@
   "tasks": {
     "start": "deno run -A --check --watch=static/,routes/ dev.ts"
   },
-  "importMap": "./import_map.json",
+  "importMap": "./vendor/import_map.json",
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noErrorTruncation":true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUncheckedIndexedAccess": true

@@ -4,8 +4,6 @@
 
 import "$fresh/plugins/twind.ts";
 import "$fresh/server.ts";
-import "@preact/signals";
-import "@preact/signals-core";
 import "fp-ts";
 import "https://deno.land/x/dotenv/load.ts";
 import "io-ts";
@@ -14,6 +12,9 @@ import "mathjs";
 import "openai";
 import "preact";
 import "preact/hooks";
+import "preact/compat";
+import "preact/debug";
+import "preact/jsx-runtime";
 import "preact-render-to-string";
 import "redis";
 import "cockatiel";

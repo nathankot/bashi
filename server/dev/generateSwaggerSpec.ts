@@ -1,6 +1,8 @@
-import { namedJSONSchemaObjects } from "@lib/to_json_schema.ts";
+// import Lincoln from "https://esm.sh/react-lincoln?alias=react:preact/compat&alias=react-dom:preact/compat&external=react";
+
 import { OpenAPIV3 } from "openapi-types";
 
+import { namedJSONSchemaObjects } from "@lib/to_json_schema.ts";
 import * as postSessions from "@routes/api/sessions.ts";
 // import * as postModelName from "@routes/api/session/requests/[modelName].ts";
 
@@ -52,5 +54,7 @@ export default async function generateSwaggerSpec() {
       ) as any,
     },
   };
-  console.log(JSON.stringify(spec, null, "  "));
+  console.log(spec);
+
+  // console.log(JSON.stringify(spec, null, "  "));
 }

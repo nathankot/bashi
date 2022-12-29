@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 
-import type { Example } from "@/dev/update_example_requests.ts";
+import type { Example } from "@/dev/updateExampleRequests.ts";
 
 export default function Examples() {
   const [examples, setExamples] = useState<Example[]>([]);

@@ -1,0 +1,863 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Bashi",
+    "version": "0.1.0",
+    "description": "TODO",
+    "termsOfService": "TODO",
+    "license": {
+      "name": "TODO",
+      "url": "TODO"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/sessions": {
+      "post": {
+        "operationId": "postSessions",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_id": []
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "modelConfigurations": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/models/assist-000/Configuration"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "model": {
+                                  "enum": [
+                                    "noop"
+                                  ],
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            {
+                              "$ref": "#/components/schemas/models/translate-000/Configuration"
+                            },
+                            {
+                              "$ref": "#/components/schemas/models/code-000/Configuration"
+                            },
+                            {
+                              "$ref": "#/components/schemas/models/whisper-000/Configuration"
+                            },
+                            {
+                              "$ref": "#/components/schemas/models/passthrough-openai-000/Configuration"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "configuration": {
+                        "$ref": "#/components/schemas/SessionConfiguration"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "session": {
+                      "$ref": "#/components/schemas/Session"
+                    },
+                    "builtinFunctions": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/FunctionDefinition"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "ArgumentParser": {
+        "oneOf": [
+          {
+            "enum": [
+              "naturalLanguageDateTime"
+            ],
+            "type": "string"
+          }
+        ]
+      },
+      "ArgumentType": {
+        "oneOf": [
+          {
+            "enum": [
+              "string"
+            ],
+            "type": "string"
+          },
+          {
+            "enum": [
+              "number"
+            ],
+            "type": "string"
+          },
+          {
+            "enum": [
+              "boolean"
+            ],
+            "type": "string"
+          }
+        ]
+      },
+      "FunctionDefinition": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "$ref": "#/components/schemas/ArgumentType"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "parse": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ArgumentParser"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "triggerTokens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "models/assist-000/Input": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "request": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "requestContext": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "language": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "requestContext": {
+                "type": "object",
+                "additionalProperties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "models/assist-000/Output": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "model": {
+                "enum": [
+                  "assist-000"
+                ],
+                "type": "string"
+              },
+              "request": {
+                "type": "string"
+              },
+              "functionCalls": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "parse_error"
+                          ],
+                          "type": "string"
+                        },
+                        "line": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "line": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "invalid"
+                          ],
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "args": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          }
+                        },
+                        "invalid_reason": {
+                          "anyOf": [
+                            {
+                              "enum": [
+                                "unknown_function"
+                              ],
+                              "type": "string"
+                            },
+                            {
+                              "enum": [
+                                "invalid_arguments"
+                              ],
+                              "type": "string"
+                            },
+                            {
+                              "enum": [
+                                "failed_execution"
+                              ],
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "line": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "enum": [
+                                "parsed"
+                              ],
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "args": {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": {
+                            "argsParsed": {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "boolean"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "line": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "executed"
+                          ],
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "args": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          }
+                        },
+                        "returnValue": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "missingRequestContext": {
+                "type": "object",
+                "additionalProperties": {
+                  "text": {
+                    "enum": [
+                      "string"
+                    ],
+                    "type": "string"
+                  },
+                  "language": {
+                    "enum": [
+                      "string"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "models/assist-000/Configuration": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "assist-000"
+            ],
+            "type": "string"
+          },
+          "functions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FunctionDefinition"
+            }
+          }
+        }
+      },
+      "models/translate-000/Input": {
+        "type": "object",
+        "properties": {
+          "targetLanguage": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          }
+        }
+      },
+      "models/translate-000/Output": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "translate-000"
+            ],
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "models/translate-000/Configuration": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "translate-000"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "models/code-000/Input": {
+        "type": "object",
+        "properties": {
+          "targetLanguage": {
+            "type": "string"
+          },
+          "whatIsBeingGenerated": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          }
+        }
+      },
+      "models/code-000/Output": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "code-000"
+            ],
+            "type": "string"
+          },
+          "targetLanguage": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "models/code-000/Configuration": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "code-000"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "models/whisper-000/Input": {
+        "type": "object",
+        "properties": {
+          "arrayBuffer": {}
+        }
+      },
+      "models/whisper-000/Output": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "whisper-000"
+            ],
+            "type": "string"
+          },
+          "transcribed": {
+            "type": "string"
+          }
+        }
+      },
+      "models/whisper-000/Configuration": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "whisper-000"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "models/passthrough-openai-000/Input": {
+        "type": "object",
+        "properties": {
+          "openAiModel": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          }
+        }
+      },
+      "models/passthrough-openai-000/Output": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "passthrough-openai-000"
+            ],
+            "type": "string"
+          },
+          "openAiModel": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "models/passthrough-openai-000/Configuration": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "enum": [
+              "passthrough-openai-000"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "SessionConfiguration": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "maxResponseTokens": {
+            "type": "number"
+          },
+          "bestOf": {
+            "type": "number"
+          },
+          "disabledBuiltinFunctions": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "answer"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "math"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "time"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "editProse"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "editCode"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "generateCode"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "translate"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "fail"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "flushToSpeech"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "flushToText"
+                  ],
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Session": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "accountNumber": {
+                "type": "string"
+              },
+              "sessionId": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "full-date"
+              },
+              "configuration": {
+                "$ref": "#/components/schemas/SessionConfiguration"
+              },
+              "modelConfigurations": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/models/assist-000/Configuration"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "enum": [
+                            "noop"
+                          ],
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/models/translate-000/Configuration"
+                    },
+                    {
+                      "$ref": "#/components/schemas/models/code-000/Configuration"
+                    },
+                    {
+                      "$ref": "#/components/schemas/models/whisper-000/Configuration"
+                    },
+                    {
+                      "$ref": "#/components/schemas/models/passthrough-openai-000/Configuration"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "outputAwaitingContext": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/models/assist-000/Output"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "model": {
+                        "enum": [
+                          "noop"
+                        ],
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "#/components/schemas/models/translate-000/Output"
+                  },
+                  {
+                    "$ref": "#/components/schemas/models/code-000/Output"
+                  },
+                  {
+                    "$ref": "#/components/schemas/models/whisper-000/Output"
+                  },
+                  {
+                    "$ref": "#/components/schemas/models/passthrough-openai-000/Output"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "account_id": {
+        "type": "http",
+        "description": "Authenticate with your Account ID",
+        "scheme": "Bearer"
+      }
+    }
+  }
+}

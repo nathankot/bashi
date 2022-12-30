@@ -19,7 +19,7 @@
   "paths": {
     "/sessions": {
       "post": {
-        "operationId": "postSessions",
+        "operationId": "post_sessions",
         "summary": "TODO",
         "description": "TODO",
         "security": [
@@ -35,16 +35,22 @@
                 "allOf": [
                   {
                     "type": "object",
+                    "required": [
+                      "modelConfigurations"
+                    ],
                     "properties": {
                       "modelConfigurations": {
                         "type": "array",
                         "items": {
                           "anyOf": [
                             {
-                              "$ref": "#/components/schemas/models/assist-000/Configuration"
+                              "$ref": "#/components/schemas/models_assist-000_Configuration"
                             },
                             {
                               "type": "object",
+                              "required": [
+                                "model"
+                              ],
                               "properties": {
                                 "model": {
                                   "enum": [
@@ -55,16 +61,16 @@
                               }
                             },
                             {
-                              "$ref": "#/components/schemas/models/translate-000/Configuration"
+                              "$ref": "#/components/schemas/models_translate-000_Configuration"
                             },
                             {
-                              "$ref": "#/components/schemas/models/code-000/Configuration"
+                              "$ref": "#/components/schemas/models_code-000_Configuration"
                             },
                             {
-                              "$ref": "#/components/schemas/models/whisper-000/Configuration"
+                              "$ref": "#/components/schemas/models_whisper-000_Configuration"
                             },
                             {
-                              "$ref": "#/components/schemas/models/passthrough-openai-000/Configuration"
+                              "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                             }
                           ]
                         }
@@ -73,7 +79,7 @@
                   },
                   {
                     "type": "object",
-                    "additionalProperties": {
+                    "properties": {
                       "configuration": {
                         "$ref": "#/components/schemas/SessionConfiguration"
                       }
@@ -91,6 +97,10 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "session",
+                    "builtinFunctions"
+                  ],
                   "properties": {
                     "session": {
                       "$ref": "#/components/schemas/Session"
@@ -107,24 +117,313 @@
             }
           },
           "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/assist-000": {
+      "post": {
+        "operationId": "post_session_assist-000",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_assist-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
             "description": "TODO",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/models_assist-000_Output"
                 }
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
           "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/translate-000": {
+      "post": {
+        "operationId": "post_session_translate-000",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_translate-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
             "description": "TODO",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/models_translate-000_Output"
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/code-000": {
+      "post": {
+        "operationId": "post_session_code-000",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_code-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models_code-000_Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/whisper-000": {
+      "post": {
+        "operationId": "post_session_whisper-000",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_whisper-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models_whisper-000_Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/passthrough-openai-000": {
+      "post": {
+        "operationId": "post_session_passthrough-openai-000",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_passthrough-openai-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/noop": {
+      "post": {
+        "operationId": "post_session_noop",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "model"
+                  ],
+                  "properties": {
+                    "model": {
+                      "enum": [
+                        "noop"
+                      ],
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
           }
         }
       }
@@ -134,6 +433,9 @@
     "schemas": {
       "Error": {
         "type": "object",
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "string"
@@ -176,6 +478,10 @@
         "allOf": [
           {
             "type": "object",
+            "required": [
+              "description",
+              "args"
+            ],
             "properties": {
               "description": {
                 "type": "string"
@@ -186,6 +492,10 @@
                   "allOf": [
                     {
                       "type": "object",
+                      "required": [
+                        "name",
+                        "type"
+                      ],
                       "properties": {
                         "name": {
                           "type": "string"
@@ -197,7 +507,7 @@
                     },
                     {
                       "type": "object",
-                      "additionalProperties": {
+                      "properties": {
                         "parse": {
                           "type": "array",
                           "items": {
@@ -213,7 +523,7 @@
           },
           {
             "type": "object",
-            "additionalProperties": {
+            "properties": {
               "triggerTokens": {
                 "type": "array",
                 "items": {
@@ -224,12 +534,15 @@
           }
         ]
       },
-      "models/assist-000/Input": {
+      "models_assist-000_Input": {
         "anyOf": [
           {
             "allOf": [
               {
                 "type": "object",
+                "required": [
+                  "request"
+                ],
                 "properties": {
                   "request": {
                     "type": "string"
@@ -238,10 +551,10 @@
               },
               {
                 "type": "object",
-                "additionalProperties": {
+                "properties": {
                   "requestContext": {
                     "type": "object",
-                    "additionalProperties": {
+                    "properties": {
                       "text": {
                         "type": "string"
                       },
@@ -256,10 +569,13 @@
           },
           {
             "type": "object",
+            "required": [
+              "requestContext"
+            ],
             "properties": {
               "requestContext": {
                 "type": "object",
-                "additionalProperties": {
+                "properties": {
                   "text": {
                     "type": "string"
                   },
@@ -272,10 +588,15 @@
           }
         ]
       },
-      "models/assist-000/Output": {
+      "models_assist-000_Output": {
         "anyOf": [
           {
             "type": "object",
+            "required": [
+              "model",
+              "request",
+              "functionCalls"
+            ],
             "properties": {
               "model": {
                 "enum": [
@@ -292,6 +613,11 @@
                   "anyOf": [
                     {
                       "type": "object",
+                      "required": [
+                        "type",
+                        "line",
+                        "error"
+                      ],
                       "properties": {
                         "type": {
                           "enum": [
@@ -309,6 +635,13 @@
                     },
                     {
                       "type": "object",
+                      "required": [
+                        "line",
+                        "type",
+                        "name",
+                        "args",
+                        "invalid_reason"
+                      ],
                       "properties": {
                         "line": {
                           "type": "string"
@@ -366,6 +699,12 @@
                       "allOf": [
                         {
                           "type": "object",
+                          "required": [
+                            "line",
+                            "type",
+                            "name",
+                            "args"
+                          ],
                           "properties": {
                             "line": {
                               "type": "string"
@@ -399,14 +738,14 @@
                         },
                         {
                           "type": "object",
-                          "additionalProperties": {
+                          "properties": {
                             "argsParsed": {
                               "type": "array",
                               "items": {
                                 "anyOf": [
                                   {
                                     "type": "object",
-                                    "additionalProperties": {}
+                                    "properties": {}
                                   },
                                   {
                                     "type": "object",
@@ -433,6 +772,13 @@
                     },
                     {
                       "type": "object",
+                      "required": [
+                        "line",
+                        "type",
+                        "name",
+                        "args",
+                        "returnValue"
+                      ],
                       "properties": {
                         "line": {
                           "type": "string"
@@ -484,10 +830,13 @@
           },
           {
             "type": "object",
+            "required": [
+              "missingRequestContext"
+            ],
             "properties": {
               "missingRequestContext": {
                 "type": "object",
-                "additionalProperties": {
+                "properties": {
                   "text": {
                     "enum": [
                       "string"
@@ -506,8 +855,12 @@
           }
         ]
       },
-      "models/assist-000/Configuration": {
+      "models_assist-000_Configuration": {
         "type": "object",
+        "required": [
+          "model",
+          "functions"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -523,8 +876,12 @@
           }
         }
       },
-      "models/translate-000/Input": {
+      "models_translate-000_Input": {
         "type": "object",
+        "required": [
+          "targetLanguage",
+          "request"
+        ],
         "properties": {
           "targetLanguage": {
             "type": "string"
@@ -534,8 +891,13 @@
           }
         }
       },
-      "models/translate-000/Output": {
+      "models_translate-000_Output": {
         "type": "object",
+        "required": [
+          "model",
+          "request",
+          "result"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -551,8 +913,11 @@
           }
         }
       },
-      "models/translate-000/Configuration": {
+      "models_translate-000_Configuration": {
         "type": "object",
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -562,8 +927,13 @@
           }
         }
       },
-      "models/code-000/Input": {
+      "models_code-000_Input": {
         "type": "object",
+        "required": [
+          "targetLanguage",
+          "whatIsBeingGenerated",
+          "request"
+        ],
         "properties": {
           "targetLanguage": {
             "type": "string"
@@ -576,8 +946,14 @@
           }
         }
       },
-      "models/code-000/Output": {
+      "models_code-000_Output": {
         "type": "object",
+        "required": [
+          "model",
+          "targetLanguage",
+          "request",
+          "result"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -596,8 +972,11 @@
           }
         }
       },
-      "models/code-000/Configuration": {
+      "models_code-000_Configuration": {
         "type": "object",
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -607,14 +986,21 @@
           }
         }
       },
-      "models/whisper-000/Input": {
+      "models_whisper-000_Input": {
         "type": "object",
+        "required": [
+          "arrayBuffer"
+        ],
         "properties": {
           "arrayBuffer": {}
         }
       },
-      "models/whisper-000/Output": {
+      "models_whisper-000_Output": {
         "type": "object",
+        "required": [
+          "model",
+          "transcribed"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -627,8 +1013,11 @@
           }
         }
       },
-      "models/whisper-000/Configuration": {
+      "models_whisper-000_Configuration": {
         "type": "object",
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -638,8 +1027,12 @@
           }
         }
       },
-      "models/passthrough-openai-000/Input": {
+      "models_passthrough-openai-000_Input": {
         "type": "object",
+        "required": [
+          "openAiModel",
+          "request"
+        ],
         "properties": {
           "openAiModel": {
             "type": "string"
@@ -649,8 +1042,14 @@
           }
         }
       },
-      "models/passthrough-openai-000/Output": {
+      "models_passthrough-openai-000_Output": {
         "type": "object",
+        "required": [
+          "model",
+          "openAiModel",
+          "request",
+          "result"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -669,8 +1068,11 @@
           }
         }
       },
-      "models/passthrough-openai-000/Configuration": {
+      "models_passthrough-openai-000_Configuration": {
         "type": "object",
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "enum": [
@@ -682,6 +1084,12 @@
       },
       "SessionConfiguration": {
         "type": "object",
+        "required": [
+          "locale",
+          "maxResponseTokens",
+          "bestOf",
+          "disabledBuiltinFunctions"
+        ],
         "properties": {
           "locale": {
             "type": "string"
@@ -765,6 +1173,13 @@
         "allOf": [
           {
             "type": "object",
+            "required": [
+              "accountNumber",
+              "sessionId",
+              "expiresAt",
+              "configuration",
+              "modelConfigurations"
+            ],
             "properties": {
               "accountNumber": {
                 "type": "string"
@@ -784,10 +1199,13 @@
                 "items": {
                   "anyOf": [
                     {
-                      "$ref": "#/components/schemas/models/assist-000/Configuration"
+                      "$ref": "#/components/schemas/models_assist-000_Configuration"
                     },
                     {
                       "type": "object",
+                      "required": [
+                        "model"
+                      ],
                       "properties": {
                         "model": {
                           "enum": [
@@ -798,16 +1216,16 @@
                       }
                     },
                     {
-                      "$ref": "#/components/schemas/models/translate-000/Configuration"
+                      "$ref": "#/components/schemas/models_translate-000_Configuration"
                     },
                     {
-                      "$ref": "#/components/schemas/models/code-000/Configuration"
+                      "$ref": "#/components/schemas/models_code-000_Configuration"
                     },
                     {
-                      "$ref": "#/components/schemas/models/whisper-000/Configuration"
+                      "$ref": "#/components/schemas/models_whisper-000_Configuration"
                     },
                     {
-                      "$ref": "#/components/schemas/models/passthrough-openai-000/Configuration"
+                      "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                     }
                   ]
                 }
@@ -816,14 +1234,17 @@
           },
           {
             "type": "object",
-            "additionalProperties": {
+            "properties": {
               "outputAwaitingContext": {
                 "anyOf": [
                   {
-                    "$ref": "#/components/schemas/models/assist-000/Output"
+                    "$ref": "#/components/schemas/models_assist-000_Output"
                   },
                   {
                     "type": "object",
+                    "required": [
+                      "model"
+                    ],
                     "properties": {
                       "model": {
                         "enum": [
@@ -834,16 +1255,16 @@
                     }
                   },
                   {
-                    "$ref": "#/components/schemas/models/translate-000/Output"
+                    "$ref": "#/components/schemas/models_translate-000_Output"
                   },
                   {
-                    "$ref": "#/components/schemas/models/code-000/Output"
+                    "$ref": "#/components/schemas/models_code-000_Output"
                   },
                   {
-                    "$ref": "#/components/schemas/models/whisper-000/Output"
+                    "$ref": "#/components/schemas/models_whisper-000_Output"
                   },
                   {
-                    "$ref": "#/components/schemas/models/passthrough-openai-000/Output"
+                    "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
                   }
                 ]
               }
@@ -864,7 +1285,22 @@
         "in": "header",
         "name": "Session-ID",
         "required": true,
-        "description": "A session_id retrieved from POST /sessions"
+        "description": "A session_id retrieved from POST /sessions",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "error": {
+        "description": "TODO",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
     }
   }

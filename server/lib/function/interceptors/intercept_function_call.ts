@@ -12,7 +12,7 @@ import {
 
 import { ModelName, models } from "@lib/models.ts";
 
-import { RequestContextDef, RequestContext } from "@lib/request_context.ts";
+import { RequestContextDef, RequestContext } from "@lib/requestContext.ts";
 
 export function interceptFunctionCall<
   N extends Extract<

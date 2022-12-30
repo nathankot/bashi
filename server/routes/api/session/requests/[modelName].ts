@@ -1,11 +1,13 @@
 import * as t from "io-ts";
 
 import { Handlers } from "$fresh/server.ts";
+import { OpenAPIV3 } from "openapi-types";
 
 import { HTTPError } from "@lib/errors.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { defaultPolicy } from "@lib/faultHandling.ts";
+import toJSONSchema from "@lib/toJsonSchema.ts";
 import {
   AllInput,
   AllOutput,
@@ -25,6 +27,47 @@ export type POSTRequest = t.TypeOf<typeof POSTRequest>;
 
 export const POSTResponse = AllOutput;
 export type POSTResponse = t.TypeOf<typeof POSTResponse>;
+
+export const meta = {} as Record<ModelName, OpenAPIV3.PathItemObject>;
+
+for (const modelName of Object.keys(models) as ModelName[]) {
+  meta[modelName] = {
+    post: {
+      operationId: "post_session_" + modelName,
+      summary: "TODO",
+      description: "TODO",
+      security: [{ account_number: [] }],
+      parameters: [
+        {
+          $ref: "#/components/parameters/session_id",
+        },
+      ],
+      requestBody: {
+        description: "TODO",
+        content: {
+          "application/json": {
+            schema: toJSONSchema(models[modelName].Input),
+            // TODO
+            // example: {}
+          },
+        },
+      },
+      responses: {
+        "200": {
+          description: "TODO",
+          content: {
+            "application/json": {
+              schema: toJSONSchema(models[modelName].Output),
+            },
+          },
+        },
+        "400": { $ref: "#/components/responses/error" },
+        "401": { $ref: "#/components/responses/error" },
+        "403": { $ref: "#/components/responses/error" },
+      },
+    },
+  } satisfies OpenAPIV3.PathItemObject;
+}
 
 export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {

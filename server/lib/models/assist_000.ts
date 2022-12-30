@@ -10,7 +10,7 @@ import {
 } from "@lib/function.ts";
 
 import { HTTPError } from "@lib/errors.ts";
-import { RequestContext, RequestContextDef } from "@lib/request_context.ts";
+import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
 import { wrap } from "@lib/log.ts";
 
 import { ModelDeps } from "./model_deps.ts";

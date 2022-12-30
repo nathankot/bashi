@@ -1,9 +1,12 @@
 import { OpenAPIV3 } from "openapi-types";
 import { equal } from "std/testing/asserts.ts";
 
-import { namedJSONSchemaObjects } from "@lib/to_json_schema.ts";
+import { ResponseError } from "@lib/errors.ts";
+import { namedJSONSchemaObjects } from "@lib/toJsonSchema.ts";
+import toJSONSchema from "@lib/toJsonSchema.ts";
+
 import * as sessionsEndpoint from "@routes/api/sessions.ts";
-// import * as postModelName from "@routes/api/session/requests/[modelName].ts";
+import * as modelNameEndpoint from "@routes/api/session/requests/[modelName].ts";
 
 const SPEC_PATH = "./static/openapi.json";
 
@@ -28,6 +31,13 @@ export default async function generateOpenAPISpec() {
     ],
     paths: {
       "/sessions": sessionsEndpoint.meta,
+      ...Object.entries(modelNameEndpoint.meta).reduce(
+        (a, [modelName, pathItemObject]) => ({
+          ...a,
+          [`/session/requests/${modelName}`]: pathItemObject,
+        }),
+        {}
+      ),
     },
     components: {
       schemas: Object.entries(namedJSONSchemaObjects).reduce(
@@ -47,6 +57,17 @@ export default async function generateOpenAPISpec() {
           name: "Session-ID",
           required: true,
           description: "A session_id retrieved from POST /sessions",
+          schema: { type: "string" },
+        },
+      },
+      responses: {
+        error: {
+          description: "TODO",
+          content: {
+            "application/json": {
+              schema: toJSONSchema(ResponseError),
+            },
+          },
         },
       },
     },

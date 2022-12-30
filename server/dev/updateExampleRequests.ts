@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
-import { RequestContext } from "@lib/request_context.ts";
+import { RequestContext } from "@lib/requestContext.ts";
 import { ModelDeps, run } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint } from "@lib/clients.ts";

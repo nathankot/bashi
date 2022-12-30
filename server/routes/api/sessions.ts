@@ -5,14 +5,14 @@ import * as b64 from "std/encoding/base64.ts";
 import { Handlers } from "$fresh/server.ts";
 import { OpenAPIV3 } from "openapi-types";
 
-import { HTTPError, ResponseError } from "@lib/errors.ts";
+import { HTTPError } from "@lib/errors.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { Session, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/msgpack.ts";
-import toJSONSchema from "@lib/to_json_schema.ts";
+import toJSONSchema from "@lib/toJsonSchema.ts";
 
 import { State } from "./_middleware.ts";
 
@@ -34,7 +34,7 @@ export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const meta = {
   post: {
-    operationId: "postSessions",
+    operationId: "post_sessions",
     summary: "TODO",
     description: "TODO",
     security: [{ account_number: [] }],
@@ -46,7 +46,7 @@ export const meta = {
           // TODO
           // example: {},
         },
-      } satisfies OpenAPIV3.RequestBodyObject["content"],
+      },
     },
     responses: {
       "200": {
@@ -59,22 +59,9 @@ export const meta = {
           },
         },
       },
-      "401": {
-        description: "TODO",
-        content: {
-          "application/json": {
-            schema: toJSONSchema(ResponseError),
-          },
-        },
-      },
-      "400": {
-        description: "TODO",
-        content: {
-          "application/json": {
-            schema: toJSONSchema(ResponseError),
-          },
-        },
-      },
+      "400": { $ref: "#/components/responses/error" },
+      "401": { $ref: "#/components/responses/error" },
+      "403": { $ref: "#/components/responses/error" },
     },
   },
 } satisfies OpenAPIV3.PathItemObject;

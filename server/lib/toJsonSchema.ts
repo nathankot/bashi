@@ -89,7 +89,7 @@ export default function toJSONSchema(
         >;
         return {
           type: "object",
-          additionalProperties: Object.entries(partial.props).reduce(
+          properties: Object.entries(partial.props).reduce(
             (a, [p, t]) => ({
               ...a,
               [p]: recurse(
@@ -106,8 +106,10 @@ export default function toJSONSchema(
         const iface = type as t.InterfaceType<
           Record<string, { _tag: SupportedTag }>
         >;
+        const propNames = Object.keys(iface.props);
         return {
           type: "object",
+          required: propNames.length > 0 ? propNames : undefined,
           properties: Object.entries(iface.props).reduce(
             (a, [p, t]) => ({ ...a, [p]: recurse(t) }),
             {}
@@ -182,12 +184,12 @@ for (const [modelName, model] of Object.entries(models)) {
     continue;
   }
 
-  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Input`] =
+  namedJSONSchemaObjects[`#/components/schemas/models_${modelName}_Input`] =
     toJSONSchema(model.Input);
-  namedJSONSchemaObjects[`#/components/schemas/models/${modelName}/Output`] =
+  namedJSONSchemaObjects[`#/components/schemas/models_${modelName}_Output`] =
     toJSONSchema(model.Output);
   namedJSONSchemaObjects[
-    `#/components/schemas/models/${modelName}/Configuration`
+    `#/components/schemas/models_${modelName}_Configuration`
   ] = toJSONSchema(model.Configuration);
 }
 

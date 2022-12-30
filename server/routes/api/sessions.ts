@@ -33,51 +33,51 @@ export const POSTResponse = t.type({
 export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const meta = {
-  operationId: "postSessions",
-  summary: "TODO",
-  description: "TODO",
-  parameters: [] as OpenAPIV3.OperationObject["parameters"],
-  requestBody: {
+  post: {
+    operationId: "postSessions",
+    summary: "TODO",
     description: "TODO",
-    required: true,
-    content: {
-      "application/json": {
-        schema: toJSONSchema(POSTRequest),
-        // TODO
-        // example: {},
-      },
-    } satisfies OpenAPIV3.RequestBodyObject["content"],
-  },
-  responseSuccess: {
-    status: 200 as 200,
-    description: "TODO",
-    content: {
-      "application/json": {
-        schema: toJSONSchema(POSTResponse),
-        // TODO
-        // example: {},
-      },
-    },
-  },
-  otherResponses: {
-    "401": {
+    security: [{ account_id: [] }],
+    requestBody: {
       description: "TODO",
       content: {
         "application/json": {
-          schema: toJSONSchema(ResponseError),
+          schema: toJSONSchema(POSTRequest),
+          // TODO
+          // example: {},
+        },
+      } satisfies OpenAPIV3.RequestBodyObject["content"],
+    },
+    responses: {
+      "200": {
+        description: "TODO",
+        content: {
+          "application/json": {
+            schema: toJSONSchema(POSTResponse),
+            // TODO
+            // example: {},
+          },
+        },
+      },
+      "401": {
+        description: "TODO",
+        content: {
+          "application/json": {
+            schema: toJSONSchema(ResponseError),
+          },
+        },
+      },
+      "400": {
+        description: "TODO",
+        content: {
+          "application/json": {
+            schema: toJSONSchema(ResponseError),
+          },
         },
       },
     },
-    "400": {
-      description: "TODO",
-      content: {
-        "application/json": {
-          schema: toJSONSchema(ResponseError),
-        },
-      },
-    },
-  } satisfies OpenAPIV3.OperationObject["responses"],
-};
+  },
+} satisfies OpenAPIV3.PathItemObject;
 
 export const handler: Handlers<POSTResponse, State> = {
   async POST(req, ctx) {

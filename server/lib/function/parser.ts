@@ -11,7 +11,7 @@ import {
 
 import { LogFn } from "@lib/log.ts";
 
-import argumentParsers from "./argument_parsers.ts";
+import argumentParsers from "./argumentParsers.ts";
 
 import {
   FunctionCall,

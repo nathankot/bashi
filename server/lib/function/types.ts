@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { Argument, ArgumentParser } from "./argument_parsers.ts";
+import { Argument, ArgumentParser } from "./argumentParsers.ts";
 export { Argument, ArgumentParser };
 
 export const ArgumentType = t.keyof({

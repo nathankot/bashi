@@ -13,7 +13,7 @@ import { HTTPError } from "@lib/errors.ts";
 import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
 import { wrap } from "@lib/log.ts";
 
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "./modelDeps.ts";
 
 export const Name = t.literal("assist-000");
 export type Name = t.TypeOf<typeof Name>;

@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "./modelDeps.ts";
 
 const model = "passthrough-openai-000";
 

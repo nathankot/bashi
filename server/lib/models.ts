@@ -1,17 +1,17 @@
 import * as t from "io-ts";
 
 import { HTTPError } from "@lib/errors.ts";
-import { ModelDeps } from "./models/model_deps.ts";
+import { ModelDeps } from "./models/modelDeps.ts";
 
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models
 
-import * as assist000 from "./models/assist_000.ts";
-import * as translate000 from "./models/translate_000.ts";
-import * as code000 from "./models/code_000.ts";
+import * as assist000 from "./models/assist000.ts";
+import * as translate000 from "./models/translate000.ts";
+import * as code000 from "./models/code000.ts";
 import * as noop from "./models/noop.ts";
-import * as whisper000 from "./models/whisper_000.ts";
-import * as passthroughOpenAi000 from "./models/passthrough_openai_000.ts";
+import * as whisper000 from "./models/whisper000.ts";
+import * as passthroughOpenAi000 from "./models/passthroughOpenai000.ts";
 
 export const models = {
   "assist-000": assist000,

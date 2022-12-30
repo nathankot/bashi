@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "./modelDeps.ts";
 
 export const Name = t.literal("noop");
 export type Name = t.TypeOf<typeof Name>;

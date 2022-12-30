@@ -1,8 +1,8 @@
 import * as t from "io-ts";
 
-import { ModelDeps } from "./model_deps.ts";
+import { ModelDeps } from "./modelDeps.ts";
 
-export const Name = t.literal("code-000");
+export const Name = t.literal("translate-000");
 export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
@@ -12,21 +12,19 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
   targetLanguage: t.string,
-  whatIsBeingGenerated: t.string,
   request: t.string,
 });
 export type Input = t.TypeOf<typeof Input>;
 
 export const Output = t.type({
   model: Name,
-  targetLanguage: t.string,
   request: t.string,
   result: t.string,
 });
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
-  model: "code-000",
+  model: "translate-000",
 };
 
 export async function run(
@@ -34,11 +32,8 @@ export async function run(
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
-  const prompt = makePrompt(
-    input.targetLanguage.trim(),
-    input.whatIsBeingGenerated.trim(),
-    input.request.trim()
-  );
+  const request = input.request.trim();
+  const prompt = makePrompt(input.targetLanguage, request);
   const completion = await deps.openai.createCompletion(
     {
       model: "text-davinci-003",
@@ -60,18 +55,12 @@ export async function run(
   const result = completion.data.choices[0]?.text ?? "";
 
   return {
-    model: "code-000",
-    targetLanguage: input.targetLanguage,
-    request: input.request,
+    model: "translate-000",
+    request,
     result,
   };
 }
 
-function makePrompt(
-  targetLanguage: string,
-  whatIsBeingGenerated: string,
-  request: string
-): string {
-  return `Generate a ${targetLanguage} ${whatIsBeingGenerated} to ${request}:
-`;
+function makePrompt(targetLanguage: string, request: string): string {
+  return `Translate this into ${targetLanguage}:\n${request}\n\nTranslation:\n`;
 }

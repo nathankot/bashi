@@ -15,7 +15,6 @@
     "mathjs": "./esm.sh/mathjs@11.5.0.js",
     "chrono": "./esm.sh/chrono-node@2.4.2.js",
     "std/log/mod.ts": "./deno.land/std@0.170.0/log/mod.ts",
-    "fp-ts": "./esm.sh/fp-ts@2.13.1.js",
     "io-ts-types": "./esm.sh/io-ts-types@0.5.19.js",
     "openapi-types": "./esm.sh/openapi-types@12.1.0.js",
     "std/testing/asserts.ts": "./deno.land/std@0.170.0/testing/asserts.ts",

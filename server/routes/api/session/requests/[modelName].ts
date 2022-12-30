@@ -1,5 +1,4 @@
 import * as t from "io-ts";
-import * as f from "fp-ts";
 
 import { Handlers } from "$fresh/server.ts";
 
@@ -14,6 +13,7 @@ import {
   InputFor,
   ModelDeps,
   run,
+  models,
 } from "@lib/models.ts";
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
@@ -30,11 +30,10 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {
     let log = ctx.state.log;
 
-    const modelNameDecodeResult = ModelName.decode(ctx.params["modelName"]);
-    if (!f.either.isRight(modelNameDecodeResult)) {
+    const model = ctx.params["modelName"];
+    if (!ModelName.is(model)) {
       return handleError(log, new HTTPError(`model name invalid`, 400));
     }
-    const model: ModelName = modelNameDecodeResult.right as any;
     log = wrap({ model }, ctx.state.log);
 
     const modelDeps: Omit<ModelDeps, "signal"> = {
@@ -74,22 +73,16 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
             return renderError(400, "could not parse json");
           }
 
-          const inputDecodeResult = AllInput.decode({ model, ...json });
-          if (!f.either.isRight(inputDecodeResult)) {
+          const input = { model, ...json };
+          if (!models[model].Input.is(input)) {
             return renderError(400, "malformed request");
           }
 
-          const requestInput: InputFor<typeof model> =
-            inputDecodeResult.right as any;
-
-          if (
-            "request" in requestInput &&
-            requestInput.request.trim().length === 0
-          ) {
+          if ("request" in input && input.request.trim().length === 0) {
             return renderError(400, "request must not be empty");
           }
 
-          return renderJSON(await run(modelDeps, model, requestInput));
+          return renderJSON(await run(modelDeps, model, input));
 
         default:
           const exhaustiveCheck: never = model;

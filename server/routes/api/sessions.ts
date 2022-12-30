@@ -1,5 +1,4 @@
 import * as t from "io-ts";
-import * as f from "fp-ts";
 
 import * as b64 from "std/encoding/base64.ts";
 
@@ -99,22 +98,20 @@ export const handler: Handlers<POSTResponse, State> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const reqDecodeResult: t.Validation<POSTRequest> = POSTRequest.decode(json);
-    if (!f.either.isRight(reqDecodeResult)) {
+    if (!POSTRequest.is(json)) {
       return renderError(400, "malformed request");
     }
 
     try {
       const sessionId = crypto.randomUUID();
-      const reqDecoded: POSTRequest = reqDecodeResult.right as any;
 
       const expiresAt = new Date(ctx.state.now().getTime() + SESSION_EXPIRY_MS);
 
       const session: Session = {
-        modelConfigurations: reqDecoded.modelConfigurations,
+        modelConfigurations: json.modelConfigurations,
         configuration: {
           ...defaultConfiguration,
-          ...reqDecoded.configuration,
+          ...json.configuration,
         },
         expiresAt: expiresAt,
         sessionId,
@@ -154,7 +151,7 @@ export const handler: Handlers<POSTResponse, State> = {
           session,
           builtinFunctions,
         },
-        meta.responseSuccess.status
+        200
       );
     } catch (e) {
       return handleError(log, e);

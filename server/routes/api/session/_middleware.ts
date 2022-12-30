@@ -1,4 +1,3 @@
-import * as f from "fp-ts";
 import * as b64 from "std/encoding/base64.ts";
 import { msgpack } from "@/msgpack.ts";
 
@@ -43,14 +42,12 @@ export async function handler(
     // TODO: unfortunately this uses b64 instead of
     // raw bytes because of an incompatibility when
     // deno imports @redis/client.
-    const deserialized = msgpack.deserialize(b64.decode(bin));
-    const decoded = Session.decode(deserialized);
+    const session = msgpack.deserialize(b64.decode(bin));
 
-    if (f.either.isLeft(decoded)) {
+    if (!Session.is(session)) {
       return renderError(500, "internal error");
     }
 
-    const session: Session = decoded.right;
     if (session.expiresAt.getTime() < ctx.state.now().getTime()) {
       return renderError(401, "session not found or expired");
     }

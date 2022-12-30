@@ -1,5 +1,4 @@
 import * as t from "io-ts";
-import * as f from "fp-ts";
 
 import { HTTPError } from "@lib/errors.ts";
 import { ModelDeps } from "./models/model_deps.ts";
@@ -77,7 +76,7 @@ export async function run<N extends keyof typeof models>(
 
   const model: typeof models[N] = models[modelName];
 
-  if (!validateInput(modelName, input)) {
+  if (!models[modelName].Input.is(input)) {
     throw new Error("could not validate input");
   }
 
@@ -95,7 +94,7 @@ export async function run<N extends keyof typeof models>(
     })(),
   };
 
-  if (!validateConfiguration(modelName, configuration)) {
+  if (!models[modelName].Configuration.is(configuration)) {
     throw new HTTPError(
       `the model '${modelName}' has not been fully configured`,
       400
@@ -108,32 +107,9 @@ export async function run<N extends keyof typeof models>(
     model.run({ ...modelDeps, signal }, configuration as any, input as any)
   );
 
-  if (!validateOutput(modelName, output)) {
+  if (!models[modelName].Output.is(output)) {
     throw new Error(`resulting output did not match model expectations`);
   }
 
   return output;
-}
-
-function validateOutput<N extends ModelName>(
-  modelName: N,
-  output: t.TypeOf<typeof models[ModelName]["Output"]>
-): output is t.TypeOf<typeof models[N]["Output"]> {
-  return f.either.isRight(models[modelName].Output.decode(output));
-}
-
-function validateInput<N extends ModelName>(
-  modelName: N,
-  input: t.TypeOf<typeof models[ModelName]["Input"]>
-): input is t.TypeOf<typeof models[N]["Input"]> {
-  return f.either.isRight(models[modelName].Input.decode(input));
-}
-
-function validateConfiguration<N extends ModelName>(
-  modelName: N,
-  configuration: Partial<t.TypeOf<typeof models[ModelName]["Configuration"]>>
-): configuration is t.TypeOf<typeof models[N]["Configuration"]> {
-  return f.either.isRight(
-    models[modelName].Configuration.decode(configuration)
-  );
 }

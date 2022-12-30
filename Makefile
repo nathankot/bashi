@@ -30,7 +30,7 @@ bench:
 	cd ./server && deno bench --allow-env --allow-read
 
 check:
-	cd ./server && deno check ./main.ts
+	cd ./server && deno check --lock-write ./main.ts
 
 vendor: check
 	cd ./server && cp ./deno.json ./deno.vendored.json

@@ -1,5 +1,3 @@
-// import Lincoln from "https://esm.sh/react-lincoln?alias=react:preact/compat&alias=react-dom:preact/compat&external=react";
-
 import { OpenAPIV3 } from "openapi-types";
 
 import { namedJSONSchemaObjects } from "@lib/to_json_schema.ts";

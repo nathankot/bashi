@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --check -A --watch=static/,routes/
+#!/usr/bin/env -S deno run --allow-run --allow-write --allow-read --allow-env --allow-net --check --watch=static/,routes/ dev.ts
 
 import dev from "$fresh/dev.ts";
 import updateExamples from "./dev/updateExampleRequests.ts";

@@ -1,7 +1,7 @@
 {
   "imports": {
     "std/": "https://deno.land/std/",
-    "$fresh/": "https://deno.land/x/fresh@1.1.2/",
+    "$fresh/": "https://raw.githubusercontent.com/denoland/fresh/82bdd6fb77d8acd3296fb8457ad0b4207bfba53f/",
     "dotenv/": "https://deno.land/x/dotenv/",
     "preact": "https://esm.sh/preact@10.11.0",
     "preact/hooks": "https://esm.sh/preact@10.11.0/hooks",

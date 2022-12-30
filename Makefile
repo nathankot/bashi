@@ -18,7 +18,7 @@ build:
 	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
 dev:
-	cd ./server && deno run -A --check --watch=static/,routes/ dev.ts
+	cd ./server && ./dev.ts
 
 test:
 	cd ./server && deno test --allow-env --allow-read
@@ -34,4 +34,5 @@ check:
 
 vendor: check
 	cd ./server && cp ./deno.json ./deno.vendored.json
+	cd ./server && rm -rf vendor
 	cd ./server && deno vendor -c ./deno.vendored.json --import-map ./import_map.json --force --reload main.ts vendor_extra.ts

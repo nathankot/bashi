@@ -37,7 +37,7 @@ export const meta = {
     operationId: "postSessions",
     summary: "TODO",
     description: "TODO",
-    security: [{ account_id: [] }],
+    security: [{ account_number: [] }],
     requestBody: {
       description: "TODO",
       content: {

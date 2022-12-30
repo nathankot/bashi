@@ -29,7 +29,12 @@ export async function handler(
       return renderError(401, "malformed Authorization header");
     }
 
-    const sessionId = authorization.substring("Bearer ".length);
+    const accountNumber = authorization.substring("Bearer ".length);
+
+    const sessionId = req.headers.get("Session-ID");
+    if (sessionId == null || sessionId.length === 0) {
+      return renderError(400, "no Session-ID header found");
+    }
 
     const bin: string | null = await ctx.state.clients.withRedis((client) =>
       client.get("s:" + sessionId)
@@ -48,6 +53,10 @@ export async function handler(
       return renderError(500, "internal error");
     }
 
+    if (session.accountNumber !== accountNumber) {
+      return renderError(403, "session belongs to a different account");
+    }
+
     if (session.expiresAt.getTime() < ctx.state.now().getTime()) {
       return renderError(401, "session not found or expired");
     }
@@ -55,7 +64,7 @@ export async function handler(
     ctx.state.log = wrap(
       {
         sessionId,
-        accountNumber: session.accountNumber,
+        accountNumber,
       },
       ctx.state.log
     );

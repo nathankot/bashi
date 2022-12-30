@@ -12,8 +12,9 @@ export default function TextPrompt(props: { sessionId: string }) {
     const result = await fetch("/api/session/requests/assist-000", {
       method: "POST",
       headers: {
+        Authorization: `Bearer 0000000000000000`,
         "Content-Type": "application/json",
-        Authorization: `Bearer ${props.sessionId}`,
+        "Session-ID": props.sessionId,
       },
       body: JSON.stringify(request),
     });

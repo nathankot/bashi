@@ -34,8 +34,9 @@ export default function AudioPrompt(props: { sessionId: string }) {
         method: "POST",
         body: new Blob(buffers),
         headers: {
+          Authorization: `Bearer 0000000000`,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${props.sessionId}`,
+          "Session-ID": props.sessionId,
         },
       });
       const transcribeResult = await transcribeResponse.json();
@@ -46,8 +47,9 @@ export default function AudioPrompt(props: { sessionId: string }) {
         method: "POST",
         body: JSON.stringify(request),
         headers: {
+          Authorization: `Bearer 0000000000`,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${props.sessionId}`,
+          "Session-ID": props.sessionId,
         },
       });
 

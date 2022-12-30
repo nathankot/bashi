@@ -19,7 +19,7 @@ export function handleError(log: LogFn, e: unknown): Response {
 }
 
 export function renderError<T extends {}>(
-  statusCode: 400 | 404 | 401 | 500,
+  statusCode: 400 | 403 | 404 | 401 | 500,
   message: string,
   mergeWith?: T
 ): Response {

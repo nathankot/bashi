@@ -35,10 +35,18 @@ export default async function generateOpenAPISpec() {
         {}
       ) as any,
       securitySchemes: {
-        account_id: {
+        account_number: {
           type: "http",
           description: "Authenticate with your Account ID",
           scheme: "Bearer",
+        },
+      },
+      parameters: {
+        session_id: {
+          in: "header",
+          name: "Session-ID",
+          required: true,
+          description: "A session_id retrieved from POST /sessions",
         },
       },
     },

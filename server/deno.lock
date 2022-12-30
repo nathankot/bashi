@@ -316,6 +316,7 @@
     "https://deno.land/x/importmap@0.2.1/_util.ts": "ada9a9618b537e6c0316c048a898352396c882b9f2de38aba18fd3f2950ede89",
     "https://deno.land/x/importmap@0.2.1/mod.ts": "ae3d1cd7eabd18c01a4960d57db471126b020f23b37ef14e1359bbb949227ade",
     "https://deno.land/x/rutt@0.0.13/mod.ts": "af981cfb95131152bf50fc9140fc00cb3efb6563df2eded1d408361d8577df20",
+    "https://deno.land/x/xhr@0.2.1/mod.ts": "9a5b4da46363ab6a134cd457a1baf15a808574ddd2e6a1c6846e0633fc15681c",
     "https://esm.sh/*preact-render-to-string@5.2.4": "a4b191d09671af764e91a4cd6a79c357f79632910d78f69baec4148d6983fdd5",
     "https://esm.sh/@redis/client@1.4.2": "7901c5d475a680342849557063a91d7cd81e208204840bd0be546d58d1a0c493",
     "https://esm.sh/@ygoe/msgpack@1.0.3/msgpack.d.ts": "3e74c436f5b90958ec2767d5ebc9e8d893608b9308c395c27229bdf4ce31fef7",

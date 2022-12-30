@@ -19,6 +19,7 @@
     "openapi-types": "./esm.sh/openapi-types@12.1.0.js",
     "std/testing/asserts.ts": "./deno.land/std@0.170.0/testing/asserts.ts",
     "$fresh/plugins/twind.ts": "./deno.land/x/fresh@1.1.2/plugins/twind.ts",
+    "xhr-polyfill": "./deno.land/x/xhr@0.2.1/mod.ts",
     "msgpack/msgpack.js": "./esm.sh/@ygoe/msgpack@1.0.3/msgpack.js",
     "msgpack/msgpack.d.ts": "./esm.sh/@ygoe/msgpack@1.0.3/msgpack.d.ts",
     "std/encoding/base64.ts": "./deno.land/std@0.170.0/encoding/base64.ts",

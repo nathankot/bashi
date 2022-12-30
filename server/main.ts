@@ -13,6 +13,10 @@ import { setup as setupLogger, log } from "@lib/log.ts";
 
 import { retryPolicy, circuitBreakerPolicy } from "@lib/faultHandling.ts";
 
+// Polyfill XMLHttpRequest which is required by the openai client,
+// see: https://github.com/denoland/deno/discussions/15040
+import "xhr-polyfill";
+
 await setupLogger();
 
 retryPolicy.onRetry((v) => {

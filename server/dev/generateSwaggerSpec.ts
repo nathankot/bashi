@@ -30,6 +30,7 @@ export default async function generateSwaggerSpec() {
           operationId: postSessions.meta.operationId,
           summary: postSessions.meta.summary,
           description: postSessions.meta.description,
+          parameters: postSessions.meta.parameters,
           requestBody: {
             description: postSessions.meta.requestBody.description,
             required: postSessions.meta.requestBody.required,
@@ -52,7 +53,6 @@ export default async function generateSwaggerSpec() {
       ) as any,
     },
   };
-  console.log(spec);
 
-  // console.log(JSON.stringify(spec, null, "  "));
+  console.log(JSON.stringify(spec, null, "  "));
 }

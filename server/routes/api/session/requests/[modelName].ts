@@ -20,11 +20,11 @@ import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "../_middleware.ts";
 
 // Note the following does not specify the binary audio/* request:
-export const Request = AllInput;
-export type Request = t.TypeOf<typeof Request>;
+export const POSTRequest = AllInput;
+export type POSTRequest = t.TypeOf<typeof POSTRequest>;
 
-export const Response = AllOutput;
-export type Response = t.TypeOf<typeof Response>;
+export const POSTResponse = AllOutput;
+export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {

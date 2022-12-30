@@ -17,7 +17,7 @@ import toJSONSchema from "@lib/to_json_schema.ts";
 
 import { State } from "./_middleware.ts";
 
-export const Request = t.intersection([
+export const POSTRequest = t.intersection([
   t.type({
     modelConfigurations: Session.types[0].props.modelConfigurations,
   }),
@@ -25,24 +25,25 @@ export const Request = t.intersection([
     configuration: Session.types[0].props.configuration,
   }),
 ]);
-export type Request = t.TypeOf<typeof Request>;
+export type POSTRequest = t.TypeOf<typeof POSTRequest>;
 
-export const Response = t.type({
+export const POSTResponse = t.type({
   session: Session,
   builtinFunctions: FunctionSet,
 });
-export type Response = t.TypeOf<typeof Response>;
+export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const meta = {
   operationId: "postSessions",
   summary: "TODO",
   description: "TODO",
+  parameters: [] as OpenAPIV3.OperationObject["parameters"],
   requestBody: {
     description: "TODO",
     required: true,
     content: {
       "application/json": {
-        schema: toJSONSchema(Request),
+        schema: toJSONSchema(POSTRequest),
         // TODO
         // example: {},
       },
@@ -53,7 +54,7 @@ export const meta = {
     description: "TODO",
     content: {
       "application/json": {
-        schema: toJSONSchema(Response),
+        schema: toJSONSchema(POSTResponse),
         // TODO
         // example: {},
       },
@@ -79,7 +80,7 @@ export const meta = {
   } satisfies OpenAPIV3.OperationObject["responses"],
 };
 
-export const handler: Handlers<Response, State> = {
+export const handler: Handlers<POSTResponse, State> = {
   async POST(req, ctx) {
     let log = ctx.state.log;
 
@@ -98,14 +99,14 @@ export const handler: Handlers<Response, State> = {
     } catch {
       return renderError(400, "could not parse json");
     }
-    const reqDecodeResult: t.Validation<Request> = Request.decode(json);
+    const reqDecodeResult: t.Validation<POSTRequest> = POSTRequest.decode(json);
     if (!f.either.isRight(reqDecodeResult)) {
       return renderError(400, "malformed request");
     }
 
     try {
       const sessionId = crypto.randomUUID();
-      const reqDecoded: Request = reqDecodeResult.right as any;
+      const reqDecoded: POSTRequest = reqDecodeResult.right as any;
 
       const expiresAt = new Date(ctx.state.now().getTime() + SESSION_EXPIRY_MS);
 
@@ -148,7 +149,7 @@ export const handler: Handlers<Response, State> = {
           .exec()
       );
 
-      return renderJSON<Response>(
+      return renderJSON<POSTResponse>(
         {
           session,
           builtinFunctions,

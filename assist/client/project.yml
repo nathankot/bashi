@@ -1,0 +1,15 @@
+name: Bashi
+targets:
+  Bashi:
+    type: framework
+    platform: iOS
+    deploymentTarget: "9.0"
+    sources: [Sources/Bashi]
+    info:
+      path: ./Info.plist
+      version: 0.1.0
+    settings:
+      APPLICATION_EXTENSION_API_ONLY: true
+    scheme: {}
+    dependencies:
+    - carthage: AnyCodable

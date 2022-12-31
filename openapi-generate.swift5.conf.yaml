@@ -1,0 +1,5 @@
+disallowAdditionalPropertiesIfNotPresent: false
+hideGenerationTimestamp: false
+projectName: Bashi
+responseAs: AsyncAwait
+swiftPackagePath: "Sources/Bashi"

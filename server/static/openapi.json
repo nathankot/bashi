@@ -4,11 +4,7 @@
     "title": "Bashi",
     "version": "0.1.0",
     "description": "TODO",
-    "termsOfService": "TODO",
-    "license": {
-      "name": "TODO",
-      "url": "TODO"
-    }
+    "termsOfService": "TODO"
   },
   "servers": [
     {

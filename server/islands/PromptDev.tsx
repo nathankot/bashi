@@ -25,7 +25,7 @@ export default function PromptDev() {
     fetch("/api/sessions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer 0000000000000000",
+        Authorization: "Bearer 0",
       },
       body: JSON.stringify(body),
     })

@@ -30,15 +30,18 @@ export default function AudioPrompt(props: { sessionId: string }) {
 
     const onStop = async () => {
       setStatus("processing");
-      const transcribeResponse = await fetch("/api/session/requests/whisper", {
-        method: "POST",
-        body: new Blob(buffers),
-        headers: {
-          Authorization: `Bearer 0000000000`,
-          "Content-Type": "application/json",
-          "Session-ID": props.sessionId,
-        },
-      });
+      const transcribeResponse = await fetch(
+        "/api/session/requests/whisper-000",
+        {
+          method: "POST",
+          body: new Blob(buffers),
+          headers: {
+            Authorization: `Bearer 0`,
+            "Content-Type": "application/json",
+            "Session-ID": props.sessionId,
+          },
+        }
+      );
       const transcribeResult = await transcribeResponse.json();
       const request: POSTRequest = {
         request: transcribeResult.transcribed,
@@ -47,7 +50,7 @@ export default function AudioPrompt(props: { sessionId: string }) {
         method: "POST",
         body: JSON.stringify(request),
         headers: {
-          Authorization: `Bearer 0000000000`,
+          Authorization: `Bearer 0`,
           "Content-Type": "application/json",
           "Session-ID": props.sessionId,
         },

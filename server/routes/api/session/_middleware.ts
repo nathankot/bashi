@@ -54,6 +54,7 @@ export async function handler(
     }
 
     if (session.accountNumber !== accountNumber) {
+      ctx.state.log("debug", `mismatch account number on session vs auth`);
       return renderError(403, "session belongs to a different account");
     }
 

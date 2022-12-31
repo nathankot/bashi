@@ -12,7 +12,6 @@ import {
   AllInput,
   AllOutput,
   ModelName,
-  InputFor,
   ModelDeps,
   run,
   models,
@@ -31,6 +30,8 @@ export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 export const meta = {} as Record<ModelName, OpenAPIV3.PathItemObject>;
 
 for (const modelName of Object.keys(models) as ModelName[]) {
+  const model = models[modelName];
+
   meta[modelName] = {
     post: {
       operationId: "post_session_" + modelName,
@@ -42,16 +43,19 @@ for (const modelName of Object.keys(models) as ModelName[]) {
           $ref: "#/components/parameters/session_id",
         },
       ],
-      requestBody: {
-        description: "TODO",
-        content: {
-          "application/json": {
-            schema: toJSONSchema(models[modelName].Input),
-            // TODO
-            // example: {}
-          },
-        },
-      },
+      requestBody:
+        "customRequestHandler" in model
+          ? model.customRequestHandler.openAPIRequestBody
+          : {
+              description: "TODO",
+              content: {
+                "application/json": {
+                  schema: toJSONSchema(models[modelName].Input),
+                  // TODO
+                  // example: {}
+                },
+              },
+            },
       responses: {
         "200": {
           description: "TODO",
@@ -73,11 +77,11 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
   async POST(req, ctx) {
     let log = ctx.state.log;
 
-    const model = ctx.params["modelName"];
-    if (!ModelName.is(model)) {
+    const modelName = ctx.params["modelName"];
+    if (!ModelName.is(modelName)) {
       return handleError(log, new HTTPError(`model name invalid`, 400));
     }
-    log = wrap({ model }, ctx.state.log);
+    log = wrap({ modelName }, ctx.state.log);
 
     const modelDeps: Omit<ModelDeps, "signal"> = {
       log,
@@ -91,46 +95,31 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
     };
 
     try {
-      switch (model) {
-        case "whisper-000":
-          const arrayBuffer = await req.arrayBuffer();
-          if (arrayBuffer == null) {
-            return renderError(400, "no audio found in the request body");
-          }
-          const arrayBufferInput: InputFor<typeof model> = {
-            arrayBuffer,
-          };
+      const model = models[modelName];
 
-          return renderJSON(await run(modelDeps, model, arrayBufferInput));
+      let input: AllInput;
 
-        case "assist-000":
-        case "translate-000":
-        case "code-000":
-        case "passthrough-openai-000":
-        case "noop":
-          // JSON request
-          let json;
-          try {
-            json = await req.json();
-          } catch {
-            return renderError(400, "could not parse json");
-          }
-
-          const input = { model, ...json };
-          if (!models[model].Input.is(input)) {
-            return renderError(400, "malformed request");
-          }
-
-          if ("request" in input && input.request.trim().length === 0) {
-            return renderError(400, "request must not be empty");
-          }
-
-          return renderJSON(await run(modelDeps, model, input));
-
-        default:
-          const exhaustiveCheck: never = model;
-          throw new Error(`model ${exhaustiveCheck} not found`);
+      if ("customRequestHandler" in model) {
+        input = await model.customRequestHandler.parseRequest(req);
+      } else {
+        let json;
+        try {
+          json = await req.json();
+        } catch {
+          return renderError(400, "could not parse json");
+        }
+        input = { model: modelName, ...json };
       }
+
+      if (!model.Input.is(input)) {
+        return renderError(400, "malformed request");
+      }
+
+      if ("request" in input && input.request.trim().length === 0) {
+        return renderError(400, "request must not be empty");
+      }
+
+      return renderJSON(await run(modelDeps, modelName, input));
     } catch (e) {
       log("error", e);
       return handleError(log, e);

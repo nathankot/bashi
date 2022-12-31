@@ -288,11 +288,12 @@
           }
         ],
         "requestBody": {
-          "description": "TODO",
+          "description": "audio data in a conatiner format supported by ffmpeg",
           "content": {
-            "application/json": {
+            "audio/*": {
               "schema": {
-                "$ref": "#/components/schemas/models_whisper-000_Input"
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -984,15 +985,6 @@
             ],
             "type": "string"
           }
-        }
-      },
-      "models_whisper-000_Input": {
-        "type": "object",
-        "required": [
-          "arrayBuffer"
-        ],
-        "properties": {
-          "arrayBuffer": {}
         }
       },
       "models_whisper-000_Output": {

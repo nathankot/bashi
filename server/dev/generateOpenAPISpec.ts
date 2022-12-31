@@ -1,6 +1,7 @@
 import { OpenAPIV3 } from "openapi-types";
 import { equal } from "std/testing/asserts.ts";
 
+import { log } from "@lib/log.ts";
 import { ResponseError } from "@lib/errors.ts";
 import { namedJSONSchemaObjects } from "@lib/toJsonSchema.ts";
 import toJSONSchema from "@lib/toJsonSchema.ts";
@@ -79,6 +80,8 @@ export default async function generateOpenAPISpec() {
   const existing = JSON.parse(textDecoder.decode(Deno.readFileSync(SPEC_PATH)));
 
   if (!equal(existing, spec)) {
+    log("info", "writing new openapi schema");
+
     Deno.writeFileSync(
       SPEC_PATH,
       textEncoder.encode(JSON.stringify(spec, null, "  "))

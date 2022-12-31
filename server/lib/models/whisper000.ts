@@ -1,4 +1,7 @@
 import * as t from "io-ts";
+import { OpenAPIV3 } from "openapi-types";
+
+import { HTTPError } from "@lib/errors.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
 
@@ -10,9 +13,11 @@ export const Configuration = t.type({ model: t.literal(model) });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
-  arrayBuffer: t.any,
+  audioArrayBuffer: t.any,
 });
-export type Input = t.TypeOf<typeof Input> & { arrayBuffer: ArrayBuffer };
+export type Input = t.TypeOf<typeof Input> & {
+  audioArrayBuffer: ArrayBuffer;
+};
 
 export const Output = t.type({
   model: t.literal(model),
@@ -24,6 +29,30 @@ export const defaultConfiguration: Partial<Configuration> = {
   model,
 };
 
+export const customRequestHandler = {
+  openAPIRequestBody: {
+    description: "audio data in a conatiner format supported by ffmpeg",
+    content: {
+      "audio/*": {
+        schema: {
+          type: "string",
+          format: "binary",
+        },
+      },
+    },
+  } satisfies OpenAPIV3.RequestBodyObject,
+
+  parseRequest: async (req: Request): Promise<Input> => {
+    const audioArrayBuffer = await req.arrayBuffer();
+    if (audioArrayBuffer == null) {
+      throw new HTTPError("no audio found in the request body", 400);
+    }
+    return {
+      audioArrayBuffer,
+    };
+  },
+};
+
 export async function run(
   deps: ModelDeps,
   configuration: Configuration,
@@ -31,14 +60,14 @@ export async function run(
 ): Promise<Output> {
   const whisperEndpoint = deps.whisperEndpoint;
 
-  if (!(input.arrayBuffer instanceof ArrayBuffer)) {
+  if (!(input.audioArrayBuffer instanceof ArrayBuffer)) {
     throw new Error("expected an ArrayBuffer");
   }
 
   const whisperRequest = new FormData();
   whisperRequest.append(
     "audio_file",
-    new Blob([input.arrayBuffer]),
+    new Blob([input.audioArrayBuffer]),
     "audio_file"
   );
   const whisperResponse = await fetch(whisperEndpoint + "?language=en", {

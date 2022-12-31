@@ -60,8 +60,6 @@ export type { ModelDeps };
 export const ModelName = t.keyof(models);
 export type ModelName = t.TypeOf<typeof ModelName>;
 
-export type InputFor<M extends ModelName> = t.TypeOf<typeof models[M]["Input"]>;
-
 export async function run<N extends keyof typeof models>(
   modelDeps: Omit<ModelDeps, "signal">,
   modelName: N,

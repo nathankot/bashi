@@ -28,60 +28,51 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "modelConfigurations"
-                    ],
-                    "properties": {
-                      "modelConfigurations": {
-                        "type": "array",
-                        "items": {
-                          "anyOf": [
-                            {
-                              "$ref": "#/components/schemas/models_assist-000_Configuration"
-                            },
-                            {
-                              "type": "object",
-                              "required": [
-                                "model"
+                "type": "object",
+                "required": [
+                  "modelConfigurations"
+                ],
+                "properties": {
+                  "modelConfigurations": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/components/schemas/models_assist-000_Configuration"
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "model"
+                          ],
+                          "properties": {
+                            "model": {
+                              "enum": [
+                                "noop"
                               ],
-                              "properties": {
-                                "model": {
-                                  "enum": [
-                                    "noop"
-                                  ],
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            {
-                              "$ref": "#/components/schemas/models_translate-000_Configuration"
-                            },
-                            {
-                              "$ref": "#/components/schemas/models_code-000_Configuration"
-                            },
-                            {
-                              "$ref": "#/components/schemas/models_whisper-000_Configuration"
-                            },
-                            {
-                              "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
+                              "type": "string"
                             }
-                          ]
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/models_translate-000_Configuration"
+                        },
+                        {
+                          "$ref": "#/components/schemas/models_code-000_Configuration"
+                        },
+                        {
+                          "$ref": "#/components/schemas/models_whisper-000_Configuration"
+                        },
+                        {
+                          "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                         }
-                      }
+                      ]
                     }
                   },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "configuration": {
-                        "$ref": "#/components/schemas/SessionConfiguration"
-                      }
-                    }
+                  "configuration": {
+                    "$ref": "#/components/schemas/SessionConfiguration"
                   }
-                ]
+                }
               }
             }
           }
@@ -472,97 +463,70 @@
         ]
       },
       "FunctionDefinition": {
-        "allOf": [
-          {
-            "type": "object",
-            "required": [
-              "description",
-              "args"
-            ],
-            "properties": {
-              "description": {
-                "type": "string"
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "required": [
-                        "name",
-                        "type"
-                      ],
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "$ref": "#/components/schemas/ArgumentType"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "parse": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ArgumentParser"
-                          }
-                        }
-                      }
-                    }
-                  ]
+        "type": "object",
+        "required": [
+          "description",
+          "args"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "$ref": "#/components/schemas/ArgumentType"
+                },
+                "parse": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ArgumentParser"
+                  }
                 }
               }
             }
           },
-          {
-            "type": "object",
-            "properties": {
-              "triggerTokens": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
+          "triggerTokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           }
-        ]
+        }
       },
       "models_assist-000_Input": {
         "anyOf": [
           {
-            "allOf": [
-              {
+            "type": "object",
+            "required": [
+              "request"
+            ],
+            "properties": {
+              "request": {
+                "type": "string"
+              },
+              "requestContext": {
                 "type": "object",
-                "required": [
-                  "request"
-                ],
                 "properties": {
-                  "request": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "language": {
                     "type": "string"
                   }
                 }
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "requestContext": {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "string"
-                      },
-                      "language": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
               }
-            ]
+            }
           },
           {
             "type": "object",
@@ -693,79 +657,70 @@
                       }
                     },
                     {
-                      "allOf": [
-                        {
-                          "type": "object",
-                          "required": [
-                            "line",
-                            "type",
-                            "name",
-                            "args"
+                      "type": "object",
+                      "required": [
+                        "line",
+                        "type",
+                        "name",
+                        "args"
+                      ],
+                      "properties": {
+                        "line": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "parsed"
                           ],
-                          "properties": {
-                            "line": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": [
-                                "parsed"
-                              ],
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "args": {
-                              "type": "array",
-                              "items": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "boolean"
-                                  }
-                                ]
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "args": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
                               }
-                            }
+                            ]
                           }
                         },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "argsParsed": {
-                              "type": "array",
-                              "items": {
-                                "anyOf": [
-                                  {
-                                    "type": "object",
-                                    "properties": {}
-                                  },
-                                  {
-                                    "type": "object",
-                                    "additionalProperties": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "boolean"
-                                        }
-                                      ]
+                        "argsParsed": {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {}
+                              },
+                              {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
                                     }
-                                  }
-                                ]
+                                  ]
+                                }
                               }
-                            }
+                            ]
                           }
                         }
-                      ]
+                      }
                     },
                     {
                       "type": "object",
@@ -1158,107 +1113,98 @@
         }
       },
       "Session": {
-        "allOf": [
-          {
-            "type": "object",
-            "required": [
-              "accountNumber",
-              "sessionId",
-              "expiresAt",
-              "configuration",
-              "modelConfigurations"
-            ],
-            "properties": {
-              "accountNumber": {
-                "type": "string"
-              },
-              "sessionId": {
-                "type": "string"
-              },
-              "expiresAt": {
-                "type": "string",
-                "format": "full-date"
-              },
-              "configuration": {
-                "$ref": "#/components/schemas/SessionConfiguration"
-              },
-              "modelConfigurations": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/models_assist-000_Configuration"
-                    },
-                    {
-                      "type": "object",
-                      "required": [
-                        "model"
+        "type": "object",
+        "required": [
+          "accountNumber",
+          "sessionId",
+          "expiresAt",
+          "configuration",
+          "modelConfigurations"
+        ],
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "full-date"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/SessionConfiguration"
+          },
+          "modelConfigurations": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/models_assist-000_Configuration"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "model"
+                  ],
+                  "properties": {
+                    "model": {
+                      "enum": [
+                        "noop"
                       ],
-                      "properties": {
-                        "model": {
-                          "enum": [
-                            "noop"
-                          ],
-                          "type": "string"
-                        }
-                      }
-                    },
-                    {
-                      "$ref": "#/components/schemas/models_translate-000_Configuration"
-                    },
-                    {
-                      "$ref": "#/components/schemas/models_code-000_Configuration"
-                    },
-                    {
-                      "$ref": "#/components/schemas/models_whisper-000_Configuration"
-                    },
-                    {
-                      "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
+                      "type": "string"
                     }
-                  ]
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/models_translate-000_Configuration"
+                },
+                {
+                  "$ref": "#/components/schemas/models_code-000_Configuration"
+                },
+                {
+                  "$ref": "#/components/schemas/models_whisper-000_Configuration"
+                },
+                {
+                  "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                 }
-              }
+              ]
             }
           },
-          {
-            "type": "object",
-            "properties": {
-              "outputAwaitingContext": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/models_assist-000_Output"
-                  },
-                  {
-                    "type": "object",
-                    "required": [
-                      "model"
+          "outputAwaitingContext": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/models_assist-000_Output"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "model"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "noop"
                     ],
-                    "properties": {
-                      "model": {
-                        "enum": [
-                          "noop"
-                        ],
-                        "type": "string"
-                      }
-                    }
-                  },
-                  {
-                    "$ref": "#/components/schemas/models_translate-000_Output"
-                  },
-                  {
-                    "$ref": "#/components/schemas/models_code-000_Output"
-                  },
-                  {
-                    "$ref": "#/components/schemas/models_whisper-000_Output"
-                  },
-                  {
-                    "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
+                    "type": "string"
                   }
-                ]
+                }
+              },
+              {
+                "$ref": "#/components/schemas/models_translate-000_Output"
+              },
+              {
+                "$ref": "#/components/schemas/models_code-000_Output"
+              },
+              {
+                "$ref": "#/components/schemas/models_whisper-000_Output"
+              },
+              {
+                "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
               }
-            }
+            ]
           }
-        ]
+        }
       }
     },
     "securitySchemes": {

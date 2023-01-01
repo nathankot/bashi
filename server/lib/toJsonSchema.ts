@@ -69,8 +69,38 @@ export default function toJSONSchema(
         } satisfies OpenAPIV3.SchemaObject;
       case "IntersectionType":
         const intersection = type as t.IntersectionType<any[]>;
+
+        const intersectionTypes = intersection.types.map((t) => recurse(t));
+
+        // If the this is an intersection of objects, then combine
+        // the object properties manually in order to get a nicer schema:
+        if (
+          intersectionTypes.every(
+            (t) =>
+              "type" in t &&
+              t.type === "object" &&
+              (!("additionalProperties" in t) ||
+                t.additionalProperties === false)
+          )
+        ) {
+          const ts = intersectionTypes as OpenAPIV3.SchemaObject[] & {
+            type: "object";
+          };
+          return {
+            type: "object",
+
+            required: ts
+              .map((t) => t.required ?? [])
+              .reduce((a, e) => [...a, ...e], []),
+            properties: ts
+              .map((t) => Object.entries(t.properties ?? {}) ?? [])
+              .reduce((a, e) => [...a, ...e], [])
+              .reduce((a, [k, v]) => ({ ...a, [k]: v }), {}),
+          };
+        }
+
         return {
-          allOf: intersection.types.map((t) => recurse(t)),
+          allOf: intersectionTypes,
         } satisfies OpenAPIV3.SchemaObject;
       case "UnionType":
         const union = type as t.UnionType<any[]>;

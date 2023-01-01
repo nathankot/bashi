@@ -17,8 +17,6 @@ public class BashiSession: APIModel {
 
     public var modelConfigurations: ModelConfigurations
 
-    public var outputAwaitingContext: OutputAwaitingContext?
-
     public class ModelConfigurations: APIModel {
 
         public var assist000: ModelsAssist000Configuration?
@@ -80,13 +78,12 @@ public class BashiSession: APIModel {
         }
     }
 
-    public init(accountNumber: String, sessionId: String, expiresAt: String, configuration: SessionConfiguration, modelConfigurations: ModelConfigurations, outputAwaitingContext: OutputAwaitingContext? = nil) {
+    public init(accountNumber: String, sessionId: String, expiresAt: String, configuration: SessionConfiguration, modelConfigurations: ModelConfigurations) {
         self.accountNumber = accountNumber
         self.sessionId = sessionId
         self.expiresAt = expiresAt
         self.configuration = configuration
         self.modelConfigurations = modelConfigurations
-        self.outputAwaitingContext = outputAwaitingContext
     }
 
     public required init(from decoder: Decoder) throws {
@@ -97,7 +94,6 @@ public class BashiSession: APIModel {
         expiresAt = try container.decode("expiresAt")
         configuration = try container.decode("configuration")
         modelConfigurations = try container.decode("modelConfigurations")
-        outputAwaitingContext = try container.decodeIfPresent("outputAwaitingContext")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -108,7 +104,6 @@ public class BashiSession: APIModel {
         try container.encode(expiresAt, forKey: "expiresAt")
         try container.encode(configuration, forKey: "configuration")
         try container.encode(modelConfigurations, forKey: "modelConfigurations")
-        try container.encodeIfPresent(outputAwaitingContext, forKey: "outputAwaitingContext")
     }
 
     public func isEqual(to object: Any?) -> Bool {
@@ -118,7 +113,6 @@ public class BashiSession: APIModel {
       guard self.expiresAt == object.expiresAt else { return false }
       guard self.configuration == object.configuration else { return false }
       guard self.modelConfigurations == object.modelConfigurations else { return false }
-      guard self.outputAwaitingContext == object.outputAwaitingContext else { return false }
       return true
     }
 

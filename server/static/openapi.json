@@ -429,36 +429,18 @@
         }
       },
       "ArgumentParser": {
-        "oneOf": [
-          {
-            "enum": [
-              "naturalLanguageDateTime"
-            ],
-            "type": "string"
-          }
-        ]
+        "enum": [
+          "naturalLanguageDateTime"
+        ],
+        "type": "string"
       },
       "ArgumentType": {
-        "oneOf": [
-          {
-            "enum": [
-              "string"
-            ],
-            "type": "string"
-          },
-          {
-            "enum": [
-              "number"
-            ],
-            "type": "string"
-          },
-          {
-            "enum": [
-              "boolean"
-            ],
-            "type": "string"
-          }
-        ]
+        "enum": [
+          "string",
+          "number",
+          "boolean"
+        ],
+        "type": "string"
       },
       "FunctionDefinition": {
         "type": "object",
@@ -1006,68 +988,19 @@
           "disabledBuiltinFunctions": {
             "type": "array",
             "items": {
-              "oneOf": [
-                {
-                  "enum": [
-                    "answer"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "math"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "time"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "editProse"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "editCode"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "generateCode"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "translate"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "fail"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "flushToSpeech"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "flushToText"
-                  ],
-                  "type": "string"
-                }
-              ]
+              "enum": [
+                "answer",
+                "math",
+                "time",
+                "editProse",
+                "editCode",
+                "generateCode",
+                "translate",
+                "fail",
+                "flushToSpeech",
+                "flushToText"
+              ],
+              "type": "string"
             }
           }
         }

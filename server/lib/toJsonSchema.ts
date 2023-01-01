@@ -148,10 +148,8 @@ export default function toJSONSchema(
       case "KeyofType":
         const kof = type as t.KeyofType<{ [key: string]: unknown }>;
         return {
-          oneOf: Object.keys(kof.keys).map((k) => ({
-            enum: [k],
-            type: typeof k as any,
-          })),
+          enum: Object.keys(kof.keys),
+          type: "string",
         } satisfies OpenAPIV3.SchemaObject;
       case undefined:
         if ("name" in type && type.name === "Date") {

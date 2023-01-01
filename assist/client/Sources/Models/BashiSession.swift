@@ -11,7 +11,7 @@ public class BashiSession: APIModel {
 
     public var sessionId: String
 
-    public var expiresAt: String
+    public var expiresAt: DateTime
 
     public var configuration: SessionConfiguration
 
@@ -78,7 +78,7 @@ public class BashiSession: APIModel {
         }
     }
 
-    public init(accountNumber: String, sessionId: String, expiresAt: String, configuration: SessionConfiguration, modelConfigurations: ModelConfigurations) {
+    public init(accountNumber: String, sessionId: String, expiresAt: DateTime, configuration: SessionConfiguration, modelConfigurations: ModelConfigurations) {
         self.accountNumber = accountNumber
         self.sessionId = sessionId
         self.expiresAt = expiresAt

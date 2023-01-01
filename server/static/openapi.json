@@ -1052,7 +1052,7 @@
           },
           "expiresAt": {
             "type": "string",
-            "format": "full-date"
+            "format": "date-time"
           },
           "configuration": {
             "$ref": "#/components/schemas/SessionConfiguration"

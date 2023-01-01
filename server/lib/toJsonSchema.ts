@@ -156,7 +156,7 @@ export default function toJSONSchema(
         if ("name" in type && type.name === "Date") {
           return {
             type: "string",
-            format: "full-date",
+            format: "date-time",
           } satisfies OpenAPIV3.SchemaObject;
         }
         console.debug(type);

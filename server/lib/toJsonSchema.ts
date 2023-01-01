@@ -10,7 +10,7 @@ import {
   FunctionDefinition,
 } from "@lib/function/types.ts";
 import { Configuration } from "@lib/session/configuration.ts";
-import { Session } from "@lib/session.ts";
+import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 
 type SupportedTag =
@@ -224,7 +224,8 @@ for (const [modelName, model] of Object.entries(models)) {
 namedJSONSchemaObjects["#/components/schemas/SessionConfiguration"] =
   toJSONSchema(Configuration);
 
-namedJSONSchemaObjects["#/components/schemas/Session"] = toJSONSchema(Session);
+namedJSONSchemaObjects["#/components/schemas/Session"] =
+  toJSONSchema(SessionPublic);
 
 // END building up of known schema definitions, order matters here.
 // ===================================================================

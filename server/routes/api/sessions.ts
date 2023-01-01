@@ -9,7 +9,7 @@ import { HTTPError } from "@lib/errors.ts";
 import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
-import { Session, defaultConfiguration } from "@lib/session.ts";
+import { SessionPublic, defaultConfiguration } from "@lib/session.ts";
 import { FunctionSet, builtinFunctions } from "@lib/function.ts";
 import { msgpack } from "@/msgpack.ts";
 import toJSONSchema from "@lib/toJsonSchema.ts";
@@ -18,16 +18,16 @@ import { State } from "./_middleware.ts";
 
 export const POSTRequest = t.intersection([
   t.type({
-    modelConfigurations: Session.types[0].props.modelConfigurations,
+    modelConfigurations: SessionPublic.props.modelConfigurations,
   }),
   t.partial({
-    configuration: Session.types[0].props.configuration,
+    configuration: SessionPublic.props.configuration,
   }),
 ]);
 export type POSTRequest = t.TypeOf<typeof POSTRequest>;
 
 export const POSTResponse = t.type({
-  session: Session,
+  session: SessionPublic,
   builtinFunctions: FunctionSet,
 });
 export type POSTResponse = t.TypeOf<typeof POSTResponse>;
@@ -94,7 +94,7 @@ export const handler: Handlers<POSTResponse, State> = {
 
       const expiresAt = new Date(ctx.state.now().getTime() + SESSION_EXPIRY_MS);
 
-      const session: Session = {
+      const session: SessionPublic = {
         modelConfigurations: json.modelConfigurations,
         configuration: {
           ...defaultConfiguration,

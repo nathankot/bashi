@@ -11,14 +11,17 @@ import {
   defaultConfiguration,
 } from "@lib/session/configuration.ts";
 
+export const SessionPublic = t.type({
+  accountNumber: t.string,
+  sessionId: t.string,
+  expiresAt: date,
+  configuration: Configuration,
+  modelConfigurations: ModelConfiguration,
+});
+export type SessionPublic = t.TypeOf<typeof SessionPublic>;
+
 export const Session = t.intersection([
-  t.type({
-    accountNumber: t.string,
-    sessionId: t.string,
-    expiresAt: date,
-    configuration: Configuration,
-    modelConfigurations: ModelConfiguration,
-  }),
+  SessionPublic,
   t.partial({
     outputAwaitingContext: ModelOutput,
   }),

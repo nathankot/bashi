@@ -1076,28 +1076,6 @@
                 "$ref": "#/components/schemas/models_noop_Configuration"
               }
             }
-          },
-          "outputAwaitingContext": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/models_assist-000_Output"
-              },
-              {
-                "$ref": "#/components/schemas/models_noop_Output"
-              },
-              {
-                "$ref": "#/components/schemas/models_translate-000_Output"
-              },
-              {
-                "$ref": "#/components/schemas/models_code-000_Output"
-              },
-              {
-                "$ref": "#/components/schemas/models_whisper-000_Output"
-              },
-              {
-                "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
-              }
-            ]
           }
         }
       }

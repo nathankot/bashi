@@ -1,5 +1,3 @@
-import * as t from "io-ts";
-
 import { Handlers } from "$fresh/server.ts";
 import { OpenAPIV3 } from "openapi-types";
 
@@ -19,13 +17,6 @@ import {
 
 import { State as ApiState } from "@routes/api/_middleware.ts";
 import { State } from "../_middleware.ts";
-
-// Note the following does not specify the binary audio/* request:
-export const POSTRequest = AllInput;
-export type POSTRequest = t.TypeOf<typeof POSTRequest>;
-
-export const POSTResponse = AllOutput;
-export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const meta = {} as Record<ModelName, OpenAPIV3.PathItemObject>;
 
@@ -115,7 +106,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
         return renderError(400, "malformed request");
       }
 
-      if ("request" in input && input.request.trim().length === 0) {
+      if ("request" in input && (input.request ?? "").trim().length === 0) {
         return renderError(400, "request must not be empty");
       }
 

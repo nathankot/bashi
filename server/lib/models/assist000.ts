@@ -24,28 +24,19 @@ export const Configuration = t.type({
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
-export const Input = t.union([
-  t.intersection([
-    t.type({
-      request: t.string,
-    }),
-    t.partial({
-      requestContext: RequestContext,
-    }),
-  ]),
-  t.type({
-    requestContext: RequestContext,
-  }),
-]);
+export const Input = t.partial({
+  request: t.string,
+  requestContext: RequestContext,
+});
 export type Input = t.TypeOf<typeof Input>;
 
-export const Output = t.union([
+export const Output = t.intersection([
   t.type({
     model: Name,
     request: t.string,
     functionCalls: FunctionCalls,
   }),
-  t.type({
+  t.partial({
     missingRequestContext: RequestContextDef,
   }),
 ]);
@@ -62,6 +53,13 @@ export async function run(
 ): Promise<Output> {
   let log = modelDeps.log;
 
+  if (!("request" in input || "requestContext" in input)) {
+    throw new HTTPError(
+      `at least one of 'request' or 'requestContext' must be populated`,
+      400
+    );
+  }
+
   const requestContext: RequestContext = !("requestContext" in input)
     ? {}
     : input.requestContext == null
@@ -71,7 +69,7 @@ export async function run(
   let output = await (async (): Promise<
     Exclude<Output, { missingRequestContext: RequestContextDef }>
   > => {
-    if (!("request" in input)) {
+    if (!("request" in input) || input.request == null) {
       const outputAwaitingContext = modelDeps.session.outputAwaitingContext;
       // we assume missing request context is being fulfilled:
       if (outputAwaitingContext == null) {
@@ -180,7 +178,12 @@ export async function run(
       ...modelDeps.session,
       outputAwaitingContext: output,
     });
-    return { missingRequestContext };
+    return {
+      model: "assist-000",
+      request: input.request ?? "",
+      functionCalls: [],
+      missingRequestContext,
+    };
   }
 
   // Then run all of the function call interceptors:

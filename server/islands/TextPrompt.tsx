@@ -1,12 +1,12 @@
 import { useState } from "preact/hooks";
-import { POSTRequest } from "@routes/api/session/requests/[modelName].ts";
+import type { Input } from "@lib/models/assist000.ts";
 
 export default function TextPrompt(props: { sessionId: string }) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
 
   const submit = async () => {
-    const request: POSTRequest = {
+    const request: Input = {
       request: prompt,
     };
     const result = await fetch("/api/session/requests/assist-000", {

@@ -503,307 +503,269 @@
         }
       },
       "models_assist-000_Input": {
-        "anyOf": [
-          {
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "string"
+          },
+          "requestContext": {
             "type": "object",
-            "required": [
-              "request"
-            ],
             "properties": {
-              "request": {
+              "text": {
                 "type": "string"
               },
-              "requestContext": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "string"
-                  },
-                  "language": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "required": [
-              "requestContext"
-            ],
-            "properties": {
-              "requestContext": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "string"
-                  },
-                  "language": {
-                    "type": "string"
-                  }
-                }
+              "language": {
+                "type": "string"
               }
             }
           }
-        ]
+        }
       },
       "models_assist-000_Output": {
-        "anyOf": [
-          {
-            "type": "object",
-            "required": [
-              "model",
-              "request",
-              "functionCalls"
+        "type": "object",
+        "required": [
+          "model",
+          "request",
+          "functionCalls"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "assist-000"
             ],
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "functionCalls": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "line",
+                    "error"
+                  ],
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "parse_error"
+                      ],
+                      "type": "string"
+                    },
+                    "line": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "line",
+                    "type",
+                    "name",
+                    "args",
+                    "invalid_reason"
+                  ],
+                  "properties": {
+                    "line": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "invalid"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          }
+                        ]
+                      }
+                    },
+                    "invalid_reason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "unknown_function"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "invalid_arguments"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "failed_execution"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "line",
+                    "type",
+                    "name",
+                    "args"
+                  ],
+                  "properties": {
+                    "line": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "parsed"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          }
+                        ]
+                      }
+                    },
+                    "argsParsed": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {}
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "line",
+                    "type",
+                    "name",
+                    "args",
+                    "returnValue"
+                  ],
+                  "properties": {
+                    "line": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "executed"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          }
+                        ]
+                      }
+                    },
+                    "returnValue": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "missingRequestContext": {
+            "type": "object",
             "properties": {
-              "model": {
+              "text": {
                 "enum": [
-                  "assist-000"
+                  "string"
                 ],
                 "type": "string"
               },
-              "request": {
+              "language": {
+                "enum": [
+                  "string"
+                ],
                 "type": "string"
-              },
-              "functionCalls": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "required": [
-                        "type",
-                        "line",
-                        "error"
-                      ],
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "parse_error"
-                          ],
-                          "type": "string"
-                        },
-                        "line": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "required": [
-                        "line",
-                        "type",
-                        "name",
-                        "args",
-                        "invalid_reason"
-                      ],
-                      "properties": {
-                        "line": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "enum": [
-                            "invalid"
-                          ],
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "args": {
-                          "type": "array",
-                          "items": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "number"
-                              },
-                              {
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        "invalid_reason": {
-                          "anyOf": [
-                            {
-                              "enum": [
-                                "unknown_function"
-                              ],
-                              "type": "string"
-                            },
-                            {
-                              "enum": [
-                                "invalid_arguments"
-                              ],
-                              "type": "string"
-                            },
-                            {
-                              "enum": [
-                                "failed_execution"
-                              ],
-                              "type": "string"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "required": [
-                        "line",
-                        "type",
-                        "name",
-                        "args"
-                      ],
-                      "properties": {
-                        "line": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "enum": [
-                            "parsed"
-                          ],
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "args": {
-                          "type": "array",
-                          "items": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "number"
-                              },
-                              {
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        "argsParsed": {
-                          "type": "array",
-                          "items": {
-                            "anyOf": [
-                              {
-                                "type": "object",
-                                "properties": {}
-                              },
-                              {
-                                "type": "object",
-                                "additionalProperties": {
-                                  "anyOf": [
-                                    {
-                                      "type": "string"
-                                    },
-                                    {
-                                      "type": "number"
-                                    },
-                                    {
-                                      "type": "boolean"
-                                    }
-                                  ]
-                                }
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "required": [
-                        "line",
-                        "type",
-                        "name",
-                        "args",
-                        "returnValue"
-                      ],
-                      "properties": {
-                        "line": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "enum": [
-                            "executed"
-                          ],
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "args": {
-                          "type": "array",
-                          "items": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "number"
-                              },
-                              {
-                                "type": "boolean"
-                              }
-                            ]
-                          }
-                        },
-                        "returnValue": {
-                          "anyOf": [
-                            {
-                              "type": "string"
-                            },
-                            {
-                              "type": "number"
-                            },
-                            {
-                              "type": "boolean"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "required": [
-              "missingRequestContext"
-            ],
-            "properties": {
-              "missingRequestContext": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "enum": [
-                      "string"
-                    ],
-                    "type": "string"
-                  },
-                  "language": {
-                    "enum": [
-                      "string"
-                    ],
-                    "type": "string"
-                  }
-                }
               }
             }
           }
-        ]
+        }
       },
       "models_assist-000_Configuration": {
         "type": "object",

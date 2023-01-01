@@ -39,9 +39,11 @@ vendor: check
 
 clients:
 	-rm -rf ./assist/client
-	docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-		-c /local/openapi-generate.swift5.conf.yaml \
-		-i /local/server/static/openapi.json \
-		-g swift5 \
-		--http-user-agent 'BashiClient/{packageVersion}/{language}' \
-		-o /local/assist/client
+	cd ./assist/vendor/SwagGen; swift run swaggen generate \
+		../../../server/static/openapi.json \
+		-d ../../client \
+		-l swift \
+		-o name:Bashi \
+		-o 'authors:Nathan Kot' \
+		-o 'homepage:http://localhost' \
+		-o 'modelNames.Session:BashiSession'

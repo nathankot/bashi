@@ -208,10 +208,6 @@ namedJSONSchemaObjects["#/components/schemas/FunctionDefinition"] =
   toJSONSchema(FunctionDefinition);
 
 for (const [modelName, model] of Object.entries(models)) {
-  if (modelName === "noop") {
-    continue;
-  }
-
   // Custom request handlers will come with their own public-facing input schema definition.
   if (!("customRequestHandler" in model)) {
     namedJSONSchemaObjects[`#/components/schemas/models_${modelName}_Input`] =

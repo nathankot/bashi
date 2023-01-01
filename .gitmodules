@@ -1,3 +1,6 @@
 [submodule "whisper-asr-webservice"]
 	path = whisper-asr-webservice
 	url = https://github.com/ahmetoner/whisper-asr-webservice
+[submodule "assist/SwagGen"]
+	path = assist/vendor/SwagGen
+	url = https://github.com/yonaskolb/SwagGen

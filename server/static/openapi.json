@@ -52,18 +52,7 @@
                         "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                       },
                       "noop": {
-                        "type": "object",
-                        "required": [
-                          "model"
-                        ],
-                        "properties": {
-                          "model": {
-                            "enum": [
-                              "noop"
-                            ],
-                            "type": "string"
-                          }
-                        }
+                        "$ref": "#/components/schemas/models_noop_Configuration"
                       }
                     }
                   },
@@ -374,8 +363,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/models_noop_Input"
               }
             }
           }
@@ -386,18 +374,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "model"
-                  ],
-                  "properties": {
-                    "model": {
-                      "enum": [
-                        "noop"
-                      ],
-                      "type": "string"
-                    }
-                  }
+                  "$ref": "#/components/schemas/models_noop_Output"
                 }
               }
             }
@@ -967,6 +944,55 @@
           }
         }
       },
+      "models_noop_Input": {
+        "type": "object",
+        "required": [
+          "request"
+        ],
+        "properties": {
+          "request": {
+            "enum": [
+              "noop"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "models_noop_Output": {
+        "type": "object",
+        "required": [
+          "model",
+          "result"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "noop"
+            ],
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "noop"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "models_noop_Configuration": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "noop"
+            ],
+            "type": "string"
+          }
+        }
+      },
       "SessionConfiguration": {
         "type": "object",
         "required": [
@@ -1047,18 +1073,7 @@
                 "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
               },
               "noop": {
-                "type": "object",
-                "required": [
-                  "model"
-                ],
-                "properties": {
-                  "model": {
-                    "enum": [
-                      "noop"
-                    ],
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/models_noop_Configuration"
               }
             }
           },
@@ -1068,18 +1083,7 @@
                 "$ref": "#/components/schemas/models_assist-000_Output"
               },
               {
-                "type": "object",
-                "required": [
-                  "model"
-                ],
-                "properties": {
-                  "model": {
-                    "enum": [
-                      "noop"
-                    ],
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/models_noop_Output"
               },
               {
                 "$ref": "#/components/schemas/models_translate-000_Output"

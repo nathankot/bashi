@@ -12,6 +12,7 @@ import {
 import { Configuration } from "@lib/session/configuration.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
+import { FunctionCall } from "@lib/function/types.ts";
 
 type SupportedTag =
   | "AnyType"
@@ -206,6 +207,8 @@ namedJSONSchemaObjects["#/components/schemas/ArgumentType"] =
   toJSONSchema(ArgumentType);
 namedJSONSchemaObjects["#/components/schemas/FunctionDefinition"] =
   toJSONSchema(FunctionDefinition);
+namedJSONSchemaObjects["#/components/schemas/FunctionCall"] =
+  toJSONSchema(FunctionCall);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

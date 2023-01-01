@@ -15,7 +15,7 @@ public class ModelsAssist000Output: APIModel {
 
     public var request: String
 
-    public var functionCalls: [FunctionCalls]
+    public var functionCalls: [FunctionCall]
 
     public var missingRequestContext: MissingRequestContext?
 
@@ -64,7 +64,7 @@ public class ModelsAssist000Output: APIModel {
         }
     }
 
-    public init(model: Model, request: String, functionCalls: [FunctionCalls], missingRequestContext: MissingRequestContext? = nil) {
+    public init(model: Model, request: String, functionCalls: [FunctionCall], missingRequestContext: MissingRequestContext? = nil) {
         self.model = model
         self.request = request
         self.functionCalls = functionCalls

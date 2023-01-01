@@ -15,7 +15,7 @@
 		D8C10983296023CF006E6A10 /* assistUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10982296023CF006E6A10 /* assistUITests.swift */; };
 		D8C10985296023CF006E6A10 /* assistUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10984296023CF006E6A10 /* assistUITestsLaunchTests.swift */; };
 		D8C26D3429607EBB001F63DB /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C26D3329607EBB001F63DB /* SettingsModel.swift */; };
-		D8C26D3629611FD8001F63DB /* Bashi in Frameworks */ = {isa = PBXBuildFile; productRef = D8C26D3529611FD8001F63DB /* Bashi */; };
+		D8C26D3829616B7C001F63DB /* Bashi in Frameworks */ = {isa = PBXBuildFile; productRef = D8C26D3729616B7C001F63DB /* Bashi */; };
 		D8F24CFF296040AA00BD3CD3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -70,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8C26D3629611FD8001F63DB /* Bashi in Frameworks */,
+				D8C26D3829616B7C001F63DB /* Bashi in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,7 +176,7 @@
 			);
 			name = assist;
 			packageProductDependencies = (
-				D8C26D3529611FD8001F63DB /* Bashi */,
+				D8C26D3729616B7C001F63DB /* Bashi */,
 			);
 			productName = assist;
 			productReference = D8C10963296023CF006E6A10 /* assist.app */;
@@ -647,7 +647,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D8C26D3529611FD8001F63DB /* Bashi */ = {
+		D8C26D3729616B7C001F63DB /* Bashi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Bashi;
 		};

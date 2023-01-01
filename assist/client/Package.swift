@@ -1,33 +1,24 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 
 import PackageDescription
 
 let package = Package(
     name: "Bashi",
     platforms: [
-        .iOS(.v9),
-        .macOS(.v10_11),
-        .tvOS(.v9),
-        .watchOS(.v3),
+        .macOS(.v10_12),
+        .iOS(.v10),
+        .tvOS(.v10),
+        .watchOS(.v3)
     ],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
-        .library(
-            name: "Bashi",
-            targets: ["Bashi"]
-        ),
+        .library(name: "Bashi", targets: ["Bashi"])
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Flight-School/AnyCodable", .upToNextMajor(from: "0.6.1")),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .exact("5.4.4")),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
-        .target(
-            name: "Bashi",
-            dependencies: ["AnyCodable", ],
-            path: "Sources/Bashi"
-        ),
+        .target(name: "Bashi", dependencies: [
+          "Alamofire",
+        ], path: "Sources")
     ]
 )

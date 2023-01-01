@@ -523,7 +523,7 @@
           "functionCalls": {
             "type": "array",
             "items": {
-              "anyOf": [
+              "oneOf": [
                 {
                   "type": "object",
                   "required": [
@@ -571,7 +571,7 @@
                     "args": {
                       "type": "array",
                       "items": {
-                        "anyOf": [
+                        "oneOf": [
                           {
                             "type": "string"
                           },
@@ -585,7 +585,7 @@
                       }
                     },
                     "invalid_reason": {
-                      "anyOf": [
+                      "oneOf": [
                         {
                           "enum": [
                             "unknown_function"
@@ -632,7 +632,7 @@
                     "args": {
                       "type": "array",
                       "items": {
-                        "anyOf": [
+                        "oneOf": [
                           {
                             "type": "string"
                           },
@@ -648,7 +648,7 @@
                     "argsParsed": {
                       "type": "array",
                       "items": {
-                        "anyOf": [
+                        "oneOf": [
                           {
                             "type": "object",
                             "properties": {}
@@ -656,7 +656,7 @@
                           {
                             "type": "object",
                             "additionalProperties": {
-                              "anyOf": [
+                              "oneOf": [
                                 {
                                   "type": "string"
                                 },
@@ -699,7 +699,7 @@
                     "args": {
                       "type": "array",
                       "items": {
-                        "anyOf": [
+                        "oneOf": [
                           {
                             "type": "string"
                           },
@@ -713,7 +713,7 @@
                       }
                     },
                     "returnValue": {
-                      "anyOf": [
+                      "oneOf": [
                         {
                           "type": "string"
                         },
@@ -1063,7 +1063,7 @@
             }
           },
           "outputAwaitingContext": {
-            "anyOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/models_assist-000_Output"
               },

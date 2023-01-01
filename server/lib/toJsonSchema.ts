@@ -105,7 +105,7 @@ export default function toJSONSchema(
       case "UnionType":
         const union = type as t.UnionType<any[]>;
         return {
-          anyOf: union.types.map((t) => recurse(t)),
+          oneOf: union.types.map((t) => recurse(t)),
         } satisfies OpenAPIV3.SchemaObject;
       case "DictionaryType":
         const dict = type as t.DictionaryType<t.StringType, any>;

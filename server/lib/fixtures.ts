@@ -70,10 +70,10 @@ export const session: Session = {
     bestOf: 1,
     disabledBuiltinFunctions: [],
   },
-  modelConfigurations: [
-    {
+  modelConfigurations: {
+    "assist-000": {
       model: "assist-000",
       functions: functionSet,
     },
-  ],
+  },
 };

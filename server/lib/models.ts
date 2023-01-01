@@ -22,6 +22,15 @@ export const models = {
   noop: noop,
 };
 
+export const Configuration = t.partial({
+  "assist-000": assist000.Configuration,
+  "translate-000": translate000.Configuration,
+  "code-000": code000.Configuration,
+  "whisper-000": whisper000.Configuration,
+  "passthrough-openai-000": passthroughOpenAi000.Configuration,
+  noop: noop.Configuration,
+});
+
 export const AllConfiguration = t.union([
   assist000.Configuration,
   noop.Configuration,
@@ -83,7 +92,7 @@ export async function run<N extends keyof typeof models>(
   const configuration: Partial<C> = {
     ...(model.defaultConfiguration as Partial<C>),
     ...((): {} | C => {
-      for (const conf of modelDeps.session.modelConfigurations) {
+      for (const conf of Object.values(modelDeps.session.modelConfigurations)) {
         if (conf.model === modelName) {
           return conf;
         }

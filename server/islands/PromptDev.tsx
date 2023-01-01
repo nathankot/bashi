@@ -14,12 +14,12 @@ export default function PromptDev() {
 
   useEffect(() => {
     let body: PostSessionRequest = {
-      modelConfigurations: [
-        {
+      modelConfigurations: {
+        "assist-000": {
           model: "assist-000",
           functions,
         },
-      ],
+      },
     };
 
     fetch("/api/sessions", {

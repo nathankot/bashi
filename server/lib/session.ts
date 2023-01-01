@@ -2,7 +2,7 @@ import * as t from "io-ts";
 import { date } from "io-ts-types";
 
 import {
-  AllConfiguration as ModelConfiguration,
+  Configuration as ModelConfiguration,
   AllOutput as ModelOutput,
 } from "@lib/models.ts";
 
@@ -17,7 +17,7 @@ export const Session = t.intersection([
     sessionId: t.string,
     expiresAt: date,
     configuration: Configuration,
-    modelConfigurations: t.array(ModelConfiguration),
+    modelConfigurations: ModelConfiguration,
   }),
   t.partial({
     outputAwaitingContext: ModelOutput,

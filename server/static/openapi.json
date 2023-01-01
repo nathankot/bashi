@@ -34,39 +34,37 @@
                 ],
                 "properties": {
                   "modelConfigurations": {
-                    "type": "array",
-                    "items": {
-                      "anyOf": [
-                        {
-                          "$ref": "#/components/schemas/models_assist-000_Configuration"
-                        },
-                        {
-                          "type": "object",
-                          "required": [
-                            "model"
-                          ],
-                          "properties": {
-                            "model": {
-                              "enum": [
-                                "noop"
-                              ],
-                              "type": "string"
-                            }
+                    "type": "object",
+                    "properties": {
+                      "assist-000": {
+                        "$ref": "#/components/schemas/models_assist-000_Configuration"
+                      },
+                      "translate-000": {
+                        "$ref": "#/components/schemas/models_translate-000_Configuration"
+                      },
+                      "code-000": {
+                        "$ref": "#/components/schemas/models_code-000_Configuration"
+                      },
+                      "whisper-000": {
+                        "$ref": "#/components/schemas/models_whisper-000_Configuration"
+                      },
+                      "passthrough-openai-000": {
+                        "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
+                      },
+                      "noop": {
+                        "type": "object",
+                        "required": [
+                          "model"
+                        ],
+                        "properties": {
+                          "model": {
+                            "enum": [
+                              "noop"
+                            ],
+                            "type": "string"
                           }
-                        },
-                        {
-                          "$ref": "#/components/schemas/models_translate-000_Configuration"
-                        },
-                        {
-                          "$ref": "#/components/schemas/models_code-000_Configuration"
-                        },
-                        {
-                          "$ref": "#/components/schemas/models_whisper-000_Configuration"
-                        },
-                        {
-                          "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                         }
-                      ]
+                      }
                     }
                   },
                   "configuration": {
@@ -1136,39 +1134,37 @@
             "$ref": "#/components/schemas/SessionConfiguration"
           },
           "modelConfigurations": {
-            "type": "array",
-            "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/models_assist-000_Configuration"
-                },
-                {
-                  "type": "object",
-                  "required": [
-                    "model"
-                  ],
-                  "properties": {
-                    "model": {
-                      "enum": [
-                        "noop"
-                      ],
-                      "type": "string"
-                    }
+            "type": "object",
+            "properties": {
+              "assist-000": {
+                "$ref": "#/components/schemas/models_assist-000_Configuration"
+              },
+              "translate-000": {
+                "$ref": "#/components/schemas/models_translate-000_Configuration"
+              },
+              "code-000": {
+                "$ref": "#/components/schemas/models_code-000_Configuration"
+              },
+              "whisper-000": {
+                "$ref": "#/components/schemas/models_whisper-000_Configuration"
+              },
+              "passthrough-openai-000": {
+                "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
+              },
+              "noop": {
+                "type": "object",
+                "required": [
+                  "model"
+                ],
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "noop"
+                    ],
+                    "type": "string"
                   }
-                },
-                {
-                  "$ref": "#/components/schemas/models_translate-000_Configuration"
-                },
-                {
-                  "$ref": "#/components/schemas/models_code-000_Configuration"
-                },
-                {
-                  "$ref": "#/components/schemas/models_whisper-000_Configuration"
-                },
-                {
-                  "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
                 }
-              ]
+              }
             }
           },
           "outputAwaitingContext": {

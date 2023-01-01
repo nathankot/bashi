@@ -106,7 +106,7 @@ export const handler: Handlers<POSTResponse, State> = {
       };
 
       // Ensure no builtin functions are being specified:
-      for (const conf of session.modelConfigurations) {
+      for (const conf of Object.values(session.modelConfigurations)) {
         if (!("functions" in conf)) {
           continue;
         }

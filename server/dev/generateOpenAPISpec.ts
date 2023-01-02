@@ -26,7 +26,7 @@ export default async function generateOpenAPISpec() {
     },
     servers: [
       {
-        url: "http://localhost:8080/api/",
+        url: "http://localhost:8080/api",
         description: "Local development server",
       },
     ],

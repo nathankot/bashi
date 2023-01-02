@@ -25,6 +25,6 @@ public struct Bashi {
     public enum Server {
 
         /** Local development server **/
-        public static let main = "http://localhost:8080/api/"
+        public static let main = "http://localhost:8080/api"
     }
 }

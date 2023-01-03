@@ -47,8 +47,9 @@ actor AppController {
                 switch e {
                 case .keyDown:
                     do {
-                        try await self?.audioRecordingController.startRecording()
-                        await self?.state.transition(newState: .Recording(bestTranscription: nil))
+                        try await self?.state.transition(newState: .Recording(bestTranscription: nil)) { [weak self] in
+                            try await self?.audioRecordingController.startRecording()
+                        }
                     } catch {
                         await self?.unexpectedError(error)
                     }
@@ -57,8 +58,7 @@ actor AppController {
                         if let transcribeStream = await self?.audioRecordingController.transcribe() {
                             do {
                                 for try await transcription in transcribeStream {
-                                    logger.info("transitioning with \(transcription) \(self == nil)")
-                                    await self?.state.transition(newState: .Recording(bestTranscription: transcription))
+                                    try await self?.state.transition(newState: .Recording(bestTranscription: transcription), doBeforeTransition: {})
                                 }
                             } catch {
                                 await self?.unexpectedError(error)
@@ -120,8 +120,9 @@ actor AppController {
     }
     
     func unexpectedError(_ err: Error) async {
-        logger.error("\(err.localizedDescription)")
-        await state.transition(newState: .Error(.Unexpected(err.localizedDescription)))
+        try? await state.transition(newState: .Error(.Unexpected(err.localizedDescription))) {
+            logger.error("\(err.localizedDescription)")
+        }
     }
     
     func showSettings() async {

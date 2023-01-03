@@ -20,14 +20,15 @@ final class AppState : ObservableObject {
     @AppStorage("accountNumber") var accountNumber: String = ""
     @Published var session: BashiSession? = nil
     
+    indirect enum ErrorType : Error, Equatable {
+        case Unexpected(String)
+        case UnexpectedTransition(State, State)
+    }
+    
     enum State : Equatable {
         case Idle
         case Recording(bestTranscription: String?)
         case Error(ErrorType)
-        
-        enum ErrorType : Equatable {
-            case Unexpected(String)
-        }
     }
     
     @Published var state: State = .Idle
@@ -40,21 +41,27 @@ final class AppState : ObservableObject {
     init(accountNumber: String) {
         self.accountNumber = accountNumber
     }
-   
-    func transition(newState: State) async {
+    
+    func canTransition(newState: State) -> Bool {
         switch (state, newState)  {
         case (.Idle, .Recording),
              (.Recording, .Recording),
              (.Error, .Idle),
              (.Error, .Recording),
              (_, .Error):
-            logger.info("transitioning to new state")
-            state = newState
+            return true
         default:
-            logger.info("unxpected state transition")
-            print(state, newState, "\n")
-            state = .Error(
-                .Unexpected("unxpected state transition from \(state) to \(newState)"))
+            return false
+        }
+    }
+   
+    func transition<R>(newState: State, doBeforeTransition: () async throws -> R) async throws -> R {
+        if canTransition(newState: newState) {
+            let r = try await doBeforeTransition()
+            state = newState
+            return r
+        } else {
+            throw ErrorType.UnexpectedTransition(state, newState)
         }
     }
 }

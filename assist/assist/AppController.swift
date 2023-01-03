@@ -70,13 +70,6 @@ actor AppController {
         }
     }
     
-    func showSettings() {
-        Task { [weak self] in
-            await self?.popover.performClose(nil)
-            await NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        }
-    }
-    
     func refreshSession(force: Bool = false) async throws {
         enum SessionError : Error {
             case HTTP(Int, String)
@@ -124,10 +117,21 @@ actor AppController {
         ])
     }
     
-    func unexpectedError(_ err: Error) {
+    func unexpectedError(_ err: Error) async {
         logger.error("\(err.localizedDescription)")
-        Task { @MainActor [weak self] in
-            await self?.state.transition(newState: .UnexpectedError(errorMessage: err.localizedDescription))
+        await state.transition(newState: .UnexpectedError(errorMessage: err.localizedDescription))
+    }
+    
+    func showSettings() async {
+        await MainActor.run {
+            popover.performClose(nil)
+            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        }
+    }
+    
+    func quit() async {
+        await MainActor.run {
+            NSApplication.shared.terminate(nil)
         }
     }
 }

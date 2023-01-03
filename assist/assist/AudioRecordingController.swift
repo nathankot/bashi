@@ -8,18 +8,35 @@
 import Foundation
 import Speech
 import SwiftUI
+import Combine
 
 @MainActor
 class AudioRecordingController : ObservableObject {
     enum E : Error {
         case noSpeechRecognitionPermissions
         case audioRecordingControllerNotPrepared
+        case notRecording
     }
     
-    let state: AppState
-    let engine = AVAudioEngine()
+    private let state: AppState
     
-    var bufferStream: AsyncStream<(AVAudioPCMBuffer, AVAudioTime)>? = nil
+    private let engine = AVAudioEngine()
+    
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(
+        identifier:
+            Locale.current.identifier.starts(with: "en-") ||
+            Locale.current.identifier.starts(with: "en_")
+            ? Locale.current.identifier
+            : "en-US"))!
+    
+    private var speechRecognitionRequest: SFSpeechAudioBufferRecognitionRequest? = nil
+    private var speechRecognitionTask: SFSpeechRecognitionTask? = nil
+    
+    private let buffers = PassthroughSubject<AVAudioPCMBuffer, Never>().share()
+    
+    private var buffersAsync: AsyncPublisher<some Publisher<AVAudioPCMBuffer, Never>> {
+        return AsyncPublisher(buffers)
+    }
     
     nonisolated init(state: AppState) {
         self.state = state
@@ -37,25 +54,6 @@ class AudioRecordingController : ObservableObject {
         }
         state.speechRecognizerAuthStatus = authStatus
         
-        let inputNode = engine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        let bufferStream = AsyncStream(bufferingPolicy: .bufferingNewest(5)) { [weak self, inputNode] continuation in
-            inputNode.installTap(onBus: 0, bufferSize: 512, format: recordingFormat) { [weak self] buffer, when in
-                if !(self?.state.isRecording ?? false) {
-                    // Only process packets if we are recording
-                    return
-                }
-                continuation.yield((buffer, when))
-            }
-        }
-        
-        self.bufferStream = bufferStream
-        
-        engine.prepare()
-        // Start-stop the engine so that we request permissions here:
-        try? engine.start()
-        engine.stop()
-        
         state.isAudioRecordingPrepared = true
     }
     
@@ -70,6 +68,18 @@ class AudioRecordingController : ObservableObject {
             return
         }
         logger.info("starting audio recording")
+        
+        engine.inputNode.removeTap(onBus: 0)
+        let recordingFormat = engine.inputNode.outputFormat(forBus: 0)
+        engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
+            if !(self?.state.isRecording ?? false) {
+                // Only process packets if we are recording
+                return
+            }
+            self?.buffers.upstream.send(buffer)
+        }
+        
+        engine.prepare()
         try engine.start()
         state.isRecording = true
     }
@@ -81,32 +91,40 @@ class AudioRecordingController : ObservableObject {
         logger.info("stopping audio recording")
         if engine.isRunning {
             engine.stop()
+            engine.inputNode.removeTap(onBus: 0)
+            speechRecognitionRequest?.endAudio()
         }
         state.isRecording = false
     }
     
     func transcribe() -> AsyncThrowingStream<String, Error> {
-        guard let bufferStream = bufferStream else {
+        if !state.isRecording {
             return AsyncThrowingStream { continuation in
-                continuation.finish(throwing: E.audioRecordingControllerNotPrepared)
+                continuation.finish(throwing: E.notRecording)
             }
         }
         
-        let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
-        let recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        recognitionRequest.shouldReportPartialResults = true
+        speechRecognitionTask?.cancel()
+        speechRecognitionRequest?.endAudio()
+        speechRecognitionTask = nil
+        speechRecognitionRequest = nil
+        
+        let speechRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        self.speechRecognitionRequest = speechRecognitionRequest
+        speechRecognitionRequest.shouldReportPartialResults = true
         
         let bufferingTask = Task {
-            for await (b, _) in bufferStream {
-                recognitionRequest.append(b)
+            for await b in buffersAsync {
+                speechRecognitionRequest.append(b)
             }
         }
         
-        return AsyncThrowingStream { continuation in
-            speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: { [continuation] result, error in
+        return AsyncThrowingStream { [weak self] continuation in
+            let speechRecognitionTask = speechRecognizer.recognitionTask(with: speechRecognitionRequest, resultHandler: { [continuation] result, error in
                 if let result = result {
                     continuation.yield(result.bestTranscription.formattedString)
                     if result.isFinal {
+                        logger.info("received final recognition result")
                         continuation.finish()
                     }
                     return
@@ -119,8 +137,11 @@ class AudioRecordingController : ObservableObject {
             })
             
             continuation.onTermination = { _ in
+                speechRecognitionTask.cancel()
                 bufferingTask.cancel()
             }
+            
+            self?.speechRecognitionTask = speechRecognitionTask
         }
     }
     

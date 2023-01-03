@@ -9,7 +9,6 @@ import AppKit
 import Foundation
 import Cocoa
 import SwiftUI
-
 #if DEBUG
 import AlamofireNetworkActivityLogger
 #endif
@@ -30,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.popover = popover
         self.appController = AppController(state: AppState.shared, popover: popover)
         
-        let menuBarView = MenuBarView(state: AppState.shared, controller: appController)
+        let menuBarView = ContentView(state: AppState.shared, controller: appController)
         popover.contentViewController = NSHostingController(rootView: menuBarView)
         
         // Create the status item
@@ -44,7 +43,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         Task { [weak self] in
             await self?.appController.prepare()
-            await self?.appController.listenToKeyboardShortcuts()
         }
     }
     

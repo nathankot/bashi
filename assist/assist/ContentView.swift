@@ -1,5 +1,5 @@
 //
-//  MenuBarView.swift
+//  ContentView.swift
 //  assist
 //
 //  Created by Nathan Kot on 2/01/23.
@@ -8,7 +8,7 @@
 import os
 import SwiftUI
 
-struct MenuBarView: View {
+struct ContentView: View {
     @ObservedObject var state: AppState
     var controller: AppController?
     
@@ -41,6 +41,6 @@ struct MenuBarView: View {
 
 struct MenuBarView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuBarView(state: AppState(accountNumber: "123"))
+        ContentView(state: AppState(accountNumber: "123"))
     }
 }

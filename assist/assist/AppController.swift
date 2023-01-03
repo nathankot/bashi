@@ -32,6 +32,7 @@ actor AppController {
     
     func prepare() async {
         await audioRecordingController.prepare()
+        listenToKeyboardShortcuts()
     }
     
     func listenToKeyboardShortcuts() {

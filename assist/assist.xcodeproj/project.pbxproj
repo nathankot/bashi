@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */; };
 		D85A306529626DFC00581B98 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306429626DFC00581B98 /* AppController.swift */; };
-		D85A306D2962BEB200581B98 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306C2962BEB200581B98 /* MenuBarView.swift */; };
+		D85A306D2962BEB200581B98 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306C2962BEB200581B98 /* ContentView.swift */; };
 		D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */ = {isa = PBXBuildFile; productRef = D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */; };
 		D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87F1F9A29631E3500C5936E /* AppDelegate.swift */; };
 		D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10966296023CF006E6A10 /* AssistApp.swift */; };
@@ -57,7 +57,7 @@
 /* Begin PBXFileReference section */
 		D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingController.swift; sourceTree = "<group>"; };
 		D85A306429626DFC00581B98 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
-		D85A306C2962BEB200581B98 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		D85A306C2962BEB200581B98 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D87F1F9929631A9C00C5936E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D87F1F9A29631E3500C5936E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D8C10963296023CF006E6A10 /* assist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = assist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,7 +130,7 @@
 				D8C1096D296023CF006E6A10 /* Preview Content */,
 				D8C10966296023CF006E6A10 /* AssistApp.swift */,
 				D87F1F9A29631E3500C5936E /* AppDelegate.swift */,
-				D85A306C2962BEB200581B98 /* MenuBarView.swift */,
+				D85A306C2962BEB200581B98 /* ContentView.swift */,
 				D8C1096A296023CF006E6A10 /* Assets.xcassets */,
 				D8C1096C296023CF006E6A10 /* assist.entitlements */,
 				D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */,
@@ -319,7 +319,7 @@
 				D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */,
 				D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */,
 				D85A306529626DFC00581B98 /* AppController.swift in Sources */,
-				D85A306D2962BEB200581B98 /* MenuBarView.swift in Sources */,
+				D85A306D2962BEB200581B98 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

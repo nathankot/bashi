@@ -15,15 +15,17 @@ actor AppController {
     
     let state: AppState
     let popover: NSPopover
+    let statusBarItem: NSStatusItem
     
-    let audioRecordingController: AudioRecordingController
+    let audioRecordingController: AudioRecordingController = AudioRecordingController()
     
     var keyboardShortcutsTask: Task<Void, Error>? = nil
     
-    init(state: AppState, popover: NSPopover, keyboardShortcutsTask: Task<Void, Error>? = nil) {
+    init(state: AppState, popover: NSPopover, statusBarItem: NSStatusItem, keyboardShortcutsTask: Task<Void, Error>? = nil) {
         self.state = state
         self.popover = popover
-        self.audioRecordingController = AudioRecordingController()
+        self.statusBarItem = statusBarItem
+        self.keyboardShortcutsTask = keyboardShortcutsTask
     }
     
     deinit {
@@ -134,6 +136,21 @@ actor AppController {
             NSApplication.shared.terminate(nil)
         }
     }
+    
+    func togglePopover(shouldShow: Bool? = nil) async {
+        let isCurrentlyShown = await self.popover.isShown
+        let shouldShow = shouldShow ?? !isCurrentlyShown
+        
+        if !shouldShow {
+            await self.popover.performClose(nil)
+        } else {
+            if let button = self.statusBarItem.button {
+                await self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+                await self.popover.contentViewController?.view.window?.becomeKey()
+            }
+        }
+    }
+    
 }
 
 extension KeyboardShortcuts.Name {

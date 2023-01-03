@@ -23,37 +23,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NetworkActivityLogger.shared.startLogging()
         #endif
         
-        let popover = NSPopover()
-//        popover.contentSize = NSSize(width: 400, height: 400)
-        popover.behavior = .transient
-        self.popover = popover
-        self.appController = AppController(state: AppState.shared, popover: popover)
-        
-        let menuBarView = ContentView(state: AppState.shared, controller: appController)
-        popover.contentViewController = NSHostingController(rootView: menuBarView)
-        
-        // Create the status item
-        self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        
+        let statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
+        self.statusBarItem = statusBarItem
         if let button = self.statusBarItem.button {
             button.image = NSImage(systemSymbolName: "heart", accessibilityDescription: "assist")
             button.action = #selector(togglePopover(_:))
         }
         
+        let popover = NSPopover()
+        popover.animates = true
+        popover.behavior = .applicationDefined
+        self.popover = popover
+        self.appController = AppController(state: AppState.shared, popover: popover, statusBarItem: statusBarItem)
+       
+        let contentView = ContentView(state: AppState.shared, controller: appController)
+        let hostingController = NSHostingController(rootView: contentView)
+        if #available(macOS 13, *) {
+            hostingController.sizingOptions = .preferredContentSize
+        }
         
+        popover.contentViewController = hostingController
+
         Task { [weak self] in
             await self?.appController.prepare()
         }
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
-        if let button = self.statusBarItem.button {
-            if self.popover.isShown {
-                self.popover.performClose(sender)
-            } else {
-                self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
-                self.popover.contentViewController?.view.window?.becomeKey()
-            }
+        Task {
+            await appController.togglePopover()
         }
     }
     

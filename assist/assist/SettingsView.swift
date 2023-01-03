@@ -6,26 +6,65 @@
 //
 
 import SwiftUI
+import KeyboardShortcuts
 
 struct SettingsView: View {
-    @ObservedObject var settings: SettingsModel
+    @Environment(\.dismiss) private var dismiss
     
+    @ObservedObject var state: AppState
+    
+    init(state s: AppState) {
+        self.state = s
+    }
+    
+    func validAccountNumber() -> Bool {
+        return state.accountNumber.filter { $0.isNumber } == state.accountNumber
+    }
+
     var body: some View {
+        let validAccountNumber = validAccountNumber()
+        
         Form {
-            Section {
-                TextField("Account Number", text: $settings.accountNumber)
-            } header: {
+            Section(content: {
+                TextField("Account Number", text: $state.accountNumber)
+                if !validAccountNumber {
+                    Text("Account number is invalid")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
+                Button("Create account number") {
+                    
+                }
+            }, header: {
                 Text("Authentication")
                     .font(Font.system(.title2))
+            })
+            .padding(.bottom)
+            
+            Section {
+                KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)
+                Text("Hold this shortcut key to enable the microphone, release to send the request.")
+                    .font(.caption)
+            } header: {
+                Text("Keyboard Shortcuts")
+                    .font(Font.system(.title2))
             }
-            Spacer()
+            .padding(.bottom)
+            
+            HStack {
+                Spacer()
+                Button("Close") {
+                    dismiss()
+                }
+            }
         }
-        .padding(.all)
+        .padding()
+        .fixedSize()
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(settings: SettingsModel(accountNumber: "123456"))
+        SettingsView(state: AppState(accountNumber: "123456"))
     }
 }

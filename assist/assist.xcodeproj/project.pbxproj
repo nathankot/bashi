@@ -7,15 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D8C10967296023CF006E6A10 /* assistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10966296023CF006E6A10 /* assistApp.swift */; };
-		D8C10969296023CF006E6A10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10968296023CF006E6A10 /* ContentView.swift */; };
+		D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */; };
+		D85A306529626DFC00581B98 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306429626DFC00581B98 /* AppController.swift */; };
+		D85A306D2962BEB200581B98 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306C2962BEB200581B98 /* MenuBarView.swift */; };
+		D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */ = {isa = PBXBuildFile; productRef = D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */; };
+		D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87F1F9A29631E3500C5936E /* AppDelegate.swift */; };
+		D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10966296023CF006E6A10 /* AssistApp.swift */; };
 		D8C1096B296023CF006E6A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8C1096A296023CF006E6A10 /* Assets.xcassets */; };
 		D8C1096F296023CF006E6A10 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8C1096E296023CF006E6A10 /* Preview Assets.xcassets */; };
 		D8C10979296023CF006E6A10 /* assistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10978296023CF006E6A10 /* assistTests.swift */; };
 		D8C10983296023CF006E6A10 /* assistUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10982296023CF006E6A10 /* assistUITests.swift */; };
 		D8C10985296023CF006E6A10 /* assistUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10984296023CF006E6A10 /* assistUITestsLaunchTests.swift */; };
-		D8C26D3429607EBB001F63DB /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C26D3329607EBB001F63DB /* SettingsModel.swift */; };
+		D8C26D3429607EBB001F63DB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C26D3329607EBB001F63DB /* AppState.swift */; };
 		D8C26D3829616B7C001F63DB /* Bashi in Frameworks */ = {isa = PBXBuildFile; productRef = D8C26D3729616B7C001F63DB /* Bashi */; };
+		D8EA825C29619B5B00833ED5 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */; };
 		D8F24CFF296040AA00BD3CD3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,9 +55,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingController.swift; sourceTree = "<group>"; };
+		D85A306429626DFC00581B98 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
+		D85A306C2962BEB200581B98 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		D87F1F9929631A9C00C5936E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D87F1F9A29631E3500C5936E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D8C10963296023CF006E6A10 /* assist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = assist.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8C10966296023CF006E6A10 /* assistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assistApp.swift; sourceTree = "<group>"; };
-		D8C10968296023CF006E6A10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D8C10966296023CF006E6A10 /* AssistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistApp.swift; sourceTree = "<group>"; };
 		D8C1096A296023CF006E6A10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D8C1096C296023CF006E6A10 /* assist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = assist.entitlements; sourceTree = "<group>"; };
 		D8C1096E296023CF006E6A10 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -61,7 +70,7 @@
 		D8C1097E296023CF006E6A10 /* assistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = assistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C10982296023CF006E6A10 /* assistUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assistUITests.swift; sourceTree = "<group>"; };
 		D8C10984296023CF006E6A10 /* assistUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assistUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		D8C26D3329607EBB001F63DB /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
+		D8C26D3329607EBB001F63DB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,7 +79,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */,
 				D8C26D3829616B7C001F63DB /* Bashi in Frameworks */,
+				D8EA825C29619B5B00833ED5 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,13 +126,17 @@
 		D8C10965296023CF006E6A10 /* assist */ = {
 			isa = PBXGroup;
 			children = (
+				D87F1F9929631A9C00C5936E /* Info.plist */,
 				D8C1096D296023CF006E6A10 /* Preview Content */,
-				D8C10966296023CF006E6A10 /* assistApp.swift */,
-				D8C10968296023CF006E6A10 /* ContentView.swift */,
+				D8C10966296023CF006E6A10 /* AssistApp.swift */,
+				D87F1F9A29631E3500C5936E /* AppDelegate.swift */,
+				D85A306C2962BEB200581B98 /* MenuBarView.swift */,
 				D8C1096A296023CF006E6A10 /* Assets.xcassets */,
 				D8C1096C296023CF006E6A10 /* assist.entitlements */,
 				D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */,
-				D8C26D3329607EBB001F63DB /* SettingsModel.swift */,
+				D85A306429626DFC00581B98 /* AppController.swift */,
+				D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */,
+				D8C26D3329607EBB001F63DB /* AppState.swift */,
 			);
 			path = assist;
 			sourceTree = "<group>";
@@ -177,6 +192,8 @@
 			name = assist;
 			packageProductDependencies = (
 				D8C26D3729616B7C001F63DB /* Bashi */,
+				D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */,
+				D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */,
 			);
 			productName = assist;
 			productReference = D8C10963296023CF006E6A10 /* assist.app */;
@@ -250,6 +267,10 @@
 				Base,
 			);
 			mainGroup = D8C1095A296023CF006E6A10;
+			packageReferences = (
+				D8EA825A29619B5B00833ED5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				D85A306E2962F4AD00581B98 /* XCRemoteSwiftPackageReference "AlamofireNetworkActivityLogger" */,
+			);
 			productRefGroup = D8C10964296023CF006E6A10 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -292,10 +313,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8C26D3429607EBB001F63DB /* SettingsModel.swift in Sources */,
-				D8C10969296023CF006E6A10 /* ContentView.swift in Sources */,
+				D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */,
+				D8C26D3429607EBB001F63DB /* AppState.swift in Sources */,
 				D8F24CFF296040AA00BD3CD3 /* SettingsView.swift in Sources */,
-				D8C10967296023CF006E6A10 /* assistApp.swift in Sources */,
+				D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */,
+				D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */,
+				D85A306529626DFC00581B98 /* AppController.swift in Sources */,
+				D85A306D2962BEB200581B98 /* MenuBarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,6 +411,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -438,6 +463,7 @@
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -453,6 +479,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = assist/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -467,7 +494,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bashi.assist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -492,6 +519,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = assist/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -506,7 +534,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bashi.assist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -646,10 +674,39 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		D85A306E2962F4AD00581B98 /* XCRemoteSwiftPackageReference "AlamofireNetworkActivityLogger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/konkab/AlamofireNetworkActivityLogger";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		D8EA825A29619B5B00833ED5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D85A306E2962F4AD00581B98 /* XCRemoteSwiftPackageReference "AlamofireNetworkActivityLogger" */;
+			productName = AlamofireNetworkActivityLogger;
+		};
 		D8C26D3729616B7C001F63DB /* Bashi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Bashi;
+		};
+		D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8EA825A29619B5B00833ED5 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

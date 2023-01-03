@@ -9,6 +9,24 @@
           "revision": "d120af1e8638c7da36c8481fd61a66c0c08dc4fc",
           "version": "5.4.4"
         }
+      },
+      {
+        "package": "AlamofireNetworkActivityLogger",
+        "repositoryURL": "https://github.com/konkab/AlamofireNetworkActivityLogger",
+        "state": {
+          "branch": "master",
+          "revision": "8db9d4e27176905298e7215e3d800e349cdfa30b",
+          "version": null
+        }
+      },
+      {
+        "package": "KeyboardShortcuts",
+        "repositoryURL": "https://github.com/sindresorhus/KeyboardShortcuts",
+        "state": {
+          "branch": "main",
+          "revision": "a99680cbbb030eeed5b8bbbfc8b140a03335dd91",
+          "version": null
+        }
       }
     ]
   },

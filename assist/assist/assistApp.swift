@@ -1,20 +1,26 @@
 //
-//  assistApp.swift
+//  AssistApp.swift
 //  assist
 //
 //  Created by Nathan Kot on 31/12/22.
 //
 
+import os
 import SwiftUI
+import Bashi
+
+let logger = Logger()
 
 @main
-struct assistApp: App {
+struct AssistApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    @StateObject private var appState: AppState = AppState.shared
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
         Settings {
-            SettingsView(settings: SettingsModel(accountNumber: "123"))
+            SettingsView(state: appState)
         }
+        // Menubar view is managed by AppDelegate.
     }
 }

@@ -121,7 +121,7 @@ actor AppController {
     
     func unexpectedError(_ err: Error) async {
         logger.error("\(err.localizedDescription)")
-        await state.transition(newState: .UnexpectedError(errorMessage: err.localizedDescription))
+        await state.transition(newState: .Error(.Unexpected(err.localizedDescription)))
     }
     
     func showSettings() async {

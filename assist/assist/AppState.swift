@@ -23,7 +23,11 @@ final class AppState : ObservableObject {
     enum State : Equatable {
         case Idle
         case Recording(bestTranscription: String?)
-        case UnexpectedError(errorMessage: String)
+        case Error(ErrorType)
+        
+        enum ErrorType : Equatable {
+            case Unexpected(String)
+        }
     }
     
     @Published var state: State = .Idle
@@ -41,16 +45,16 @@ final class AppState : ObservableObject {
         switch (state, newState)  {
         case (.Idle, .Recording),
              (.Recording, .Recording),
-             (.UnexpectedError, .Idle),
-             (.UnexpectedError, .Recording),
-             (_, .UnexpectedError):
+             (.Error, .Idle),
+             (.Error, .Recording),
+             (_, .Error):
             logger.info("transitioning to new state")
             state = newState
         default:
             logger.info("unxpected state transition")
             print(state, newState, "\n")
-            state = .UnexpectedError(
-                errorMessage: "unxpected state transition from \(state) to \(newState)")
+            state = .Error(
+                .Unexpected("unxpected state transition from \(state) to \(newState)"))
         }
     }
 }

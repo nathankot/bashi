@@ -47,7 +47,7 @@ actor AppController {
                         try await self?.audioRecordingController.startRecording()
                     } catch {
                         logger.error("failed to start audio recording \(error.localizedDescription)")
-                        await MainActor.run { [weak self] in self?.state.lastError = error }
+                        await self?.registerError(error)
                     }
                     
                     Task { [weak self] in
@@ -74,7 +74,6 @@ actor AppController {
             await NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         }
     }
-    
     
     func refreshSession(force: Bool = false) async throws {
         enum SessionError : Error {
@@ -113,6 +112,12 @@ actor AppController {
         }
         await MainActor.run {
             state.session = r.success!.session
+        }
+    }
+    
+    func registerError(_ err: Error) {
+        Task { @MainActor [weak self] in
+            self?.state.errors.append(err)
         }
     }
 }

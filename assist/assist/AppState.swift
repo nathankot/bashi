@@ -26,7 +26,7 @@ final class AppState : ObservableObject {
     @Published var isAudioRecordingPrepared = false
     
     // Error handling:
-    @Published var lastError: Error? = nil
+    @Published var errors: [Error] = []
     
     convenience init() {
         logger.info("initializing app state")

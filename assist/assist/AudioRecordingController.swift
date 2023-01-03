@@ -18,7 +18,9 @@ class AudioRecordingController : ObservableObject {
         case notRecording
     }
     
-    private let state: AppState
+    var isRecording: Bool = false
+    var speechRecognizerAuthStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
+    var isAudioRecordingPrepared = false
     
     private let engine = AVAudioEngine()
     
@@ -38,12 +40,10 @@ class AudioRecordingController : ObservableObject {
         return AsyncPublisher(buffers)
     }
     
-    nonisolated init(state: AppState) {
-        self.state = state
-    }
+    nonisolated init() {}
     
     func prepare() async {
-        if state.isAudioRecordingPrepared {
+        if isAudioRecordingPrepared {
             return
         }
         
@@ -52,19 +52,19 @@ class AudioRecordingController : ObservableObject {
                 continuation.resume(returning: authStatus)
             }
         }
-        state.speechRecognizerAuthStatus = authStatus
         
-        state.isAudioRecordingPrepared = true
+        speechRecognizerAuthStatus = authStatus
+        isAudioRecordingPrepared = true
     }
     
     func startRecording() async throws {
-        if !state.isAudioRecordingPrepared {
+        if !isAudioRecordingPrepared {
             return
         }
-        if state.speechRecognizerAuthStatus != .authorized {
+        if speechRecognizerAuthStatus != .authorized {
             throw E.noSpeechRecognitionPermissions
         }
-        if state.isRecording {
+        if isRecording {
             return
         }
         logger.info("starting audio recording")
@@ -72,7 +72,7 @@ class AudioRecordingController : ObservableObject {
         engine.inputNode.removeTap(onBus: 0)
         let recordingFormat = engine.inputNode.outputFormat(forBus: 0)
         engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-            if !(self?.state.isRecording ?? false) {
+            if !(self?.isRecording ?? false) {
                 // Only process packets if we are recording
                 return
             }
@@ -81,11 +81,11 @@ class AudioRecordingController : ObservableObject {
         
         engine.prepare()
         try engine.start()
-        state.isRecording = true
+        isRecording = true
     }
     
     func stopRecording() async {
-        if !state.isAudioRecordingPrepared {
+        if !isAudioRecordingPrepared {
             return
         }
         logger.info("stopping audio recording")
@@ -94,11 +94,11 @@ class AudioRecordingController : ObservableObject {
             engine.inputNode.removeTap(onBus: 0)
             speechRecognitionRequest?.endAudio()
         }
-        state.isRecording = false
+        isRecording = false
     }
     
     func transcribe() -> AsyncThrowingStream<String, Error> {
-        if !state.isRecording {
+        if !isRecording {
             return AsyncThrowingStream { continuation in
                 continuation.finish(throwing: E.notRecording)
             }

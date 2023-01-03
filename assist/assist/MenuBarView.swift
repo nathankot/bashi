@@ -27,6 +27,13 @@ struct MenuBarView: View {
             if let session = state.session {
                 Text("Your session id is \(session.sessionId)")
             }
+            
+            switch state.state {
+            case .Recording(let bestTranscription):
+                Text("Recording: " + (bestTranscription ?? ""))
+            default:
+                Text("blah")
+            }
         }
         .padding()
     }

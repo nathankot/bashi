@@ -23,7 +23,7 @@ actor AppController {
     init(state: AppState, popover: NSPopover, keyboardShortcutsTask: Task<Void, Error>? = nil) {
         self.state = state
         self.popover = popover
-        self.audioRecordingController = AudioRecordingController(state: state)
+        self.audioRecordingController = AudioRecordingController()
     }
     
     deinit {
@@ -45,19 +45,20 @@ actor AppController {
                 case .keyDown:
                     do {
                         try await self?.audioRecordingController.startRecording()
+                        await self?.state.transition(newState: .Recording(bestTranscription: nil))
                     } catch {
-                        logger.error("failed to start audio recording \(error.localizedDescription)")
-                        await self?.registerError(error)
+                        await self?.unexpectedError(error)
                     }
                     
                     Task { [weak self] in
                         if let transcribeStream = await self?.audioRecordingController.transcribe() {
                             do {
                                 for try await transcription in transcribeStream {
-                                    logger.info("got transcription: \(transcription)")
+                                    logger.info("transitioning with \(transcription) \(self == nil)")
+                                    await self?.state.transition(newState: .Recording(bestTranscription: transcription))
                                 }
                             } catch {
-                                logger.error("error from transcribe stream \(error)")
+                                await self?.unexpectedError(error)
                             }
                         }
                     }
@@ -93,7 +94,7 @@ actor AppController {
             }
         }
         
-        let apiClient = await state.makeApiClient()
+        let apiClient = await makeApiClient()
         let request = Bashi.PostSessions.Request(
             body: .init(modelConfigurations: .init(
                 assist000: .init(model: .assist000, functions: [:])))
@@ -115,9 +116,17 @@ actor AppController {
         }
     }
     
-    func registerError(_ err: Error) {
+    func makeApiClient() async -> APIClient {
+        let accountNumber = await state.accountNumber
+        return APIClient(baseURL: Bashi.Server.main, defaultHeaders: [
+            "Authorization": "Bearer \(accountNumber)",
+        ])
+    }
+    
+    func unexpectedError(_ err: Error) {
+        logger.error("\(err.localizedDescription)")
         Task { @MainActor [weak self] in
-            self?.state.errors.append(err)
+            await self?.state.transition(newState: .UnexpectedError(errorMessage: err.localizedDescription))
         }
     }
 }

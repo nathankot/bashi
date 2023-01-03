@@ -61,6 +61,7 @@ final class AppState : ObservableObject {
             state = newState
             return r
         } else {
+            logger.error("unexpected transition from \(String(reflecting: state)) to \(String(reflecting: newState))")
             throw ErrorType.UnexpectedTransition(state, newState)
         }
     }

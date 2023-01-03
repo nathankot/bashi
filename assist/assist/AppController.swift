@@ -50,6 +50,7 @@ actor AppController {
                         try await self?.state.transition(newState: .Recording(bestTranscription: nil)) { [weak self] in
                             try await self?.audioRecordingController.startRecording()
                         }
+                    } catch AppState.ErrorType.UnexpectedTransition {
                     } catch {
                         await self?.unexpectedError(error)
                     }
@@ -60,6 +61,7 @@ actor AppController {
                                 for try await transcription in transcribeStream {
                                     try await self?.state.transition(newState: .Recording(bestTranscription: transcription), doBeforeTransition: {})
                                 }
+                            } catch AppState.ErrorType.UnexpectedTransition {
                             } catch {
                                 await self?.unexpectedError(error)
                             }

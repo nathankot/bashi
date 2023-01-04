@@ -9,7 +9,7 @@ public enum FunctionCall: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        let discriminator: String = try container.decode("")
+        let discriminator: String = try container.decode("type")
         switch discriminator {
         default:
             throw DecodingError.dataCorrupted(DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "Couldn't find type to decode with discriminator \(discriminator)"))

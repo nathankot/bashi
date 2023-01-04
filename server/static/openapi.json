@@ -666,7 +666,10 @@
               }
             }
           }
-        ]
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
       },
       "models_assist-000_Input": {
         "type": "object",

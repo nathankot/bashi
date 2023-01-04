@@ -105,9 +105,57 @@ export default function toJSONSchema(
         } satisfies OpenAPIV3.SchemaObject;
       case "UnionType":
         const union = type as t.UnionType<any[]>;
-        return {
-          oneOf: union.types.map((t) => recurse(t)),
-        } satisfies OpenAPIV3.SchemaObject;
+        const childTypes = union.types.map((t) => recurse(t));
+
+        // If this is a union of objects, and the objects have a common
+        // discriminator, use it.
+        let possibleDiscriminators = new Set<string>();
+        let excludedDiscriminators = new Set<string>();
+        for (let childType of childTypes) {
+          if ("$ref" in childType) {
+            const r = refs[childType.$ref];
+            if (r != null) {
+              childType = r;
+            }
+          }
+          if (!("type" in childType)) {
+            possibleDiscriminators.clear();
+            break;
+          }
+          if (childType.type !== "object") {
+            possibleDiscriminators.clear();
+            break;
+          }
+          for (const [n, t] of Object.entries(childType.properties ?? {})) {
+            if ("type" in t && t.type === "string") {
+              possibleDiscriminators.add(n);
+            }
+          }
+          for (const [e] of possibleDiscriminators.entries()) {
+            if (!(childType.required ?? []).includes(e)) {
+              // Can't use it if the property is not required on all types.
+              excludedDiscriminators.add(e);
+            }
+          }
+        }
+
+        const viableDiscriminators = new Set(
+          [...possibleDiscriminators].filter(
+            (x) => !excludedDiscriminators.has(x)
+          )
+        );
+
+        let result: OpenAPIV3.SchemaObject = {
+          oneOf: childTypes,
+        };
+
+        if (viableDiscriminators.size > 0) {
+          result.discriminator = {
+            propertyName: [...viableDiscriminators][0]!,
+          };
+        }
+
+        return result;
       case "DictionaryType":
         const dict = type as t.DictionaryType<t.StringType, any>;
         return {

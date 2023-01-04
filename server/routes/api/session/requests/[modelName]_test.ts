@@ -58,7 +58,7 @@ reminder("in 5 days", "some reminder name")`,
   {
     description: "noop model works",
     model: "noop",
-    request: `{}`,
+    request: `{ "request": "noop" }`,
     session: fixtures.session,
     openAiFn: null,
   },

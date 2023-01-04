@@ -405,6 +405,60 @@
           }
         }
       },
+      "StringValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "string"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "NumberValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "number"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        }
+      },
+      "BooleanValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "boolean"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        }
+      },
       "ArgumentParser": {
         "enum": [
           "naturalLanguageDateTime"
@@ -460,15 +514,23 @@
           "returnValue": {
             "oneOf": [
               {
-                "type": "string"
+                "$ref": "#/components/schemas/StringValue"
               },
               {
-                "type": "number"
+                "$ref": "#/components/schemas/NumberValue"
               },
               {
-                "type": "boolean"
+                "$ref": "#/components/schemas/BooleanValue"
               }
-            ]
+            ],
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "string": "#/components/schemas/StringValue",
+                "number": "#/components/schemas/NumberValue",
+                "boolean": "#/components/schemas/BooleanValue"
+              }
+            }
           }
         }
       },

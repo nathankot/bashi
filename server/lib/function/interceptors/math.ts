@@ -6,7 +6,7 @@ const interceptor = interceptFunctionCall(
   "math",
   async ({ log, session }, input, [expr]) => {
     const result = mathjs.evaluate(expr);
-    return `${result}`;
+    return { type: "string", value: `${result}` };
   }
 );
 

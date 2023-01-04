@@ -47,7 +47,10 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
       ],
       line: 'time("America/New_York")',
       name: "time",
-      returnValue: "12/19/2022, 3:41:10 AM",
+      returnValue: {
+        type: "string",
+        value: "12/19/2022, 3:41:10 AM",
+      },
       type: "executed",
     },
     {
@@ -114,5 +117,6 @@ snapshot[`POST /api/session/requests/assist-000: empty request 1`] = `
 snapshot[`POST /api/session/requests/noop: noop model works 1`] = `
 {
   model: "noop",
+  result: "noop",
 }
 `;

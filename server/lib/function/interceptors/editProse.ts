@@ -14,7 +14,7 @@ const interceptor = interceptFunctionCall(
 
 ${text}`,
     });
-    return output.result.trim();
+    return { type: "string", value: output.result.trim() };
   },
   async (ctx) => {
     if ((ctx.text?.length ?? 0) === 0) {

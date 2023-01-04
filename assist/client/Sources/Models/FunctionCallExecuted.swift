@@ -21,6 +21,39 @@ public class FunctionCallExecuted: APIModel {
 
     public var returnValue: ReturnValue
 
+    public enum ReturnValue: Codable, Equatable {
+        case stringValue(StringValue)
+        case numberValue(NumberValue)
+        case booleanValue(BooleanValue)
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: StringCodingKey.self)
+            let discriminator: String = try container.decode("type")
+            switch discriminator {
+            case "boolean":
+                self = .booleanValue(try BooleanValue(from: decoder))
+            case "number":
+                self = .numberValue(try NumberValue(from: decoder))
+            case "string":
+                self = .stringValue(try StringValue(from: decoder))
+            default:
+                throw DecodingError.dataCorrupted(DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "Couldn't find type to decode with discriminator \(discriminator)"))
+            }
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            switch self {
+            case .stringValue(let content):
+                try container.encode(content)
+            case .numberValue(let content):
+                try container.encode(content)
+            case .booleanValue(let content):
+                try container.encode(content)
+            }
+        }
+    }
+
     public init(line: String, type: `Type`, name: String, args: [Args], returnValue: ReturnValue) {
         self.line = line
         self.type = type

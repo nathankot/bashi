@@ -153,6 +153,7 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **ArgumentParser**
 - **ArgumentType**
 - **BashiSession**
+- **BooleanValue**
 - **ErrorType**
 - **FunctionCall**
 - **FunctionCallExecuted**
@@ -177,7 +178,9 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **ModelsTranslate000Output**
 - **ModelsWhisper000Configuration**
 - **ModelsWhisper000Output**
+- **NumberValue**
 - **SessionConfiguration**
+- **StringValue**
 
 ## Requests
 

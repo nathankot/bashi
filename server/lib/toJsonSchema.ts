@@ -4,15 +4,17 @@ import { equal } from "std/testing/asserts.ts";
 import { OpenAPIV3 } from "openapi-types";
 
 import { models } from "@lib/models.ts";
-import {
-  ArgumentParser,
-  ArgumentType,
-  FunctionDefinition,
-} from "@lib/function/types.ts";
 import { Configuration } from "@lib/session/configuration.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
+
 import {
+  StringValue,
+  NumberValue,
+  BooleanValue,
+  ArgumentParser,
+  ArgumentType,
+  FunctionDefinition,
   FunctionCall,
   FunctionCallExecuted,
   FunctionCallInvalid,
@@ -284,6 +286,13 @@ export default function toJSONSchema(
 
 namedJSONSchemaObjects["#/components/schemas/Error"] =
   toJSONSchema(ResponseError);
+
+namedJSONSchemaObjects["#/components/schemas/StringValue"] =
+  toJSONSchema(StringValue);
+namedJSONSchemaObjects["#/components/schemas/NumberValue"] =
+  toJSONSchema(NumberValue);
+namedJSONSchemaObjects["#/components/schemas/BooleanValue"] =
+  toJSONSchema(BooleanValue);
 
 namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
   toJSONSchema(ArgumentParser);

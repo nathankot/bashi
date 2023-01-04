@@ -12,7 +12,13 @@ import {
 import { Configuration } from "@lib/session/configuration.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
-import { FunctionCall } from "@lib/function/types.ts";
+import {
+  FunctionCall,
+  FunctionCallExecuted,
+  FunctionCallInvalid,
+  FunctionCallParseError,
+  FunctionCallParsed,
+} from "@lib/function/types.ts";
 
 type SupportedTag =
   | "AnyType"
@@ -270,6 +276,16 @@ namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
   toJSONSchema(ArgumentParser);
 namedJSONSchemaObjects["#/components/schemas/ArgumentType"] =
   toJSONSchema(ArgumentType);
+
+namedJSONSchemaObjects["#/components/schemas/FunctionCallExecuted"] =
+  toJSONSchema(FunctionCallExecuted);
+namedJSONSchemaObjects["#/components/schemas/FunctionCallInvalid"] =
+  toJSONSchema(FunctionCallInvalid);
+namedJSONSchemaObjects["#/components/schemas/FunctionCallParseError"] =
+  toJSONSchema(FunctionCallParseError);
+namedJSONSchemaObjects["#/components/schemas/FunctionCallParsed"] =
+  toJSONSchema(FunctionCallParsed);
+
 namedJSONSchemaObjects["#/components/schemas/FunctionDefinition"] =
   toJSONSchema(FunctionDefinition);
 namedJSONSchemaObjects["#/components/schemas/FunctionCall"] =

@@ -57,44 +57,56 @@ export type FunctionSet = t.TypeOf<typeof FunctionSet>;
 export const FunctionReturnValue = t.union([t.string, t.number, t.boolean]);
 export type FunctionReturnValue = t.TypeOf<typeof FunctionReturnValue>;
 
+export const FunctionCallParseError = t.type({
+  type: t.literal("parse_error"),
+  line: t.string,
+  error: t.string,
+});
+export type FunctionCallParseError = t.TypeOf<typeof FunctionCallParseError>;
+
+export const FunctionCallInvalid = t.type({
+  line: t.string,
+  type: t.literal("invalid"),
+  name: t.string,
+  args: t.array(Argument),
+  invalidReason: t.keyof({
+    unknown_function: null,
+    invalid_arguments: null,
+    failed_execution: null,
+  }),
+});
+export type FunctionCallInvalid = t.TypeOf<typeof FunctionCallInvalid>;
+
+export const FunctionCallParsed = t.intersection([
+  t.type({
+    line: t.string,
+    type: t.literal("parsed"),
+    name: t.string,
+    args: t.array(Argument),
+  }),
+  t.partial({
+    argsParsed: t.array(
+      // this produces a partial record:
+      t.union([t.partial({}), t.record(ArgumentParser, Argument)])
+    ),
+  }),
+]);
+export type FunctionCallParsed = t.TypeOf<typeof FunctionCallParsed>;
+
+export const FunctionCallExecuted = t.type({
+  line: t.string,
+  type: t.literal("executed"),
+  name: t.string,
+  args: t.array(Argument),
+  returnValue: FunctionReturnValue,
+});
+export type FunctionCallExecuted = t.TypeOf<typeof FunctionCallExecuted>;
+
 export const FunctionCall = t.union([
-  t.type({
-    type: t.literal("parse_error"),
-    line: t.string,
-    error: t.string,
-  }),
-  t.type({
-    line: t.string,
-    type: t.literal("invalid"),
-    name: t.string,
-    args: t.array(Argument),
-    invalidReason: t.keyof({
-      unknown_function: null,
-      invalid_arguments: null,
-      failed_execution: null,
-    }),
-  }),
-  t.intersection([
-    t.type({
-      line: t.string,
-      type: t.literal("parsed"),
-      name: t.string,
-      args: t.array(Argument),
-    }),
-    t.partial({
-      argsParsed: t.array(
-        // this produces a partial record:
-        t.union([t.partial({}), t.record(ArgumentParser, Argument)])
-      ),
-    }),
-  ]),
-  t.type({
-    line: t.string,
-    type: t.literal("executed"),
-    name: t.string,
-    args: t.array(Argument),
-    returnValue: FunctionReturnValue,
-  }),
+  FunctionCallParseError,
+  FunctionCallInvalid,
+  FunctionCallParsed,
+  FunctionCallExecuted,
 ]);
 export type FunctionCall = t.TypeOf<typeof FunctionCall>;
 

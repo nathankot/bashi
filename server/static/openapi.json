@@ -419,6 +419,187 @@
         ],
         "type": "string"
       },
+      "FunctionCallExecuted": {
+        "type": "object",
+        "required": [
+          "line",
+          "type",
+          "name",
+          "args",
+          "returnValue"
+        ],
+        "properties": {
+          "line": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "executed"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "returnValue": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      },
+      "FunctionCallInvalid": {
+        "type": "object",
+        "required": [
+          "line",
+          "type",
+          "name",
+          "args",
+          "invalidReason"
+        ],
+        "properties": {
+          "line": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "invalid"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "invalidReason": {
+            "enum": [
+              "unknown_function",
+              "invalid_arguments",
+              "failed_execution"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "FunctionCallParseError": {
+        "type": "object",
+        "required": [
+          "type",
+          "line",
+          "error"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "parse_error"
+            ],
+            "type": "string"
+          },
+          "line": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "FunctionCallParsed": {
+        "type": "object",
+        "required": [
+          "line",
+          "type",
+          "name",
+          "args"
+        ],
+        "properties": {
+          "line": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "parsed"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "argsParsed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
       "FunctionDefinition": {
         "type": "object",
         "required": [
@@ -464,185 +645,16 @@
       "FunctionCall": {
         "oneOf": [
           {
-            "type": "object",
-            "required": [
-              "type",
-              "line",
-              "error"
-            ],
-            "properties": {
-              "type": {
-                "enum": [
-                  "parse_error"
-                ],
-                "type": "string"
-              },
-              "line": {
-                "type": "string"
-              },
-              "error": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/FunctionCallParseError"
           },
           {
-            "type": "object",
-            "required": [
-              "line",
-              "type",
-              "name",
-              "args",
-              "invalidReason"
-            ],
-            "properties": {
-              "line": {
-                "type": "string"
-              },
-              "type": {
-                "enum": [
-                  "invalid"
-                ],
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    }
-                  ]
-                }
-              },
-              "invalidReason": {
-                "enum": [
-                  "unknown_function",
-                  "invalid_arguments",
-                  "failed_execution"
-                ],
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/FunctionCallInvalid"
           },
           {
-            "type": "object",
-            "required": [
-              "line",
-              "type",
-              "name",
-              "args"
-            ],
-            "properties": {
-              "line": {
-                "type": "string"
-              },
-              "type": {
-                "enum": [
-                  "parsed"
-                ],
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    }
-                  ]
-                }
-              },
-              "argsParsed": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "boolean"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/schemas/FunctionCallParsed"
           },
           {
-            "type": "object",
-            "required": [
-              "line",
-              "type",
-              "name",
-              "args",
-              "returnValue"
-            ],
-            "properties": {
-              "line": {
-                "type": "string"
-              },
-              "type": {
-                "enum": [
-                  "executed"
-                ],
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    }
-                  ]
-                }
-              },
-              "returnValue": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  }
-                ]
-              }
-            }
+            "$ref": "#/components/schemas/FunctionCallExecuted"
           }
         ],
         "discriminator": {

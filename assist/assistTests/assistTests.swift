@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import assist
 
 final class assistTests: XCTestCase {
 
@@ -17,12 +18,28 @@ final class assistTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testAppStateTransition() async throws {
+        let state = await AppState()
+        let expected = AppState.State.AssistResult(.init(model: .assist000, request: "blah", functionCalls: []))
+        
+        // t1 should happen first, despite it having a longer wait:
+        let t1 = Task {
+            try await state.transition(newState: .RequestPending(request: "some request")) { doTransition in
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                await doTransition()
+            }
+        }
+        
+        let t2 = Task {
+            try await Task.sleep(nanoseconds: 500_000_000   )
+            try await state.transition(newState: expected)
+        }
+        
+        try await t2.value
+        try await t1.value
+        
+        let s = await state.state
+        XCTAssertEqual(s, expected)
     }
 
     func testPerformanceExample() throws {

@@ -11,16 +11,17 @@ import KeyboardShortcuts
 import Bashi
 import Speech
 import UserNotifications
+import Combine
 
 @MainActor
-final class AppState : ObservableObject {
+public final class AppState : ObservableObject {
     
     static let shared = AppState()
     
     @AppStorage("accountNumber") var accountNumber: String = ""
     @Published var session: BashiSession? = nil
     
-    enum State : Equatable {
+    public enum State : Equatable {
         case Idle
         case Recording(bestTranscription: String?)
         case RequestPending(request: String)
@@ -28,7 +29,7 @@ final class AppState : ObservableObject {
         case Error(ErrorType)
     }
 
-    indirect enum ErrorType : Error, Equatable {
+    public indirect enum ErrorType : Error, Equatable {
         case Internal(String)
         case NoRequestFound
         case UnexpectedTransition(State, State)
@@ -37,14 +38,14 @@ final class AppState : ObservableObject {
         case InsufficientAppPermissions(String)
     }
     
-    @Published var state: State = .Idle
+    @Published public var state: State = .Idle
     
-    convenience init() {
+    public convenience init() {
         logger.info("initializing app state")
         self.init(accountNumber: "")
     }
     
-    init(accountNumber: String) {
+    public init(accountNumber: String) {
         self.accountNumber = accountNumber
     }
     
@@ -63,21 +64,36 @@ final class AppState : ObservableObject {
             return false
         }
     }
-   
-    func transition<R>(
+    
+    private var semaphoreWaits: [CheckedContinuation<Void, Never>] = []
+    private var semaphoreCount = 1
+    
+    public func transition<R>(
         newState: State,
         closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }
     ) async throws -> R {
-        if canTransition(newState: newState) {
-            // TODO does this really prevent state update races?
-            return try await closure({ state = newState })
-        } else {
+        // wait
+        semaphoreCount -= 1
+        if semaphoreCount < 0 {
+            await withCheckedContinuation { semaphoreWaits.append($0) }
+        }
+        defer {
+            // signal
+            semaphoreCount += 1
+            if !semaphoreWaits.isEmpty {
+                semaphoreWaits.removeFirst().resume()
+            }
+        }
+        
+        if !canTransition(newState: newState) {
             logger.error("unexpected transition from \(String(reflecting: self.state)) to \(String(reflecting: newState))")
             throw ErrorType.UnexpectedTransition(state, newState)
         }
+        
+        return try await closure({ state = newState })
     }
     
-    func handleError(_ e: Error) async {
+    public func handleError(_ e: Error) async {
         switch e {
         case ErrorType.UnexpectedTransition(let before, let after):
             logger.error("unexpected transition from \(String(reflecting: before)) to \(String(reflecting: after))")

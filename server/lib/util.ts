@@ -24,7 +24,7 @@ export function renderError<T extends {}>(
   mergeWith?: T
 ): Response {
   return new Response(JSON.stringify({ error: message, ...mergeWith }), {
-    status: 400,
+    status: statusCode,
     headers: {
       "Content-Type": "application/json",
     },

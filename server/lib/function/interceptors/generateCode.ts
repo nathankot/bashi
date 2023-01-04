@@ -6,9 +6,9 @@ const interceptor = interceptFunctionCall(
   async (modelDeps, input, [targetLanguage, whatIsBeingGenerated, request]) => {
     const model = "code-000" as const;
     const output = await run(modelDeps, model, {
-      request,
-      whatIsBeingGenerated,
-      targetLanguage,
+      request: request.value,
+      whatIsBeingGenerated: whatIsBeingGenerated.value,
+      targetLanguage: targetLanguage.value,
     });
     return { type: "string", value: output.result.trim() };
   }

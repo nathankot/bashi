@@ -459,6 +459,27 @@
           }
         }
       },
+      "Value": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringValue"
+          },
+          {
+            "$ref": "#/components/schemas/NumberValue"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanValue"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "string": "#/components/schemas/StringValue",
+            "number": "#/components/schemas/NumberValue",
+            "boolean": "#/components/schemas/BooleanValue"
+          }
+        }
+      },
       "ArgumentParser": {
         "enum": [
           "naturalLanguageDateTime"
@@ -498,39 +519,11 @@
           "args": {
             "type": "array",
             "items": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                }
-              ]
+              "$ref": "#/components/schemas/Value"
             }
           },
           "returnValue": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/StringValue"
-              },
-              {
-                "$ref": "#/components/schemas/NumberValue"
-              },
-              {
-                "$ref": "#/components/schemas/BooleanValue"
-              }
-            ],
-            "discriminator": {
-              "propertyName": "type",
-              "mapping": {
-                "string": "#/components/schemas/StringValue",
-                "number": "#/components/schemas/NumberValue",
-                "boolean": "#/components/schemas/BooleanValue"
-              }
-            }
+            "$ref": "#/components/schemas/Value"
           }
         }
       },
@@ -559,17 +552,7 @@
           "args": {
             "type": "array",
             "items": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                }
-              ]
+              "$ref": "#/components/schemas/Value"
             }
           },
           "invalidReason": {
@@ -628,17 +611,7 @@
           "args": {
             "type": "array",
             "items": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                }
-              ]
+              "$ref": "#/components/schemas/Value"
             }
           },
           "argsParsed": {
@@ -646,17 +619,7 @@
             "items": {
               "type": "object",
               "additionalProperties": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  }
-                ]
+                "$ref": "#/components/schemas/Value"
               }
             }
           }

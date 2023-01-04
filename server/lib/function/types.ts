@@ -1,25 +1,10 @@
 import * as t from "io-ts";
 
+import { Value } from "./valueTypes.ts";
 import { Argument, ArgumentParser } from "./argumentParsers.ts";
 export { Argument, ArgumentParser };
 
-export const StringValue = t.type({
-  type: t.literal("string"),
-  value: t.string,
-});
-export type StringValue = t.TypeOf<typeof StringValue>;
-
-export const NumberValue = t.type({
-  type: t.literal("number"),
-  value: t.number,
-});
-export type NumberValue = t.TypeOf<typeof NumberValue>;
-
-export const BooleanValue = t.type({
-  type: t.literal("boolean"),
-  value: t.boolean,
-});
-export type BooleanValue = t.TypeOf<typeof BooleanValue>;
+export { Value as FunctionReturnValue };
 
 export const ArgumentType = t.keyof({
   string: null,
@@ -60,24 +45,11 @@ export type BuiltinFunctionDefinition<A extends ArgumentType[]> = Omit<
 export type BuiltinFunctionDefinitionArgs<
   A extends FunctionDefinition["args"]
 > = {
-  [K in keyof A]: A[K]["type"] extends "string"
-    ? string
-    : A[K]["type"] extends "number"
-    ? number
-    : A[K]["type"] extends "boolean"
-    ? boolean
-    : never;
+  [K in keyof A]: Value & { type: A[K]["type"] };
 };
 
 export const FunctionSet = t.record(t.string, FunctionDefinition);
 export type FunctionSet = t.TypeOf<typeof FunctionSet>;
-
-export const FunctionReturnValue = t.union([
-  StringValue,
-  NumberValue,
-  BooleanValue,
-]);
-export type FunctionReturnValue = t.TypeOf<typeof FunctionReturnValue>;
 
 export const FunctionCallParseError = t.type({
   type: t.literal("parse_error"),
@@ -120,7 +92,7 @@ export const FunctionCallExecuted = t.type({
   type: t.literal("executed"),
   name: t.string,
   args: t.array(Argument),
-  returnValue: FunctionReturnValue,
+  returnValue: Value,
 });
 export type FunctionCallExecuted = t.TypeOf<typeof FunctionCallExecuted>;
 

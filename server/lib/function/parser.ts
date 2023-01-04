@@ -63,17 +63,32 @@ function applyLiteral(
 ): Argument {
   switch (tok.kind) {
     case TokenKind.TrueLiteral:
-      return true;
+      return { type: "boolean", value: true };
     case TokenKind.FalseLiteral:
-      return false;
+      return { type: "boolean", value: false };
     case TokenKind.NumberLiteral:
-      return +tok.text;
+      return { type: "number", value: +tok.text };
     case TokenKind.SingleQuoteStringLiteral:
-      return tok.text.substring(1, tok.text.length - 1).replaceAll(`\\'`, `'`);
+      return {
+        type: "string",
+        value: tok.text
+          .substring(1, tok.text.length - 1)
+          .replaceAll(`\\'`, `'`),
+      };
     case TokenKind.DoubleQuoteStringLiteral:
-      return tok.text.substring(1, tok.text.length - 1).replaceAll(`\\"`, `"`);
+      return {
+        type: "string",
+        value: tok.text
+          .substring(1, tok.text.length - 1)
+          .replaceAll(`\\"`, `"`),
+      };
     case TokenKind.BackQuoteStringLiteral:
-      return tok.text.substring(1, tok.text.length - 1).replaceAll("\\`", "`");
+      return {
+        type: "string",
+        value: tok.text
+          .substring(1, tok.text.length - 1)
+          .replaceAll("\\`", "`"),
+      };
     default:
       const exhaustiveCheck: never = tok;
       throw new Error(
@@ -183,33 +198,24 @@ export function parseFromModelResult(
       // Do any additional argument parsing:
       parsed.argsParsed = knownFunction.args.map((argDef, i) =>
         (argDef.parse ?? []).reduce((a, e) => {
-          const rawValue = parsed.args[i];
-          if (rawValue == null) {
+          const value = parsed.args[i];
+          if (value == null) {
             return a;
           }
           try {
             const argParser = argumentParsers[e];
-            switch (argParser.inputType) {
-              case "string":
-                if (typeof rawValue !== "string") {
-                  throw new Error(
-                    `expected parser input to be string got ${typeof rawValue}`
-                  );
-                }
-                return {
-                  ...a,
-                  [e]: argParser.fn(
-                    { now, chronoParseDate: parseDate },
-                    rawValue
-                  ),
-                };
-
-              default:
-                const exhaustiveCheck: never = argParser.inputType;
-                throw new Error(
-                  `unexpected parser input type: ${exhaustiveCheck}`
-                );
+            if (argParser.inputType != value.type) {
+              throw new Error(
+                `expected parser input to be ${argParser.inputType} got ${value.type}`
+              );
             }
+            return {
+              ...a,
+              [e]: argParser.fn(
+                { now, chronoParseDate: parseDate },
+                value.value
+              ),
+            };
           } catch (e) {
             log("error", e);
             return a;
@@ -240,7 +246,7 @@ export function checkArgumentsValid(
   for (let i = 0; i < knownFunction.args.length; i++) {
     const argDef = knownFunction.args[i]!;
     const arg = args[i]!;
-    if (typeof arg !== argDef.type) {
+    if (arg.type !== argDef.type) {
       return false;
     }
   }

@@ -5,7 +5,9 @@ const interceptor = interceptFunctionCall(
   async ({ log, session, now }, input, [timeZone]) => {
     return {
       type: "string",
-      value: now().toLocaleString(session.configuration.locale, { timeZone }),
+      value: now().toLocaleString(session.configuration.locale, {
+        timeZone: timeZone.value,
+      }),
     };
   }
 );

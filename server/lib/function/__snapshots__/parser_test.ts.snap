@@ -13,8 +13,14 @@ snapshot[`someCall() 1`] = `
 snapshot[`someCall('a', 111) 1`] = `
 {
   args: [
-    "a",
-    111,
+    {
+      type: "string",
+      value: "a",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -25,8 +31,14 @@ snapshot[`someCall('a', 111) 1`] = `
 snapshot[`someCall('a \\'ha\\'', 111) 1`] = `
 {
   args: [
-    "a 'ha'",
-    111,
+    {
+      type: "string",
+      value: "a 'ha'",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -37,8 +49,14 @@ snapshot[`someCall('a \\'ha\\'', 111) 1`] = `
 snapshot[`someCall(\`a\`, 111) 1`] = `
 {
   args: [
-    "a",
-    111,
+    {
+      type: "string",
+      value: "a",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -49,8 +67,14 @@ snapshot[`someCall(\`a\`, 111) 1`] = `
 snapshot[`someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 {
   args: [
-    "a \`ha\`",
-    111,
+    {
+      type: "string",
+      value: "a \`ha\`",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -61,8 +85,14 @@ snapshot[`someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 snapshot[`someCall("a", 111) 1`] = `
 {
   args: [
-    "a",
-    111,
+    {
+      type: "string",
+      value: "a",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -73,8 +103,14 @@ snapshot[`someCall("a", 111) 1`] = `
 snapshot[`someCall("a \\"ha\\"", 111) 1`] = `
 {
   args: [
-    'a "ha"',
-    111,
+    {
+      type: "string",
+      value: 'a "ha"',
+    },
+    {
+      type: "number",
+      value: 111,
+    },
   ],
   line: "",
   name: "someCall",
@@ -85,9 +121,18 @@ snapshot[`someCall("a \\"ha\\"", 111) 1`] = `
 snapshot[`someCall("a", 111,true) 1`] = `
 {
   args: [
-    "a",
-    111,
-    true,
+    {
+      type: "string",
+      value: "a",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
+    {
+      type: "boolean",
+      value: true,
+    },
   ],
   line: "",
   name: "someCall",
@@ -98,9 +143,18 @@ snapshot[`someCall("a", 111,true) 1`] = `
 snapshot[`someCall("a", 111, false) 1`] = `
 {
   args: [
-    "a",
-    111,
-    false,
+    {
+      type: "string",
+      value: "a",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
+    {
+      type: "boolean",
+      value: false,
+    },
   ],
   line: "",
   name: "someCall",
@@ -111,9 +165,18 @@ snapshot[`someCall("a", 111, false) 1`] = `
 snapshot[`someCall("a false true 123 b", 111, false) 1`] = `
 {
   args: [
-    "a false true 123 b",
-    111,
-    false,
+    {
+      type: "string",
+      value: "a false true 123 b",
+    },
+    {
+      type: "number",
+      value: 111,
+    },
+    {
+      type: "boolean",
+      value: false,
+    },
   ],
   line: "",
   name: "someCall",
@@ -124,7 +187,10 @@ snapshot[`someCall("a false true 123 b", 111, false) 1`] = `
 snapshot[`someCall(-123) 1`] = `
 {
   args: [
-    -123,
+    {
+      type: "number",
+      value: -123,
+    },
   ],
   line: "",
   name: "someCall",
@@ -167,7 +233,10 @@ snapshot[`malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-
 snapshot[`someCall(-123.500) 1`] = `
 {
   args: [
-    -123.5,
+    {
+      type: "number",
+      value: -123.5,
+    },
   ],
   line: "",
   name: "someCall",

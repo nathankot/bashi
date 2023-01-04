@@ -12,6 +12,10 @@ import {
   StringValue,
   NumberValue,
   BooleanValue,
+  Value,
+} from "@lib/function/valueTypes.ts";
+
+import {
   ArgumentParser,
   ArgumentType,
   FunctionDefinition,
@@ -293,6 +297,7 @@ namedJSONSchemaObjects["#/components/schemas/NumberValue"] =
   toJSONSchema(NumberValue);
 namedJSONSchemaObjects["#/components/schemas/BooleanValue"] =
   toJSONSchema(BooleanValue);
+namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
 
 namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
   toJSONSchema(ArgumentParser);

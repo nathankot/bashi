@@ -5,7 +5,10 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
   functionCalls: [
     {
       args: [
-        "mock response",
+        {
+          type: "string",
+          value: "mock response",
+        },
       ],
       argsParsed: [
         {},
@@ -16,7 +19,10 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        123,
+        {
+          type: "number",
+          value: 123,
+        },
       ],
       invalidReason: "unknown_function",
       line: "   unknownCall(123)",
@@ -30,8 +36,14 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        "English",
-        "should not work because disabled by conf",
+        {
+          type: "string",
+          value: "English",
+        },
+        {
+          type: "string",
+          value: "should not work because disabled by conf",
+        },
       ],
       invalidReason: "unknown_function",
       line: 'translate("English", "should not work because disabled by conf")',
@@ -40,7 +52,10 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        "America/New_York",
+        {
+          type: "string",
+          value: "America/New_York",
+        },
       ],
       argsParsed: [
         {},
@@ -55,7 +70,10 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        "not enough args",
+        {
+          type: "string",
+          value: "not enough args",
+        },
       ],
       invalidReason: "invalid_arguments",
       line: 'sendEmail("not enough args")',
@@ -64,9 +82,18 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        "blah@blah.com",
-        "some subject",
-        "some body",
+        {
+          type: "string",
+          value: "blah@blah.com",
+        },
+        {
+          type: "string",
+          value: "some subject",
+        },
+        {
+          type: "string",
+          value: "some body",
+        },
       ],
       argsParsed: [
         {},
@@ -88,8 +115,14 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
     },
     {
       args: [
-        "in 5 days",
-        "some reminder name",
+        {
+          type: "string",
+          value: "in 5 days",
+        },
+        {
+          type: "string",
+          value: "some reminder name",
+        },
       ],
       invalidReason: "unknown_function",
       line: 'reminder("in 5 days", "some reminder name")',

@@ -1,5 +1,7 @@
 import * as t from "io-ts";
 
+export { Value as Argument } from "./valueTypes.ts";
+
 export type ArgumentParserContext = {
   now: Date;
   chronoParseDate: (str: string, ref?: Date) => null | Date;
@@ -21,8 +23,5 @@ export const argumentParsers = {
 
 export const ArgumentParser = t.keyof(argumentParsers);
 export type ArgumentParser = t.TypeOf<typeof ArgumentParser>;
-
-export const Argument = t.union([t.string, t.number, t.boolean]);
-export type Argument = t.TypeOf<typeof Argument>;
 
 export default argumentParsers;

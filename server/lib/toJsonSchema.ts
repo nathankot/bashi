@@ -105,6 +105,23 @@ export default function toJSONSchema(
         } satisfies OpenAPIV3.SchemaObject;
       case "UnionType":
         const union = type as t.UnionType<any[]>;
+
+        // If this is a union of t.partial({}) | t.record(..., ...) then it
+        // is just an attempt to create a partial record type:
+        if (union.types.length === 2) {
+          const [first, second] = union.types!;
+          if (
+            first._tag === "PartialType" &&
+            Object.entries(first.props).length === 0 &&
+            second._tag === "DictionaryType"
+          ) {
+            return {
+              ...toJSONSchema(second),
+              required: undefined,
+            };
+          }
+        }
+
         const childTypes = union.types.map((t) => recurse(t));
 
         // If this is a union of objects, and the objects have a common

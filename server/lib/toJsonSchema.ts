@@ -122,7 +122,7 @@ export default function toJSONSchema(
             second._tag === "DictionaryType"
           ) {
             return {
-              ...toJSONSchema(second),
+              ...recurse(second),
               required: undefined,
             };
           }
@@ -130,51 +130,64 @@ export default function toJSONSchema(
 
         const childTypes = union.types.map((t) => recurse(t));
 
-        // If this is a union of objects, and the objects have a common
+        // If this is a union of ref objects, and the objects have a common
         // discriminator, use it.
-        let possibleDiscriminators = new Set<string>();
+        let possibleDiscriminators: Record<string, Record<string, string>> = {};
         let excludedDiscriminators = new Set<string>();
         for (let childType of childTypes) {
-          if ("$ref" in childType) {
-            const r = refs[childType.$ref];
-            if (r != null) {
-              childType = r;
-            }
-          }
-          if (!("type" in childType)) {
-            possibleDiscriminators.clear();
+          if (!("$ref" in childType)) {
+            possibleDiscriminators = {};
             break;
           }
-          if (childType.type !== "object") {
-            possibleDiscriminators.clear();
+          const deref = refs[childType.$ref];
+          if (deref == null) {
+            throw new Error(`could not deref ${childType.$ref}`);
+          }
+          if (!("type" in deref)) {
+            possibleDiscriminators = {};
             break;
           }
-          for (const [n, t] of Object.entries(childType.properties ?? {})) {
-            if ("type" in t && t.type === "string") {
-              possibleDiscriminators.add(n);
-            }
+          if (deref.type !== "object") {
+            possibleDiscriminators = {};
+            break;
           }
-          for (const [e] of possibleDiscriminators.entries()) {
-            if (!(childType.required ?? []).includes(e)) {
+          for (const [n, t] of Object.entries(deref.properties ?? {})) {
+            if (!("type" in t) || t.type !== "string") {
+              continue;
+            }
+            // Only accept properties that are represented by a string literal
+            if (t.enum == null || t.enum.length !== 1) {
+              continue;
+            }
+            const typeName = t.enum[0]!;
+            possibleDiscriminators = {
+              ...possibleDiscriminators,
+              [n]: {
+                ...possibleDiscriminators[n],
+                [typeName]: childType.$ref,
+              },
+            };
+          }
+          for (const [e] of Object.entries(possibleDiscriminators)) {
+            if (!(deref.required ?? []).includes(e)) {
               // Can't use it if the property is not required on all types.
               excludedDiscriminators.add(e);
             }
           }
         }
-
-        const viableDiscriminators = new Set(
-          [...possibleDiscriminators].filter(
-            (x) => !excludedDiscriminators.has(x)
-          )
-        );
+        const viableDiscriminators = Object.entries(
+          possibleDiscriminators
+        ).filter(([x]) => !excludedDiscriminators.has(x));
 
         let result: OpenAPIV3.SchemaObject = {
           oneOf: childTypes,
         };
 
-        if (viableDiscriminators.size > 0) {
+        if (viableDiscriminators.length === 1) {
+          const [discriminatorName, mapping] = viableDiscriminators[0]!;
           result.discriminator = {
-            propertyName: [...viableDiscriminators][0]!,
+            propertyName: discriminatorName,
+            mapping,
           };
         }
 

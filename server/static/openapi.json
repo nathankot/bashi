@@ -658,7 +658,13 @@
           }
         ],
         "discriminator": {
-          "propertyName": "type"
+          "propertyName": "type",
+          "mapping": {
+            "parse_error": "#/components/schemas/FunctionCallParseError",
+            "invalid": "#/components/schemas/FunctionCallInvalid",
+            "parsed": "#/components/schemas/FunctionCallParsed",
+            "executed": "#/components/schemas/FunctionCallExecuted"
+          }
         }
       },
       "models_assist-000_Input": {

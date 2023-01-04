@@ -18,6 +18,7 @@
 		D8C10979296023CF006E6A10 /* assistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10978296023CF006E6A10 /* assistTests.swift */; };
 		D8C10983296023CF006E6A10 /* assistUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10982296023CF006E6A10 /* assistUITests.swift */; };
 		D8C10985296023CF006E6A10 /* assistUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10984296023CF006E6A10 /* assistUITestsLaunchTests.swift */; };
+		D8C1A1FA29655CCA00AD8227 /* AppController+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C1A1F929655CCA00AD8227 /* AppController+API.swift */; };
 		D8C26D3429607EBB001F63DB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C26D3329607EBB001F63DB /* AppState.swift */; };
 		D8C26D3829616B7C001F63DB /* Bashi in Frameworks */ = {isa = PBXBuildFile; productRef = D8C26D3729616B7C001F63DB /* Bashi */; };
 		D8EA825C29619B5B00833ED5 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */; };
@@ -70,6 +71,7 @@
 		D8C1097E296023CF006E6A10 /* assistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = assistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C10982296023CF006E6A10 /* assistUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assistUITests.swift; sourceTree = "<group>"; };
 		D8C10984296023CF006E6A10 /* assistUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = assistUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D8C1A1F929655CCA00AD8227 /* AppController+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+API.swift"; sourceTree = "<group>"; };
 		D8C26D3329607EBB001F63DB /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,6 +137,7 @@
 				D8C1096C296023CF006E6A10 /* assist.entitlements */,
 				D8F24CFE296040AA00BD3CD3 /* SettingsView.swift */,
 				D85A306429626DFC00581B98 /* AppController.swift */,
+				D8C1A1F929655CCA00AD8227 /* AppController+API.swift */,
 				D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */,
 				D8C26D3329607EBB001F63DB /* AppState.swift */,
 			);
@@ -317,6 +320,7 @@
 				D8C26D3429607EBB001F63DB /* AppState.swift in Sources */,
 				D8F24CFF296040AA00BD3CD3 /* SettingsView.swift in Sources */,
 				D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */,
+				D8C1A1FA29655CCA00AD8227 /* AppController+API.swift in Sources */,
 				D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */,
 				D85A306529626DFC00581B98 /* AppController.swift in Sources */,
 				D85A306D2962BEB200581B98 /* ContentView.swift in Sources */,

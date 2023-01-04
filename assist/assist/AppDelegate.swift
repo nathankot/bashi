@@ -9,9 +9,6 @@ import AppKit
 import Foundation
 import Cocoa
 import SwiftUI
-#if DEBUG
-import AlamofireNetworkActivityLogger
-#endif
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var popover: NSPopover!
@@ -19,9 +16,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var appController: AppController!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        #if DEBUG
-        NetworkActivityLogger.shared.startLogging()
-        #endif
         
         let statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         self.statusBarItem = statusBarItem

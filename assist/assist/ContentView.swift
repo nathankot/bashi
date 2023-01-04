@@ -29,6 +29,9 @@ struct ContentView: View {
                 Text("Your session id is \(session.sessionId)")
             }
             
+            Text("\(String(reflecting: state.state))")
+            
+            
             switch state.state {
             case .Recording(let bestTranscription):
                 Text("Recording: " + (bestTranscription ?? ""))

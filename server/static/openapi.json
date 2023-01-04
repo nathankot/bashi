@@ -524,26 +524,12 @@
                 }
               },
               "invalid_reason": {
-                "oneOf": [
-                  {
-                    "enum": [
-                      "unknown_function"
-                    ],
-                    "type": "string"
-                  },
-                  {
-                    "enum": [
-                      "invalid_arguments"
-                    ],
-                    "type": "string"
-                  },
-                  {
-                    "enum": [
-                      "failed_execution"
-                    ],
-                    "type": "string"
-                  }
-                ]
+                "enum": [
+                  "unknown_function",
+                  "invalid_arguments",
+                  "failed_execution"
+                ],
+                "type": "string"
               }
             }
           },

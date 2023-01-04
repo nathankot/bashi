@@ -68,11 +68,11 @@ export const FunctionCall = t.union([
     type: t.literal("invalid"),
     name: t.string,
     args: t.array(Argument),
-    invalid_reason: t.union([
-      t.literal("unknown_function"),
-      t.literal("invalid_arguments"),
-      t.literal("failed_execution"),
-    ]),
+    invalid_reason: t.keyof({
+      unknown_function: null,
+      invalid_arguments: null,
+      failed_execution: null,
+    }),
   }),
   t.intersection([
     t.type({

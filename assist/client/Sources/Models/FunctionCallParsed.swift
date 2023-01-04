@@ -17,11 +17,11 @@ public class FunctionCallParsed: APIModel {
 
     public var name: String
 
-    public var args: [Args]
+    public var args: [Value]
 
-    public var argsParsed: [[String: ArgsParsed]]?
+    public var argsParsed: [[String: Value]]?
 
-    public init(line: String, type: `Type`, name: String, args: [Args], argsParsed: [[String: ArgsParsed]]? = nil) {
+    public init(line: String, type: `Type`, name: String, args: [Value], argsParsed: [[String: Value]]? = nil) {
         self.line = line
         self.type = type
         self.name = name

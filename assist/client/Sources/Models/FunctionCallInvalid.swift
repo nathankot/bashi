@@ -23,11 +23,11 @@ public class FunctionCallInvalid: APIModel {
 
     public var name: String
 
-    public var args: [Args]
+    public var args: [Value]
 
     public var invalidReason: InvalidReason
 
-    public init(line: String, type: `Type`, name: String, args: [Args], invalidReason: InvalidReason) {
+    public init(line: String, type: `Type`, name: String, args: [Value], invalidReason: InvalidReason) {
         self.line = line
         self.type = type
         self.name = name

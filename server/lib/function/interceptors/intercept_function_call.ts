@@ -70,7 +70,7 @@ export function interceptFunctionCall<
         newFunctionCalls[i] = {
           ...call,
           type: "invalid",
-          invalid_reason: "failed_execution",
+          invalidReason: "failed_execution",
         };
       }
     }

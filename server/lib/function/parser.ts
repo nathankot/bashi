@@ -167,7 +167,7 @@ export function parseFromModelResult(
         result.push({
           ...parsed,
           type: "invalid",
-          invalid_reason: "unknown_function",
+          invalidReason: "unknown_function",
         });
         continue;
       }
@@ -175,7 +175,7 @@ export function parseFromModelResult(
         result.push({
           ...parsed,
           type: "invalid",
-          invalid_reason: "invalid_arguments",
+          invalidReason: "invalid_arguments",
         });
         continue;
       }

@@ -492,7 +492,7 @@
               "type",
               "name",
               "args",
-              "invalid_reason"
+              "invalidReason"
             ],
             "properties": {
               "line": {
@@ -523,7 +523,7 @@
                   ]
                 }
               },
-              "invalid_reason": {
+              "invalidReason": {
                 "enum": [
                   "unknown_function",
                   "invalid_arguments",

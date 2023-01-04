@@ -68,7 +68,7 @@ export const FunctionCall = t.union([
     type: t.literal("invalid"),
     name: t.string,
     args: t.array(Argument),
-    invalid_reason: t.keyof({
+    invalidReason: t.keyof({
       unknown_function: null,
       invalid_arguments: null,
       failed_execution: null,

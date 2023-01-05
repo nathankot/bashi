@@ -26,7 +26,7 @@ actor AppController {
         self.popover = popover
         self.statusBarItem = statusBarItem
         self.keyboardShortcutsTask = keyboardShortcutsTask
-        self.audioRecordingController = AudioRecordingController(state: state)
+        self.audioRecordingController = AudioRecordingController()
     }
     
     deinit {

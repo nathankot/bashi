@@ -10,16 +10,9 @@ import Speech
 import SwiftUI
 import Combine
 
-actor AudioRecordingController : ObservableObject {
+actor AudioRecordingController {
     
-    let state: AppState
-    
-    var isRecording: Bool = false
-    var speechRecognizerAuthStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
-    var isAudioRecordingPrepared = false
-    
-    private let engine = AVAudioEngine()
-    
+    private var speechRecognizerAuthStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(
         identifier:
             Locale.current.identifier.starts(with: "en-") ||
@@ -27,80 +20,103 @@ actor AudioRecordingController : ObservableObject {
             ? Locale.current.identifier
             : "en-US"))!
     
-    private var speechRecognitionRequest: SFSpeechAudioBufferRecognitionRequest? = nil
     
-    private let buffers = PassthroughSubject<AVAudioPCMBuffer, Never>().share()
-    private var buffersAsync: AsyncPublisher<some Publisher<AVAudioPCMBuffer, Never>> {
-        return AsyncPublisher(buffers)
+    private var engine: AVAudioEngine? = nil
+    private var speechRecognitionRequest: SFSpeechAudioBufferRecognitionRequest? = nil
+    private var speechRecognitionTask: SFSpeechRecognitionTask? = nil
+    private var transcribedSubject: CurrentValueSubject<String, Error>? = nil
+    
+    public var transcribedPublished: AnyPublisher<String, Error>? {
+        return transcribedSubject?.eraseToAnyPublisher()
     }
     
-    private var transcribeStream: AsyncThrowingStream<String, Error>? = nil
-    
-    init(state: AppState) {
-        self.state = state
+    public var transcribeStream: AsyncThrowingPublisher<AnyPublisher<String, Error>>? {
+        guard let published = transcribedPublished else { return nil }
+        return AsyncThrowingPublisher(published)
     }
     
     func prepare() async {
-        if isAudioRecordingPrepared {
-            return
-        }
-        
         let authStatus = await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { authStatus in
                 continuation.resume(returning: authStatus)
             }
         }
-        
         speechRecognizerAuthStatus = authStatus
-        isAudioRecordingPrepared = true
     }
     
-    func startRecording() async throws {
-        if !isAudioRecordingPrepared {
-            throw AppState.ErrorType.Internal("audio recording controller should be prepared")
+    
+    private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
+        let audioEngine = AVAudioEngine()
+        
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        request.shouldReportPartialResults = true
+        
+        let inputNode = audioEngine.inputNode
+        
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            request.append(buffer)
         }
+        audioEngine.prepare()
+        try audioEngine.start()
+        
+        return (audioEngine, request)
+    }
+
+    func reset() {
+        speechRecognitionTask?.cancel()
+        engine?.stop()
+        engine = nil
+        speechRecognitionRequest = nil
+        speechRecognitionTask = nil
+        transcribedSubject = nil
+    }
+    
+    func startRecording() throws {
         if speechRecognizerAuthStatus != .authorized {
             throw AppState.ErrorType.InsufficientAppPermissions("speech recognition")
         }
-        if isRecording {
+        if !speechRecognizer.isAvailable {
+            throw AppState.ErrorType.InsufficientAppPermissions("speech recognizer not available")
+        }
+        if engine?.isRunning ?? false {
             throw AppState.ErrorType.Internal("should not be recording")
         }
-
-        try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
-            logger.info("starting audio recording")
-            
-            engine.inputNode.removeTap(onBus: 0)
-            let recordingFormat = engine.inputNode.outputFormat(forBus: 0)
-            // TODO if native format is set, add a re-encode step
-            
-            engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-                self?.buffers.upstream.send(buffer)
-            }
-            
-            await doTransition()
-            engine.prepare()
-            try engine.start()
-            isRecording = true
-            transcribeStream = try transcribe()
-        }
+        logger.info("starting audio recording")
         
+        do {
+            let (engine, speechRecognitionRequest) = try Self.prepareEngine()
+            self.engine = engine
+            let transcribedSubject = CurrentValueSubject<String, Error>("")
+            self.transcribedSubject = transcribedSubject
+            self.speechRecognitionRequest = speechRecognitionRequest
+            self.speechRecognitionTask = speechRecognizer.recognitionTask(with: speechRecognitionRequest, resultHandler: { result, err in
+                var finished = false
+                if let result = result {
+                    transcribedSubject.send(result.bestTranscription.formattedString)
+                    if result.isFinal {
+                        transcribedSubject.send(completion: .finished)
+                        finished = true
+                    }
+                } else if let err = err {
+                    transcribedSubject.send(completion: .failure(err))
+                    finished = true
+                }
+                if finished {
+                    engine.stop()
+                    engine.inputNode.removeTap(onBus: 0)
+                }
+            })
+        } catch {
+            reset()
+            throw error
+        }
     }
     
     func stopRecording() async throws -> String? {
-        if !isAudioRecordingPrepared {
-            throw AppState.ErrorType.Internal("audio recording not prepared")
-        }
-        if !engine.isRunning {
-            throw AppState.ErrorType.Internal("audio engine expected to be running")
-        }
-        engine.stop()
-        engine.inputNode.removeTap(onBus: 0)
-        if !isRecording {
-            throw AppState.ErrorType.Internal("expected to be recording")
-        }
         logger.info("stopping audio recording")
+        engine?.stop()
         speechRecognitionRequest?.endAudio()
-        isRecording = false
         
         var result: String? = nil
         if let transcribeStream = transcribeStream {
@@ -110,55 +126,10 @@ actor AudioRecordingController : ObservableObject {
                 result = transcription
             }
         }
+        
+        reset()
 
         return result
-    }
-    
-    fileprivate func transcribe() throws -> AsyncThrowingStream<String, Error> {
-        if !isRecording {
-            throw AppState.ErrorType.Internal("should be recording when transcribe() is called")
-        }
-        
-        speechRecognitionRequest?.endAudio()
-        speechRecognitionRequest = nil
-        
-        let speechRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        self.speechRecognitionRequest = speechRecognitionRequest
-        speechRecognitionRequest.shouldReportPartialResults = true
-        
-        let bufferingTask = Task {
-            for await b in buffersAsync {
-                speechRecognitionRequest.append(b)
-            }
-        }
-        
-        return AsyncThrowingStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
-            let speechRecognitionTask = speechRecognizer.recognitionTask(with: speechRecognitionRequest, resultHandler: { [continuation] result, error in
-                if let result = result {
-                    let bestTranscription = result.bestTranscription.formattedString
-                    
-                    // TODO the following is ugly:
-                    Task { [weak self] in try? await self?.state.transition(newState: .Recording(bestTranscription: bestTranscription)) }
-                    
-                    continuation.yield(bestTranscription)
-                    if result.isFinal {
-                        logger.info("received final recognition result")
-                        continuation.finish()
-                    }
-                    return
-                }
-                
-                if let error = error {
-                    continuation.finish(throwing: error)
-                    return
-                }
-            })
-            
-            continuation.onTermination = { _ in
-                speechRecognitionTask.cancel()
-                bufferingTask.cancel()
-            }
-        }
     }
     
 }

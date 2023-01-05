@@ -72,7 +72,7 @@ actor AudioRecordingController {
         transcribedSubject = nil
     }
     
-    func startRecording() throws {
+    func startRecording() throws -> AsyncThrowingPublisher<AnyPublisher<String, Error>> {
         if speechRecognizerAuthStatus != .authorized {
             throw AppState.ErrorType.InsufficientAppPermissions("speech recognition")
         }
@@ -107,6 +107,8 @@ actor AudioRecordingController {
                     engine.inputNode.removeTap(onBus: 0)
                 }
             })
+            
+            return transcribeStream!
         } catch {
             reset()
             throw error

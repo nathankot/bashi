@@ -21,6 +21,8 @@ actor AppController {
     let audioRecordingController: AudioRecordingController
     var keyboardShortcutsTask: Task<Void, Error>? = nil
     
+    var transcriptionUpdatingTask: Task<Void, Error>? = nil
+    
     init(state: AppState, popover: NSPopover, statusBarItem: NSStatusItem, keyboardShortcutsTask: Task<Void, Error>? = nil) {
         self.state = state
         self.popover = popover
@@ -53,9 +55,16 @@ actor AppController {
     
     func startRecording() async {
         do {
-            try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
-                try await audioRecordingController.startRecording()
+            let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
+                let transcriptions = try await audioRecordingController.startRecording()
                 await doTransition()
+                return transcriptions
+            }
+            transcriptionUpdatingTask = Task {
+                try Task.checkCancellation()
+                for try await transcription in transcriptions {
+                    try await state.transition(newState: .Recording(bestTranscription: transcription))
+                }
             }
         } catch {
             await state.handleError(error)
@@ -64,6 +73,9 @@ actor AppController {
     
     func stopRecording() async {
         do {
+            transcriptionUpdatingTask?.cancel()
+            transcriptionUpdatingTask = nil
+            
             let bestTranscription = try await audioRecordingController.stopRecording()
             guard let bestTranscription = bestTranscription else {
                 throw AppState.ErrorType.NoRequestFound

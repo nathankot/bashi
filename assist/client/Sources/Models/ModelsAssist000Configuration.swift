@@ -13,9 +13,9 @@ public class ModelsAssist000Configuration: APIModel {
 
     public var model: Model
 
-    public var commands: [String: FunctionDefinition]
+    public var commands: [String: CommandDefinition]
 
-    public init(model: Model, commands: [String: FunctionDefinition]) {
+    public init(model: Model, commands: [String: CommandDefinition]) {
         self.model = model
         self.commands = commands
     }

@@ -68,7 +68,7 @@ export default function PromptDev() {
       <hr />
 
       <div class="my-8">
-        <h2 class="text-lg mb-2">Function configuration</h2>
+        <h2 class="text-lg mb-2">Command configuration</h2>
 
         {error == null ? null : (
           <p class="bg-red-400 text-white my-2 p-2 rounded-sm">

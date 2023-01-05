@@ -131,9 +131,9 @@ extension Bashi {
 
                 public var session: BashiSession
 
-                public var builtinCommands: [String: FunctionDefinition]
+                public var builtinCommands: [String: CommandDefinition]
 
-                public init(session: BashiSession, builtinCommands: [String: FunctionDefinition]) {
+                public init(session: BashiSession, builtinCommands: [String: CommandDefinition]) {
                     self.session = session
                     self.builtinCommands = builtinCommands
                 }

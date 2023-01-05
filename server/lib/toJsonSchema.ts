@@ -313,10 +313,9 @@ namedJSONSchemaObjects["#/components/schemas/CommandParseError"] =
 namedJSONSchemaObjects["#/components/schemas/CommandParsed"] =
   toJSONSchema(CommandParsed);
 
-namedJSONSchemaObjects["#/components/schemas/FunctionDefinition"] =
+namedJSONSchemaObjects["#/components/schemas/CommandDefinition"] =
   toJSONSchema(CommandDefinition);
-namedJSONSchemaObjects["#/components/schemas/Command"] =
-  toJSONSchema(Command);
+namedJSONSchemaObjects["#/components/schemas/Command"] = toJSONSchema(Command);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

@@ -82,7 +82,7 @@
                     "builtinCommands": {
                       "type": "object",
                       "additionalProperties": {
-                        "$ref": "#/components/schemas/FunctionDefinition"
+                        "$ref": "#/components/schemas/CommandDefinition"
                       }
                     }
                   }
@@ -625,7 +625,7 @@
           }
         }
       },
-      "FunctionDefinition": {
+      "CommandDefinition": {
         "type": "object",
         "required": [
           "description",
@@ -769,7 +769,7 @@
           "commands": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/FunctionDefinition"
+              "$ref": "#/components/schemas/CommandDefinition"
             }
           }
         }

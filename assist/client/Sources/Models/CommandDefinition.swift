@@ -5,7 +5,7 @@
 
 import Foundation
 
-public class FunctionDefinition: APIModel {
+public class CommandDefinition: APIModel {
 
     public var description: String
 
@@ -79,14 +79,14 @@ public class FunctionDefinition: APIModel {
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? FunctionDefinition else { return false }
+      guard let object = object as? CommandDefinition else { return false }
       guard self.description == object.description else { return false }
       guard self.args == object.args else { return false }
       guard self.triggerTokens == object.triggerTokens else { return false }
       return true
     }
 
-    public static func == (lhs: FunctionDefinition, rhs: FunctionDefinition) -> Bool {
+    public static func == (lhs: CommandDefinition, rhs: CommandDefinition) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

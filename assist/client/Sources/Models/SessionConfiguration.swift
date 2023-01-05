@@ -7,7 +7,7 @@ import Foundation
 
 public class SessionConfiguration: APIModel {
 
-    public enum DisabledBuiltinFunctions: String, Codable, Equatable, CaseIterable {
+    public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
         case answer = "answer"
         case math = "math"
         case time = "time"
@@ -26,13 +26,13 @@ public class SessionConfiguration: APIModel {
 
     public var bestOf: Double
 
-    public var disabledBuiltinFunctions: [DisabledBuiltinFunctions]
+    public var disabledBuiltinCommands: [DisabledBuiltinCommands]
 
-    public init(locale: String, maxResponseTokens: Double, bestOf: Double, disabledBuiltinFunctions: [DisabledBuiltinFunctions]) {
+    public init(locale: String, maxResponseTokens: Double, bestOf: Double, disabledBuiltinCommands: [DisabledBuiltinCommands]) {
         self.locale = locale
         self.maxResponseTokens = maxResponseTokens
         self.bestOf = bestOf
-        self.disabledBuiltinFunctions = disabledBuiltinFunctions
+        self.disabledBuiltinCommands = disabledBuiltinCommands
     }
 
     public required init(from decoder: Decoder) throws {
@@ -41,7 +41,7 @@ public class SessionConfiguration: APIModel {
         locale = try container.decode("locale")
         maxResponseTokens = try container.decode("maxResponseTokens")
         bestOf = try container.decode("bestOf")
-        disabledBuiltinFunctions = try container.decodeArray("disabledBuiltinFunctions")
+        disabledBuiltinCommands = try container.decodeArray("disabledBuiltinCommands")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -50,7 +50,7 @@ public class SessionConfiguration: APIModel {
         try container.encode(locale, forKey: "locale")
         try container.encode(maxResponseTokens, forKey: "maxResponseTokens")
         try container.encode(bestOf, forKey: "bestOf")
-        try container.encode(disabledBuiltinFunctions, forKey: "disabledBuiltinFunctions")
+        try container.encode(disabledBuiltinCommands, forKey: "disabledBuiltinCommands")
     }
 
     public func isEqual(to object: Any?) -> Bool {
@@ -58,7 +58,7 @@ public class SessionConfiguration: APIModel {
       guard self.locale == object.locale else { return false }
       guard self.maxResponseTokens == object.maxResponseTokens else { return false }
       guard self.bestOf == object.bestOf else { return false }
-      guard self.disabledBuiltinFunctions == object.disabledBuiltinFunctions else { return false }
+      guard self.disabledBuiltinCommands == object.disabledBuiltinCommands else { return false }
       return true
     }
 

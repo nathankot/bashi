@@ -5,7 +5,7 @@
 
 import Foundation
 
-public class FunctionCallParseError: APIModel {
+public class CommandParseError: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
         case parseError = "parse_error"
@@ -40,14 +40,14 @@ public class FunctionCallParseError: APIModel {
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? FunctionCallParseError else { return false }
+      guard let object = object as? CommandParseError else { return false }
       guard self.type == object.type else { return false }
       guard self.line == object.line else { return false }
       guard self.error == object.error else { return false }
       return true
     }
 
-    public static func == (lhs: FunctionCallParseError, rhs: FunctionCallParseError) -> Bool {
+    public static func == (lhs: CommandParseError, rhs: CommandParseError) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

@@ -15,7 +15,7 @@ public class ModelsAssist000Output: APIModel {
 
     public var request: String
 
-    public var functionCalls: [FunctionCall]
+    public var commands: [Command]
 
     public var missingRequestContext: MissingRequestContext?
 
@@ -64,10 +64,10 @@ public class ModelsAssist000Output: APIModel {
         }
     }
 
-    public init(model: Model, request: String, functionCalls: [FunctionCall], missingRequestContext: MissingRequestContext? = nil) {
+    public init(model: Model, request: String, commands: [Command], missingRequestContext: MissingRequestContext? = nil) {
         self.model = model
         self.request = request
-        self.functionCalls = functionCalls
+        self.commands = commands
         self.missingRequestContext = missingRequestContext
     }
 
@@ -76,7 +76,7 @@ public class ModelsAssist000Output: APIModel {
 
         model = try container.decode("model")
         request = try container.decode("request")
-        functionCalls = try container.decodeArray("functionCalls")
+        commands = try container.decodeArray("commands")
         missingRequestContext = try container.decodeIfPresent("missingRequestContext")
     }
 
@@ -85,7 +85,7 @@ public class ModelsAssist000Output: APIModel {
 
         try container.encode(model, forKey: "model")
         try container.encode(request, forKey: "request")
-        try container.encode(functionCalls, forKey: "functionCalls")
+        try container.encode(commands, forKey: "commands")
         try container.encodeIfPresent(missingRequestContext, forKey: "missingRequestContext")
     }
 
@@ -93,7 +93,7 @@ public class ModelsAssist000Output: APIModel {
       guard let object = object as? ModelsAssist000Output else { return false }
       guard self.model == object.model else { return false }
       guard self.request == object.request else { return false }
-      guard self.functionCalls == object.functionCalls else { return false }
+      guard self.commands == object.commands else { return false }
       guard self.missingRequestContext == object.missingRequestContext else { return false }
       return true
     }

@@ -55,7 +55,7 @@ extension AppController {
         let apiClient = await makeApiClient()
         let request = Bashi.PostSessions.Request(
             body: .init(modelConfigurations: .init(
-                assist000: .init(model: .assist000, functions: [:])))
+                assist000: .init(model: .assist000, commands: [:])))
         )
         let response = await withCheckedContinuation { continuation in
             apiClient.makeRequest(request, complete: { response in

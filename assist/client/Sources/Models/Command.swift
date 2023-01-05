@@ -5,24 +5,24 @@
 
 import Foundation
 
-public enum FunctionCall: Codable, Equatable {
-    case functionCallParseError(FunctionCallParseError)
-    case functionCallInvalid(FunctionCallInvalid)
-    case functionCallParsed(FunctionCallParsed)
-    case functionCallExecuted(FunctionCallExecuted)
+public enum Command: Codable, Equatable {
+    case commandParseError(CommandParseError)
+    case commandInvalid(CommandInvalid)
+    case commandParsed(CommandParsed)
+    case commandExecuted(CommandExecuted)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         let discriminator: String = try container.decode("type")
         switch discriminator {
         case "executed":
-            self = .functionCallExecuted(try FunctionCallExecuted(from: decoder))
+            self = .commandExecuted(try CommandExecuted(from: decoder))
         case "invalid":
-            self = .functionCallInvalid(try FunctionCallInvalid(from: decoder))
+            self = .commandInvalid(try CommandInvalid(from: decoder))
         case "parse_error":
-            self = .functionCallParseError(try FunctionCallParseError(from: decoder))
+            self = .commandParseError(try CommandParseError(from: decoder))
         case "parsed":
-            self = .functionCallParsed(try FunctionCallParsed(from: decoder))
+            self = .commandParsed(try CommandParsed(from: decoder))
         default:
             throw DecodingError.dataCorrupted(DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "Couldn't find type to decode with discriminator \(discriminator)"))
         }
@@ -31,13 +31,13 @@ public enum FunctionCall: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case .functionCallParseError(let content):
+        case .commandParseError(let content):
             try container.encode(content)
-        case .functionCallInvalid(let content):
+        case .commandInvalid(let content):
             try container.encode(content)
-        case .functionCallParsed(let content):
+        case .commandParsed(let content):
             try container.encode(content)
-        case .functionCallExecuted(let content):
+        case .commandExecuted(let content):
             try container.encode(content)
         }
     }

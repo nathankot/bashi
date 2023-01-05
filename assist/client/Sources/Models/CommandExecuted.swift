@@ -5,7 +5,7 @@
 
 import Foundation
 
-public class FunctionCallExecuted: APIModel {
+public class CommandExecuted: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
         case executed = "executed"
@@ -50,7 +50,7 @@ public class FunctionCallExecuted: APIModel {
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? FunctionCallExecuted else { return false }
+      guard let object = object as? CommandExecuted else { return false }
       guard self.line == object.line else { return false }
       guard self.type == object.type else { return false }
       guard self.name == object.name else { return false }
@@ -59,7 +59,7 @@ public class FunctionCallExecuted: APIModel {
       return true
     }
 
-    public static func == (lhs: FunctionCallExecuted, rhs: FunctionCallExecuted) -> Bool {
+    public static func == (lhs: CommandExecuted, rhs: CommandExecuted) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

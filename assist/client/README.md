@@ -154,12 +154,12 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **ArgumentType**
 - **BashiSession**
 - **BooleanValue**
+- **Command**
+- **CommandExecuted**
+- **CommandInvalid**
+- **CommandParseError**
+- **CommandParsed**
 - **ErrorType**
-- **FunctionCall**
-- **FunctionCallExecuted**
-- **FunctionCallInvalid**
-- **FunctionCallParseError**
-- **FunctionCallParsed**
 - **FunctionDefinition**
 - **ModelsAssist000Configuration**
 - **ModelsAssist000Input**

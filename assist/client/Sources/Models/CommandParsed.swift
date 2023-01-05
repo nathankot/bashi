@@ -5,16 +5,10 @@
 
 import Foundation
 
-public class FunctionCallInvalid: APIModel {
+public class CommandParsed: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
-        case invalid = "invalid"
-    }
-
-    public enum InvalidReason: String, Codable, Equatable, CaseIterable {
-        case unknownFunction = "unknown_function"
-        case invalidArguments = "invalid_arguments"
-        case failedExecution = "failed_execution"
+        case parsed = "parsed"
     }
 
     public var line: String
@@ -25,14 +19,14 @@ public class FunctionCallInvalid: APIModel {
 
     public var args: [Value]
 
-    public var invalidReason: InvalidReason
+    public var argsParsed: [[String: Value]]?
 
-    public init(line: String, type: `Type`, name: String, args: [Value], invalidReason: InvalidReason) {
+    public init(line: String, type: `Type`, name: String, args: [Value], argsParsed: [[String: Value]]? = nil) {
         self.line = line
         self.type = type
         self.name = name
         self.args = args
-        self.invalidReason = invalidReason
+        self.argsParsed = argsParsed
     }
 
     public required init(from decoder: Decoder) throws {
@@ -42,7 +36,7 @@ public class FunctionCallInvalid: APIModel {
         type = try container.decode("type")
         name = try container.decode("name")
         args = try container.decodeArray("args")
-        invalidReason = try container.decode("invalidReason")
+        argsParsed = try container.decodeArrayIfPresent("argsParsed")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -52,20 +46,20 @@ public class FunctionCallInvalid: APIModel {
         try container.encode(type, forKey: "type")
         try container.encode(name, forKey: "name")
         try container.encode(args, forKey: "args")
-        try container.encode(invalidReason, forKey: "invalidReason")
+        try container.encodeIfPresent(argsParsed, forKey: "argsParsed")
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? FunctionCallInvalid else { return false }
+      guard let object = object as? CommandParsed else { return false }
       guard self.line == object.line else { return false }
       guard self.type == object.type else { return false }
       guard self.name == object.name else { return false }
       guard self.args == object.args else { return false }
-      guard self.invalidReason == object.invalidReason else { return false }
+      guard self.argsParsed == object.argsParsed else { return false }
       return true
     }
 
-    public static func == (lhs: FunctionCallInvalid, rhs: FunctionCallInvalid) -> Bool {
+    public static func == (lhs: CommandParsed, rhs: CommandParsed) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

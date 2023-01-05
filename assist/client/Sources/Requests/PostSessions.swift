@@ -131,31 +131,31 @@ extension Bashi {
 
                 public var session: BashiSession
 
-                public var builtinFunctions: [String: FunctionDefinition]
+                public var builtinCommands: [String: FunctionDefinition]
 
-                public init(session: BashiSession, builtinFunctions: [String: FunctionDefinition]) {
+                public init(session: BashiSession, builtinCommands: [String: FunctionDefinition]) {
                     self.session = session
-                    self.builtinFunctions = builtinFunctions
+                    self.builtinCommands = builtinCommands
                 }
 
                 public required init(from decoder: Decoder) throws {
                     let container = try decoder.container(keyedBy: StringCodingKey.self)
 
                     session = try container.decode("session")
-                    builtinFunctions = try container.decode("builtinFunctions")
+                    builtinCommands = try container.decode("builtinCommands")
                 }
 
                 public func encode(to encoder: Encoder) throws {
                     var container = encoder.container(keyedBy: StringCodingKey.self)
 
                     try container.encode(session, forKey: "session")
-                    try container.encode(builtinFunctions, forKey: "builtinFunctions")
+                    try container.encode(builtinCommands, forKey: "builtinCommands")
                 }
 
                 public func isEqual(to object: Any?) -> Bool {
                   guard let object = object as? Status200 else { return false }
                   guard self.session == object.session else { return false }
-                  guard self.builtinFunctions == object.builtinFunctions else { return false }
+                  guard self.builtinCommands == object.builtinCommands else { return false }
                   return true
                 }
 

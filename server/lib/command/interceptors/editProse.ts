@@ -1,4 +1,4 @@
-import { interceptCommand } from "./intercept_function_call.ts";
+import { interceptCommand } from "./interceptCommand.ts";
 import { run } from "@lib/models.ts";
 
 const interceptor = interceptCommand(

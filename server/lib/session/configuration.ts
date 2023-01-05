@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 
 import { DEFAULT_MAX_RESPONSE_TOKENS } from "@lib/constants.ts";
-import builtinCommands from "@lib/function/builtinFunctions.ts";
+import builtinCommands from "@lib/command/builtinCommands.ts";
 
 export const Configuration = t.type({
   locale: t.string,

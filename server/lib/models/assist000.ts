@@ -7,7 +7,7 @@ import {
   builtinCommands,
   filterUnnecessary,
   commandInterceptors,
-} from "@lib/function.ts";
+} from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
 import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
@@ -219,7 +219,7 @@ For example, if the request is "Whats the time in Los Angeles?", respond with:
 time("America/Los_Angeles")
 flushToSpeech()
 
-If the request could not be understood, use the fail() function to indicate why or what might be missing from the request. Aim to use the minimal number of functions to satisfy the request.
+If the request could not be understood, use the fail() command to indicate why or what might be missing from the request. Aim to use the minimal number of commands to satisfy the request.
 
 The request is:
 

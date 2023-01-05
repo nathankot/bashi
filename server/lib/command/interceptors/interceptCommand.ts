@@ -8,7 +8,7 @@ import {
   Commands,
   checkArgumentsValid,
   builtinCommands,
-} from "@lib/function.ts";
+} from "@lib/command.ts";
 
 import { ModelName, models } from "@lib/models.ts";
 

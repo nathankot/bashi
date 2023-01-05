@@ -10,7 +10,7 @@ import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { SessionPublic, defaultConfiguration } from "@lib/session.ts";
-import { CommandSet, builtinCommands } from "@lib/function.ts";
+import { CommandSet, builtinCommands } from "@lib/command.ts";
 import { msgpack } from "@/msgpack.ts";
 import toJSONSchema from "@lib/toJsonSchema.ts";
 

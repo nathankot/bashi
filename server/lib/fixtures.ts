@@ -1,5 +1,5 @@
 import type { Session } from "@lib/session.ts";
-import type { CommandSet } from "@lib/function/types.ts";
+import type { CommandSet } from "@lib/command/types.ts";
 import type { HandlerContext } from "$fresh/server.ts";
 
 export const now = new Date(1671439270000);

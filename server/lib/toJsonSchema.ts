@@ -13,7 +13,7 @@ import {
   NumberValue,
   BooleanValue,
   Value,
-} from "@lib/function/valueTypes.ts";
+} from "@lib/command/valueTypes.ts";
 
 import {
   ArgumentParser,
@@ -24,7 +24,7 @@ import {
   CommandInvalid,
   CommandParseError,
   CommandParsed,
-} from "@lib/function/types.ts";
+} from "@lib/command/types.ts";
 
 type SupportedTag =
   | "AnyType"

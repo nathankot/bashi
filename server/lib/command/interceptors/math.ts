@@ -1,6 +1,6 @@
 import * as mathjs from "mathjs";
 
-import { interceptCommand } from "./intercept_function_call.ts";
+import { interceptCommand } from "./interceptCommand.ts";
 
 const interceptor = interceptCommand(
   "math",

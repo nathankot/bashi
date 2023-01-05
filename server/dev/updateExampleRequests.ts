@@ -5,7 +5,7 @@ import { RequestContext } from "@lib/requestContext.ts";
 import { ModelDeps, run } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint } from "@lib/clients.ts";
-import { Commands } from "@lib/function.ts";
+import { Commands } from "@lib/command.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 

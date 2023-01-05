@@ -1,13 +1,12 @@
-import { interceptCommand } from "./intercept_function_call.ts";
+import { interceptCommand } from "./interceptCommand.ts";
 import { run } from "@lib/models.ts";
 
 const interceptor = interceptCommand(
-  "generateCode",
-  async (modelDeps, input, [targetLanguage, whatIsBeingGenerated, request]) => {
-    const model = "code-000" as const;
+  "translate",
+  async (modelDeps, input, [targetLanguage, request]) => {
+    const model: "translate-000" = "translate-000";
     const output = await run(modelDeps, model, {
       request: request.value,
-      whatIsBeingGenerated: whatIsBeingGenerated.value,
       targetLanguage: targetLanguage.value,
     });
     return { type: "string", value: output.result.trim() };

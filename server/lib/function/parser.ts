@@ -14,9 +14,9 @@ import { LogFn } from "@lib/log.ts";
 import argumentParsers from "./argumentParsers.ts";
 
 import {
-  FunctionCall,
-  FunctionSet,
-  FunctionDefinition,
+  Command,
+  CommandSet,
+  CommandDefinition,
   Argument,
 } from "./types.ts";
 
@@ -104,7 +104,7 @@ function applyCall(
     undefined | Argument[],
     Token<TokenKind.RParen>
   ]
-): FunctionCall & { type: "parsed" } {
+): Command & { type: "parsed" } {
   const [{ text: name }, , maybeArgs] = toks;
   return {
     type: "parsed",
@@ -129,7 +129,7 @@ ARG.setPattern(
   )
 );
 
-const CALL = rule<TokenKind, FunctionCall & { type: "parsed" }>();
+const CALL = rule<TokenKind, Command & { type: "parsed" }>();
 CALL.setPattern(
   p.apply(
     p.seq(
@@ -142,7 +142,7 @@ CALL.setPattern(
   )
 );
 
-export function evaluate(expr: string): FunctionCall & { type: "parsed" } {
+export function evaluate(expr: string): Command & { type: "parsed" } {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
 }
 
@@ -150,15 +150,15 @@ export function parseFromModelResult(
   {
     log,
     now,
-    knownFunctions,
+    knownCommands,
   }: {
     log: LogFn;
     now: Date;
-    knownFunctions: FunctionSet;
+    knownCommands: CommandSet;
   },
   text: string
-): FunctionCall[] {
-  let result: FunctionCall[] = [];
+): Command[] {
+  let result: Command[] = [];
 
   for (const line of text.split("\n")) {
     if (line.trim() === "") {
@@ -176,17 +176,17 @@ export function parseFromModelResult(
         ...evaluate(line),
         line,
       };
-      const knownFunction = knownFunctions[parsed.name];
-      // Check that the function is known
-      if (knownFunction == null) {
+      const command = knownCommands[parsed.name];
+      // Check that the command is known
+      if (command == null) {
         result.push({
           ...parsed,
           type: "invalid",
-          invalidReason: "unknown_function",
+          invalidReason: "unknown_command",
         });
         continue;
       }
-      if (!checkArgumentsValid(knownFunction, parsed.args)) {
+      if (!checkArgumentsValid(command, parsed.args)) {
         result.push({
           ...parsed,
           type: "invalid",
@@ -196,7 +196,7 @@ export function parseFromModelResult(
       }
 
       // Do any additional argument parsing:
-      parsed.argsParsed = knownFunction.args.map((argDef, i) =>
+      parsed.argsParsed = command.args.map((argDef, i) =>
         (argDef.parse ?? []).reduce((a, e) => {
           const value = parsed.args[i];
           if (value == null) {
@@ -237,14 +237,14 @@ export function parseFromModelResult(
 }
 
 export function checkArgumentsValid(
-  knownFunction: FunctionDefinition,
+  knownCommand: CommandDefinition,
   args: Argument[]
 ): boolean {
-  if (knownFunction.args.length !== args.length) {
+  if (knownCommand.args.length !== args.length) {
     return false;
   }
-  for (let i = 0; i < knownFunction.args.length; i++) {
-    const argDef = knownFunction.args[i]!;
+  for (let i = 0; i < knownCommand.args.length; i++) {
+    const argDef = knownCommand.args[i]!;
     const arg = args[i]!;
     if (arg.type !== argDef.type) {
       return false;

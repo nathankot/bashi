@@ -1,7 +1,7 @@
-import { interceptFunctionCall } from "./intercept_function_call.ts";
+import { interceptCommand } from "./intercept_function_call.ts";
 import { run } from "@lib/models.ts";
 
-const interceptor = interceptFunctionCall(
+const interceptor = interceptCommand(
   "editProse",
   async (modelDeps, input, [editingRequirement]) => {
     const text = input.requestContext?.text;

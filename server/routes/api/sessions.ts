@@ -10,7 +10,7 @@ import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { SessionPublic, defaultConfiguration } from "@lib/session.ts";
-import { FunctionSet, builtinFunctions } from "@lib/function.ts";
+import { CommandSet, builtinCommands } from "@lib/function.ts";
 import { msgpack } from "@/msgpack.ts";
 import toJSONSchema from "@lib/toJsonSchema.ts";
 
@@ -28,7 +28,7 @@ export type POSTRequest = t.TypeOf<typeof POSTRequest>;
 
 export const POSTResponse = t.type({
   session: SessionPublic,
-  builtinFunctions: FunctionSet,
+  builtinCommands: CommandSet,
 });
 export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
@@ -105,15 +105,15 @@ export const handler: Handlers<POSTResponse, State> = {
         accountNumber,
       };
 
-      // Ensure no builtin functions are being specified:
+      // Ensure no builtin commands are being specified:
       for (const conf of Object.values(session.modelConfigurations)) {
-        if (!("functions" in conf)) {
+        if (!("commands" in conf)) {
           continue;
         }
-        for (const customFunction of Object.keys(conf.functions)) {
-          if (customFunction in builtinFunctions) {
+        for (const customCommand of Object.keys(conf.commands)) {
+          if (customCommand in builtinCommands) {
             throw new HTTPError(
-              `'${customFunction}' is a builtin function and must not be specified`,
+              `'${customCommand}' is a builtin command and must not be specified`,
               400
             );
           }
@@ -136,7 +136,7 @@ export const handler: Handlers<POSTResponse, State> = {
       return renderJSON<POSTResponse>(
         {
           session,
-          builtinFunctions,
+          builtinCommands,
         },
         200
       );

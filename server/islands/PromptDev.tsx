@@ -1,7 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 
-import { functionSet } from "@lib/fixtures.ts";
-import { FunctionSet } from "@lib/function/types.ts";
+import { commandSet } from "@lib/fixtures.ts";
+import { CommandSet } from "@lib/function/types.ts";
 import { Session } from "@lib/session.ts";
 import { POSTRequest as PostSessionRequest } from "@routes/api/sessions.ts";
 import TextPrompt from "./TextPrompt.tsx";
@@ -9,7 +9,7 @@ import AudioPrompt from "./AudioPrompt.tsx";
 
 export default function PromptDev() {
   const [error, setError] = useState<string | null>(null);
-  const [functions, setFunctions] = useState<FunctionSet>(functionSet);
+  const [commands, setCommands] = useState<CommandSet>(commandSet);
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function PromptDev() {
       modelConfigurations: {
         "assist-000": {
           model: "assist-000",
-          functions,
+          commands,
         },
       },
     };
@@ -33,17 +33,17 @@ export default function PromptDev() {
       .then((sessJson: { session: Session }) =>
         setSessionId(sessJson.session.sessionId)
       );
-  }, [functions]);
+  }, [commands]);
 
-  const onFunctionsChange = (t: string) => {
+  const onCommandsChange = (t: string) => {
     try {
-      const decoded = FunctionSet.decode(JSON.parse(t));
+      const decoded = CommandSet.decode(JSON.parse(t));
       if (decoded.right == null) {
-        setError("could not decode functions");
+        setError("could not decode commands");
         return;
       }
       setError(null);
-      setFunctions(decoded.right);
+      setCommands(decoded.right);
     } catch {
       setError("could not parse json");
     }
@@ -77,9 +77,9 @@ export default function PromptDev() {
         )}
         <textarea
           class="block w-full h-96 font-mono text-xs"
-          onChange={(e) => onFunctionsChange(e.currentTarget.value)}
+          onChange={(e) => onCommandsChange(e.currentTarget.value)}
         >
-          {JSON.stringify(functions, undefined, "  ")}
+          {JSON.stringify(commands, undefined, "  ")}
         </textarea>
       </div>
     </div>

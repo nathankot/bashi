@@ -4,7 +4,7 @@ import { Value } from "./valueTypes.ts";
 import { Argument, ArgumentParser } from "./argumentParsers.ts";
 export { Argument, ArgumentParser };
 
-export { Value as FunctionReturnValue };
+export { Value as CommandReturnValue };
 
 export const ArgumentType = t.keyof({
   string: null,
@@ -13,7 +13,7 @@ export const ArgumentType = t.keyof({
 });
 export type ArgumentType = t.TypeOf<typeof ArgumentType>;
 
-export const FunctionDefinition = t.intersection([
+export const CommandDefinition = t.intersection([
   t.type({
     description: t.string,
     args: t.array(
@@ -32,46 +32,46 @@ export const FunctionDefinition = t.intersection([
     triggerTokens: t.array(t.string),
   }),
 ]);
-export type FunctionDefinition = t.TypeOf<typeof FunctionDefinition>;
+export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
 
-export type BuiltinFunctionDefinition<A extends ArgumentType[]> = Omit<
-  FunctionDefinition,
+export type BuiltinCommandDefinition<A extends ArgumentType[]> = Omit<
+  CommandDefinition,
   "args"
 > & {
   args: { [K in keyof A]: { type: A[K]; name: string } };
   mustNotBeDisabled?: boolean;
 };
 
-export type BuiltinFunctionDefinitionArgs<
-  A extends FunctionDefinition["args"]
+export type BuiltinCommandDefinitionArgs<
+  A extends CommandDefinition["args"]
 > = {
   [K in keyof A]: Value & { type: A[K]["type"] };
 };
 
-export const FunctionSet = t.record(t.string, FunctionDefinition);
-export type FunctionSet = t.TypeOf<typeof FunctionSet>;
+export const CommandSet = t.record(t.string, CommandDefinition);
+export type CommandSet = t.TypeOf<typeof CommandSet>;
 
-export const FunctionCallParseError = t.type({
+export const CommandParseError = t.type({
   type: t.literal("parse_error"),
   line: t.string,
   error: t.string,
 });
-export type FunctionCallParseError = t.TypeOf<typeof FunctionCallParseError>;
+export type CommandParseError = t.TypeOf<typeof CommandParseError>;
 
-export const FunctionCallInvalid = t.type({
+export const CommandInvalid = t.type({
   line: t.string,
   type: t.literal("invalid"),
   name: t.string,
   args: t.array(Argument),
   invalidReason: t.keyof({
-    unknown_function: null,
+    unknown_command: null,
     invalid_arguments: null,
     failed_execution: null,
   }),
 });
-export type FunctionCallInvalid = t.TypeOf<typeof FunctionCallInvalid>;
+export type CommandInvalid = t.TypeOf<typeof CommandInvalid>;
 
-export const FunctionCallParsed = t.intersection([
+export const CommandParsed = t.intersection([
   t.type({
     line: t.string,
     type: t.literal("parsed"),
@@ -85,24 +85,24 @@ export const FunctionCallParsed = t.intersection([
     ),
   }),
 ]);
-export type FunctionCallParsed = t.TypeOf<typeof FunctionCallParsed>;
+export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
-export const FunctionCallExecuted = t.type({
+export const CommandExecuted = t.type({
   line: t.string,
   type: t.literal("executed"),
   name: t.string,
   args: t.array(Argument),
   returnValue: Value,
 });
-export type FunctionCallExecuted = t.TypeOf<typeof FunctionCallExecuted>;
+export type CommandExecuted = t.TypeOf<typeof CommandExecuted>;
 
-export const FunctionCall = t.union([
-  FunctionCallParseError,
-  FunctionCallInvalid,
-  FunctionCallParsed,
-  FunctionCallExecuted,
+export const Command = t.union([
+  CommandParseError,
+  CommandInvalid,
+  CommandParsed,
+  CommandExecuted,
 ]);
-export type FunctionCall = t.TypeOf<typeof FunctionCall>;
+export type Command = t.TypeOf<typeof Command>;
 
-export const FunctionCalls = t.array(FunctionCall);
-export type FunctionCalls = t.TypeOf<typeof FunctionCalls>;
+export const Commands = t.array(Command);
+export type Commands = t.TypeOf<typeof Commands>;

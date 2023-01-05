@@ -1,7 +1,7 @@
-import { interceptFunctionCall } from "./intercept_function_call.ts";
+import { interceptCommand } from "./intercept_function_call.ts";
 import { run } from "@lib/models.ts";
 
-const interceptor = interceptFunctionCall(
+const interceptor = interceptCommand(
   "generateCode",
   async (modelDeps, input, [targetLanguage, whatIsBeingGenerated, request]) => {
     const model = "code-000" as const;

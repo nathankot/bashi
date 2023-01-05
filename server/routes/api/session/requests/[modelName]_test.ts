@@ -17,7 +17,7 @@ for (const test of [
       ...fixtures.session,
       configuration: {
         ...fixtures.session.configuration,
-        disabledBuiltinFunctions: ["translate"],
+        disabledBuiltinCommands: ["translate"],
       },
     } as Session,
     openAiFn: async () =>

@@ -1,8 +1,8 @@
 import * as mathjs from "mathjs";
 
-import { interceptFunctionCall } from "./intercept_function_call.ts";
+import { interceptCommand } from "./intercept_function_call.ts";
 
-const interceptor = interceptFunctionCall(
+const interceptor = interceptCommand(
   "math",
   async ({ log, session }, input, [expr]) => {
     const result = mathjs.evaluate(expr.value);

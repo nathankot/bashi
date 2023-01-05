@@ -19,11 +19,11 @@ import "xhr-polyfill";
 
 await setupLogger();
 
-retryPolicy.onRetry((v) => {
+retryPolicy.onRetry((_v) => {
   log("debug", "fault handling - retry");
 });
 
-circuitBreakerPolicy.onBreak((v) => {
+circuitBreakerPolicy.onBreak((_v) => {
   log("debug", "fault handling - circuit breaker");
 });
 

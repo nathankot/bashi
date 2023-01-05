@@ -3,71 +3,71 @@ import * as t from "io-ts";
 import { ModelInterceptor } from "@lib/interceptors.ts";
 
 import {
-  BuiltinFunctionDefinitionArgs,
-  FunctionReturnValue,
-  FunctionCalls,
+  BuiltinCommandDefinitionArgs,
+  CommandReturnValue,
+  Commands,
   checkArgumentsValid,
-  builtinFunctions,
+  builtinCommands,
 } from "@lib/function.ts";
 
 import { ModelName, models } from "@lib/models.ts";
 
 import { RequestContextDef, RequestContext } from "@lib/requestContext.ts";
 
-export function interceptFunctionCall<
+export function interceptCommand<
   N extends Extract<
     t.TypeOf<typeof models[ModelName]["Output"]>,
-    { model: string; functionCalls: FunctionCalls }
+    { model: string; commands: Commands }
   >["model"],
-  FN extends keyof typeof builtinFunctions
+  FN extends keyof typeof builtinCommands
 >(
-  fnName: FN,
+  commandName: FN,
   interceptFn: (
     deps: Parameters<ModelInterceptor<N>>[0],
     input: t.TypeOf<typeof models[N]["Input"]>,
-    args: BuiltinFunctionDefinitionArgs<typeof builtinFunctions[FN]["args"]>
-  ) => Promise<FunctionReturnValue | null>,
+    args: BuiltinCommandDefinitionArgs<typeof builtinCommands[FN]["args"]>
+  ) => Promise<CommandReturnValue | null>,
   validateFn?: (reqCtx: RequestContext) => Promise<true | RequestContextDef>
 ): {
-  fnName: FN;
+  commandName: FN;
   interceptor: ModelInterceptor<N>;
   validateRequestContext: NonNullable<typeof validateFn>;
 } {
   const interceptor: ModelInterceptor<N> = async (deps, input, output) => {
-    if (!("functionCalls" in output)) {
+    if (!("commands" in output)) {
       return output;
     }
 
     const { log } = deps;
-    const fnDef = builtinFunctions[fnName];
-    const newFunctionCalls = [...output.functionCalls];
-    for (let i = 0; i < newFunctionCalls.length; i++) {
-      const call = newFunctionCalls[i]!;
+    const fnDef = builtinCommands[commandName];
+    const newCommands = [...output.commands];
+    for (let i = 0; i < newCommands.length; i++) {
+      const call = newCommands[i]!;
       if (call.type !== "parsed") {
         continue;
       }
-      if (call.name !== fnName) {
+      if (call.name !== commandName) {
         continue;
       }
       if (!checkArgumentsValid(fnDef, call.args)) {
         continue;
       }
-      const args = call.args as BuiltinFunctionDefinitionArgs<
-        typeof builtinFunctions[FN]["args"]
+      const args = call.args as BuiltinCommandDefinitionArgs<
+        typeof builtinCommands[FN]["args"]
       >;
       try {
         const maybeReturnValue = await interceptFn(deps, input, args);
         if (maybeReturnValue == null) {
           continue;
         }
-        newFunctionCalls[i] = {
+        newCommands[i] = {
           ...call,
           type: "executed",
           returnValue: maybeReturnValue,
         };
       } catch (e) {
         log("error", e);
-        newFunctionCalls[i] = {
+        newCommands[i] = {
           ...call,
           type: "invalid",
           invalidReason: "failed_execution",
@@ -77,14 +77,14 @@ export function interceptFunctionCall<
 
     return {
       ...output,
-      functionCalls: newFunctionCalls,
+      commands: newCommands,
     };
   };
 
   const validateRequestContext = validateFn ?? (async () => true);
 
   return {
-    fnName,
+    commandName,
     interceptor,
     validateRequestContext,
   };

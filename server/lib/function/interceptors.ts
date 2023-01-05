@@ -5,7 +5,7 @@ import generateCode from "./interceptors/generateCode.ts";
 import editProse from "./interceptors/editProse.ts";
 import editCode from "./interceptors/editCode.ts";
 
-export const functionCallInterceptors = [
+export const commandInterceptors = [
   math,
   time,
   translate,

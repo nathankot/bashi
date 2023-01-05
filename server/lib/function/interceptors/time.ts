@@ -1,6 +1,6 @@
-import { interceptFunctionCall } from "./intercept_function_call.ts";
+import { interceptCommand } from "./intercept_function_call.ts";
 
-const interceptor = interceptFunctionCall(
+const interceptor = interceptCommand(
   "time",
   async ({ log, session, now }, input, [timeZone]) => {
     return {

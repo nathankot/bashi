@@ -1,5 +1,5 @@
 import type { Session } from "@lib/session.ts";
-import type { FunctionSet } from "@lib/function/types.ts";
+import type { CommandSet } from "@lib/function/types.ts";
 import type { HandlerContext } from "$fresh/server.ts";
 
 export const now = new Date(1671439270000);
@@ -21,7 +21,7 @@ export const handlerCtx: HandlerContext<{}> = {
   },
 };
 
-export const functionSet: FunctionSet = {
+export const commandSet: CommandSet = {
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
     args: [
@@ -68,12 +68,12 @@ export const session: Session = {
     locale: "en-US",
     maxResponseTokens: 1000,
     bestOf: 1,
-    disabledBuiltinFunctions: [],
+    disabledBuiltinCommands: [],
   },
   modelConfigurations: {
     "assist-000": {
       model: "assist-000",
-      functions: functionSet,
+      commands: commandSet,
     },
   },
 };

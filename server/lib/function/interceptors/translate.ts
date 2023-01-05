@@ -1,7 +1,7 @@
-import { interceptFunctionCall } from "./intercept_function_call.ts";
+import { interceptCommand } from "./intercept_function_call.ts";
 import { run } from "@lib/models.ts";
 
-const interceptor = interceptFunctionCall(
+const interceptor = interceptCommand(
   "translate",
   async (modelDeps, input, [targetLanguage, request]) => {
     const model: "translate-000" = "translate-000";

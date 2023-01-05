@@ -7,7 +7,7 @@ import {
   expectSingleResult,
 } from "typescript-parsec";
 
-import { FunctionSet } from "./types.ts";
+import { CommandSet } from "./types.ts";
 
 enum TokenKind {
   Word,
@@ -174,11 +174,11 @@ export function parseWordsFromRequest(request: string): Record<string, true> {
 
 export function filterUnnecessary(
   request: string,
-  functionSet: FunctionSet
-): FunctionSet {
-  const result: FunctionSet = {};
+  commandSet: CommandSet
+): CommandSet {
+  const result: CommandSet = {};
   const words = parseWordsFromRequest(request);
-  functionLoop: for (const [k, f] of Object.entries(functionSet)) {
+  functionLoop: for (const [k, f] of Object.entries(commandSet)) {
     if (f.triggerTokens == null || f.triggerTokens.length === 0) {
       result[k] = f;
       continue functionLoop;

@@ -1,18 +1,18 @@
 import { PROGRAMMING_LANGUAGES } from "@lib/constants.ts";
-import { BuiltinFunctionDefinition } from "./types.ts";
+import { BuiltinCommandDefinition } from "./types.ts";
 
-const time: BuiltinFunctionDefinition<["string"]> = {
+const time: BuiltinCommandDefinition<["string"]> = {
   description: `check the time for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
 };
 
-const math: BuiltinFunctionDefinition<["string"]> = {
+const math: BuiltinCommandDefinition<["string"]> = {
   description: `compute a math formula`,
   args: [{ name: "a mathjs expression ", type: "string" }],
 };
 
-const translate: BuiltinFunctionDefinition<["string", "string"]> = {
+const translate: BuiltinCommandDefinition<["string", "string"]> = {
   description: `translate something into a target language`,
   args: [
     { name: "full name of the target language", type: "string" },
@@ -20,7 +20,7 @@ const translate: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const editProse: BuiltinFunctionDefinition<["string"]> = {
+const editProse: BuiltinCommandDefinition<["string"]> = {
   description: `edit prose using the given requirements`,
   args: [{ name: "sentence describing desired changes", type: "string" }],
   triggerTokens: [
@@ -35,7 +35,7 @@ const editProse: BuiltinFunctionDefinition<["string"]> = {
 };
 
 // TODO: maybe a code edit model will do better with this?
-const editCode: BuiltinFunctionDefinition<["string", "string"]> = {
+const editCode: BuiltinCommandDefinition<["string", "string"]> = {
   description: `edit code using the given requirements`,
   args: [
     { name: "full name of the programming language", type: "string" },
@@ -61,7 +61,7 @@ const editCode: BuiltinFunctionDefinition<["string", "string"]> = {
   ],
 };
 
-const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
+const generateCode: BuiltinCommandDefinition<["string", "string", "string"]> =
   {
     description: `generate code for the given request`,
     args: [
@@ -89,31 +89,31 @@ const generateCode: BuiltinFunctionDefinition<["string", "string", "string"]> =
     ],
   };
 
-const answer: BuiltinFunctionDefinition<["string"]> = {
+const answer: BuiltinCommandDefinition<["string"]> = {
   description: `store an answer that is readily available if the request is a question`,
   args: [{ name: "answer", type: "string" }],
   mustNotBeDisabled: true,
 };
 
-const flushToSpeech: BuiltinFunctionDefinition<[]> = {
+const flushToSpeech: BuiltinCommandDefinition<[]> = {
   description: `the results above should be communicated by speech`,
   args: [],
   mustNotBeDisabled: true,
 };
 
-const flushToText: BuiltinFunctionDefinition<[]> = {
+const flushToText: BuiltinCommandDefinition<[]> = {
   description: `the results above should be written/inserted into the current context`,
   args: [],
   mustNotBeDisabled: true,
 };
 
-const fail: BuiltinFunctionDefinition<["string"]> = {
+const fail: BuiltinCommandDefinition<["string"]> = {
   description: `indicate the request could not be interpreted`,
   args: [{ name: "reason", type: "string" }],
   mustNotBeDisabled: true,
 };
 
-export const builtinFunctions = {
+export const builtinCommands = {
   answer,
   math,
   time,
@@ -126,4 +126,4 @@ export const builtinFunctions = {
   flushToText,
 };
 
-export default builtinFunctions;
+export default builtinCommands;

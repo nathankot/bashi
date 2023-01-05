@@ -9,8 +9,8 @@ export type ArgumentParserContext = {
 
 export const argumentParsers = {
   naturalLanguageDateTime: {
-    inputType: "string" as "string",
-    outputType: "string" as "string",
+    inputType: "string" as const,
+    outputType: "string" as const,
     fn: function (ctx: ArgumentParserContext, arg: string): null | string {
       const d = ctx.chronoParseDate(arg, ctx.now);
       if (d == null) {

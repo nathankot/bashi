@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`POST /api/session/requests/assist-000: success 1`] = `
 {
-  functionCalls: [
+  commands: [
     {
       args: [
         {
@@ -24,7 +24,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
           value: 123,
         },
       ],
-      invalidReason: "unknown_function",
+      invalidReason: "unknown_command",
       line: "   unknownCall(123)",
       name: "unknownCall",
       type: "invalid",
@@ -45,7 +45,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
           value: "should not work because disabled by conf",
         },
       ],
-      invalidReason: "unknown_function",
+      invalidReason: "unknown_command",
       line: 'translate("English", "should not work because disabled by conf")',
       name: "translate",
       type: "invalid",
@@ -124,7 +124,7 @@ snapshot[`POST /api/session/requests/assist-000: success 1`] = `
           value: "some reminder name",
         },
       ],
-      invalidReason: "unknown_function",
+      invalidReason: "unknown_command",
       line: 'reminder("in 5 days", "some reminder name")',
       name: "reminder",
       type: "invalid",

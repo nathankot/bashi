@@ -18,12 +18,12 @@ import {
 import {
   ArgumentParser,
   ArgumentType,
-  FunctionDefinition,
-  FunctionCall,
-  FunctionCallExecuted,
-  FunctionCallInvalid,
-  FunctionCallParseError,
-  FunctionCallParsed,
+  CommandDefinition,
+  Command,
+  CommandExecuted,
+  CommandInvalid,
+  CommandParseError,
+  CommandParsed,
 } from "@lib/function/types.ts";
 
 type SupportedTag =
@@ -304,19 +304,19 @@ namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
 namedJSONSchemaObjects["#/components/schemas/ArgumentType"] =
   toJSONSchema(ArgumentType);
 
-namedJSONSchemaObjects["#/components/schemas/FunctionCallExecuted"] =
-  toJSONSchema(FunctionCallExecuted);
-namedJSONSchemaObjects["#/components/schemas/FunctionCallInvalid"] =
-  toJSONSchema(FunctionCallInvalid);
-namedJSONSchemaObjects["#/components/schemas/FunctionCallParseError"] =
-  toJSONSchema(FunctionCallParseError);
-namedJSONSchemaObjects["#/components/schemas/FunctionCallParsed"] =
-  toJSONSchema(FunctionCallParsed);
+namedJSONSchemaObjects["#/components/schemas/CommandExecuted"] =
+  toJSONSchema(CommandExecuted);
+namedJSONSchemaObjects["#/components/schemas/CommandInvalid"] =
+  toJSONSchema(CommandInvalid);
+namedJSONSchemaObjects["#/components/schemas/CommandParseError"] =
+  toJSONSchema(CommandParseError);
+namedJSONSchemaObjects["#/components/schemas/CommandParsed"] =
+  toJSONSchema(CommandParsed);
 
 namedJSONSchemaObjects["#/components/schemas/FunctionDefinition"] =
-  toJSONSchema(FunctionDefinition);
-namedJSONSchemaObjects["#/components/schemas/FunctionCall"] =
-  toJSONSchema(FunctionCall);
+  toJSONSchema(CommandDefinition);
+namedJSONSchemaObjects["#/components/schemas/Command"] =
+  toJSONSchema(Command);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

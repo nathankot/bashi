@@ -73,13 +73,13 @@
                   "type": "object",
                   "required": [
                     "session",
-                    "builtinFunctions"
+                    "builtinCommands"
                   ],
                   "properties": {
                     "session": {
                       "$ref": "#/components/schemas/Session"
                     },
-                    "builtinFunctions": {
+                    "builtinCommands": {
                       "type": "object",
                       "additionalProperties": {
                         "$ref": "#/components/schemas/FunctionDefinition"
@@ -494,7 +494,7 @@
         ],
         "type": "string"
       },
-      "FunctionCallExecuted": {
+      "CommandExecuted": {
         "type": "object",
         "required": [
           "line",
@@ -527,7 +527,7 @@
           }
         }
       },
-      "FunctionCallInvalid": {
+      "CommandInvalid": {
         "type": "object",
         "required": [
           "line",
@@ -557,7 +557,7 @@
           },
           "invalidReason": {
             "enum": [
-              "unknown_function",
+              "unknown_command",
               "invalid_arguments",
               "failed_execution"
             ],
@@ -565,7 +565,7 @@
           }
         }
       },
-      "FunctionCallParseError": {
+      "CommandParseError": {
         "type": "object",
         "required": [
           "type",
@@ -587,7 +587,7 @@
           }
         }
       },
-      "FunctionCallParsed": {
+      "CommandParsed": {
         "type": "object",
         "required": [
           "line",
@@ -667,28 +667,28 @@
           }
         }
       },
-      "FunctionCall": {
+      "Command": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/FunctionCallParseError"
+            "$ref": "#/components/schemas/CommandParseError"
           },
           {
-            "$ref": "#/components/schemas/FunctionCallInvalid"
+            "$ref": "#/components/schemas/CommandInvalid"
           },
           {
-            "$ref": "#/components/schemas/FunctionCallParsed"
+            "$ref": "#/components/schemas/CommandParsed"
           },
           {
-            "$ref": "#/components/schemas/FunctionCallExecuted"
+            "$ref": "#/components/schemas/CommandExecuted"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "parse_error": "#/components/schemas/FunctionCallParseError",
-            "invalid": "#/components/schemas/FunctionCallInvalid",
-            "parsed": "#/components/schemas/FunctionCallParsed",
-            "executed": "#/components/schemas/FunctionCallExecuted"
+            "parse_error": "#/components/schemas/CommandParseError",
+            "invalid": "#/components/schemas/CommandInvalid",
+            "parsed": "#/components/schemas/CommandParsed",
+            "executed": "#/components/schemas/CommandExecuted"
           }
         }
       },
@@ -716,7 +716,7 @@
         "required": [
           "model",
           "request",
-          "functionCalls"
+          "commands"
         ],
         "properties": {
           "model": {
@@ -728,10 +728,10 @@
           "request": {
             "type": "string"
           },
-          "functionCalls": {
+          "commands": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FunctionCall"
+              "$ref": "#/components/schemas/Command"
             }
           },
           "missingRequestContext": {
@@ -757,7 +757,7 @@
         "type": "object",
         "required": [
           "model",
-          "functions"
+          "commands"
         ],
         "properties": {
           "model": {
@@ -766,7 +766,7 @@
             ],
             "type": "string"
           },
-          "functions": {
+          "commands": {
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/FunctionDefinition"
@@ -1026,7 +1026,7 @@
           "locale",
           "maxResponseTokens",
           "bestOf",
-          "disabledBuiltinFunctions"
+          "disabledBuiltinCommands"
         ],
         "properties": {
           "locale": {
@@ -1038,7 +1038,7 @@
           "bestOf": {
             "type": "number"
           },
-          "disabledBuiltinFunctions": {
+          "disabledBuiltinCommands": {
             "type": "array",
             "items": {
               "enum": [

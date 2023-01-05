@@ -22,7 +22,7 @@ export default function Examples() {
       {examples.map((example) => (
         <div class="mb-3">
           <div>{example.prompt}</div>
-          {example.functionCalls.map((f) => (
+          {example.commands.map((f) => (
             <div class="whitespace-pre text-xs font-mono overflow-x-auto">
               {JSON.stringify(f, null, "  ")}
             </div>

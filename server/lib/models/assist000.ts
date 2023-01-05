@@ -1,12 +1,12 @@
 import * as t from "io-ts";
 
 import {
-  FunctionSet,
-  FunctionCalls,
+  CommandSet,
+  Commands,
   parseFromModelResult,
-  builtinFunctions,
+  builtinCommands,
   filterUnnecessary,
-  functionCallInterceptors,
+  commandInterceptors,
 } from "@lib/function.ts";
 
 import { HTTPError } from "@lib/errors.ts";
@@ -20,7 +20,7 @@ export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
   model: Name,
-  functions: FunctionSet,
+  commands: CommandSet,
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
@@ -34,7 +34,7 @@ export const Output = t.intersection([
   t.type({
     model: Name,
     request: t.string,
-    functionCalls: FunctionCalls,
+    commands: Commands,
   }),
   t.partial({
     missingRequestContext: RequestContextDef,
@@ -98,18 +98,18 @@ export async function run(
     }
 
     const request = input.request.trim();
-    const filteredBuiltinFunctions: Partial<typeof builtinFunctions> = {
-      ...builtinFunctions,
+    const filteredBuiltinCommands: Partial<typeof builtinCommands> = {
+      ...builtinCommands,
     };
     for (const disabledFn of modelDeps.session.configuration
-      .disabledBuiltinFunctions) {
-      delete filteredBuiltinFunctions[disabledFn];
+      .disabledBuiltinCommands) {
+      delete filteredBuiltinCommands[disabledFn];
     }
-    const functionsSet = filterUnnecessary(request, {
-      ...configuration.functions,
-      ...filteredBuiltinFunctions,
+    const commandSet = filterUnnecessary(request, {
+      ...configuration.commands,
+      ...filteredBuiltinCommands,
     });
-    const prompt = makePrompt(functionsSet, request);
+    const prompt = makePrompt(commandSet, request);
 
     const completion = await modelDeps.openai.createCompletion(
       {
@@ -129,11 +129,11 @@ export async function run(
 
     const text = completion.data.choices[0]?.text ?? "";
 
-    const functionCalls = parseFromModelResult(
+    const commands = parseFromModelResult(
       {
         log,
         now: modelDeps.now(),
-        knownFunctions: functionsSet,
+        knownCommands: commandSet,
       },
       text
     );
@@ -141,13 +141,13 @@ export async function run(
     return {
       model: "assist-000",
       request,
-      functionCalls,
+      commands,
     };
   })();
 
-  const functionCalls = output.functionCalls;
+  const commands = output.commands;
 
-  const fnNames = functionCalls.reduce(
+  const commandNames = commands.reduce(
     (a: Record<string, null>, c) =>
       c.type !== "parsed" ? a : { ...a, [c.name]: null },
     {}
@@ -155,8 +155,8 @@ export async function run(
 
   let missingRequestContext: null | RequestContextDef = null;
   // First ensure that all interceptors have the request context that they need:
-  for (const interceptor of functionCallInterceptors) {
-    if (!(interceptor.fnName in fnNames)) {
+  for (const interceptor of commandInterceptors) {
+    if (!(interceptor.commandName in commandNames)) {
       continue;
     }
     const validateResult = await interceptor.validateRequestContext(
@@ -181,20 +181,20 @@ export async function run(
     return {
       model: "assist-000",
       request: input.request ?? "",
-      functionCalls: [],
+      commands: [],
       missingRequestContext,
     };
   }
 
-  // Then run all of the function call interceptors:
-  for (const interceptor of functionCallInterceptors) {
+  // Then run all of the command interceptors:
+  for (const interceptor of commandInterceptors) {
     const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
       async ({ signal }) =>
         interceptor.interceptor({ ...modelDeps, signal }, input, output)
     );
     if ("missingRequestContext" in interceptedOutput) {
       throw new Error(
-        `function intercepts must not return missinGrequestContext - this should happen at the validation step`
+        `command intercepts must not return missinGrequestContext - this should happen at the validation step`
       );
     }
     output = interceptedOutput;
@@ -203,8 +203,8 @@ export async function run(
   return output;
 }
 
-function makePrompt(functions: FunctionSet, request: string): string {
-  const functionSet = makeFunctionSet(functions);
+function makePrompt(commands: CommandSet, request: string): string {
+  const commandSet = makeCommandSet(commands);
 
   return `You are a voice assistant capable of interpreting requests.
 
@@ -212,7 +212,7 @@ For each request respond with one or more lines of ordered function calls separa
 
 The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. And ONLY functions specified below may be used. Function arguments must be literal types and cannot be nested.
 
-${functionSet.join("\n")}
+${commandSet.join("\n")}
 
 For example, if the request is "Whats the time in Los Angeles?", respond with:
 
@@ -228,8 +228,8 @@ ${request}
 Write your response below:`;
 }
 
-function makeFunctionSet(functions: FunctionSet): string[] {
-  return Object.entries(functions).map(([name, c]) => {
+function makeCommandSet(commands: CommandSet): string[] {
+  return Object.entries(commands).map(([name, c]) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
     return `\`${name}(${args.join(", ")})\` - ${c.description}`;
   });

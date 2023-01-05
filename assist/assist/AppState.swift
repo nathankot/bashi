@@ -38,7 +38,7 @@ public final class AppState : ObservableObject {
         case InsufficientAppPermissions(String)
     }
     
-    @Published public var state: State = .Idle
+    @Published public private(set) var state: State = .Idle
     
     public convenience init() {
         logger.info("initializing app state")

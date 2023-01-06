@@ -2,7 +2,13 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:client">
+      location = "group:BashiClient">
+   </FileRef>
+   <FileRef
+      location = "group:BashiPlugin">
+   </FileRef>
+   <FileRef
+      location = "group:builtinCommands/builtinCommands.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:assist.xcodeproj">

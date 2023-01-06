@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import KeyboardShortcuts
-import Bashi
+import BashiClient
 import Speech
 import UserNotifications
 import Combine

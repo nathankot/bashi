@@ -6,7 +6,7 @@
 import Foundation
 
 /** TODO */
-public struct Bashi {
+public struct BashiClient {
 
     /// Whether to discard any errors when decoding optional properties
     public static var safeOptionalDecoding = false

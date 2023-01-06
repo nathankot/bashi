@@ -1,10 +1,10 @@
-# Bashi
+# BashiClient
 
 This is an api generated from a OpenAPI 3.0 spec with [SwagGen](https://github.com/yonaskolb/SwagGen)
 
 ## Operation
 
-Each operation lives under the `Bashi` namespace and within an optional tag: `Bashi(.tagName).operationId`. If an operation doesn't have an operationId one will be generated from the path and method.
+Each operation lives under the `BashiClient` namespace and within an optional tag: `BashiClient(.tagName).operationId`. If an operation doesn't have an operationId one will be generated from the path and method.
 
 Each operation has a nested `Request` and a `Response`, as well as a static `service` property
 
@@ -57,7 +57,7 @@ Example request (that is not neccessarily in this api):
 
 ```swift
 
-let getUserRequest = Bashi.User.GetUser.Request(id: 123)
+let getUserRequest = BashiClient.User.GetUser.Request(id: 123)
 let apiClient = APIClient.default
 
 apiClient.makeRequest(getUserRequest) { apiResponse in
@@ -74,7 +74,7 @@ apiClient.makeRequest(getUserRequest) { apiResponse in
 }
 ```
 
-Each [Request](#request) also has a `makeRequest` convenience function that uses `Bashi.shared`.
+Each [Request](#request) also has a `makeRequest` convenience function that uses `BashiClient.shared`.
 
 #### APIResponse
 The `APIResponse` that gets passed to the completion closure contains the following properties:
@@ -88,7 +88,7 @@ The `APIResponse` that gets passed to the completion closure contains the follow
 
 #### Encoding and Decoding
 Only JSON requests and responses are supported. These are encoded and decoded by `JSONEncoder` and `JSONDecoder` respectively, using Swift's `Codable` apis.
-There are some options to control how invalid JSON is handled when decoding and these are available as static properties on `Bashi`:
+There are some options to control how invalid JSON is handled when decoding and these are available as static properties on `BashiClient`:
 
 - `safeOptionalDecoding`: Whether to discard any errors when decoding optional properties. Defaults to `true`.
 - `safeArrayDecoding`: Whether to remove invalid elements instead of throwing when decoding arrays. Defaults to `true`.
@@ -185,10 +185,10 @@ To add support for a specific asynchronous library, just add an extension on `AP
 
 ## Requests
 
-- **Bashi.PostSessionAssist000**: POST `/session/requests/assist-000`
-- **Bashi.PostSessionCode000**: POST `/session/requests/code-000`
-- **Bashi.PostSessionNoop**: POST `/session/requests/noop`
-- **Bashi.PostSessionPassthroughOpenai000**: POST `/session/requests/passthrough-openai-000`
-- **Bashi.PostSessionTranslate000**: POST `/session/requests/translate-000`
-- **Bashi.PostSessionWhisper000**: POST `/session/requests/whisper-000`
-- **Bashi.PostSessions**: POST `/sessions`
+- **BashiClient.PostSessionAssist000**: POST `/session/requests/assist-000`
+- **BashiClient.PostSessionCode000**: POST `/session/requests/code-000`
+- **BashiClient.PostSessionNoop**: POST `/session/requests/noop`
+- **BashiClient.PostSessionPassthroughOpenai000**: POST `/session/requests/passthrough-openai-000`
+- **BashiClient.PostSessionTranslate000**: POST `/session/requests/translate-000`
+- **BashiClient.PostSessionWhisper000**: POST `/session/requests/whisper-000`
+- **BashiClient.PostSessions**: POST `/sessions`

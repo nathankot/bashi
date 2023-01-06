@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Bashi",
+    name: "BashiClient",
     platforms: [
         .macOS(.v10_12),
         .iOS(.v10),
@@ -11,13 +11,13 @@ let package = Package(
         .watchOS(.v3)
     ],
     products: [
-        .library(name: "Bashi", targets: ["Bashi"])
+        .library(name: "BashiClient", targets: ["BashiClient"])
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .exact("5.4.4")),
     ],
     targets: [
-        .target(name: "Bashi", dependencies: [
+        .target(name: "BashiClient", dependencies: [
           "Alamofire",
         ], path: "Sources")
     ]

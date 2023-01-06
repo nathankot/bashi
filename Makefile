@@ -38,12 +38,12 @@ vendor: check
 	cd ./server && deno vendor -c ./deno.vendored.json --import-map ./import_map.json --force --reload main.ts vendor_extra.ts
 
 clients:
-	-rm -rf ./assist/client
+	-rm -rf ./assist/BashiClient
 	cd ./assist/vendor/SwagGen; swift run swaggen generate \
 		../../../server/static/openapi.json \
-		-d ../../client \
+		-d ../../BashiClient \
 		-l swift \
-		-o name:Bashi \
+		-o name:BashiClient \
 		-o 'authors:Nathan Kot' \
 		-o 'homepage:http://localhost' \
 		-o 'modelNames.Session:BashiSession'

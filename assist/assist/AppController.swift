@@ -7,7 +7,7 @@
 
 import os
 import Foundation
-import Bashi
+import BashiClient
 import KeyboardShortcuts
 import Cocoa
 import Combine

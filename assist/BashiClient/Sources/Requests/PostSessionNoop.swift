@@ -5,12 +5,12 @@
 
 import Foundation
 
-extension Bashi {
+extension BashiClient {
 
     /** TODO */
-    public enum PostSessionTranslate000 {
+    public enum PostSessionNoop {
 
-        public static let service = APIService<Response>(id: "post_session_translate-000", tag: "", method: "POST", path: "/session/requests/translate-000", hasBody: true, securityRequirements: [SecurityRequirement(type: "account_number", scopes: [])])
+        public static let service = APIService<Response>(id: "post_session_noop", tag: "", method: "POST", path: "/session/requests/noop", hasBody: true, securityRequirements: [SecurityRequirement(type: "account_number", scopes: [])])
 
         public final class Request: APIRequest<Response> {
 
@@ -26,18 +26,18 @@ extension Bashi {
 
             public var options: Options
 
-            public var body: ModelsTranslate000Input?
+            public var body: ModelsNoopInput?
 
-            public init(body: ModelsTranslate000Input?, options: Options, encoder: RequestEncoder? = nil) {
+            public init(body: ModelsNoopInput?, options: Options, encoder: RequestEncoder? = nil) {
                 self.body = body
                 self.options = options
-                super.init(service: PostSessionTranslate000.service) { defaultEncoder in
+                super.init(service: PostSessionNoop.service) { defaultEncoder in
                     return try (encoder ?? defaultEncoder).encode(body)
                 }
             }
 
             /// convenience initialiser so an Option doesn't have to be created
-            public convenience init(sessionID: String, body: ModelsTranslate000Input? = nil) {
+            public convenience init(sessionID: String, body: ModelsNoopInput? = nil) {
                 let options = Options(sessionID: sessionID)
                 self.init(body: body, options: options)
             }
@@ -50,10 +50,10 @@ extension Bashi {
         }
 
         public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
-            public typealias SuccessType = ModelsTranslate000Output
+            public typealias SuccessType = ModelsNoopOutput
 
             /** TODO */
-            case status200(ModelsTranslate000Output)
+            case status200(ModelsNoopOutput)
 
             /** TODO */
             case status400(ErrorType)
@@ -64,7 +64,7 @@ extension Bashi {
             /** TODO */
             case status403(ErrorType)
 
-            public var success: ModelsTranslate000Output? {
+            public var success: ModelsNoopOutput? {
                 switch self {
                 case .status200(let response): return response
                 default: return nil
@@ -81,7 +81,7 @@ extension Bashi {
             }
 
             /// either success or failure value. Success is anything in the 200..<300 status code range
-            public var responseResult: APIResponseResult<ModelsTranslate000Output, ErrorType> {
+            public var responseResult: APIResponseResult<ModelsNoopOutput, ErrorType> {
                 if let successValue = success {
                     return .success(successValue)
                 } else if let failureValue = failure {
@@ -120,7 +120,7 @@ extension Bashi {
 
             public init(statusCode: Int, data: Data, decoder: ResponseDecoder) throws {
                 switch statusCode {
-                case 200: self = try .status200(decoder.decode(ModelsTranslate000Output.self, from: data))
+                case 200: self = try .status200(decoder.decode(ModelsNoopOutput.self, from: data))
                 case 400: self = try .status400(decoder.decode(ErrorType.self, from: data))
                 case 401: self = try .status401(decoder.decode(ErrorType.self, from: data))
                 case 403: self = try .status403(decoder.decode(ErrorType.self, from: data))

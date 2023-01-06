@@ -9,7 +9,7 @@ import Alamofire
 /// Manages and sends APIRequests
 public class APIClient {
 
-    public static var `default` = APIClient(baseURL: Bashi.Server.main)
+    public static var `default` = APIClient(baseURL: BashiClient.Server.main)
 
     /// A list of RequestBehaviours that can be used to monitor and alter all requests
     public var behaviours: [RequestBehaviour] = []
@@ -34,7 +34,7 @@ public class APIClient {
         self.behaviours = behaviours
         self.defaultHeaders = defaultHeaders
         jsonDecoder.dateDecodingStrategy = .custom(dateDecoder)
-        jsonEncoder.dateEncodingStrategy = .formatted(Bashi.dateEncodingFormatter)
+        jsonEncoder.dateEncodingStrategy = .formatted(BashiClient.dateEncodingFormatter)
     }
 
     /// Makes a network request

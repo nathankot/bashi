@@ -130,7 +130,7 @@ extension KeyedDecodingContainer {
         do {
             container = try nestedUnkeyedContainer(forKey: key)
         } catch {
-            if Bashi.safeArrayDecoding {
+            if BashiClient.safeArrayDecoding {
                 return array
             } else {
                 throw error
@@ -142,7 +142,7 @@ extension KeyedDecodingContainer {
                 let element = try container.decode(T.self)
                 array.append(element)
             } catch {
-                if Bashi.safeArrayDecoding {
+                if BashiClient.safeArrayDecoding {
                     // hack to advance the current index
                     _ = try? container.decode(AnyCodable.self)
                 } else {
@@ -164,7 +164,7 @@ extension KeyedDecodingContainer {
     }
 
     fileprivate func decodeOptional<T>(_ closure: () throws -> T? ) throws -> T? {
-        if Bashi.safeOptionalDecoding {
+        if BashiClient.safeOptionalDecoding {
             do {
                 return try closure()
             } catch {
@@ -319,7 +319,7 @@ extension DateDay {
 
 extension Date {
     func encode() -> Any {
-        return Bashi.dateEncodingFormatter.string(from: self)
+        return BashiClient.dateEncodingFormatter.string(from: self)
     }
 }
 

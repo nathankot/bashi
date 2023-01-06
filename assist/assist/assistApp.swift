@@ -7,7 +7,7 @@
 
 import os
 import SwiftUI
-import Bashi
+import BashiClient
 
 let logger = Logger()
 

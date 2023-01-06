@@ -5,7 +5,7 @@
 
 import Foundation
 
-extension Bashi {
+extension BashiClient {
 
     /** TODO */
     public enum PostSessions {

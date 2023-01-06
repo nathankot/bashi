@@ -5,7 +5,7 @@
 //  Created by Nathan Kot on 4/01/23.
 //
 
-import Bashi
+import BashiClient
 import Foundation
 
 #if DEBUG
@@ -17,7 +17,7 @@ extension AppController {
    func assist(request: String) async throws -> ModelsAssist000Output {
        let session = try await refreshSession()
        let apiClient = await makeApiClient()
-       let request = Bashi.PostSessionAssist000.Request(
+       let request = BashiClient.PostSessionAssist000.Request(
         body: .init(request: request),
         options: .init(sessionID: session.sessionId))
        
@@ -53,7 +53,7 @@ extension AppController {
         }
         
         let apiClient = await makeApiClient()
-        let request = Bashi.PostSessions.Request(
+        let request = BashiClient.PostSessions.Request(
             body: .init(modelConfigurations: .init(
                 assist000: .init(model: .assist000, commands: [:])))
         )
@@ -79,7 +79,7 @@ extension AppController {
         #endif
         
         let accountNumber = await state.accountNumber
-        let apiClient = APIClient(baseURL: Bashi.Server.main, defaultHeaders: [
+        let apiClient = APIClient(baseURL: BashiClient.Server.main, defaultHeaders: [
             "Authorization": "Bearer \(accountNumber)",
         ])
         

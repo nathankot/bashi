@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.source_files = '*.swift'
-    s.name = 'Bashi'
+    s.name = 'BashiClient'
     s.authors = 'Nathan Kot'
     s.summary = 'TODO'
     s.version = '0.1.0'

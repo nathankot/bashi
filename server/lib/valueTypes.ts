@@ -9,6 +9,9 @@ export type NumberType = t.TypeOf<typeof NumberType>;
 export const BooleanType = t.literal("boolean");
 export type BooleanType = t.TypeOf<typeof BooleanType>;
 
+export const ValueType = t.union([StringType, NumberType, BooleanType]);
+export type ValueType = t.TypeOf<typeof ValueType>;
+
 export const StringValue = t.type({ type: StringType, value: t.string });
 export type StringValue = t.TypeOf<typeof StringValue>;
 
@@ -20,6 +23,3 @@ export type BooleanValue = t.TypeOf<typeof BooleanValue>;
 
 export const Value = t.union([StringValue, NumberValue, BooleanValue]);
 export type Value = t.TypeOf<typeof Value>;
-
-export const ValueTypes = t.union([StringType, NumberType, BooleanType]);
-export type ValueType = t.TypeOf<typeof ValueTypes>;

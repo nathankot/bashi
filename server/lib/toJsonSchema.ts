@@ -13,11 +13,11 @@ import {
   NumberValue,
   BooleanValue,
   Value,
+  ValueType,
 } from "@lib/valueTypes.ts";
 
 import {
   ArgumentParser,
-  ArgumentType,
   CommandDefinition,
   Command,
   CommandExecuted,
@@ -26,7 +26,14 @@ import {
   CommandParsed,
 } from "@lib/command/types.ts";
 
-import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
+import {
+  RequestContext,
+  RequestContextRequirement,
+  StringValueRequirement,
+  NumberValueRequirement,
+  BooleanValueRequirement,
+  ValueRequirement,
+} from "@lib/requestContext.ts";
 
 type SupportedTag =
   | "AnyType"
@@ -160,6 +167,31 @@ export default function toJSONSchema(
         }
 
         const childTypes = union.types.map((t) => recurse(t));
+
+        // If this is a union of enum strings, then combine into a single enum:
+        if (
+          childTypes.every(
+            (t) =>
+              "enum" in t &&
+              t.enum != null &&
+              "type" in t &&
+              t.type === "string"
+          )
+        ) {
+          return {
+            type: "string",
+            enum: [
+              ...new Set(
+                childTypes.reduce((a, t) => {
+                  if ("enum" in t && t.enum != null && t.type === "string") {
+                    return [...a, ...t.enum];
+                  }
+                  throw new Error("should all be string enums");
+                }, [] as string[])
+              ),
+            ],
+          };
+        }
 
         // If this is a union of ref objects, and the objects have a common
         // discriminator, use it.
@@ -323,16 +355,27 @@ namedJSONSchemaObjects["#/components/schemas/NumberValue"] =
 namedJSONSchemaObjects["#/components/schemas/BooleanValue"] =
   toJSONSchema(BooleanValue);
 namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
-
-namedJSONSchemaObjects["#/components/schemas/RequestContext"] =
-  toJSONSchema(RequestContext);
-namedJSONSchemaObjects["#/components/schemas/RequestContextDefinition"] =
-  toJSONSchema(RequestContextDef);
+namedJSONSchemaObjects["#/components/schemas/ValueType"] =
+  toJSONSchema(ValueType);
 
 namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
   toJSONSchema(ArgumentParser);
-namedJSONSchemaObjects["#/components/schemas/ArgumentType"] =
-  toJSONSchema(ArgumentType);
+
+namedJSONSchemaObjects["#/components/schemas/StringValueRequirement"] =
+  toJSONSchema(StringValueRequirement);
+namedJSONSchemaObjects["#/components/schemas/NumberValueRequirement"] =
+  toJSONSchema(NumberValueRequirement);
+namedJSONSchemaObjects["#/components/schemas/BooleanValueRequirement"] =
+  toJSONSchema(BooleanValueRequirement);
+namedJSONSchemaObjects["#/components/schemas/ValueRequirement"] =
+  toJSONSchema(ValueRequirement);
+
+namedJSONSchemaObjects["#/components/schemas/RequestContext"] =
+  toJSONSchema(RequestContext);
+namedJSONSchemaObjects["#/components/schemas/RequestContextRequirement"] =
+  toJSONSchema(RequestContextRequirement);
+// namedJSONSchemaObjects["#/components/schemas/RequestContextDefinitionType"] =
+//   toJSONSchema(RequestContextDef.types[1].codomain);
 
 namedJSONSchemaObjects["#/components/schemas/CommandExecuted"] =
   toJSONSchema(CommandExecuted);

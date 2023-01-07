@@ -1,6 +1,12 @@
 import * as t from "io-ts";
 
-import { Value, ValueTypes, StringValue } from "@lib/valueTypes.ts";
+import {
+  Value,
+  StringValue,
+  StringType,
+  NumberType,
+  BooleanType,
+} from "@lib/valueTypes.ts";
 
 const KnownRequestContext = t.partial({
   text: StringValue,
@@ -20,7 +26,23 @@ type KnownRequestContextDefProps = {
   }>;
 };
 
-export const RequestContextDef = t.intersection([
+export const StringValueRequirement = t.type({ type: StringType });
+export type StringValueRequirement = t.TypeOf<typeof StringValueRequirement>;
+
+export const NumberValueRequirement = t.type({ type: NumberType });
+export type NumberValueRequirement = t.TypeOf<typeof NumberValueRequirement>;
+
+export const BooleanValueRequirement = t.type({ type: BooleanType });
+export type BooleanValueRequirement = t.TypeOf<typeof BooleanValueRequirement>;
+
+export const ValueRequirement = t.union([
+  StringValueRequirement,
+  NumberValueRequirement,
+  BooleanValueRequirement,
+]);
+export type ValueRequirement = t.TypeOf<typeof ValueRequirement>;
+
+export const RequestContextRequirement = t.intersection([
   t.partial<KnownRequestContextDefProps>(
     Object.entries(KnownRequestContext.props).reduce(
       (a, [key, propDef]) =>
@@ -31,6 +53,8 @@ export const RequestContextDef = t.intersection([
       {} as Partial<KnownRequestContextDefProps>
     ) as KnownRequestContextDefProps
   ),
-  t.record(t.string, t.type({ type: ValueTypes })),
+  t.record(t.string, ValueRequirement),
 ]);
-export type RequestContextDef = t.TypeOf<typeof RequestContextDef>;
+export type RequestContextRequirement = t.TypeOf<
+  typeof RequestContextRequirement
+>;

@@ -480,6 +480,83 @@
           }
         }
       },
+      "ValueType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      },
+      "ArgumentParser": {
+        "enum": [
+          "naturalLanguageDateTime"
+        ],
+        "type": "string"
+      },
+      "StringValueRequirement": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "string"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "NumberValueRequirement": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "number"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "BooleanValueRequirement": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "boolean"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "ValueRequirement": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringValueRequirement"
+          },
+          {
+            "$ref": "#/components/schemas/NumberValueRequirement"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanValueRequirement"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "string": "#/components/schemas/StringValueRequirement",
+            "number": "#/components/schemas/NumberValueRequirement",
+            "boolean": "#/components/schemas/BooleanValueRequirement"
+          }
+        }
+      },
       "RequestContext": {
         "type": "object",
         "additionalProperties": {
@@ -494,82 +571,19 @@
           }
         }
       },
-      "RequestContextDefinition": {
+      "RequestContextRequirement": {
         "type": "object",
         "additionalProperties": {
-          "type": "object",
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "oneOf": [
-                {
-                  "enum": [
-                    "string"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "number"
-                  ],
-                  "type": "string"
-                },
-                {
-                  "enum": [
-                    "boolean"
-                  ],
-                  "type": "string"
-                }
-              ]
-            }
-          }
+          "$ref": "#/components/schemas/ValueRequirement"
         },
         "properties": {
           "text": {
-            "type": "object",
-            "required": [
-              "type"
-            ],
-            "properties": {
-              "type": {
-                "enum": [
-                  "string"
-                ],
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/StringValueRequirement"
           },
           "language": {
-            "type": "object",
-            "required": [
-              "type"
-            ],
-            "properties": {
-              "type": {
-                "enum": [
-                  "string"
-                ],
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/StringValueRequirement"
           }
         }
-      },
-      "ArgumentParser": {
-        "enum": [
-          "naturalLanguageDateTime"
-        ],
-        "type": "string"
-      },
-      "ArgumentType": {
-        "enum": [
-          "string",
-          "number",
-          "boolean"
-        ],
-        "type": "string"
       },
       "CommandExecuted": {
         "type": "object",
@@ -725,7 +739,7 @@
                   "type": "string"
                 },
                 "type": {
-                  "$ref": "#/components/schemas/ArgumentType"
+                  "$ref": "#/components/schemas/ValueType"
                 },
                 "parse": {
                   "type": "array",
@@ -804,7 +818,7 @@
             }
           },
           "missingRequestContext": {
-            "$ref": "#/components/schemas/RequestContextDefinition"
+            "$ref": "#/components/schemas/RequestContextRequirement"
           }
         }
       },

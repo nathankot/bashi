@@ -17,11 +17,11 @@ public class CommandDefinition: APIModel {
 
         public var name: String
 
-        public var type: ArgumentType
+        public var type: ValueType
 
         public var parse: [ArgumentParser]?
 
-        public init(name: String, type: ArgumentType, parse: [ArgumentParser]? = nil) {
+        public init(name: String, type: ValueType, parse: [ArgumentParser]? = nil) {
             self.name = name
             self.type = type
             self.parse = parse

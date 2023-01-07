@@ -10,7 +10,10 @@ import {
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
-import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
+import {
+  RequestContext,
+  RequestContextRequirement,
+} from "@lib/requestContext.ts";
 import { wrap } from "@lib/log.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
@@ -37,7 +40,7 @@ export const Output = t.intersection([
     commands: Commands,
   }),
   t.partial({
-    missingRequestContext: RequestContextDef,
+    missingRequestContext: RequestContextRequirement,
   }),
 ]);
 export type Output = t.TypeOf<typeof Output>;
@@ -67,7 +70,7 @@ export async function run(
     : input.requestContext;
 
   let output = await (async (): Promise<
-    Exclude<Output, { missingRequestContext: RequestContextDef }>
+    Exclude<Output, { missingRequestContext: RequestContextRequirement }>
   > => {
     if (!("request" in input) || input.request == null) {
       const outputAwaitingContext = modelDeps.session.outputAwaitingContext;
@@ -153,7 +156,7 @@ export async function run(
     {}
   );
 
-  let missingRequestContext: null | RequestContextDef = null;
+  let missingRequestContext: null | RequestContextRequirement = null;
   // First ensure that all interceptors have the request context that they need:
   for (const interceptor of commandInterceptors) {
     if (!(interceptor.commandName in commandNames)) {

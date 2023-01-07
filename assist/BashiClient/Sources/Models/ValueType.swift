@@ -5,7 +5,7 @@
 
 import Foundation
 
-public enum ArgumentType: String, Codable, Equatable, CaseIterable {
+public enum ValueType: String, Codable, Equatable, CaseIterable {
     case string = "string"
     case number = "number"
     case boolean = "boolean"

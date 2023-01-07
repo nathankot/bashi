@@ -12,7 +12,10 @@ import {
 
 import { ModelName, models } from "@lib/models.ts";
 
-import { RequestContextDef, RequestContext } from "@lib/requestContext.ts";
+import {
+  RequestContextRequirement,
+  RequestContext,
+} from "@lib/requestContext.ts";
 
 export function interceptCommand<
   N extends Extract<
@@ -27,7 +30,9 @@ export function interceptCommand<
     input: t.TypeOf<typeof models[N]["Input"]>,
     args: BuiltinCommandDefinitionArgs<typeof builtinCommands[FN]["args"]>
   ) => Promise<CommandReturnValue | null>,
-  validateFn?: (reqCtx: RequestContext) => Promise<true | RequestContextDef>
+  validateFn?: (
+    reqCtx: RequestContext
+  ) => Promise<true | RequestContextRequirement>
 ): {
   commandName: FN;
   interceptor: ModelInterceptor<N>;

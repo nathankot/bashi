@@ -151,9 +151,9 @@ To add support for a specific asynchronous library, just add an extension on `AP
 ## Models
 
 - **ArgumentParser**
-- **ArgumentType**
 - **BashiSession**
 - **BooleanValue**
+- **BooleanValueRequirement**
 - **Command**
 - **CommandDefinition**
 - **CommandExecuted**
@@ -179,9 +179,15 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **ModelsWhisper000Configuration**
 - **ModelsWhisper000Output**
 - **NumberValue**
+- **NumberValueRequirement**
+- **RequestContext**
+- **RequestContextRequirement**
 - **SessionConfiguration**
 - **StringValue**
+- **StringValueRequirement**
 - **Value**
+- **ValueRequirement**
+- **ValueType**
 
 ## Requests
 

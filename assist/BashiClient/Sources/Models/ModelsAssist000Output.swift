@@ -17,54 +17,9 @@ public class ModelsAssist000Output: APIModel {
 
     public var commands: [Command]
 
-    public var missingRequestContext: MissingRequestContext?
+    public var missingRequestContext: RequestContextRequirement?
 
-    public class MissingRequestContext: APIModel {
-
-        public enum Language: String, Codable, Equatable, CaseIterable {
-            case string = "string"
-        }
-
-        public enum Text: String, Codable, Equatable, CaseIterable {
-            case string = "string"
-        }
-
-        public var language: Language?
-
-        public var text: Text?
-
-        public init(language: Language? = nil, text: Text? = nil) {
-            self.language = language
-            self.text = text
-        }
-
-        public required init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: StringCodingKey.self)
-
-            language = try container.decodeIfPresent("language")
-            text = try container.decodeIfPresent("text")
-        }
-
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: StringCodingKey.self)
-
-            try container.encodeIfPresent(language, forKey: "language")
-            try container.encodeIfPresent(text, forKey: "text")
-        }
-
-        public func isEqual(to object: Any?) -> Bool {
-          guard let object = object as? MissingRequestContext else { return false }
-          guard self.language == object.language else { return false }
-          guard self.text == object.text else { return false }
-          return true
-        }
-
-        public static func == (lhs: MissingRequestContext, rhs: MissingRequestContext) -> Bool {
-            return lhs.isEqual(to: rhs)
-        }
-    }
-
-    public init(model: Model, request: String, commands: [Command], missingRequestContext: MissingRequestContext? = nil) {
+    public init(model: Model, request: String, commands: [Command], missingRequestContext: RequestContextRequirement? = nil) {
         self.model = model
         self.request = request
         self.commands = commands

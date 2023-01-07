@@ -11,43 +11,6 @@ public class ModelsAssist000Input: APIModel {
 
     public var requestContext: RequestContext?
 
-    public class RequestContext: APIModel {
-
-        public var language: String?
-
-        public var text: String?
-
-        public init(language: String? = nil, text: String? = nil) {
-            self.language = language
-            self.text = text
-        }
-
-        public required init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: StringCodingKey.self)
-
-            language = try container.decodeIfPresent("language")
-            text = try container.decodeIfPresent("text")
-        }
-
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: StringCodingKey.self)
-
-            try container.encodeIfPresent(language, forKey: "language")
-            try container.encodeIfPresent(text, forKey: "text")
-        }
-
-        public func isEqual(to object: Any?) -> Bool {
-          guard let object = object as? RequestContext else { return false }
-          guard self.language == object.language else { return false }
-          guard self.text == object.text else { return false }
-          return true
-        }
-
-        public static func == (lhs: RequestContext, rhs: RequestContext) -> Bool {
-            return lhs.isEqual(to: rhs)
-        }
-    }
-
     public init(request: String? = nil, requestContext: RequestContext? = nil) {
         self.request = request
         self.requestContext = requestContext

@@ -95,6 +95,9 @@ function doSomething() int {
       },
     },
   },
+
+  // TODO: something like 'highlight the selected string', will it be able to differentiate from
+  // having the request string be in the request?
 ];
 
 export default async function updateExamples(examplesFile: string) {

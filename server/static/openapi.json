@@ -480,6 +480,83 @@
           }
         }
       },
+      "RequestContext": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/Value"
+        },
+        "properties": {
+          "text": {
+            "$ref": "#/components/schemas/StringValue"
+          },
+          "language": {
+            "$ref": "#/components/schemas/StringValue"
+          }
+        }
+      },
+      "RequestContextDefinition": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "string"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "number"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "enum": [
+                    "boolean"
+                  ],
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        "properties": {
+          "text": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "string"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "language": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "string"
+                ],
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "ArgumentParser": {
         "enum": [
           "naturalLanguageDateTime"
@@ -699,25 +776,7 @@
             "type": "string"
           },
           "requestContext": {
-            "allOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "$ref": "#/components/schemas/StringValue"
-                  },
-                  "language": {
-                    "$ref": "#/components/schemas/StringValue"
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": {
-                  "$ref": "#/components/schemas/Value"
-                }
-              }
-            ]
+            "$ref": "#/components/schemas/RequestContext"
           }
         }
       },
@@ -745,74 +804,7 @@
             }
           },
           "missingRequestContext": {
-            "allOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "object",
-                    "required": [
-                      "type"
-                    ],
-                    "properties": {
-                      "type": {
-                        "enum": [
-                          "string"
-                        ],
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "language": {
-                    "type": "object",
-                    "required": [
-                      "type"
-                    ],
-                    "properties": {
-                      "type": {
-                        "enum": [
-                          "string"
-                        ],
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "required": [
-                    "type"
-                  ],
-                  "properties": {
-                    "type": {
-                      "oneOf": [
-                        {
-                          "enum": [
-                            "string"
-                          ],
-                          "type": "string"
-                        },
-                        {
-                          "enum": [
-                            "number"
-                          ],
-                          "type": "string"
-                        },
-                        {
-                          "enum": [
-                            "boolean"
-                          ],
-                          "type": "string"
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
+            "$ref": "#/components/schemas/RequestContextDefinition"
           }
         }
       },

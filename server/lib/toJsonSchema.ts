@@ -26,6 +26,8 @@ import {
   CommandParsed,
 } from "@lib/command/types.ts";
 
+import { RequestContext, RequestContextDef } from "@lib/requestContext.ts";
+
 type SupportedTag =
   | "AnyType"
   | "StringType"
@@ -85,7 +87,7 @@ export default function toJSONSchema(
 
         const intersectionTypes = intersection.types.map((t) => recurse(t));
 
-        // If the this is an intersection of objects, then combine
+        // If this is an intersection of objects, then combine
         // the object properties manually in order to get a nicer schema:
         if (
           intersectionTypes.every(
@@ -110,6 +112,29 @@ export default function toJSONSchema(
               .reduce((a, e) => [...a, ...e], [])
               .reduce((a, [k, v]) => ({ ...a, [k]: v }), {}),
           };
+        }
+
+        // If this is an intersection of an object with well-known keys,
+        // and an object without any well-known keys, then we can merge th
+        // two in a nicer manner:
+        if (intersectionTypes.length === 2) {
+          let t1 = intersectionTypes[0]!;
+          let t2 = intersectionTypes[1]!;
+          if (
+            "type" in t1 &&
+            t1.type === "object" &&
+            "type" in t2 &&
+            t2.type === "object" &&
+            t1.additionalProperties == null &&
+            t2.properties == null &&
+            t2.additionalProperties != null
+          ) {
+            return {
+              ...t2,
+              ...t1,
+              additionalProperties: t2.additionalProperties,
+            };
+          }
         }
 
         return {
@@ -298,6 +323,11 @@ namedJSONSchemaObjects["#/components/schemas/NumberValue"] =
 namedJSONSchemaObjects["#/components/schemas/BooleanValue"] =
   toJSONSchema(BooleanValue);
 namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
+
+namedJSONSchemaObjects["#/components/schemas/RequestContext"] =
+  toJSONSchema(RequestContext);
+namedJSONSchemaObjects["#/components/schemas/RequestContextDefinition"] =
+  toJSONSchema(RequestContextDef);
 
 namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
   toJSONSchema(ArgumentParser);

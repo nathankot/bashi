@@ -13,7 +13,7 @@ import {
   NumberValue,
   BooleanValue,
   Value,
-} from "@lib/command/valueTypes.ts";
+} from "@lib/valueTypes.ts";
 
 import {
   ArgumentParser,

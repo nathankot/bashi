@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { Value } from "./valueTypes.ts";
+import { Value } from "@lib/valueTypes.ts";
 import { Argument, ArgumentParser } from "./argumentParsers.ts";
 export { Argument, ArgumentParser };
 
@@ -42,11 +42,10 @@ export type BuiltinCommandDefinition<A extends ArgumentType[]> = Omit<
   mustNotBeDisabled?: boolean;
 };
 
-export type BuiltinCommandDefinitionArgs<
-  A extends CommandDefinition["args"]
-> = {
-  [K in keyof A]: Value & { type: A[K]["type"] };
-};
+export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =
+  {
+    [K in keyof A]: Value & { type: A[K]["type"] };
+  };
 
 export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;

@@ -30,6 +30,7 @@ public final class AppState : ObservableObject {
     }
 
     public indirect enum ErrorType : Error, Equatable {
+        case AppLaunchError(String)
         case Internal(String) // TODO Internal should wrap another error
         case NoRequestFound
         case UnexpectedTransition(State, State)

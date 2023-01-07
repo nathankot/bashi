@@ -8,11 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		D86BE9112967A95500198811 /* BuiltinCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86BE9102967A95500198811 /* BuiltinCommands.swift */; };
-		D86BE9172967ACA600198811 /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D86BE9162967ACA600198811 /* BashiPlugin */; };
+		D8B9BA59296A755200C7BD4F /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D8B9BA58296A755200C7BD4F /* BashiPlugin */; };
+		D8B9BA5B296A755400C7BD4F /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D8B9BA5A296A755400C7BD4F /* BashiClient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D86BE908296796D100198811 /* builtinCommands.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = builtinCommands.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		D86BE908296796D100198811 /* builtinCommands.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = builtinCommands.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86BE9102967A95500198811 /* BuiltinCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinCommands.swift; sourceTree = "<group>"; };
 		D86BE9152967AC2300198811 /* plugin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = plugin; path = ../plugin; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -22,7 +23,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D86BE9172967ACA600198811 /* BashiPlugin in Frameworks */,
+				D8B9BA59296A755200C7BD4F /* BashiPlugin in Frameworks */,
+				D8B9BA5B296A755400C7BD4F /* BashiClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,7 +43,7 @@
 		D86BE909296796D100198811 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D86BE908296796D100198811 /* builtinCommands.bundle */,
+				D86BE908296796D100198811 /* builtinCommands.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,10 +73,11 @@
 			);
 			name = builtinCommands;
 			packageProductDependencies = (
-				D86BE9162967ACA600198811 /* BashiPlugin */,
+				D8B9BA58296A755200C7BD4F /* BashiPlugin */,
+				D8B9BA5A296A755400C7BD4F /* BashiClient */,
 			);
 			productName = builtinCommands;
-			productReference = D86BE908296796D100198811 /* builtinCommands.bundle */;
+			productReference = D86BE908296796D100198811 /* builtinCommands.plugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -252,13 +255,14 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSPrincipalClass = "";
+				INFOPLIST_KEY_NSPrincipalClass = BuiltinCommands;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACH_O_TYPE = mh_bundle;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bashi.builtinCommands;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -266,7 +270,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = plugin;
 			};
 			name = Debug;
 		};
@@ -281,20 +285,22 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSPrincipalClass = "";
+				INFOPLIST_KEY_NSPrincipalClass = BuiltinCommands;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACH_O_TYPE = mh_bundle;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bashi.builtinCommands;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = plugin;
 			};
 			name = Release;
 		};
@@ -322,9 +328,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D86BE9162967ACA600198811 /* BashiPlugin */ = {
+		D8B9BA58296A755200C7BD4F /* BashiPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BashiPlugin;
+		};
+		D8B9BA5A296A755400C7BD4F /* BashiClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BashiClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

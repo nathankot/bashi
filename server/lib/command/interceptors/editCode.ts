@@ -11,10 +11,13 @@ const interceptor = interceptCommand(
     const output = await run(modelDeps, "passthrough-openai-000", {
       openAiModel: "text-davinci-003",
       request: `Edit or refactor the code below based on the given requirement.
-Programming language is '${input.requestContext?.language?.value ?? language}'.
-The requirement is '${editingRequirement}':
+Programming language is '${
+        (input.requestContext?.language?.value ??
+          language.value) satisfies string
+      }'.
+The requirement is '${editingRequirement.value satisfies string}':
 
-${text}`,
+${text satisfies string}`,
     });
     return { type: "string", value: output.result.trim() };
   },

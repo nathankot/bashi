@@ -10,7 +10,9 @@ const interceptor = interceptCommand(
     }
     const output = await run(modelDeps, "passthrough-openai-000", {
       openAiModel: "text-davinci-003",
-      request: `Rewrite and edit the following text. The requirement is '${editingRequirement}':
+      request: `Rewrite and edit the following text. The requirement is '${
+        editingRequirement.value satisfies string
+      }':
 
 ${text}`,
     });

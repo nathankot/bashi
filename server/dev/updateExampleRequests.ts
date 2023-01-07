@@ -53,38 +53,46 @@ const INPUTS: {
   {
     prompt: "help me fix spelling and grammar mistakes",
     requestContext: {
-      text: `stp by step, heart to hard, left right left. is we all fall down..`,
+      text: {
+        type: "string",
+        value: `stp by step, heart to hard, left right left. is we all fall down..`,
+      },
     },
   },
   {
     prompt: "edit this function in go lang in order to make it compile",
     requestContext: {
-      text: `
+      text: {
+        type: "string",
+        value: `
 function doSomething() int {
   return "55"
 }
 `,
+      },
     },
   },
   {
     prompt: "edit this go lang function in order to make it compile",
     requestContext: {
-      text: `
+      text: {
+        type: "string",
+        value: `
 function doSomething() int {
   return "55"
 }
 `,
+      },
     },
   },
   {
     prompt: "edit this function in order to make it compile",
     requestContext: {
-      language: "Go",
-      text: `
-function doSomething() int {
-  return "55"
-}
-`,
+      language: { type: "string", value: "Go" },
+      text: {
+        type: "string",
+        value: `function doSomething() int { return "55" }`,
+      },
     },
   },
 ];

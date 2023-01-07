@@ -4,7 +4,7 @@ import { run } from "@lib/models.ts";
 const interceptor = interceptCommand(
   "editProse",
   async (modelDeps, input, [editingRequirement]) => {
-    const text = input.requestContext?.text;
+    const text = input.requestContext?.text?.value;
     if (text == null) {
       throw new Error("context text unexpectedly null");
     }
@@ -17,7 +17,7 @@ ${text}`,
     return { type: "string", value: output.result.trim() };
   },
   async (ctx) => {
-    if ((ctx.text?.length ?? 0) === 0) {
+    if ((ctx.text?.value.length ?? 0) === 0) {
       return {
         text: { type: "string" },
       };

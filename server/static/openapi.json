@@ -699,15 +699,25 @@
             "type": "string"
           },
           "requestContext": {
-            "type": "object",
-            "properties": {
-              "text": {
-                "type": "string"
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "$ref": "#/components/schemas/StringValue"
+                  },
+                  "language": {
+                    "$ref": "#/components/schemas/StringValue"
+                  }
+                }
               },
-              "language": {
-                "type": "string"
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/Value"
+                }
               }
-            }
+            ]
           }
         }
       },
@@ -735,21 +745,74 @@
             }
           },
           "missingRequestContext": {
-            "type": "object",
-            "properties": {
-              "text": {
-                "enum": [
-                  "string"
-                ],
-                "type": "string"
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "object",
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "string"
+                        ],
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "language": {
+                    "type": "object",
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "string"
+                        ],
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               },
-              "language": {
-                "enum": [
-                  "string"
-                ],
-                "type": "string"
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "string"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "number"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "boolean"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
               }
-            }
+            ]
           }
         }
       },

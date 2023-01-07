@@ -1,36 +1,36 @@
 import * as t from "io-ts";
 
-export const RequestContext = t.partial({
-  text: t.string,
-  language: t.string,
+import { Value, ValueTypes, StringValue } from "@lib/valueTypes.ts";
+
+const KnownRequestContext = t.partial({
+  text: StringValue,
+  language: StringValue,
 });
+type KnownRequestContext = t.TypeOf<typeof KnownRequestContext>;
+
+export const RequestContext = t.intersection([
+  KnownRequestContext,
+  t.record(t.string, Value),
+]);
 export type RequestContext = t.TypeOf<typeof RequestContext>;
 
-type RequestContextDefProps = {
-  [K in keyof Required<RequestContext>]: t.TypeC<{
-    type: t.LiteralC<"string">;
+type KnownRequestContextDefProps = {
+  [K in keyof Required<KnownRequestContext>]: t.TypeC<{
+    type: t.LiteralC<Required<KnownRequestContext>[K]["type"]>;
   }>;
 };
 
-export const RequestContextDef = t.partial<RequestContextDefProps>(
-  Object.entries(RequestContext.props).reduce(
-    (a, [key, type]) => ({
-      ...a,
-      [key]: (() => {
-        switch (type) {
-          case t.string:
-            return { type: t.literal("string") };
-          // case t.boolean:
-          //   return { type: t.literal("number") };
-          // case t.boolean:
-          //   return { type: t.literal("boolean") };
-          // default:
-          //   const _exhaustiveCheck: never = type;
-          //   throw new Error(`unexpected type: ${_exhaustiveCheck}`);
-        }
-      })(),
-    }),
-    {} as RequestContextDefProps
-  )
-);
+export const RequestContextDef = t.intersection([
+  t.partial<KnownRequestContextDefProps>(
+    Object.entries(KnownRequestContext.props).reduce(
+      (a, [key, propDef]) =>
+        ({
+          ...a,
+          [key]: t.type({ type: propDef.props.type }),
+        } satisfies Partial<KnownRequestContextDefProps>),
+      {} as Partial<KnownRequestContextDefProps>
+    ) as KnownRequestContextDefProps
+  ),
+  t.record(t.string, t.type({ type: ValueTypes })),
+]);
 export type RequestContextDef = t.TypeOf<typeof RequestContextDef>;

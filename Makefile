@@ -47,3 +47,4 @@ clients:
 		-o 'authors:Nathan Kot' \
 		-o 'homepage:http://localhost' \
 		-o 'modelNames.Session:BashiSession'
+	git apply assist.client.Package.swift.patch

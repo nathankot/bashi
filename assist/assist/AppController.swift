@@ -8,11 +8,12 @@
 import os
 import Foundation
 import BashiClient
+import BashiPlugin
 import KeyboardShortcuts
 import Cocoa
 import Combine
 
-actor AppController {
+actor AppController : PluginAPI {
     
     let state: AppState
     let popover: NSPopover
@@ -118,6 +119,10 @@ actor AppController {
                 await self.popover.contentViewController?.view.window?.becomeKey()
             }
         }
+    }
+    
+    func displayResult(text: String) async {
+        logger.log("displayed result is: \(text)")
     }
     
 }

@@ -20,8 +20,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        pluginsController = PluginsController()
         appController = AppController(state: AppState.shared, popover: popover, statusBarItem: statusBarItem)
+        pluginsController = PluginsController(pluginAPI: appController)
         
         popover.animates = true
         popover.behavior = .applicationDefined

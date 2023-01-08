@@ -9,19 +9,20 @@ import os
 import Foundation
 import BashiPlugin
 
-actor PluginAPI : BashiPlugin.PluginAPI {
-}
-
 actor PluginsController {
     
     enum ErrorType : Error {
         case couldNotLoadPlugin(reason: String)
     }
     
-    let commandAPI = PluginAPI()
+    private let pluginAPI: PluginAPI
     
-    var loadedPluginIds = Set<String>()
-    var plugins: [any Plugin] = []
+    private var loadedPluginIds = Set<String>()
+    private var plugins: [any Plugin] = []
+    
+    init(pluginAPI: PluginAPI) {
+        self.pluginAPI = pluginAPI
+    }
     
     func loadBuiltinCommands() throws {
         guard let builtinCommands = Bundle.main.builtInPlugInsURL?.appendingPathComponent(
@@ -42,7 +43,7 @@ actor PluginsController {
         guard let bundle = Bundle.init(url: bundlePath) else {
             throw ErrorType.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
         }
-        guard let plugin = bundle.principalClass?.makeBashiPlugin(api: commandAPI) else {
+        guard let plugin = bundle.principalClass?.makeBashiPlugin(api: pluginAPI) else {
            throw ErrorType.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
         }
         guard let pluginId = bundle.principalClass?.id else {

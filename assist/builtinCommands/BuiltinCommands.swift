@@ -10,22 +10,33 @@ import BashiPlugin
 import BashiClient
 
 class BuiltinCommands : Plugin {
-    static var id: String = "built_in_commands"
+    static var id: String = "builtInCommands"
     static func makeBashiPlugin(api: PluginAPI) -> Plugin {
         return BuiltinCommands()
     }
     
     func provideCommands() -> [BashiPlugin.Command] {
         return [
+            AnonymousCommand(
+                name: "flushToSpeech",
+                description: "<builtin>",
+                prepareFn: { _, _ in
+                    AnonymousPreparedCommand(
+                        shouldSkipConfirmation: true,
+                        confirmationMessage: "") { api, ctx in
+                            await api.displayResult(text: ctx.stringResult ?? "")
+                        }
+                })
         ]
     }
 }
 
 public class AnonymousCommandContext: CommandContext {
-    public var requestContextStrings: Dictionary<String, String> = [:]
-    public var requestContextNumbers: Dictionary<String, Double> = [:]
-    public var requestContextBooleans: Dictionary<String, Bool> = [:]
+    public private(set) var requestContextStrings: Dictionary<String, String> = [:]
+    public private(set) var requestContextNumbers: Dictionary<String, Double> = [:]
+    public private(set) var requestContextBooleans: Dictionary<String, Bool> = [:]
     public var stringResult: String? = nil
+    public var error: Error? = nil
     
     public static func from(requestContext: RequestContext) -> AnonymousCommandContext {
         let ctx = AnonymousCommandContext()
@@ -69,40 +80,51 @@ public class AnonymousCommandContext: CommandContext {
 public class AnonymousPreparedCommand : PreparedCommand {
     public let shouldSkipConfirmation: Bool
     public let confirmationMessage: String
-    private let runFn: (PluginAPI, CommandContext) async throws -> CommandContext
+    private let runFn: (PluginAPI, CommandContext) async throws -> Void
     
     init(
         shouldSkipConfirmation: Bool,
         confirmationMessage: String,
-        runFn: @escaping (PluginAPI, CommandContext) async throws -> CommandContext
+        runFn: @escaping (PluginAPI, CommandContext) async throws -> Void
     ) {
         self.shouldSkipConfirmation = shouldSkipConfirmation
         self.confirmationMessage = confirmationMessage
         self.runFn = runFn
-        
     }
     
-    public func run(api: PluginAPI, context: CommandContext) async throws -> CommandContext {
+    public func run(api: PluginAPI, context: CommandContext) async throws {
         return try await runFn(api, context)
+    }
+}
+
+public class CommandArg : BashiPlugin.CommandArg {
+    public let type: String
+    public let name: String
+    init(type: String, name: String) {
+        self.type = type
+        self.name = name
     }
 }
 
 public class AnonymousCommand : BashiPlugin.Command {
     public let name: String
-    private let shouldRunBeforeFn: (BashiPlugin.Command) -> Bool
+    public let description: String
+    public let args: [BashiPlugin.CommandArg]
+    public let triggerTokens: [String]?
     private let prepareFn: (PluginAPI, CommandContext) -> PreparedCommand?
     
-    init(name: String,
-         shouldRunBeforeFn: @escaping (BashiPlugin.Command) -> Bool = { _ in false },
-         prepareFn: @escaping (PluginAPI, CommandContext) -> PreparedCommand?) {
+    init(
+        name: String,
+        description: String,
+        args: [CommandArg] = [],
+        triggerTokens: [String]? = nil,
+        prepareFn: @escaping (PluginAPI, CommandContext) -> PreparedCommand?
+    ) {
         self.name = name
-        self.shouldRunBeforeFn = shouldRunBeforeFn
+        self.description = description
+        self.args = args
+        self.triggerTokens = triggerTokens
         self.prepareFn = prepareFn
-    }
-    
-    public func shouldRunBefore(otherCommand: BashiPlugin.Command) -> Bool {
-        return shouldRunBeforeFn(otherCommand)
-        
     }
     
     public func prepare(api: PluginAPI, context: CommandContext) -> PreparedCommand? {

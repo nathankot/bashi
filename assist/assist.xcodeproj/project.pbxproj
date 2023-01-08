@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D80ADE64296AFF81003BAE01 /* BashiClient in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D85597E3296AFD26003C8C13 /* BashiClient */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D80ADE65296AFF82003BAE01 /* BashiPlugin in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D85597E7296AFEA3003C8C13 /* BashiPlugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D8132939296AFCD800DE7A4C /* builtinCommands.plugin in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = D88CC8402967B1B1009912AA /* builtinCommands.plugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */; };
+		D85597E4296AFD26003C8C13 /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D85597E3296AFD26003C8C13 /* BashiClient */; };
+		D85597E8296AFEA3003C8C13 /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D85597E7296AFEA3003C8C13 /* BashiPlugin */; };
 		D85A306529626DFC00581B98 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306429626DFC00581B98 /* AppController.swift */; };
 		D85A306D2962BEB200581B98 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A306C2962BEB200581B98 /* ContentView.swift */; };
 		D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */ = {isa = PBXBuildFile; productRef = D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */; };
 		D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87F1F9A29631E3500C5936E /* AppDelegate.swift */; };
-		D88CC83C2967AD7D009912AA /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D88CC83B2967AD7D009912AA /* BashiClient */; };
-		D88CC8482967B2EF009912AA /* builtinCommands.plugin in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = D88CC8472967B2EF009912AA /* builtinCommands.plugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D88CC84A2967BB93009912AA /* PluginsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88CC8492967BB93009912AA /* PluginsController.swift */; };
 		D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10966296023CF006E6A10 /* AssistApp.swift */; };
 		D8C1096B296023CF006E6A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8C1096A296023CF006E6A10 /* Assets.xcassets */; };
@@ -45,13 +48,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D88CC8442967B1BB009912AA /* Embed PlugIns */ = {
+		D813293A296AFCD800DE7A4C /* Embed PlugIns */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				D88CC8482967B2EF009912AA /* builtinCommands.plugin in Embed PlugIns */,
+				D8132939296AFCD800DE7A4C /* builtinCommands.plugin in Embed PlugIns */,
 			);
 			name = "Embed PlugIns";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -62,6 +65,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D80ADE64296AFF81003BAE01 /* BashiClient in Embed Frameworks */,
+				D80ADE65296AFF82003BAE01 /* BashiPlugin in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,6 +75,7 @@
 
 /* Begin PBXFileReference section */
 		D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingController.swift; sourceTree = "<group>"; };
+		D85597E6296AFE9B003C8C13 /* BashiPlugin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BashiPlugin; sourceTree = "<group>"; };
 		D85A306429626DFC00581B98 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
 		D85A306C2962BEB200581B98 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D87F1F9929631A9C00C5936E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -102,8 +108,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */,
+				D85597E8296AFEA3003C8C13 /* BashiPlugin in Frameworks */,
+				D85597E4296AFD26003C8C13 /* BashiClient in Frameworks */,
 				D8EA825C29619B5B00833ED5 /* KeyboardShortcuts in Frameworks */,
-				D88CC83C2967AD7D009912AA /* BashiClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +202,7 @@
 			children = (
 				D88CC8472967B2EF009912AA /* builtinCommands.plugin */,
 				D88CC8452967B20D009912AA /* builtinCommands.bundle */,
+				D85597E6296AFE9B003C8C13 /* BashiPlugin */,
 				D88CC8422967B1BB009912AA /* builtinCommands.plugin */,
 				D88CC8402967B1B1009912AA /* builtinCommands.plugin */,
 				D88CC83D2967ADBB009912AA /* builtinCommands.bundle */,
@@ -214,7 +222,7 @@
 				D8C10960296023CF006E6A10 /* Frameworks */,
 				D8C10961296023CF006E6A10 /* Resources */,
 				D8F24CFD2960279F00BD3CD3 /* Embed Frameworks */,
-				D88CC8442967B1BB009912AA /* Embed PlugIns */,
+				D813293A296AFCD800DE7A4C /* Embed PlugIns */,
 			);
 			buildRules = (
 			);
@@ -224,7 +232,8 @@
 			packageProductDependencies = (
 				D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */,
 				D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */,
-				D88CC83B2967AD7D009912AA /* BashiClient */,
+				D85597E3296AFD26003C8C13 /* BashiClient */,
+				D85597E7296AFEA3003C8C13 /* BashiPlugin */,
 			);
 			productName = assist;
 			productReference = D8C10963296023CF006E6A10 /* assist.app */;
@@ -727,14 +736,18 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D85597E3296AFD26003C8C13 /* BashiClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BashiClient;
+		};
+		D85597E7296AFEA3003C8C13 /* BashiPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BashiPlugin;
+		};
 		D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D85A306E2962F4AD00581B98 /* XCRemoteSwiftPackageReference "AlamofireNetworkActivityLogger" */;
 			productName = AlamofireNetworkActivityLogger;
-		};
-		D88CC83B2967AD7D009912AA /* BashiClient */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BashiClient;
 		};
 		D8EA825B29619B5B00833ED5 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;

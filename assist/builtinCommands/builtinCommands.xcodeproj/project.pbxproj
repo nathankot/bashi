@@ -12,6 +12,19 @@
 		D8B9BA5B296A755400C7BD4F /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D8B9BA5A296A755400C7BD4F /* BashiClient */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D8132938296AFCBC00DE7A4C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		D86BE908296796D100198811 /* builtinCommands.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = builtinCommands.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86BE9102967A95500198811 /* BuiltinCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinCommands.swift; sourceTree = "<group>"; };
@@ -66,6 +79,7 @@
 				D86BE904296796D100198811 /* Sources */,
 				D86BE905296796D100198811 /* Frameworks */,
 				D86BE906296796D100198811 /* Resources */,
+				D8132938296AFCBC00DE7A4C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

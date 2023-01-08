@@ -11,7 +11,7 @@ let package = Package(
         .watchOS(.v3)
     ],
     products: [
-        .library(name: "BashiClient", targets: ["BashiClient"])
+        .library(name: "BashiClient", type: .dynamic, targets: ["BashiClient"])
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .exact("5.4.4")),

@@ -48,6 +48,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D80ADE6A296BC90F003BAE01 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D80ADE6B296BC90F003BAE01 /* BashiClient in Embed Frameworks */,
+				D80ADE6E296BC912003BAE01 /* BashiPlugin in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D813293A296AFCD800DE7A4C /* Embed PlugIns */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -118,6 +130,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D80ADE69296BC90F003BAE01 /* BashiClient in Frameworks */,
+				D80ADE6D296BC912003BAE01 /* BashiPlugin in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +260,7 @@
 				D8C10970296023CF006E6A10 /* Sources */,
 				D8C10971296023CF006E6A10 /* Frameworks */,
 				D8C10972296023CF006E6A10 /* Resources */,
+				D80ADE6A296BC90F003BAE01 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -253,6 +268,10 @@
 				D8C10976296023CF006E6A10 /* PBXTargetDependency */,
 			);
 			name = assistTests;
+			packageProductDependencies = (
+				D80ADE68296BC90F003BAE01 /* BashiClient */,
+				D80ADE6C296BC912003BAE01 /* BashiPlugin */,
+			);
 			productName = assistTests;
 			productReference = D8C10974296023CF006E6A10 /* assistTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -736,6 +755,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D80ADE68296BC90F003BAE01 /* BashiClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BashiClient;
+		};
+		D80ADE6C296BC912003BAE01 /* BashiPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BashiPlugin;
+		};
 		D85597E3296AFD26003C8C13 /* BashiClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BashiClient;

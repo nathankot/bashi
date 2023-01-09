@@ -74,13 +74,13 @@ actor AudioRecordingController {
     
     func startRecording() throws -> AsyncThrowingPublisher<AnyPublisher<String, Error>> {
         if speechRecognizerAuthStatus != .authorized {
-            throw AppState.ErrorType.InsufficientAppPermissions("speech recognition")
+            throw AppError.InsufficientAppPermissions("speech recognition")
         }
         if !speechRecognizer.isAvailable {
-            throw AppState.ErrorType.InsufficientAppPermissions("speech recognizer not available")
+            throw AppError.InsufficientAppPermissions("speech recognizer not available")
         }
         if engine?.isRunning ?? false {
-            throw AppState.ErrorType.Internal("should not be recording")
+            throw AppError.Internal("should not be recording")
         }
         logger.info("starting audio recording")
         

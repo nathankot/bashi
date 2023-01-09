@@ -79,7 +79,7 @@ actor AppController : PluginAPI {
             
             let bestTranscription = try await audioRecordingController.stopRecording()
             guard let bestTranscription = bestTranscription else {
-                throw AppState.ErrorType.NoRequestFound
+                throw AppError.NoRequestFound
             }
             
             let modelOutput = try await state.transition(newState: .RequestPending(request: bestTranscription)) { doTransition in

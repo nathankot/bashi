@@ -13,6 +13,16 @@ import Speech
 import UserNotifications
 import Combine
 
+public indirect enum AppError : Error, Equatable {
+    case AppLaunchError(String)
+    case Internal(String) // TODO Internal should wrap another error
+    case NoRequestFound
+    case UnexpectedTransition(AppState.State, AppState.State)
+    case CouldNotAuthenticate(String? = nil)
+    case BadConfiguration(String? = nil)
+    case InsufficientAppPermissions(String)
+}
+    
 @MainActor
 public final class AppState : ObservableObject {
     
@@ -26,19 +36,9 @@ public final class AppState : ObservableObject {
         case Recording(bestTranscription: String?)
         case RequestPending(request: String)
         case AssistResult(ModelsAssist000Output)
-        case Error(ErrorType)
+        case Error(AppError)
     }
 
-    public indirect enum ErrorType : Error, Equatable {
-        case AppLaunchError(String)
-        case Internal(String) // TODO Internal should wrap another error
-        case NoRequestFound
-        case UnexpectedTransition(State, State)
-        case CouldNotAuthenticate(String? = nil)
-        case BadConfiguration(String? = nil)
-        case InsufficientAppPermissions(String)
-    }
-    
     @Published public private(set) var state: State = .Idle
     
     public convenience init() {
@@ -88,7 +88,7 @@ public final class AppState : ObservableObject {
         
         if !canTransition(newState: newState) {
             logger.error("unexpected transition from \(String(reflecting: self.state)) to \(String(reflecting: newState))")
-            throw ErrorType.UnexpectedTransition(state, newState)
+            throw AppError.UnexpectedTransition(state, newState)
         }
         
         return try await closure({ state = newState })
@@ -96,9 +96,9 @@ public final class AppState : ObservableObject {
     
     public func handleError(_ e: Error) async {
         switch e {
-        case ErrorType.UnexpectedTransition(let before, let after):
+        case AppError.UnexpectedTransition(let before, let after):
             logger.error("unexpected transition from \(String(reflecting: before)) to \(String(reflecting: after))")
-        case let e as ErrorType:
+        case let e as AppError:
             state = .Error(e)
         default:
             logger.error("internal error: \(String(reflecting: e))")

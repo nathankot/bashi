@@ -31,9 +31,9 @@ extension AppController {
        
        switch r {
        case .status401(let e), .status403(let e):
-           throw AppState.ErrorType.CouldNotAuthenticate(e.error)
+           throw AppError.CouldNotAuthenticate(e.error)
        case .status400(let e):
-           throw AppState.ErrorType.BadConfiguration(e.error)
+           throw AppError.BadConfiguration(e.error)
        case .status200(let response):
            return response
        }
@@ -64,9 +64,9 @@ extension AppController {
         }
         switch try response.result.get() {
         case .status401(let e), .status403(let e):
-            throw AppState.ErrorType.CouldNotAuthenticate(e.error)
+            throw AppError.CouldNotAuthenticate(e.error)
         case .status400(let e):
-            throw AppState.ErrorType.BadConfiguration(e.error)
+            throw AppError.BadConfiguration(e.error)
         case .status200(let success):
             await MainActor.run { state.session = success.session }
             return success.session

@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/nathan/Development/src/localhost/bashi/assist/assistTests/Mocks.swift">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/nathan/Development/src/localhost/bashi/assist/assistTests/CommandsControllerTest.swift">
+   </FileRef>
+   <FileRef
       location = "group:BashiClient">
    </FileRef>
    <FileRef

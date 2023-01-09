@@ -9,47 +9,61 @@ import os
 import Foundation
 import BashiPlugin
 
-actor PluginsController {
+public actor PluginsController {
     
-    enum ErrorType : Error {
+    enum PluginError : Error {
         case couldNotLoadPlugin(reason: String)
+        case commandLoadedTwice(commandName: String)
     }
     
     private let pluginAPI: PluginAPI
     
-    private var loadedPluginIds = Set<String>()
-    private var plugins: [any Plugin] = []
+    private var plugins: Dictionary<String, any Plugin> = [:]
+    private var commandDefinitions: Dictionary<String, any Command> = [:]
     
-    init(pluginAPI: PluginAPI) {
+    public init(pluginAPI: PluginAPI) {
         self.pluginAPI = pluginAPI
     }
     
-    func loadBuiltinCommands() throws {
+    public func lookup(command: String) -> Command? {
+        return commandDefinitions[command]
+    }
+    
+    internal func loadBuiltinCommands() throws {
         guard let builtinCommands = Bundle.main.builtInPlugInsURL?.appendingPathComponent(
             "builtinCommands",
             conformingTo: .pluginBundle) else {
-            throw ErrorType.couldNotLoadPlugin(reason: "could not load built in commands - URL not found")
+            throw PluginError.couldNotLoadPlugin(reason: "could not load built in commands - URL not found")
         }
         
-        let (pluginId, plugin) = try loadPlugin(fromBundle: builtinCommands)
-        if loadedPluginIds.contains(pluginId) {
-           throw ErrorType.couldNotLoadPlugin(reason: "plugin loaded more than once: \(pluginId)")
-        }
-        loadedPluginIds.insert(pluginId)
-        plugins.append(plugin)
+        try loadPlugin(fromBundle: builtinCommands)
     }
     
-    private func loadPlugin(fromBundle bundlePath: URL) throws -> (pluginId: String, plugin: Plugin) {
+    internal func loadPlugin(fromBundle bundlePath: URL) throws {
         guard let bundle = Bundle.init(url: bundlePath) else {
-            throw ErrorType.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
+            throw PluginError.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
         }
         guard let plugin = bundle.principalClass?.makeBashiPlugin(api: pluginAPI) else {
-           throw ErrorType.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
+           throw PluginError.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
         }
         guard let pluginId = bundle.principalClass?.id else {
-           throw ErrorType.couldNotLoadPlugin(reason: "no plugin id found: \(bundlePath.absoluteString)")
+           throw PluginError.couldNotLoadPlugin(reason: "no plugin id found: \(bundlePath.absoluteString)")
         }
-        return (pluginId: pluginId, plugin: plugin)
+        try loadPlugin(plugin, withId: pluginId)
+    }
+    
+    public func loadPlugin(_ plugin: Plugin, withId pluginId: String) throws {
+        if plugins[pluginId] != nil {
+           throw PluginError.couldNotLoadPlugin(reason: "plugin loaded more than once: \(pluginId)")
+        }
+        plugins[pluginId] = plugin
+        
+        for c in plugin.provideCommands() {
+            if commandDefinitions[c.name] != nil {
+                throw PluginError.commandLoadedTwice(commandName: c.name)
+            }
+            commandDefinitions[c.name] = c
+        }
     }
 
 }

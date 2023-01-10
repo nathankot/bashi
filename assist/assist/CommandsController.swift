@@ -15,7 +15,7 @@ public actor CommandsController {
         case commandInvalid(CommandInvalid.InvalidReason)
         case commandParseError(String)
         case commandNotFound(String)
-        case commandNotConfirmed
+        case commandNotConfirmed(latestCommandContext: CommandContext)
         case mismatchArgs(String)
     }
 
@@ -84,7 +84,7 @@ public actor CommandsController {
                 if !prepared.shouldSkipConfirmation {
                     let confirmed = await confirmationHandler(prepared.confirmationMessage)
                     if !confirmed {
-                        throw CommandError.commandNotConfirmed
+                        throw CommandError.commandNotConfirmed(latestCommandContext: commandContext)
                     }
                 }
 

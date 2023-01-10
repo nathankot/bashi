@@ -5,6 +5,7 @@
 //  Created by Nathan Kot on 9/01/23.
 //
 
+import Foundation
 import XCTest
 import BashiPlugin
 import builtinCommands
@@ -56,12 +57,103 @@ final class CommandsControllerTest: XCTestCase {
     }
 
     func testCommandNotConfirmed() async throws {
+        let expectation = expectation(description: "should throw error")
+        do {
+            _ = try await commandsController.handle(
+                assistResponse: .init(
+                    model: .assist000,
+                    request: "some request",
+                    commands: [
+                            .commandParsed(.init(
+                            line: "",
+                            type: .parsed,
+                            name: "mock_command_no_confirm",
+                            args: []
+                            )),
+                            .commandParsed(.init(
+                            line: "",
+                            type: .parsed,
+                            name: "mock_command",
+                            args: []
+                            ))
+                    ]
+                ),
+                requestContext: .init()
+            ) { confirmationMessage in false }
+        } catch let e as CommandsController.CommandError {
+            switch e {
+            case .commandNotConfirmed(let resultContext):
+                XCTAssertEqual(resultContext.returnValues.map({ $0.string ?? "" }), ["some result D"])
+                XCTAssertEqual(pluginAPI.seenResults, ["some result C"])
+                expectation.fulfill()
+            default:
+                throw e
+            }
+        }
+        
+        await waitForExpectations(timeout: 2)
+    }
+
+    func testWrongArgumentType() async throws {
+        let expectation = expectation(description: "should throw err")
+        do {
+            _ = try await commandsController.handle(
+                assistResponse: .init(
+                    model: .assist000,
+                    request: "some request",
+                    commands: [
+                            .commandParsed(.init(
+                            line: "",
+                            type: .parsed,
+                            name: "mock_command_return_argument",
+                            args: [.numberValue(.init(type: .number, value: 123))]
+                            ))
+                    ]
+                ),
+                requestContext: .init()
+            ) { confirmationMessage in true }
+        } catch let e as CommandsController.CommandError {
+            switch e {
+            case .mismatchArgs(let reason):
+                XCTAssertEqual(reason, "the argument 'any string' expects a string")
+                expectation.fulfill()
+            default:
+                throw e
+            }
+        }
+        
+        await waitForExpectations(timeout: 2)
     }
     
-    func testCommandNotConfirmedButSkipsConfirmation() async throws {
+    func testWrongArgumentNumberOfArguments() async throws {
+        let expectation = expectation(description: "should throw err")
+        do {
+            _ = try await commandsController.handle(
+                assistResponse: .init(
+                    model: .assist000,
+                    request: "some request",
+                    commands: [
+                            .commandParsed(.init(
+                            line: "",
+                            type: .parsed,
+                            name: "mock_command_return_argument",
+                            args: []
+                            ))
+                    ]
+                ),
+                requestContext: .init()
+            ) { confirmationMessage in true }
+        } catch let e as CommandsController.CommandError {
+            switch e {
+            case .mismatchArgs(let reason):
+                XCTAssertEqual(reason, "command expects 1 args but got 0")
+                expectation.fulfill()
+            default:
+                throw e
+            }
+        }
+        
+        await waitForExpectations(timeout: 2)
     }
-    
-    func testWrongArgumentType() async throws {}
-    func testWrongArgumentNumberOfArguments() async throws {}
 
 }

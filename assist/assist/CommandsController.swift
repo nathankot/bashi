@@ -33,7 +33,6 @@ public actor CommandsController {
         confirmationHandler: (String) async -> Bool
     ) async throws -> CommandContext {
         if let missingRequestContext = assistResponse.missingRequestContext {
-            // TODO Who should handle missing request context?
             throw AppError.Internal("fulfillment of missing request context not yet implemented: \(missingRequestContext)")
         }
 

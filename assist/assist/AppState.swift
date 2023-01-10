@@ -15,22 +15,22 @@ import Combine
 
 public indirect enum AppError : Error, Equatable {
     case AppLaunchError(String)
-    case Internal(String) // TODO Internal should wrap another error
+    case Internal(String)
     case NoRequestFound
     case UnexpectedTransition(AppState.State, AppState.State)
     case CouldNotAuthenticate(String? = nil)
     case BadConfiguration(String? = nil)
     case InsufficientAppPermissions(String)
 }
-    
+
 @MainActor
 public final class AppState : ObservableObject {
-    
+
     static let shared = AppState()
-    
+
     @AppStorage("accountNumber") var accountNumber: String = ""
     @Published var session: BashiSession? = nil
-    
+
     public enum State : Equatable {
         case Idle
         case Recording(bestTranscription: String?)
@@ -40,16 +40,16 @@ public final class AppState : ObservableObject {
     }
 
     @Published public private(set) var state: State = .Idle
-    
+
     public convenience init() {
         logger.info("initializing app state")
         self.init(accountNumber: "")
     }
-    
+
     public init(accountNumber: String) {
         self.accountNumber = accountNumber
     }
-    
+
     private func canTransition(newState: State) -> Bool {
         switch (state, newState)  {
         case (.Idle, .Recording),
@@ -65,10 +65,10 @@ public final class AppState : ObservableObject {
             return false
         }
     }
-    
+
     private var semaphoreWaits: [CheckedContinuation<Void, Never>] = []
     private var semaphoreCount = 1
-    
+
     public func transition<R>(
         newState: State,
         closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }
@@ -85,15 +85,15 @@ public final class AppState : ObservableObject {
                 semaphoreWaits.removeFirst().resume()
             }
         }
-        
+
         if !canTransition(newState: newState) {
             logger.error("unexpected transition from \(String(reflecting: self.state)) to \(String(reflecting: newState))")
             throw AppError.UnexpectedTransition(state, newState)
         }
-        
+
         return try await closure({ state = newState })
     }
-    
+
     public func handleError(_ e: Error) async {
         switch e {
         case AppError.UnexpectedTransition(let before, let after):
@@ -106,4 +106,3 @@ public final class AppState : ObservableObject {
         }
     }
 }
-

@@ -30,6 +30,7 @@ public actor CommandsController {
     public func handle(
         assistResponse: ModelsAssist000Output,
         requestContext: RequestContext,
+        onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
         confirmationHandler: (String) async -> Bool
     ) async throws -> CommandContext {
         if let missingRequestContext = assistResponse.missingRequestContext {
@@ -37,15 +38,21 @@ public actor CommandsController {
         }
 
         let commandContext = CommandContext.from(requestContext: requestContext)
-        var errors: [CommandError] = []
+        var updateCommandContext = true
 
         for command in assistResponse.commands {
+            if updateCommandContext {
+                updateCommandContext = false
+                try await onUpdatedContext?(commandContext)
+            }
+            
             switch command {
             case .commandInvalid(let c):
-                errors.append(.commandInvalid(c.invalidReason))
+                commandContext.errors.append(CommandError.commandInvalid(c.invalidReason))
             case .commandParseError(let c):
-                errors.append(.commandParseError(c.error))
+                commandContext.errors.append(CommandError.commandParseError(c.error))
             case .commandExecuted(let c):
+                updateCommandContext = true
                 switch c.returnValue {
                 case .stringValue(let v):
                     commandContext.returnValues.append(
@@ -58,8 +65,9 @@ public actor CommandsController {
                         CommandValue(.boolean(v.value)))
                 }
             case .commandParsed(let c):
+                updateCommandContext = true
                 guard let commandDef = await pluginsController.lookup(command: c.name) else {
-                    errors.append(.commandNotFound(c.name))
+                    commandContext.errors.append(CommandError.commandNotFound(c.name))
                     continue
                 }
                 let args = c.args.map { CommandValue.init(from: $0) }
@@ -101,7 +109,7 @@ public class CommandContext: BashiPlugin.CommandContext {
     public private(set) var requestContextStrings: Dictionary<String, String> = [:]
     public private(set) var requestContextNumbers: Dictionary<String, Double> = [:]
     public private(set) var requestContextBooleans: Dictionary<String, Bool> = [:]
-    public var error: Error? = nil
+    public var errors: [Error] = []
     public var returnValues: [BashiPlugin.CommandValue] = []
     public var returnValuesHandling: BashiPlugin.ReturnValuesHandling = .none
 

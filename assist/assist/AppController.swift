@@ -14,28 +14,30 @@ import Cocoa
 import Combine
 
 actor AppController {
-    
+
     let state: AppState
     let pluginAPI: AppAPI
-    
+
     let audioRecordingController: AudioRecordingController
+    let commandsController: CommandsController
     var keyboardShortcutsTask: Task<Void, Error>? = nil
-    
+
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
-    
-    init(state: AppState, pluginAPI: AppAPI) {
+
+    init(state: AppState, pluginAPI: AppAPI, commandsController: CommandsController) {
         self.state = state
         self.pluginAPI = pluginAPI
         self.audioRecordingController = AudioRecordingController()
+        self.commandsController = commandsController
     }
-    
+
     deinit {
         keyboardShortcutsTask?.cancel()
     }
-    
+
     func prepare() async {
         await audioRecordingController.prepare()
-        
+
         if self.keyboardShortcutsTask == nil {
             logger.info("listening to keyboard shortcuts")
             keyboardShortcutsTask = Task {
@@ -50,7 +52,7 @@ actor AppController {
             }
         }
     }
-    
+
     func startRecording() async {
         do {
             let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
@@ -68,31 +70,44 @@ actor AppController {
             await state.handleError(error)
         }
     }
-    
+
     func stopRecording() async {
         do {
             transcriptionUpdatingTask?.cancel()
             transcriptionUpdatingTask = nil
-            
+
             let bestTranscription = try await audioRecordingController.stopRecording()
             guard let bestTranscription = bestTranscription else {
                 throw AppError.NoRequestFound
             }
-            
+
+            let requestContext: RequestContext = .init()
+
             let modelOutput = try await state.transition(newState: .RequestPending(request: bestTranscription)) { doTransition in
                 await doTransition()
-                return try await assist(request: bestTranscription)
+                return try await assist(request: bestTranscription, requestContext: requestContext)
             }
-            
-            print(modelOutput)
+
+            let finalCommandContext = try await commandsController.handle(
+                assistResponse: modelOutput,
+                requestContext: requestContext,
+                onUpdatedContext: { commandContext in
+                    await self.state.update(commandContext: commandContext)
+                }
+            ) { confirmationMessage in
+                // TODO support confirmation
+                true
+            }
+
+            debugPrint(finalCommandContext.returnValues)
 //            try await state.transition(newState: .ProcessingResult(modelOutput))
         } catch {
             await state.handleError(error)
         }
     }
-    
-    
-    
+
+
+
 }
 
 extension KeyboardShortcuts.Name {

@@ -40,6 +40,8 @@ public final class AppState : ObservableObject {
         case Error(AppError)
     }
 
+    
+    @Published public private(set) var commandContext: CommandContext? = nil
     @Published public private(set) var state: State = .Idle
 
     public convenience init() {
@@ -98,6 +100,10 @@ public final class AppState : ObservableObject {
         return try await closure({ state = newState })
     }
 
+    public func update(commandContext: CommandContext) {
+        self.commandContext = commandContext
+    }
+    
     public func handleError(_ e: Error) async {
         switch e {
         case AppError.UnexpectedTransition(let before, let after):

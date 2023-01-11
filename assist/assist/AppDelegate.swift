@@ -23,14 +23,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         appAPI = AppAPI(state: AppState.shared, popover: popover, statusBarItem: statusBarItem)
-        appController = AppController(state: AppState.shared, pluginAPI: appAPI)
         pluginsController = PluginsController(pluginAPI: appAPI)
         commandsController = CommandsController(pluginAPI: appAPI, pluginsController: pluginsController)
+        appController = AppController(
+            state: AppState.shared,
+            pluginAPI: appAPI,
+            commandsController: commandsController
+        )
         
         popover.animates = true
         popover.behavior = .applicationDefined
-//        popover.contentViewController?.view.superview?.wantsLayer = true
-//        popover.contentViewController?.view.superview?.layer?.backgroundColor = .clear
         if let button = self.statusBarItem.button {
             button.image = NSImage(systemSymbolName: "heart", accessibilityDescription: "assist")
             button.action = #selector(togglePopover(_:))

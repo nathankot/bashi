@@ -49,6 +49,19 @@ import Foundation
     public private(set) var boolean: NSNumber? = nil
     
     public var type: CommandArgType
+    
+    override public var description: String {
+        if let v = string {
+            return v
+        }
+        if let v = number {
+            return "\(v)"
+        }
+        if let v = boolean {
+            return "\(v == 0 ? false : true)"
+        }
+        return "<unknown value>"
+    }
 
     public enum InitOption {
         case string(String)
@@ -92,7 +105,7 @@ import Foundation
 
     var returnValuesHandling: ReturnValuesHandling { get set }
     var returnValues: [CommandValue] { get set }
-    var error: Error? { get set }
+    var errors: [Error] { get set }
 }
 
 extension CommandContext {

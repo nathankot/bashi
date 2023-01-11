@@ -14,11 +14,11 @@ import AlamofireNetworkActivityLogger
 
 extension AppController {
     
-   func assist(request: String) async throws -> ModelsAssist000Output {
+    func assist(request: String, requestContext: RequestContext) async throws -> ModelsAssist000Output {
        let session = try await refreshSession()
        let apiClient = await makeApiClient()
        let request = BashiClient.PostSessionAssist000.Request(
-        body: .init(request: request),
+        body: .init(request: request, requestContext: requestContext),
         options: .init(sessionID: session.sessionId))
        
        let response = await withCheckedContinuation { continuation in

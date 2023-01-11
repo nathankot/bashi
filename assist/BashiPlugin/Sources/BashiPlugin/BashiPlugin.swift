@@ -2,7 +2,7 @@ import os
 import Foundation
 
 @objc public protocol PluginAPI {
-    func displayResult(text: String) async
+    @objc optional func setResultForTesting(text: String)
 }
 
 @objc public protocol Plugin {
@@ -26,6 +26,12 @@ import Foundation
         case .number: return "number"
         }
     }
+}
+
+@objc public enum ReturnValuesHandling: Int, Equatable {
+    case none
+    case displayOnScreen
+    case insertText
 }
 
 @objc public class CommandArgDef: NSObject {
@@ -84,6 +90,7 @@ import Foundation
     var requestContextNumbers: Dictionary<String, Double> { get }
     var requestContextBooleans: Dictionary<String, Bool> { get }
 
+    var returnValuesHandling: ReturnValuesHandling { get set }
     var returnValues: [CommandValue] { get set }
     var error: Error? { get set }
 }

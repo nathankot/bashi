@@ -20,7 +20,7 @@ final class assistTests: XCTestCase {
 
     func testAppStateTransition() async throws {
         let state = await AppState()
-        let expected = AppState.State.AssistResult(.init(model: .assist000, request: "blah", commands: []))
+        let expected = AppState.State.Confirm(confirmationMessage: "some confirmation")
         
         // t1 should happen first, despite it having a longer wait:
         let t1 = Task {

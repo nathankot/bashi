@@ -23,7 +23,7 @@ public class BuiltinCommands : BundledPlugin {
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
-                            await api.displayResult(text: ctx.stringReturnValues.first ?? "")
+                            ctx.returnValuesHandling = .displayOnScreen
                         }
                 })
         ]

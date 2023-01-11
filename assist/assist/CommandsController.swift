@@ -97,12 +97,13 @@ public actor CommandsController {
 }
 
 public class CommandContext: BashiPlugin.CommandContext {
-
+    
     public private(set) var requestContextStrings: Dictionary<String, String> = [:]
     public private(set) var requestContextNumbers: Dictionary<String, Double> = [:]
     public private(set) var requestContextBooleans: Dictionary<String, Bool> = [:]
     public var error: Error? = nil
     public var returnValues: [BashiPlugin.CommandValue] = []
+    public var returnValuesHandling: BashiPlugin.ReturnValuesHandling = .none
 
     static func from(requestContext: RequestContext) -> CommandContext {
         let ctx = CommandContext()

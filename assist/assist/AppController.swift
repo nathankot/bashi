@@ -13,22 +13,19 @@ import KeyboardShortcuts
 import Cocoa
 import Combine
 
-actor AppController : PluginAPI {
+actor AppController {
     
     let state: AppState
-    let popover: NSPopover
-    let statusBarItem: NSStatusItem
+    let pluginAPI: AppAPI
     
     let audioRecordingController: AudioRecordingController
     var keyboardShortcutsTask: Task<Void, Error>? = nil
     
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
     
-    init(state: AppState, popover: NSPopover, statusBarItem: NSStatusItem, keyboardShortcutsTask: Task<Void, Error>? = nil) {
+    init(state: AppState, pluginAPI: AppAPI) {
         self.state = state
-        self.popover = popover
-        self.statusBarItem = statusBarItem
-        self.keyboardShortcutsTask = keyboardShortcutsTask
+        self.pluginAPI = pluginAPI
         self.audioRecordingController = AudioRecordingController()
     }
     
@@ -87,43 +84,14 @@ actor AppController : PluginAPI {
                 return try await assist(request: bestTranscription)
             }
             
-            try await state.transition(newState: .AssistResult(modelOutput))
+            print(modelOutput)
+//            try await state.transition(newState: .ProcessingResult(modelOutput))
         } catch {
             await state.handleError(error)
         }
     }
     
     
-    func showSettings() async {
-        await MainActor.run {
-            popover.performClose(nil)
-            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        }
-    }
-    
-    func quit() async {
-        await MainActor.run {
-            NSApplication.shared.terminate(nil)
-        }
-    }
-    
-    func togglePopover(shouldShow: Bool? = nil) async {
-        let isCurrentlyShown = await self.popover.isShown
-        let shouldShow = shouldShow ?? !isCurrentlyShown
-        
-        if !shouldShow {
-            await self.popover.performClose(nil)
-        } else {
-            if let button = self.statusBarItem.button {
-                await self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
-                await self.popover.contentViewController?.view.window?.becomeKey()
-            }
-        }
-    }
-    
-    func displayResult(text: String) async {
-        logger.log("displayed result is: \(text)")
-    }
     
 }
 

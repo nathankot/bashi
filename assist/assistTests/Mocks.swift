@@ -10,7 +10,7 @@ import BashiPlugin
 
 class MockPluginAPI: PluginAPI {
     var seenResults: [String] = []
-    func displayResult(text: String) async {
+    func setResultForTesting(text: String) {
         seenResults.append(text)
     }
 }
@@ -29,7 +29,7 @@ class MockPlugin: Plugin {
                     shouldSkipConfirmation: false,
                     confirmationMessage: "some confirmation message",
                     runFn: {
-                        await api.displayResult(text: "some result A")
+                        api.setResultForTesting?(text: "some result A")
                         ctx.returnValues.append(CommandValue(.string("some result B")))
                     })
             },
@@ -38,7 +38,7 @@ class MockPlugin: Plugin {
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
                     runFn: {
-                        await api.displayResult(text: "some result C")
+                        api.setResultForTesting?(text: "some result C")
                         ctx.returnValues.append(CommandValue(.string("some result D")))
                     })
             },
@@ -60,7 +60,7 @@ class MockPlugin: Plugin {
                         if let str = args.first?.string {
                             ctx.returnValues.append(CommandValue(.string(str)))
                         }
-                        await api.displayResult(text: "some result E")
+                        api.setResultForTesting?(text: "some result E")
                     })
             },
         ]
@@ -68,4 +68,3 @@ class MockPlugin: Plugin {
 
 
 }
-

@@ -19,10 +19,10 @@ struct ContentView: View {
                 logger.info("button one tapped")
             }
             Button("Preferences") {
-                Task { await controller?.showSettings() }
+                Task { await controller?.pluginAPI.showSettings() }
             }
             Button("Quit") {
-                Task { await controller?.quit() }
+                Task { await controller?.pluginAPI.quit() }
             }
             Text("Your account number is \(state.accountNumber)")
             if let session = state.session {

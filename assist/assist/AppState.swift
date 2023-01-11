@@ -35,7 +35,8 @@ public final class AppState : ObservableObject {
         case Idle
         case Recording(bestTranscription: String?)
         case RequestPending(request: String)
-        case AssistResult(ModelsAssist000Output)
+        case Confirm(confirmationMessage: String)
+        case Success(String)
         case Error(AppError)
     }
 
@@ -56,7 +57,10 @@ public final class AppState : ObservableObject {
              (.Idle, .RequestPending),
              (.Recording, .Recording),
              (.Recording, .RequestPending),
-             (.RequestPending, .AssistResult),
+             (.RequestPending, .Confirm),
+             (.RequestPending, .Success),
+             (.Confirm, .Idle),
+             (.Confirm, .Success),
              (.Error, .Idle),
              (.Error, .Recording),
              (_, .Error):

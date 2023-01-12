@@ -82,31 +82,32 @@ actor AppController {
             }
 
             let requestContext: RequestContext = .init()
+            let commandContext = CommandContext.from(request: bestTranscription, requestContext: requestContext)
 
-            let modelOutput = try await state.transition(newState: .RequestPending(request: bestTranscription)) { doTransition in
+            let modelOutput = try await state.transition(
+                newState: .Processing(commandContext: commandContext)
+            ) { doTransition in
                 await doTransition()
                 return try await assist(request: bestTranscription, requestContext: requestContext)
             }
 
             let finalCommandContext = try await commandsController.handle(
                 assistResponse: modelOutput,
-                requestContext: requestContext,
-                onUpdatedContext: { commandContext in
-                    await self.state.update(commandContext: commandContext)
+                commandContext: commandContext,
+                onUpdatedContext: { [weak self] commandContext in
+                    try? await self?.state.transition(newState: .Processing(commandContext: commandContext))
                 }
             ) { confirmationMessage in
                 // TODO support confirmation
                 true
             }
 
-            debugPrint(finalCommandContext.returnValues)
-//            try await state.transition(newState: .ProcessingResult(modelOutput))
+            await debugPrint(finalCommandContext.getReturnValues())
+            try await state.transition(newState: .Success(commandContext: finalCommandContext, "blah"))
         } catch {
             await state.handleError(error)
         }
     }
-
-
 
 }
 

@@ -13,7 +13,7 @@ import Speech
 import UserNotifications
 import Combine
 
-public indirect enum AppError : Error, Equatable {
+public indirect enum AppError : Error {
     case AppLaunchError(String)
     case Internal(String)
     case NoRequestFound
@@ -31,17 +31,15 @@ public final class AppState : ObservableObject {
     @AppStorage("accountNumber") var accountNumber: String = ""
     @Published var session: BashiSession? = nil
 
-    public enum State : Equatable {
+    public enum State {
         case Idle
         case Recording(bestTranscription: String?)
-        case RequestPending(request: String)
-        case Confirm(confirmationMessage: String)
-        case Success(String)
+        case Processing(commandContext: CommandContext)
+        case Confirm(commandContext: CommandContext, confirmationMessage: String)
+        case Success(commandContext: CommandContext, String)
         case Error(AppError)
     }
 
-    
-    @Published public private(set) var commandContext: CommandContext? = nil
     @Published public private(set) var state: State = .Idle
 
     public convenience init() {
@@ -56,11 +54,11 @@ public final class AppState : ObservableObject {
     private func canTransition(newState: State) -> Bool {
         switch (state, newState)  {
         case (.Idle, .Recording),
-             (.Idle, .RequestPending),
+             (.Idle, .Processing),
              (.Recording, .Recording),
-             (.Recording, .RequestPending),
-             (.RequestPending, .Confirm),
-             (.RequestPending, .Success),
+             (.Recording, .Processing),
+             (.Processing, .Confirm),
+             (.Processing, .Success),
              (.Confirm, .Idle),
              (.Confirm, .Success),
              (.Error, .Idle),
@@ -100,10 +98,6 @@ public final class AppState : ObservableObject {
         return try await closure({ state = newState })
     }
 
-    public func update(commandContext: CommandContext) {
-        self.commandContext = commandContext
-    }
-    
     public func handleError(_ e: Error) async {
         switch e {
         case AppError.UnexpectedTransition(let before, let after):

@@ -30,7 +30,7 @@ class MockPlugin: Plugin {
                     confirmationMessage: "some confirmation message",
                     runFn: {
                         api.setResultForTesting?(text: "some result A")
-                        ctx.returnValues.append(CommandValue(.string("some result B")))
+                        await ctx.append(returnValue: CommandValue(.string("some result B")))
                     })
             },
             AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args in
@@ -39,7 +39,7 @@ class MockPlugin: Plugin {
                     confirmationMessage: "",
                     runFn: {
                         api.setResultForTesting?(text: "some result C")
-                        ctx.returnValues.append(CommandValue(.string("some result D")))
+                        await ctx.append(returnValue: CommandValue(.string("some result D")))
                     })
             },
             AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args in
@@ -58,7 +58,7 @@ class MockPlugin: Plugin {
                     confirmationMessage: "confirm?",
                     runFn: {
                         if let str = args.first?.string {
-                            ctx.returnValues.append(CommandValue(.string(str)))
+                            await ctx.append(returnValue: CommandValue(.string(str)))
                         }
                         api.setResultForTesting?(text: "some result E")
                     })

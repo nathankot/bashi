@@ -23,7 +23,7 @@ public class BuiltinCommands : BundledPlugin {
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
-                            ctx.returnValuesHandling = .displayOnScreen
+                            await ctx.append(builtinAction: .flushToDisplay)
                         }
                 })
         ]

@@ -29,7 +29,7 @@ public actor CommandsController {
 
     public func handle(
         assistResponse: ModelsAssist000Output,
-        requestContext: RequestContext,
+        commandContext: CommandContext,
         onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
         confirmationHandler: (String) async -> Bool
     ) async throws -> CommandContext {
@@ -37,7 +37,6 @@ public actor CommandsController {
             throw AppError.Internal("fulfillment of missing request context not yet implemented: \(missingRequestContext)")
         }
 
-        let commandContext = CommandContext.from(requestContext: requestContext)
         var updateCommandContext = true
 
         for command in assistResponse.commands {
@@ -45,29 +44,29 @@ public actor CommandsController {
                 updateCommandContext = false
                 try await onUpdatedContext?(commandContext)
             }
-            
+
             switch command {
             case .commandInvalid(let c):
-                commandContext.errors.append(CommandError.commandInvalid(c.invalidReason))
+                await commandContext.append(error: CommandError.commandInvalid(c.invalidReason))
             case .commandParseError(let c):
-                commandContext.errors.append(CommandError.commandParseError(c.error))
+                await commandContext.append(error: CommandError.commandParseError(c.error))
             case .commandExecuted(let c):
                 updateCommandContext = true
                 switch c.returnValue {
                 case .stringValue(let v):
-                    commandContext.returnValues.append(
-                        CommandValue(.string(v.value)))
+                    await commandContext.append(
+                        returnValue: CommandValue(.string(v.value)))
                 case .numberValue(let v):
-                    commandContext.returnValues.append(
-                        CommandValue(.number(v.value)))
+                    await commandContext.append(
+                        returnValue: CommandValue(.number(v.value)))
                 case .booleanValue(let v):
-                    commandContext.returnValues.append(
-                        CommandValue(.boolean(v.value)))
+                    await commandContext.append(
+                        returnValue: CommandValue(.boolean(v.value)))
                 }
             case .commandParsed(let c):
                 updateCommandContext = true
                 guard let commandDef = await pluginsController.lookup(command: c.name) else {
-                    commandContext.errors.append(CommandError.commandNotFound(c.name))
+                    await commandContext.append(error: CommandError.commandNotFound(c.name))
                     continue
                 }
                 let args = c.args.map { CommandValue.init(from: $0) }
@@ -104,26 +103,34 @@ public actor CommandsController {
 
 }
 
-public class CommandContext: BashiPlugin.CommandContext {
-    
-    public private(set) var requestContextStrings: Dictionary<String, String> = [:]
-    public private(set) var requestContextNumbers: Dictionary<String, Double> = [:]
-    public private(set) var requestContextBooleans: Dictionary<String, Bool> = [:]
-    public var errors: [Error] = []
-    public var returnValues: [BashiPlugin.CommandValue] = []
-    public var returnValuesHandling: BashiPlugin.ReturnValuesHandling = .none
+public actor CommandContext: BashiPlugin.CommandContext {
 
-    static func from(requestContext: RequestContext) -> CommandContext {
-        let ctx = CommandContext()
+    enum ReturnValue {
+        case commandValue(CommandValue)
+        case action(CommandBuiltinAction)
+    }
+
+    nonisolated public let request: String
+    nonisolated public let requestContextStrings: Dictionary<String, String>
+    nonisolated public let requestContextNumbers: Dictionary<String, Double>
+    nonisolated public let requestContextBooleans: Dictionary<String, Bool>
+
+    private var _returnValues: [ReturnValue] = []
+    private var errors: [Error] = []
+
+    public static func from(request: String, requestContext: RequestContext) -> CommandContext {
+        var requestContextStrings: Dictionary<String, String> = [:]
+        var requestContextNumbers: Dictionary<String, Double> = [:]
+        var requestContextBooleans: Dictionary<String, Bool> = [:]
 
         for (name, value) in requestContext.additionalProperties {
             switch value {
             case .stringValue(let v):
-                ctx.requestContextStrings.updateValue(v.value, forKey: name)
+                requestContextStrings.updateValue(v.value, forKey: name)
             case .numberValue(let v):
-                ctx.requestContextNumbers.updateValue(v.value, forKey: name)
+                requestContextNumbers.updateValue(v.value, forKey: name)
             case .booleanValue(let v):
-                ctx.requestContextBooleans.updateValue(v.value, forKey: name)
+                requestContextBooleans.updateValue(v.value, forKey: name)
             }
         }
 
@@ -134,18 +141,57 @@ public class CommandContext: BashiPlugin.CommandContext {
             guard let label = attr.label else { continue }
             switch attr.value {
             case let v as StringValue:
-                ctx.requestContextStrings.updateValue(v.value, forKey: label)
+                requestContextStrings.updateValue(v.value, forKey: label)
             case let v as NumberValue:
-                ctx.requestContextNumbers.updateValue(v.value, forKey: label)
+                requestContextNumbers.updateValue(v.value, forKey: label)
             case let v as BooleanValue:
-                ctx.requestContextBooleans.updateValue(v.value, forKey: label)
+                requestContextBooleans.updateValue(v.value, forKey: label)
             default:
                 continue
             }
         }
 
 
-        return ctx
+        return CommandContext(
+            request: request,
+            requestContextStrings: requestContextStrings,
+            requestContextNumbers: requestContextNumbers,
+            requestContextBooleans: requestContextBooleans)
+    }
+
+    public init(request: String,
+        requestContextStrings: Dictionary<String, String> = [:],
+        requestContextNumbers: Dictionary<String, Double> = [:],
+        requestContextBooleans: Dictionary<String, Bool> = [:]) {
+        self.request = request
+        self.requestContextStrings = requestContextStrings
+        self.requestContextNumbers = requestContextNumbers
+        self.requestContextBooleans = requestContextBooleans
+    }
+
+    public func append(returnValue: BashiPlugin.CommandValue) async {
+        _returnValues.append(.commandValue(returnValue))
+    }
+
+    public func append(error: Error) async {
+        errors.append(error)
+    }
+
+    public func append(builtinAction: BashiPlugin.CommandBuiltinAction) async {
+        _returnValues.append(.action(builtinAction))
+    }
+    
+    public func getReturnValues() async -> [BashiPlugin.CommandValue] {
+        return _returnValues.compactMap({
+            switch $0 {
+            case .commandValue(let v): return v
+            default: return nil
+            }
+        })
+    }
+    
+    public func getErrors() async -> [Error] {
+        return errors
     }
 }
 

@@ -28,10 +28,8 @@ import Foundation
     }
 }
 
-@objc public enum ReturnValuesHandling: Int, Equatable {
-    case none
-    case displayOnScreen
-    case insertText
+@objc public enum CommandBuiltinAction: Int, Equatable {
+    case flushToDisplay
 }
 
 @objc public class CommandArgDef: NSObject {
@@ -48,7 +46,7 @@ import Foundation
     public private(set) var number: NSNumber? = nil
     public private(set) var boolean: NSNumber? = nil
     
-    public var type: CommandArgType
+    public private(set) var type: CommandArgType
     
     override public var description: String {
         if let v = string {
@@ -99,20 +97,25 @@ import Foundation
 }
 
 @objc public protocol CommandContext {
+    var request: String { get }
     var requestContextStrings: Dictionary<String, String> { get }
     var requestContextNumbers: Dictionary<String, Double> { get }
     var requestContextBooleans: Dictionary<String, Bool> { get }
 
-    var returnValuesHandling: ReturnValuesHandling { get set }
-    var returnValues: [CommandValue] { get set }
-    var errors: [Error] { get set }
+    func getReturnValues() async -> [CommandValue]
+    func getErrors() async -> [Error]
+    
+    func append(returnValue: CommandValue) async
+    func append(error: Error) async
+    func append(builtinAction: CommandBuiltinAction) async
 }
 
 extension CommandContext {
-    public var stringReturnValues: [String] {
-        return returnValues.compactMap({ v in v.string })
+    public func stringReturnValues() async -> [String] {
+        return await getReturnValues().compactMap({ v in v.string })
     }
 }
+
 public class AnonymousPreparedCommand: PreparedCommand {
     public let shouldSkipConfirmation: Bool
     public let confirmationMessage: String

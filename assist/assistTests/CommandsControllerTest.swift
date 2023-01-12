@@ -49,10 +49,11 @@ final class CommandsControllerTest: XCTestCase {
                     name: "mock_command",
                     args: []
                     ))]),
-            requestContext: .init()
+            commandContext: .init(request: "blah")
         ) { confirmationMessage in true }
 
-        XCTAssertEqual(resultContext.returnValues.map({ $0.string ?? "" }), ["some result B"])
+        let returnValues = await resultContext.getReturnValues().map({ $0.string ?? "" })
+        XCTAssertEqual(returnValues, ["some result B"])
         XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
     }
 
@@ -78,12 +79,13 @@ final class CommandsControllerTest: XCTestCase {
                             ))
                     ]
                 ),
-                requestContext: .init()
+                commandContext: .init(request: "blah")
             ) { confirmationMessage in false }
         } catch let e as CommandsController.CommandError {
             switch e {
             case .commandNotConfirmed(let resultContext):
-                XCTAssertEqual(resultContext.returnValues.map({ $0.string ?? "" }), ["some result D"])
+                let returnValues = await resultContext.getReturnValues().map({ $0.string ?? "" })
+                XCTAssertEqual(returnValues, ["some result D"])
                 XCTAssertEqual(pluginAPI.seenResults, ["some result C"])
                 expectation.fulfill()
             default:
@@ -110,7 +112,7 @@ final class CommandsControllerTest: XCTestCase {
                             ))
                     ]
                 ),
-                requestContext: .init()
+                commandContext: .init(request: "blah")
             ) { confirmationMessage in true }
         } catch let e as CommandsController.CommandError {
             switch e {
@@ -141,7 +143,7 @@ final class CommandsControllerTest: XCTestCase {
                             ))
                     ]
                 ),
-                requestContext: .init()
+                commandContext: .init(request: "blah")
             ) { confirmationMessage in true }
         } catch let e as CommandsController.CommandError {
             switch e {

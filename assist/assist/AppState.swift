@@ -66,6 +66,9 @@ public final class AppState : ObservableObject {
              (.Processing, .Idle),
              (.Confirm, .Idle),
              (.Confirm, .Success),
+             (.Success, .Idle),
+             (.Success, .Recording),
+             (.Success, .Processing),
              (.Error, .Idle),
              (.Error, .Recording),
              (_, .Error):

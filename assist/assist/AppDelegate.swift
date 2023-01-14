@@ -58,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         Task { [weak self] in
             do {
-                try await self?.pluginsController.loadBuiltinCommands()
+                try await self?.pluginsController.loadBuiltinPlugins()
                 await self?.appController.prepare()
             } catch {
                 await self?.appController.state.handleError(AppError.AppLaunchError(error))

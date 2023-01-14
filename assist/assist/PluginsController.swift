@@ -35,15 +35,17 @@ public actor PluginsController {
         return commandDefinitions[command]?.def
     }
     
-    internal func loadBuiltinCommands() async throws {
-        guard let builtinCommands = Bundle.main.builtInPlugInsURL?.appendingPathComponent(
-            BUILTIN_COMMANDS_PLUGIN_ID,
-            conformingTo: .pluginBundle) else {
-            throw PluginError.couldNotLoadPlugin(reason: "could not load built in commands - URL not found")
+    internal func loadBuiltinPlugins() async throws {
+        guard let url = Bundle.main.builtInPlugInsURL else {
+            throw PluginError.couldNotLoadPlugin(reason: "no plugins url found")
         }
-        
-        try await loadPlugin(fromBundle: builtinCommands)
+        for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
+            if f.hasSuffix(".plugin") {
+                try await loadPlugin(fromBundle: url.appendingPathComponent(f))
+            }
+        }
     }
+    
     
     internal func loadPlugin(fromBundle bundlePath: URL) async throws {
         guard let bundle = Bundle.init(url: bundlePath) else {

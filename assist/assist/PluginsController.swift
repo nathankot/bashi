@@ -8,6 +8,11 @@
 import os
 import Foundation
 import BashiPlugin
+import class BashiClient.CommandDefinition
+import enum BashiClient.ValueType
+import enum BashiClient.ArgumentParser
+
+let BUILTIN_COMMANDS_PLUGIN_ID = "builtinCommands"
 
 public actor PluginsController {
     
@@ -16,22 +21,23 @@ public actor PluginsController {
         case commandLoadedTwice(commandName: String)
     }
     
+    private let state: AppState = AppState.shared
     private let pluginAPI: PluginAPI
     
     private var plugins: Dictionary<String, any Plugin> = [:]
-    private var commandDefinitions: Dictionary<String, any Command> = [:]
+    public private(set) var commandDefinitions: Dictionary<String, (pluginId: String, def: any Command)> = [:]
     
     public init(pluginAPI: PluginAPI) {
         self.pluginAPI = pluginAPI
     }
     
     public func lookup(command: String) -> Command? {
-        return commandDefinitions[command]
+        return commandDefinitions[command]?.def
     }
     
     internal func loadBuiltinCommands() async throws {
         guard let builtinCommands = Bundle.main.builtInPlugInsURL?.appendingPathComponent(
-            "builtinCommands",
+            BUILTIN_COMMANDS_PLUGIN_ID,
             conformingTo: .pluginBundle) else {
             throw PluginError.couldNotLoadPlugin(reason: "could not load built in commands - URL not found")
         }
@@ -67,8 +73,42 @@ public actor PluginsController {
             if commandDefinitions[c.name] != nil {
                 throw PluginError.commandLoadedTwice(commandName: c.name)
             }
-            commandDefinitions[c.name] = c
+            commandDefinitions[c.name] = (pluginId: pluginId, def: c)
         }
     }
 
+}
+
+extension CommandArgType {
+    func toAPIRepresentation() -> ValueType {
+        switch self {
+        case .string: return .string
+        case .boolean: return .boolean
+        case .number: return .number
+        }
+    }
+}
+
+extension CommandArgParser {
+    func toAPIRepresentation() -> ArgumentParser {
+        switch self {
+        case .naturalLanguageDateTime: return .naturalLanguageDateTime
+        }
+    }
+}
+
+extension Command {
+    func toAPIRepresentation() -> BashiClient.CommandDefinition {
+        return .init(
+            description: self.description,
+            args: self.args.map {
+                .init(
+                    name: $0.name,
+                    type: $0.type.toAPIRepresentation(),
+                    parse: $0.parsers.map { $0.toAPIRepresentation() }
+                )
+            },
+            triggerTokens: self.triggerTokens
+        )
+    }
 }

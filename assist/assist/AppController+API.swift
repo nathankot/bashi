@@ -46,6 +46,7 @@ extension AppController {
     }
     
     func refreshSession(force: Bool = false) async throws -> BashiSession {
+        let commandDefinitions = await pluginsController.commandDefinitions
         let accountNumber = await state.accountNumber
         if !force {
             if let session = await state.session {
@@ -61,7 +62,12 @@ extension AppController {
         let apiClient = await makeApiClient()
         let request = BashiClient.PostSessions.Request(
             body: .init(modelConfigurations: .init(
-                assist000: .init(model: .assist000, commands: [:])))
+                assist000: .init(
+                    model: .assist000,
+                    commands: commandDefinitions
+                        .filter{ $0.value.pluginId != BUILTIN_COMMANDS_PLUGIN_ID}
+                        .mapValues { $0.def.toAPIRepresentation() }
+                )))
         )
         let response = await withCheckedContinuation { continuation in
             apiClient.makeRequest(request, complete: { response in

@@ -20,15 +20,22 @@ actor AppController {
 
     let audioRecordingController: AudioRecordingController
     let commandsController: CommandsController
+    let pluginsController: PluginsController
     var keyboardShortcutsTask: Task<Void, Error>? = nil
 
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
 
-    init(state: AppState, pluginAPI: AppAPI, commandsController: CommandsController) {
+    init(
+        state: AppState,
+        pluginAPI: AppAPI,
+        commandsController: CommandsController,
+        pluginsController: PluginsController
+    ) {
         self.state = state
         self.appAPI = pluginAPI
         self.audioRecordingController = AudioRecordingController()
         self.commandsController = commandsController
+        self.pluginsController = pluginsController
     }
 
     deinit {
@@ -105,7 +112,7 @@ actor AppController {
                 // TODO support confirmation
                 true
             }
-            
+
             switch handleResult {
             case .Success(renderResult: nil):
                 try await state.transition(newState: .Idle) { doTransition in
@@ -126,7 +133,7 @@ actor AppController {
                         newState: .Error(.CommandExecutionErrors(errors)))
                 }
             }
-            
+
         } catch {
             await state.handleError(error)
         }
@@ -135,7 +142,7 @@ actor AppController {
     func dismissError() async {
         try? await state.transition(newState: .Idle)
     }
-    
+
     func showSettings() async {
         await appAPI.showSettings()
     }

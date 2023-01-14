@@ -33,12 +33,25 @@ import Foundation
     case flushToDisplay
 }
 
+@objc public enum CommandArgParser: Int, Equatable {
+    case naturalLanguageDateTime
+    
+    func asString() -> String {
+        switch self {
+        case .naturalLanguageDateTime:
+            return "naturalLanguageDateTime"
+        }
+    }
+}
+
 @objc public class CommandArgDef: NSObject {
     public let type: CommandArgType
     public let name: String
-    public init(type: CommandArgType, name: String) {
+    public let parsers: [CommandArgParser]
+    public init(type: CommandArgType, name: String, parsers: [CommandArgParser] = []) {
         self.name = name
         self.type = type
+        self.parsers = parsers
     }
 }
 

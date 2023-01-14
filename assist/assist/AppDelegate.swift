@@ -28,7 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         appController = AppController(
             state: AppState.shared,
             pluginAPI: appAPI,
-            commandsController: commandsController
+            commandsController: commandsController,
+            pluginsController: pluginsController
         )
 
         popover.animates = true

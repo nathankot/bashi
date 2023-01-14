@@ -22,17 +22,14 @@ class AppAPI : PluginAPI {
         self.statusBarItem = statusBarItem
     }
     
-    func quit() async {
-        await MainActor.run {
-            NSApplication.shared.terminate(nil)
-        }
+    func quit() {
+        NSApplication.shared.terminate(nil)
     }
     
     func showSettings() async {
-        await MainActor.run {
-            popover.performClose(nil)
-            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        }
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        togglePopover(shouldShow: false)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     func togglePopover(shouldShow: Bool? = nil) {

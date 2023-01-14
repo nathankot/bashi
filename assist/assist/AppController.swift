@@ -16,7 +16,7 @@ import Combine
 actor AppController {
 
     let state: AppState
-    let pluginAPI: AppAPI
+    private let pluginAPI: AppAPI
 
     let audioRecordingController: AudioRecordingController
     let commandsController: CommandsController
@@ -109,6 +109,13 @@ actor AppController {
         }
     }
 
+    func showSettings() async {
+        await pluginAPI.showSettings()
+    }
+
+    func quit() async {
+        await pluginAPI.quit()
+    }
 }
 
 extension KeyboardShortcuts.Name {

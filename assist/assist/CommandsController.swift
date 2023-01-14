@@ -83,7 +83,7 @@ public actor CommandsController {
                 guard let prepared = commandDef.prepare(
                     api: pluginAPI,
                     context: commandContext,
-                    args: []
+                    args: args
                 ) else {
                     continue
                 }

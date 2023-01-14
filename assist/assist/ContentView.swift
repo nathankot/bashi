@@ -11,40 +11,59 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var state: AppState
     var controller: AppController?
-    
+
     var body: some View {
         VStack {
-            Text("Hello there")
-            Button("One") {
-                logger.info("button one tapped")
+            HStack {
+                Text("Assist")
+                    .frame(minWidth: 200, alignment: .leading)
+                Spacer()
+                Menu {
+                    Button("Preferences", action: showSettings)
+                    Button("Quit", action: quit)
+                } label: {
+                    Spacer()
+                    Label("Settings", systemImage: "gear")
+                        .labelStyle(.iconOnly)
+                }
+                    .menuStyle(.borderlessButton)
+                    .frame(maxWidth: 30)
             }
-            Button("Preferences") {
-                Task { await controller?.pluginAPI.showSettings() }
+
+            Spacer()
+            if state.accountNumber == "" {
+                Text("Provide your account number first.")
+                    .font(.callout)
+                Button("Open settings", action: showSettings)
+            } else {
+                switch state.state {
+                case .Idle:
+                    Text("Idle")
+                default:
+                    Text("Unsupported state: \(String(reflecting: state.state))")
+                }
             }
-            Button("Quit") {
-                Task { await controller?.pluginAPI.quit() }
-            }
-            Text("Your account number is \(state.accountNumber)")
-            if let session = state.session {
-                Text("Your session id is \(session.sessionId)")
-            }
-            
-            Text("\(String(reflecting: state.state))")
-            
-            
-            switch state.state {
-            case .Recording(let bestTranscription):
-                Text("Recording: " + (bestTranscription ?? ""))
-            default:
-                Text("blah")
-            }
+            Spacer()
         }
-        .padding()
+            .padding()
+            .frame(minHeight: 200)
+    }
+
+    func showSettings() {
+        Task { await controller?.showSettings() }
+    }
+
+    func quit() {
+        Task { await controller?.quit() }
     }
 }
 
-struct MenuBarView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        ContentView(state: AppState(accountNumber: ""))
+            .previewDisplayName("Needs account number")
         ContentView(state: AppState(accountNumber: "123"))
+            .previewDisplayName("Idle")
     }
 }
+

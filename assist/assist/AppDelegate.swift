@@ -30,21 +30,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             pluginAPI: appAPI,
             commandsController: commandsController
         )
-        
+
         popover.animates = true
         popover.behavior = .applicationDefined
         if let button = self.statusBarItem.button {
             button.image = NSImage(systemSymbolName: "heart", accessibilityDescription: "assist")
             button.action = #selector(togglePopover(_:))
         }
-        
+
         let contentView = ContentView(state: AppState.shared, controller: appController)
         let hostingController = NSHostingController(rootView: contentView)
         if #available(macOS 13, *) {
             hostingController.sizingOptions = .preferredContentSize
         }
-        
+
         popover.contentViewController = hostingController
+
+        #if DEBUG
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" ||
+                ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                // Do not run any preparatory tasks when testing or previewing
+                return
+            }
+        #endif
 
         Task { [weak self] in
             do {
@@ -55,12 +63,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
+
     @objc func togglePopover(_ sender: AnyObject?) {
         Task {
             await appAPI.togglePopover()
         }
     }
-    
+
 }
 

@@ -8,21 +8,26 @@
 import Foundation
 import BashiPlugin
 
-class MockPluginAPI: PluginAPI {
-    var seenResults: [String] = []
-    func setResultForTesting(text: String) {
+#if DEBUG
+
+public class MockPluginAPI: PluginAPI {
+    public var seenResults: [String] = []
+    public func setResultForTesting(text: String) {
         seenResults.append(text)
     }
+    public init() {}
 }
 
-class MockPlugin: Plugin {
-    enum ErrorType: Error {
+public class MockPlugin: Plugin {
+    public enum ErrorType: Error {
         case mockError
     }
 
-    static var id: String = "mockPlugin"
+    public static var id: String = "mockPlugin"
+    
+    public init() {}
 
-    func provideCommands() -> [BashiPlugin.Command] {
+    public func provideCommands() -> [BashiPlugin.Command] {
         return [
             AnonymousCommand(name: "mock_command", description: "do some thing") { api, ctx, _ in
                 return AnonymousPreparedCommand(
@@ -68,3 +73,5 @@ class MockPlugin: Plugin {
 
 
 }
+
+#endif

@@ -14,12 +14,12 @@ let logger = Logger()
 @main
 struct AssistApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
-    @StateObject private var appState: AppState = AppState.shared
-    
+
+    @StateObject private var state: AppState = AppState.shared
+
     var body: some Scene {
         Settings {
-            SettingsView(state: appState)
+            SettingsView(state: state)
         }
         // Menubar view is managed by AppDelegate.
     }

@@ -61,6 +61,7 @@ actor AppController {
             let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
                 let transcriptions = try await audioRecordingController.startRecording()
                 await doTransition()
+                await appAPI.togglePopover(shouldShow: true)
                 return transcriptions
             }
             transcriptionUpdatingTask = Task {
@@ -107,9 +108,23 @@ actor AppController {
             
             switch handleResult {
             case .Success(renderResult: nil):
-                try await state.transition(newState: .Idle)
+                try await state.transition(newState: .Idle) { doTransition in
+                    await appAPI.togglePopover(shouldShow: false)
+                    await doTransition()
+                }
             case .Success(renderResult: let s):
                 try await state.transition(newState: .Success(renderedResult: s!))
+            case .HasErrors(
+                renderResult: let s,
+                successfulCommandsCount: _,
+                errors: let errors):
+                if let s = s {
+                    try await state.transition(
+                        newState: .Success(renderedResult: s))
+                } else {
+                    try await state.transition(
+                        newState: .Error(.CommandExecutionErrors(errors)))
+                }
             }
             
         } catch {

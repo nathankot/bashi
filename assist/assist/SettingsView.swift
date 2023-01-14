@@ -29,6 +29,9 @@ struct SettingsView: View {
     var body: some View {
         Form {
             TextField("Account Number", text: $accountNumber)
+                .onAppear {
+                    accountNumber = state.accountNumber
+                }
                 .onChange(of: state.accountNumber) {
                     accountNumber = $0
                 }

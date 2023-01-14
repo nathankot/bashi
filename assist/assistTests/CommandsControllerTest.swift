@@ -37,18 +37,18 @@ final class CommandsControllerTest: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    // test mixed success
 
     func testCommandsHandle() async throws {
         let result = try await commandsController.handle(
             assistResponse: .init(
                 model: .assist000,
                 request: "some request",
-                commands: [.commandParsed(.init(
-                    line: "",
-                    type: .parsed,
-                    name: "mock_command",
-                    args: []
-                    ))]),
+                commands: [
+                        .commandParsed(.init(line: "", type: .parsed, name: "mock_command", args: [])),
+                        .commandParsed(.init(line: "", type: .parsed, name: "flush", args: []))
+                ]),
             commandContext: .init(request: "blah")
         ) { confirmationMessage in true }
 
@@ -57,6 +57,26 @@ final class CommandsControllerTest: XCTestCase {
             XCTAssertEqual(r, "some result B")
         default:
             XCTFail("expected a success result")
+        }
+        XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
+    }
+    
+    func testCommandsHandleNoImplicitFlush() async throws {
+        let result = try await commandsController.handle(
+            assistResponse: .init(
+                model: .assist000,
+                request: "some request",
+                commands: [
+                        .commandParsed(.init(line: "", type: .parsed, name: "mock_command", args: [])),
+                ]),
+            commandContext: .init(request: "blah")
+        ) { confirmationMessage in true }
+
+        switch result {
+        case .Success(renderResult: let r):
+            XCTAssertEqual(r, nil)
+        default:
+            XCTFail("expected a nil success result")
         }
         XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
     }

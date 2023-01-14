@@ -21,6 +21,11 @@ public actor CommandsController {
     
     public enum HandleResult {
         case Success(renderResult: String?)
+        case HasErrors(
+            renderResult: String?,
+            successfulCommandsCount: Int,
+            errors: [Error]
+        )
     }
 
     let pluginAPI: PluginAPI
@@ -42,6 +47,11 @@ public actor CommandsController {
         }
 
         var updateCommandContext = true
+        
+        var successfulCommandsCount = 0
+        
+        var renderToString: [String] = []
+        var lastFlushToDisplayIndex = -1
 
         for command in assistResponse.commands {
             if updateCommandContext {
@@ -67,6 +77,7 @@ public actor CommandsController {
                     await commandContext.append(
                         returnValue: CommandValue(.boolean(v.value)))
                 }
+                successfulCommandsCount += 1
             case .commandParsed(let c):
                 updateCommandContext = true
                 guard let commandDef = await pluginsController.lookup(command: c.name) else {
@@ -101,24 +112,42 @@ public actor CommandsController {
 
                 logger.debug("running command: \(c.name)")
                 try await prepared.run()
+                successfulCommandsCount += 1
             }
+            
+            let returnValues = await commandContext._returnValues
+            for (i, v) in returnValues[(lastFlushToDisplayIndex+1)...].enumerated() {
+                if case .action(.flushToDisplay) = v, i > lastFlushToDisplayIndex {
+                    let stringsSinceLastCommand = returnValues[(lastFlushToDisplayIndex+1)..<i].compactMap {
+                        if case let .commandValue(v) = $0 {
+                            return v.string
+                        }
+                        return nil
+                    }
+                    if stringsSinceLastCommand.count > 0 {
+                        renderToString.append(contentsOf: stringsSinceLastCommand)
+                    }
+                    lastFlushToDisplayIndex = i
+                }
+            }
+            
+            await commandContext.update(
+                partialResult: renderToString.count == 0
+                ? nil : renderToString.joined(separator: "\n"))
         }
         
-        // TODO: process the command context into a renderable result (not async)
-        // If there is nothing to be rendered, transition to idle and close the menu
+        let renderResult = renderToString.count == 0
+            ? nil : renderToString.joined(separator: "\n")
         
-        let returnValues = await commandContext.getReturnValues()
-        
-        if returnValues.count == 0 {
-            return .Success(renderResult: nil)
+        let errors = await commandContext.getErrors()
+        if errors.count > 0 {
+            return .HasErrors(
+                renderResult: renderResult,
+                successfulCommandsCount: successfulCommandsCount,
+                errors: errors)
         }
         
-        let joined = returnValues.compactMap { $0.string }.joined(separator: "\n")
-        #if DEBUG
-        logger.debug("return values are: \n\(joined)")
-        #endif
-
-        return .Success(renderResult: joined)
+        return .Success(renderResult: renderResult)
     }
 
 }
@@ -135,8 +164,10 @@ public actor CommandContext: BashiPlugin.CommandContext {
     nonisolated public let requestContextNumbers: Dictionary<String, Double>
     nonisolated public let requestContextBooleans: Dictionary<String, Bool>
 
-    private var _returnValues: [ReturnValue] = []
+    fileprivate var _returnValues: [ReturnValue] = []
     private var errors: [Error] = []
+    
+    public var partialRenderedResult: String? = nil
 
     public static func from(request: String, requestContext: RequestContext) -> CommandContext {
         var requestContextStrings: Dictionary<String, String> = [:]
@@ -199,6 +230,10 @@ public actor CommandContext: BashiPlugin.CommandContext {
 
     public func append(builtinAction: BashiPlugin.CommandBuiltinAction) async {
         _returnValues.append(.action(builtinAction))
+    }
+    
+    public func update(partialResult: String?) {
+        partialRenderedResult = partialResult
     }
     
     public func getReturnValues() async -> [BashiPlugin.CommandValue] {

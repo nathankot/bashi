@@ -80,6 +80,12 @@ extension AppController {
         case .status400(let e):
             throw AppError.BadConfiguration(e.error)
         case .status200(let success):
+           #if DEBUG
+           let encoder = JSONEncoder()
+           if let d = try? encoder.encode(success) {
+               logger.debug("raw response is: \(String(data: d, encoding: .utf8)!)")
+           }
+           #endif
             await MainActor.run { state.session = success.session }
             return success.session
         }

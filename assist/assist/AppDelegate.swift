@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        appAPI = AppAPI(state: AppState.shared, popover: popover, statusBarItem: statusBarItem)
+        appAPI = AppAPI(popover: popover, statusBarItem: statusBarItem)
         pluginsController = PluginsController(pluginAPI: appAPI)
         commandsController = CommandsController(pluginAPI: appAPI, pluginsController: pluginsController)
         appController = AppController(

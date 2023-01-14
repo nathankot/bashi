@@ -12,12 +12,10 @@ import BashiPlugin
 @MainActor
 class AppAPI : PluginAPI {
     
-    let state: AppState
     let popover: NSPopover
     let statusBarItem: NSStatusItem
     
-    init(state: AppState, popover: NSPopover, statusBarItem: NSStatusItem) {
-        self.state = state
+    init(popover: NSPopover, statusBarItem: NSStatusItem) {
         self.popover = popover
         self.statusBarItem = statusBarItem
     }

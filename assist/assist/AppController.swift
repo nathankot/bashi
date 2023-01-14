@@ -16,7 +16,7 @@ import Combine
 actor AppController {
 
     let state: AppState
-    private let pluginAPI: AppAPI
+    private let appAPI: AppAPI
 
     let audioRecordingController: AudioRecordingController
     let commandsController: CommandsController
@@ -26,7 +26,7 @@ actor AppController {
 
     init(state: AppState, pluginAPI: AppAPI, commandsController: CommandsController) {
         self.state = state
-        self.pluginAPI = pluginAPI
+        self.appAPI = pluginAPI
         self.audioRecordingController = AudioRecordingController()
         self.commandsController = commandsController
     }
@@ -122,11 +122,11 @@ actor AppController {
     }
     
     func showSettings() async {
-        await pluginAPI.showSettings()
+        await appAPI.showSettings()
     }
 
     func quit() async {
-        await pluginAPI.quit()
+        await appAPI.quit()
     }
 }
 

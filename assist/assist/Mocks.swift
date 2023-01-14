@@ -19,6 +19,7 @@ public class MockPluginAPI: PluginAPI {
 }
 
 public class MockPlugin: Plugin {
+    
     public enum ErrorType: Error {
         case mockError
     }
@@ -26,6 +27,8 @@ public class MockPlugin: Plugin {
     public static var id: String = "mockPlugin"
     
     public init() {}
+    
+    public func prepare() async throws {}
 
     public func provideCommands() -> [BashiPlugin.Command] {
         return [

@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 try await self?.pluginsController.loadBuiltinCommands()
                 await self?.appController.prepare()
             } catch {
-                await self?.appController.state.handleError(AppError.AppLaunchError("could not prepare app"))
+                await self?.appController.state.handleError(AppError.AppLaunchError(error))
             }
         }
     }

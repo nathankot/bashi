@@ -14,7 +14,7 @@ import UserNotifications
 import Combine
 
 public indirect enum AppError : Error {
-    case AppLaunchError(String)
+    case AppLaunchError(Error)
     case Internal(String)
     case NoRequestFound
     case UnexpectedTransition(AppState.State, AppState.State)
@@ -104,6 +104,9 @@ public final class AppState : ObservableObject {
     }
 
     public func handleError(_ e: Error) async {
+        #if DEBUG
+        logger.debug("handling error: \(String(reflecting: e))")
+        #endif
         switch e {
         case AppError.UnexpectedTransition(let before, let after):
             logger.error("unexpected transition from \(String(reflecting: before)) to \(String(reflecting: after))")

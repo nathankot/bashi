@@ -7,6 +7,7 @@ import Foundation
 
 @objc public protocol Plugin {
     static var id: String { get }
+    func prepare() async throws
     func provideCommands() -> [Command]
 }
 

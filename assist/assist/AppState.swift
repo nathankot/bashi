@@ -28,7 +28,11 @@ public final class AppState : ObservableObject {
 
     static let shared = AppState()
 
+    #if DEBUG
+    @Published var accountNumber: String = "123"
+    #else
     @AppStorage("accountNumber") var accountNumber: String = ""
+    #endif
     @Published var session: BashiSession? = nil
 
     public enum State {
@@ -36,19 +40,17 @@ public final class AppState : ObservableObject {
         case Recording(bestTranscription: String?)
         case Processing(commandContext: CommandContext)
         case Confirm(commandContext: CommandContext, confirmationMessage: String)
-        case Success(commandContext: CommandContext, String)
+        case Success(renderedResult: String)
         case Error(AppError)
     }
 
     @Published public private(set) var state: State = .Idle
 
-    public convenience init() {
+    public init(accountNumber: String? = nil) {
         logger.info("initializing app state")
-        self.init(accountNumber: "")
-    }
-
-    public init(accountNumber: String) {
-        self.accountNumber = accountNumber
+        if let an = accountNumber {
+            self.accountNumber = an
+        }
     }
 
     private func canTransition(newState: State) -> Bool {
@@ -57,6 +59,7 @@ public final class AppState : ObservableObject {
              (.Idle, .Processing),
              (.Recording, .Recording),
              (.Recording, .Processing),
+             (.Processing, .Processing),
              (.Processing, .Confirm),
              (.Processing, .Success),
              (.Confirm, .Idle),

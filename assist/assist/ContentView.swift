@@ -7,6 +7,7 @@
 
 import os
 import SwiftUI
+import KeyboardShortcuts
 
 struct ContentView: View {
     @ObservedObject var state: AppState
@@ -30,15 +31,35 @@ struct ContentView: View {
                     .frame(maxWidth: 30)
             }
 
+            let pushToTalkShortcut = KeyboardShortcuts.getShortcut(for: .pushToTalk)
+
             Spacer()
             if state.accountNumber == "" {
-                Text("Provide your account number first.")
-                    .font(.callout)
+                Text("Provide your account number first.").font(.callout)
                 Button("Open settings", action: showSettings)
             } else {
                 switch state.state {
                 case .Idle:
-                    Text("Idle")
+                    if let k = pushToTalkShortcut {
+                        Text("Hold \(k.description) to push-to-talk").font(.callout)
+                    } else {
+                        Text("Set up a shortcut key for push-to-talk").font(.callout)
+                        Button("Open settings", action: showSettings)
+                    }
+                case .Recording(bestTranscription: let s):
+                    Text("Listening...").font(.callout)
+                    Text(s ?? "")
+                case .Processing(commandContext: let c):
+                    Text("Processing...").font(.callout)
+                    Text(c.request)
+                case .Success(let r):
+                    Text(r)
+                case .Error(let e):
+                    switch e {
+                    default:
+                        Text("Unexpected error. Please try again.")
+                    }
+                    Button("Dismiss", action: dismissError)
                 default:
                     Text("Unsupported state: \(String(reflecting: state.state))")
                 }
@@ -46,9 +67,13 @@ struct ContentView: View {
             Spacer()
         }
             .padding()
-            .frame(minHeight: 200)
+            .frame(maxWidth: 300, minHeight: 200)
     }
 
+    func dismissError() {
+        Task { await controller?.dismissError() }
+    }
+    
     func showSettings() {
         Task { await controller?.showSettings() }
     }

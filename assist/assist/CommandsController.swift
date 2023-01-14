@@ -18,6 +18,10 @@ public actor CommandsController {
         case commandNotConfirmed(latestCommandContext: CommandContext)
         case mismatchArgs(String)
     }
+    
+    public enum HandleResult {
+        case Success(renderResult: String?)
+    }
 
     let pluginAPI: PluginAPI
     let pluginsController: PluginsController
@@ -32,7 +36,7 @@ public actor CommandsController {
         commandContext: CommandContext,
         onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
         confirmationHandler: (String) async -> Bool
-    ) async throws -> CommandContext {
+    ) async throws -> HandleResult {
         if let missingRequestContext = assistResponse.missingRequestContext {
             throw AppError.Internal("fulfillment of missing request context not yet implemented: \(missingRequestContext)")
         }
@@ -66,6 +70,7 @@ public actor CommandsController {
             case .commandParsed(let c):
                 updateCommandContext = true
                 guard let commandDef = await pluginsController.lookup(command: c.name) else {
+                    logger.debug("command not found: \(c.name)")
                     await commandContext.append(error: CommandError.commandNotFound(c.name))
                     continue
                 }
@@ -94,11 +99,26 @@ public actor CommandsController {
                     }
                 }
 
+                logger.debug("running command: \(c.name)")
                 try await prepared.run()
             }
         }
+        
+        // TODO: process the command context into a renderable result (not async)
+        // If there is nothing to be rendered, transition to idle and close the menu
+        
+        let returnValues = await commandContext.getReturnValues()
+        
+        if returnValues.count == 0 {
+            return .Success(renderResult: nil)
+        }
+        
+        let joined = returnValues.compactMap { $0.string }.joined(separator: "\n")
+        #if DEBUG
+        logger.debug("return values are: \n\(joined)")
+        #endif
 
-        return commandContext
+        return .Success(renderResult: joined)
     }
 
 }

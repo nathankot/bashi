@@ -54,6 +54,9 @@ actor AppController {
     }
 
     func startRecording() async {
+        if await state.accountNumber.isEmpty {
+            return
+        }
         do {
             let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
                 let transcriptions = try await audioRecordingController.startRecording()
@@ -91,7 +94,7 @@ actor AppController {
                 return try await assist(request: bestTranscription, requestContext: requestContext)
             }
 
-            let finalCommandContext = try await commandsController.handle(
+            let handleResult = try await commandsController.handle(
                 assistResponse: modelOutput,
                 commandContext: commandContext,
                 onUpdatedContext: { [weak self] commandContext in
@@ -101,14 +104,23 @@ actor AppController {
                 // TODO support confirmation
                 true
             }
-
-            await debugPrint(finalCommandContext.getReturnValues())
-            try await state.transition(newState: .Success(commandContext: finalCommandContext, "blah"))
+            
+            switch handleResult {
+            case .Success(renderResult: nil):
+                try await state.transition(newState: .Idle)
+            case .Success(renderResult: let s):
+                try await state.transition(newState: .Success(renderedResult: s!))
+            }
+            
         } catch {
             await state.handleError(error)
         }
     }
 
+    func dismissError() async {
+        try? await state.transition(newState: .Idle)
+    }
+    
     func showSettings() async {
         await pluginAPI.showSettings()
     }

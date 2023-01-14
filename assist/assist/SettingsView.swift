@@ -17,7 +17,7 @@ struct SettingsView: View {
     @State var accountNumber = ""
     @State var accountNumberInvalid = false
     @State var isSaving = false
-    
+
     var overrideAccountNumberInvalid = false
 
     init(state s: AppState, overrideAccountNumberInvalid: Bool = false) {
@@ -28,37 +28,27 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section(content: {
-                TextField("Account Number", text: $accountNumber)
-                if accountNumberInvalid || overrideAccountNumberInvalid {
-                    Text("Account number is invalid")
-                        .foregroundColor(.red)
-                        .font(.caption)
-                }
-                Button("Create account number") {
-
-                }
-            }, header: {
-                    Text("Authentication")
-                        .font(Font.system(.title2))
-                })
-                .padding(.bottom)
+            TextField("Account Number", text: $accountNumber)
                 .onChange(of: state.accountNumber) {
-                accountNumber = $0
-            }
-
-            Section {
-                KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)
-                Text("Hold this shortcut key to enable the microphone, release to send the request.")
+                    accountNumber = $0
+                }
+            if accountNumberInvalid || overrideAccountNumberInvalid {
+                Text("Account number is invalid")
+                    .foregroundColor(.red)
                     .font(.caption)
-            } header: {
-                Text("Keyboard Shortcuts")
-                    .font(Font.system(.title2))
             }
-                .padding(.bottom)
+            Button("Create account number") {
+            }
+            
+            Spacer(minLength: 30)
 
+            KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)
+            Text("Hold this shortcut key to enable the microphone, release to send the request.")
+                .font(.caption)
+
+            Spacer(minLength: 30)
+            
             HStack {
-                Spacer()
                 Button("Save") {
                     Task { await save() }
                 }

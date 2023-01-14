@@ -35,6 +35,12 @@ extension AppController {
        case .status400(let e):
            throw AppError.BadConfiguration(e.error)
        case .status200(let response):
+           #if DEBUG
+           let encoder = JSONEncoder()
+           if let d = try? encoder.encode(response) {
+               logger.debug("raw response is: \(String(data: d, encoding: .utf8)!)")
+           }
+           #endif
            return response
        }
     }

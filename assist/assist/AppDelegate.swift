@@ -32,7 +32,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         popover.animates = true
-        popover.behavior = .applicationDefined
+//        popover.behavior = .applicationDefined
+        popover.behavior = .transient
         if let button = self.statusBarItem.button {
             button.image = NSImage(systemSymbolName: "heart", accessibilityDescription: "assist")
             button.action = #selector(togglePopover(_:))

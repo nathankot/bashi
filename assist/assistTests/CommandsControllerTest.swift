@@ -39,7 +39,7 @@ final class CommandsControllerTest: XCTestCase {
     }
 
     func testCommandsHandle() async throws {
-        let resultContext = try await commandsController.handle(
+        let result = try await commandsController.handle(
             assistResponse: .init(
                 model: .assist000,
                 request: "some request",
@@ -52,8 +52,12 @@ final class CommandsControllerTest: XCTestCase {
             commandContext: .init(request: "blah")
         ) { confirmationMessage in true }
 
-        let returnValues = await resultContext.getReturnValues().map({ $0.string ?? "" })
-        XCTAssertEqual(returnValues, ["some result B"])
+        switch result {
+        case .Success(renderResult: let r):
+            XCTAssertEqual(r, "some result B")
+        default:
+            XCTFail("expected a success result")
+        }
         XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
     }
 
@@ -92,7 +96,7 @@ final class CommandsControllerTest: XCTestCase {
                 throw e
             }
         }
-        
+
         await waitForExpectations(timeout: 2)
     }
 
@@ -123,10 +127,10 @@ final class CommandsControllerTest: XCTestCase {
                 throw e
             }
         }
-        
+
         await waitForExpectations(timeout: 2)
     }
-    
+
     func testWrongArgumentNumberOfArguments() async throws {
         let expectation = expectation(description: "should throw err")
         do {
@@ -154,7 +158,7 @@ final class CommandsControllerTest: XCTestCase {
                 throw e
             }
         }
-        
+
         await waitForExpectations(timeout: 2)
     }
 

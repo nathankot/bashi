@@ -16,6 +16,7 @@ public actor CommandsController {
         case commandParseError(String)
         case commandNotFound(String)
         case commandNotConfirmed(latestCommandContext: CommandContext)
+        case commandCouldNotBePrepared(name: String)
         case mismatchArgs(String)
     }
     
@@ -108,7 +109,7 @@ public actor CommandsController {
                     args: args,
                     argsParsed: argsParsed
                 ) else {
-                    continue
+                    throw CommandError.commandCouldNotBePrepared(name: commandDef.name)
                 }
                 if !prepared.shouldSkipConfirmation {
                     let confirmed = await confirmationHandler(prepared.confirmationMessage)

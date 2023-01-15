@@ -94,6 +94,13 @@ import Foundation
             self.type = .number
         }
     }
+    
+    public var maybeAsDate: Date? {
+        guard let s = string else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions.insert(.withFractionalSeconds)
+        return formatter.date(from: s)
+    }
 }
 
 @objc public protocol Command {

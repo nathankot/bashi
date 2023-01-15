@@ -5,8 +5,13 @@ import { interceptCommand } from "./interceptCommand.ts";
 const interceptor = interceptCommand(
   "math",
   async ({ log, session }, input, [expr]) => {
-    const result = mathjs.evaluate(expr.value);
-    return { type: "string", value: `${result satisfies string}` };
+    try {
+      const result = mathjs.evaluate(expr.value);
+      return { type: "string", value: `${result satisfies string}` };
+    } catch {
+      log("info", "failed to parse math: " + expr.value);
+      return null;
+    }
   }
 );
 

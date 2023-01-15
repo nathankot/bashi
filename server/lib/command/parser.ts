@@ -11,12 +11,14 @@ import {
 
 import { LogFn } from "@lib/log.ts";
 
+import { Value } from "@lib/valueTypes.ts";
 import argumentParsers from "./argumentParsers.ts";
 
 import {
   Command,
   CommandSet,
   CommandDefinition,
+  CommandParsed,
   Argument,
 } from "./types.ts";
 
@@ -146,6 +148,8 @@ export function evaluate(expr: string): Command & { type: "parsed" } {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
 }
 
+type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
+
 export function parseFromModelResult(
   {
     log,
@@ -209,13 +213,19 @@ export function parseFromModelResult(
                 `expected parser input to be ${argParser.inputType} got ${value.type}`
               );
             }
+            let v: Value | null = argParser.fn(
+              { now, chronoParseDate: parseDate },
+              value.value
+            );
+
+            if (v == null) {
+              return a;
+            }
+
             return {
               ...a,
-              [e]: argParser.fn(
-                { now, chronoParseDate: parseDate },
-                value.value
-              ),
-            };
+              [e]: v,
+            } satisfies ArgParsed;
           } catch (e) {
             log("error", e);
             return a;

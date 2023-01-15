@@ -1,5 +1,6 @@
 import * as t from "io-ts";
 
+import { StringValue } from "@lib/valueTypes.ts";
 export { Value as Argument } from "@lib/valueTypes.ts";
 
 export type ArgumentParserContext = {
@@ -11,12 +12,15 @@ export const argumentParsers = {
   naturalLanguageDateTime: {
     inputType: "string" as const,
     outputType: "string" as const,
-    fn: function (ctx: ArgumentParserContext, arg: string): null | string {
+    fn: function (ctx: ArgumentParserContext, arg: string): null | StringValue {
       const d = ctx.chronoParseDate(arg, ctx.now);
       if (d == null) {
         return null;
       }
-      return d.toISOString();
+      return {
+        type: "string",
+        value: d.toISOString(),
+      };
     },
   },
 };

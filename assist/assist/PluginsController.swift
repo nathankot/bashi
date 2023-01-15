@@ -41,11 +41,17 @@ public actor PluginsController {
         }
         for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
             if f.hasSuffix(".plugin") {
-                try await loadPlugin(fromBundle: url.appendingPathComponent(f))
+                do {
+                    try await loadPlugin(fromBundle: url.appendingPathComponent(f))
+                } catch {
+                    if f.hasSuffix(BUILTIN_COMMANDS_PLUGIN_ID + ".plugin") {
+                        throw error
+                    }
+                    logger.error("could not load plugin at: \(url.path)")
+                }
             }
         }
     }
-    
     
     internal func loadPlugin(fromBundle bundlePath: URL) async throws {
         guard let bundle = Bundle.init(url: bundlePath) else {

@@ -32,7 +32,7 @@ public class MockPlugin: Plugin {
 
     public func provideCommands() -> [BashiPlugin.Command] {
         return [
-            AnonymousCommand(name: "mock_command", description: "do some thing") { api, ctx, _ in
+            AnonymousCommand(name: "mock_command", description: "do some thing") { api, ctx, _, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: false,
                     confirmationMessage: "some confirmation message",
@@ -41,7 +41,7 @@ public class MockPlugin: Plugin {
                         await ctx.append(returnValue: CommandValue(.string("some result B")))
                     })
             },
-            AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args in
+            AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
@@ -50,7 +50,7 @@ public class MockPlugin: Plugin {
                         await ctx.append(returnValue: CommandValue(.string("some result D")))
                     })
             },
-            AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args in
+            AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
@@ -60,7 +60,7 @@ public class MockPlugin: Plugin {
                 name: "mock_command_return_argument",
                 description: "do some thing",
                 args: [.init(type: .string, name: "any string")]
-            ) { api, ctx, args in
+            ) { api, ctx, args, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: false,
                     confirmationMessage: "confirm?",
@@ -71,7 +71,7 @@ public class MockPlugin: Plugin {
                         api.setResultForTesting?(text: "some result E")
                     })
             },
-            AnonymousCommand(name: "flush", description: "flush to display") { api, ctx, _ in
+            AnonymousCommand(name: "flush", description: "flush to display") { api, ctx, _, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",

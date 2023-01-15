@@ -95,11 +95,18 @@ public actor CommandsController {
                     let type = invalidArgs.first?.0.type.asString() ?? "<unknown>"
                     throw CommandError.mismatchArgs("the argument '\(name)' expects a \(type)")
                 }
+                
+                let argsParsed = c.argsParsed?.map { $0.mapValues { CommandValue.init(from: $0) } }
+                if let argsParsed = argsParsed, commandDef.args.count != argsParsed.count {
+                    throw CommandError.mismatchArgs(
+                        "command expects \(commandDef.args.count) args but got \(args.count) parsed args")
+                }
 
                 guard let prepared = commandDef.prepare(
                     api: pluginAPI,
                     context: commandContext,
-                    args: args
+                    args: args,
+                    argsParsed: argsParsed
                 ) else {
                     continue
                 }

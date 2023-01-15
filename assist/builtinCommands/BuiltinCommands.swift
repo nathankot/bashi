@@ -7,12 +7,16 @@
 
 import Foundation
 import BashiPlugin
+import EventKit
 
 public class BuiltinCommands: BundledPlugin {
+
     static public var id: String = "builtinCommands"
     static public func makeBashiPlugin(api: PluginAPI) -> Plugin {
         return BuiltinCommands()
     }
+
+    public func prepare() async throws {}
 
     public func provideCommands() -> [Command] {
         return [
@@ -20,7 +24,7 @@ public class BuiltinCommands: BundledPlugin {
                 name: "answer",
                 description: "<builtin>",
                 args: [.init(type: .string, name: "the answer")],
-                prepareFn: { api, ctx, args in
+                prepareFn: { api, ctx, args, _ in
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
@@ -32,7 +36,17 @@ public class BuiltinCommands: BundledPlugin {
             AnonymousCommand(
                 name: "flushToSpeech",
                 description: "<builtin>",
-                prepareFn: { api, ctx, args in
+                prepareFn: { api, ctx, args, _ in
+                    AnonymousPreparedCommand(
+                        shouldSkipConfirmation: true,
+                        confirmationMessage: "") {
+                        await ctx.append(builtinAction: .flushToDisplay)
+                    }
+                }),
+            AnonymousCommand(
+                name: "flushToText",
+                description: "<builtin>",
+                prepareFn: { api, ctx, args, _ in
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {

@@ -101,7 +101,12 @@ import Foundation
     var description: String { get }
     var args: [CommandArgDef] { get }
     var triggerTokens: [String]? { get }
-    func prepare(api: PluginAPI, context: CommandContext, args: [CommandValue]) -> PreparedCommand?
+    func prepare(
+        api: PluginAPI,
+        context: CommandContext,
+        args: [CommandValue],
+        argsParsed: [Dictionary<String, CommandValue>]?
+    ) -> PreparedCommand?
 }
 
 @objc public protocol PreparedCommand {
@@ -155,14 +160,24 @@ public class AnonymousCommand: Command {
     public let description: String
     public let args: [CommandArgDef]
     public let triggerTokens: [String]?
-    private let prepareFn: (PluginAPI, CommandContext, [CommandValue]) -> PreparedCommand?
+    private let prepareFn: (
+        PluginAPI,
+        CommandContext,
+        [CommandValue],
+        [Dictionary<String, CommandValue>]?
+    ) -> PreparedCommand?
 
     public init(
         name: String,
         description: String,
         args: [CommandArgDef] = [],
         triggerTokens: [String]? = nil,
-        prepareFn: @escaping (PluginAPI, CommandContext, [CommandValue]) -> PreparedCommand?
+        prepareFn: @escaping (
+            PluginAPI,
+            CommandContext,
+            [CommandValue],
+            [Dictionary<String, CommandValue>]?
+        ) -> PreparedCommand?
     ) {
         self.name = name
         self.description = description
@@ -171,8 +186,13 @@ public class AnonymousCommand: Command {
         self.prepareFn = prepareFn
     }
 
-    public func prepare(api: PluginAPI, context: CommandContext, args: [CommandValue]) -> PreparedCommand? {
-        return prepareFn(api, context, args)
+    public func prepare(
+        api: PluginAPI,
+        context: CommandContext,
+        args: [CommandValue],
+        argsParsed: [Dictionary<String, CommandValue>]?
+    ) -> PreparedCommand? {
+        return prepareFn(api, context, args, argsParsed)
     }
 }
 

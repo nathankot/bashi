@@ -8,6 +8,9 @@
       location = "group:BashiPlugin">
    </FileRef>
    <FileRef
+      location = "group:calendarCommands/calendarCommands.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:builtinCommands/builtinCommands.xcodeproj">
    </FileRef>
    <FileRef

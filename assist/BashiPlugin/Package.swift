@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "BashiPlugin",
     platforms: [
-        .macOS(.v10_15),
+        .macOS(.v11),
         .iOS(.v11),
         .tvOS(.v11),
         .watchOS(.v4)

@@ -4,7 +4,6 @@ import { equal } from "std/testing/asserts.ts";
 import { OpenAPIV3 } from "openapi-types";
 
 import { models } from "@lib/models.ts";
-import { Configuration } from "@lib/session/configuration.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 
@@ -403,9 +402,6 @@ for (const [modelName, model] of Object.entries(models)) {
     `#/components/schemas/models_${modelName}_Configuration`
   ] = toJSONSchema(model.Configuration);
 }
-
-namedJSONSchemaObjects["#/components/schemas/SessionConfiguration"] =
-  toJSONSchema(Configuration);
 
 namedJSONSchemaObjects["#/components/schemas/Session"] =
   toJSONSchema(SessionPublic);

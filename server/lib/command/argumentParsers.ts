@@ -1,11 +1,13 @@
 import * as t from "io-ts";
+import { parseDate } from "chrono";
 
 import { StringValue } from "@lib/valueTypes.ts";
 export { Value as Argument } from "@lib/valueTypes.ts";
 
 export type ArgumentParserContext = {
   now: Date;
-  chronoParseDate: (str: string, ref?: Date) => null | Date;
+  chronoParseDate: typeof parseDate;
+  timezoneUtcOffset: number;
 };
 
 export const argumentParsers = {
@@ -13,7 +15,10 @@ export const argumentParsers = {
     inputType: "string" as const,
     outputType: "string" as const,
     fn: function (ctx: ArgumentParserContext, arg: string): null | StringValue {
-      const d = ctx.chronoParseDate(arg, ctx.now);
+      const d = ctx.chronoParseDate(arg, {
+        instant: ctx.now,
+        timezone: ctx.timezoneUtcOffset,
+      });
       if (d == null) {
         return null;
       }

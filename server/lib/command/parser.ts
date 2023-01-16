@@ -1,5 +1,6 @@
 import * as p from "typescript-parsec";
 import { parseDate } from "chrono";
+import type { Configuration } from "@lib/session.ts";
 
 import {
   Token,
@@ -155,10 +156,12 @@ export function parseFromModelResult(
     log,
     now,
     knownCommands,
+    sessionConfiguration,
   }: {
     log: LogFn;
     now: Date;
     knownCommands: CommandSet;
+    sessionConfiguration: Configuration;
   },
   text: string
 ): Command[] {
@@ -214,7 +217,11 @@ export function parseFromModelResult(
               );
             }
             let v: Value | null = argParser.fn(
-              { now, chronoParseDate: parseDate },
+              {
+                now,
+                chronoParseDate: parseDate,
+                timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
+              },
               value.value
             );
 

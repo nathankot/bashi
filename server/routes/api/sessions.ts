@@ -21,7 +21,7 @@ export const POSTRequest = t.intersection([
     modelConfigurations: SessionPublic.props.modelConfigurations,
   }),
   t.partial({
-    configuration: SessionPublic.props.configuration,
+    configuration: t.partial(SessionPublic.props.configuration.props),
   }),
 ]);
 export type POSTRequest = t.TypeOf<typeof POSTRequest>;

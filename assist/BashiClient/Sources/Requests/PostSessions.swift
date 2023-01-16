@@ -19,7 +19,7 @@ extension BashiClient {
 
                 public var modelConfigurations: ModelConfigurations
 
-                public var configuration: SessionConfiguration?
+                public var configuration: Configuration?
 
                 /** TODO */
                 public class ModelConfigurations: APIModel {
@@ -83,7 +83,77 @@ extension BashiClient {
                     }
                 }
 
-                public init(modelConfigurations: ModelConfigurations, configuration: SessionConfiguration? = nil) {
+                /** TODO */
+                public class Configuration: APIModel {
+
+                    /** TODO */
+                    public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+                        case answer = "answer"
+                        case math = "math"
+                        case time = "time"
+                        case editProse = "editProse"
+                        case editCode = "editCode"
+                        case generateCode = "generateCode"
+                        case translate = "translate"
+                        case fail = "fail"
+                        case flushToSpeech = "flushToSpeech"
+                        case flushToText = "flushToText"
+                    }
+
+                    public var bestOf: Double?
+
+                    public var disabledBuiltinCommands: [DisabledBuiltinCommands]?
+
+                    public var locale: String?
+
+                    public var maxResponseTokens: Double?
+
+                    public var timezoneUtcOffset: Double?
+
+                    public init(bestOf: Double? = nil, disabledBuiltinCommands: [DisabledBuiltinCommands]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
+                        self.bestOf = bestOf
+                        self.disabledBuiltinCommands = disabledBuiltinCommands
+                        self.locale = locale
+                        self.maxResponseTokens = maxResponseTokens
+                        self.timezoneUtcOffset = timezoneUtcOffset
+                    }
+
+                    public required init(from decoder: Decoder) throws {
+                        let container = try decoder.container(keyedBy: StringCodingKey.self)
+
+                        bestOf = try container.decodeIfPresent("bestOf")
+                        disabledBuiltinCommands = try container.decodeArrayIfPresent("disabledBuiltinCommands")
+                        locale = try container.decodeIfPresent("locale")
+                        maxResponseTokens = try container.decodeIfPresent("maxResponseTokens")
+                        timezoneUtcOffset = try container.decodeIfPresent("timezoneUtcOffset")
+                    }
+
+                    public func encode(to encoder: Encoder) throws {
+                        var container = encoder.container(keyedBy: StringCodingKey.self)
+
+                        try container.encodeIfPresent(bestOf, forKey: "bestOf")
+                        try container.encodeIfPresent(disabledBuiltinCommands, forKey: "disabledBuiltinCommands")
+                        try container.encodeIfPresent(locale, forKey: "locale")
+                        try container.encodeIfPresent(maxResponseTokens, forKey: "maxResponseTokens")
+                        try container.encodeIfPresent(timezoneUtcOffset, forKey: "timezoneUtcOffset")
+                    }
+
+                    public func isEqual(to object: Any?) -> Bool {
+                      guard let object = object as? Configuration else { return false }
+                      guard self.bestOf == object.bestOf else { return false }
+                      guard self.disabledBuiltinCommands == object.disabledBuiltinCommands else { return false }
+                      guard self.locale == object.locale else { return false }
+                      guard self.maxResponseTokens == object.maxResponseTokens else { return false }
+                      guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
+                      return true
+                    }
+
+                    public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+                        return lhs.isEqual(to: rhs)
+                    }
+                }
+
+                public init(modelConfigurations: ModelConfigurations, configuration: Configuration? = nil) {
                     self.modelConfigurations = modelConfigurations
                     self.configuration = configuration
                 }

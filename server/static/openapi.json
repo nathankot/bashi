@@ -57,7 +57,39 @@
                     }
                   },
                   "configuration": {
-                    "$ref": "#/components/schemas/SessionConfiguration"
+                    "type": "object",
+                    "properties": {
+                      "locale": {
+                        "type": "string"
+                      },
+                      "timezoneUtcOffset": {
+                        "type": "number"
+                      },
+                      "maxResponseTokens": {
+                        "type": "number"
+                      },
+                      "bestOf": {
+                        "type": "number"
+                      },
+                      "disabledBuiltinCommands": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "answer",
+                            "math",
+                            "time",
+                            "editProse",
+                            "editCode",
+                            "generateCode",
+                            "translate",
+                            "fail",
+                            "flushToSpeech",
+                            "flushToText"
+                          ],
+                          "type": "string"
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -1089,44 +1121,6 @@
           }
         }
       },
-      "SessionConfiguration": {
-        "type": "object",
-        "required": [
-          "locale",
-          "maxResponseTokens",
-          "bestOf",
-          "disabledBuiltinCommands"
-        ],
-        "properties": {
-          "locale": {
-            "type": "string"
-          },
-          "maxResponseTokens": {
-            "type": "number"
-          },
-          "bestOf": {
-            "type": "number"
-          },
-          "disabledBuiltinCommands": {
-            "type": "array",
-            "items": {
-              "enum": [
-                "answer",
-                "math",
-                "time",
-                "editProse",
-                "editCode",
-                "generateCode",
-                "translate",
-                "fail",
-                "flushToSpeech",
-                "flushToText"
-              ],
-              "type": "string"
-            }
-          }
-        }
-      },
       "Session": {
         "type": "object",
         "required": [
@@ -1148,7 +1142,46 @@
             "format": "date-time"
           },
           "configuration": {
-            "$ref": "#/components/schemas/SessionConfiguration"
+            "type": "object",
+            "required": [
+              "locale",
+              "timezoneUtcOffset",
+              "maxResponseTokens",
+              "bestOf",
+              "disabledBuiltinCommands"
+            ],
+            "properties": {
+              "locale": {
+                "type": "string"
+              },
+              "timezoneUtcOffset": {
+                "type": "number"
+              },
+              "maxResponseTokens": {
+                "type": "number"
+              },
+              "bestOf": {
+                "type": "number"
+              },
+              "disabledBuiltinCommands": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "answer",
+                    "math",
+                    "time",
+                    "editProse",
+                    "editCode",
+                    "generateCode",
+                    "translate",
+                    "fail",
+                    "flushToSpeech",
+                    "flushToText"
+                  ],
+                  "type": "string"
+                }
+              }
+            }
           },
           "modelConfigurations": {
             "type": "object",

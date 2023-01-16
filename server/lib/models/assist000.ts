@@ -137,6 +137,7 @@ export async function run(
         log,
         now: modelDeps.now(),
         knownCommands: commandSet,
+        sessionConfiguration: modelDeps.session.configuration,
       },
       text
     );

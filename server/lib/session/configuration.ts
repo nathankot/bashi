@@ -5,6 +5,7 @@ import builtinCommands from "@lib/command/builtinCommands.ts";
 
 export const Configuration = t.type({
   locale: t.string,
+  timezoneUtcOffset: t.number,
   maxResponseTokens: t.number,
   bestOf: t.number,
   disabledBuiltinCommands: t.array(t.keyof(builtinCommands)),
@@ -17,4 +18,5 @@ export const defaultConfiguration: Configuration = {
   maxResponseTokens: DEFAULT_MAX_RESPONSE_TOKENS,
   bestOf: 2,
   disabledBuiltinCommands: [],
+  timezoneUtcOffset: 0,
 };

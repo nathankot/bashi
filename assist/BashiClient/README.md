@@ -182,7 +182,6 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **NumberValueRequirement**
 - **RequestContext**
 - **RequestContextRequirement**
-- **SessionConfiguration**
 - **StringValue**
 - **StringValueRequirement**
 - **Value**

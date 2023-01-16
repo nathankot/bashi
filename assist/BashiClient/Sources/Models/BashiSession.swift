@@ -13,9 +13,77 @@ public class BashiSession: APIModel {
 
     public var expiresAt: DateTime
 
-    public var configuration: SessionConfiguration
+    public var configuration: Configuration
 
     public var modelConfigurations: ModelConfigurations
+
+    public class Configuration: APIModel {
+
+        public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+            case answer = "answer"
+            case math = "math"
+            case time = "time"
+            case editProse = "editProse"
+            case editCode = "editCode"
+            case generateCode = "generateCode"
+            case translate = "translate"
+            case fail = "fail"
+            case flushToSpeech = "flushToSpeech"
+            case flushToText = "flushToText"
+        }
+
+        public var locale: String
+
+        public var timezoneUtcOffset: Double
+
+        public var maxResponseTokens: Double
+
+        public var bestOf: Double
+
+        public var disabledBuiltinCommands: [DisabledBuiltinCommands]
+
+        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, disabledBuiltinCommands: [DisabledBuiltinCommands]) {
+            self.locale = locale
+            self.timezoneUtcOffset = timezoneUtcOffset
+            self.maxResponseTokens = maxResponseTokens
+            self.bestOf = bestOf
+            self.disabledBuiltinCommands = disabledBuiltinCommands
+        }
+
+        public required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: StringCodingKey.self)
+
+            locale = try container.decode("locale")
+            timezoneUtcOffset = try container.decode("timezoneUtcOffset")
+            maxResponseTokens = try container.decode("maxResponseTokens")
+            bestOf = try container.decode("bestOf")
+            disabledBuiltinCommands = try container.decodeArray("disabledBuiltinCommands")
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: StringCodingKey.self)
+
+            try container.encode(locale, forKey: "locale")
+            try container.encode(timezoneUtcOffset, forKey: "timezoneUtcOffset")
+            try container.encode(maxResponseTokens, forKey: "maxResponseTokens")
+            try container.encode(bestOf, forKey: "bestOf")
+            try container.encode(disabledBuiltinCommands, forKey: "disabledBuiltinCommands")
+        }
+
+        public func isEqual(to object: Any?) -> Bool {
+          guard let object = object as? Configuration else { return false }
+          guard self.locale == object.locale else { return false }
+          guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
+          guard self.maxResponseTokens == object.maxResponseTokens else { return false }
+          guard self.bestOf == object.bestOf else { return false }
+          guard self.disabledBuiltinCommands == object.disabledBuiltinCommands else { return false }
+          return true
+        }
+
+        public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.isEqual(to: rhs)
+        }
+    }
 
     public class ModelConfigurations: APIModel {
 
@@ -78,7 +146,7 @@ public class BashiSession: APIModel {
         }
     }
 
-    public init(accountNumber: String, sessionId: String, expiresAt: DateTime, configuration: SessionConfiguration, modelConfigurations: ModelConfigurations) {
+    public init(accountNumber: String, sessionId: String, expiresAt: DateTime, configuration: Configuration, modelConfigurations: ModelConfigurations) {
         self.accountNumber = accountNumber
         self.sessionId = sessionId
         self.expiresAt = expiresAt

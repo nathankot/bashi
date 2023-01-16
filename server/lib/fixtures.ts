@@ -69,6 +69,7 @@ export const session: Session = {
     maxResponseTokens: 1000,
     bestOf: 1,
     disabledBuiltinCommands: [],
+    timezoneUtcOffset: 0,
   },
   modelConfigurations: {
     "assist-000": {

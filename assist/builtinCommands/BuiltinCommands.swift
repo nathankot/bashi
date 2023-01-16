@@ -34,23 +34,13 @@ public class BuiltinCommands: BundledPlugin {
                     }
                 }),
             AnonymousCommand(
-                name: "flushToSpeech",
+                name: "display",
                 description: "<builtin>",
                 prepareFn: { api, ctx, args, _ in
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
-                        await ctx.append(builtinAction: .flushToDisplay)
-                    }
-                }),
-            AnonymousCommand(
-                name: "flushToText",
-                description: "<builtin>",
-                prepareFn: { api, ctx, args, _ in
-                    AnonymousPreparedCommand(
-                        shouldSkipConfirmation: true,
-                        confirmationMessage: "") {
-                        await ctx.append(builtinAction: .flushToDisplay)
+                        await ctx.append(builtinAction: .display)
                     }
                 })
         ]

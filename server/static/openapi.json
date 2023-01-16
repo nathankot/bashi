@@ -75,6 +75,8 @@
                         "type": "array",
                         "items": {
                           "enum": [
+                            "display",
+                            "write",
                             "answer",
                             "math",
                             "time",
@@ -82,9 +84,7 @@
                             "editCode",
                             "generateCode",
                             "translate",
-                            "fail",
-                            "flushToSpeech",
-                            "flushToText"
+                            "fail"
                           ],
                           "type": "string"
                         }
@@ -1167,6 +1167,8 @@
                 "type": "array",
                 "items": {
                   "enum": [
+                    "display",
+                    "write",
                     "answer",
                     "math",
                     "time",
@@ -1174,9 +1176,7 @@
                     "editCode",
                     "generateCode",
                     "translate",
-                    "fail",
-                    "flushToSpeech",
-                    "flushToText"
+                    "fail"
                   ],
                   "type": "string"
                 }

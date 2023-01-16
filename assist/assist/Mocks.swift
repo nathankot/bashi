@@ -71,12 +71,12 @@ public class MockPlugin: Plugin {
                         api.setResultForTesting?(text: "some result E")
                     })
             },
-            AnonymousCommand(name: "flush", description: "flush to display") { api, ctx, _, _ in
+            AnonymousCommand(name: "display", description: "flush to display") { api, ctx, _, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
                     runFn: {
-                        await ctx.append(builtinAction: .flushToDisplay)
+                        await ctx.append(builtinAction: .display)
                     })
             },
         ]

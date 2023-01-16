@@ -30,7 +30,7 @@ import Foundation
 }
 
 @objc public enum CommandBuiltinAction: Int, Equatable {
-    case flushToDisplay
+    case display
 }
 
 @objc public enum CommandArgParser: Int, Equatable {

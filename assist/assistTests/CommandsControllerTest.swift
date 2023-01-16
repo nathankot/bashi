@@ -47,7 +47,7 @@ final class CommandsControllerTest: XCTestCase {
                 request: "some request",
                 commands: [
                         .commandParsed(.init(line: "", type: .parsed, name: "mock_command", args: [])),
-                        .commandParsed(.init(line: "", type: .parsed, name: "flush", args: []))
+                        .commandParsed(.init(line: "", type: .parsed, name: "display", args: []))
                 ]),
             commandContext: .init(request: "blah")
         ) { confirmationMessage in true }

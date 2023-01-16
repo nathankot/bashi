@@ -125,7 +125,7 @@ public actor CommandsController {
             
             let returnValues = await commandContext._returnValues
             for (i, v) in returnValues[(lastFlushToDisplayIndex+1)...].enumerated() {
-                if case .action(.flushToDisplay) = v, i > lastFlushToDisplayIndex {
+                if case .action(.display) = v, i > lastFlushToDisplayIndex {
                     let stringsSinceLastCommand = returnValues[(lastFlushToDisplayIndex+1)..<i].compactMap {
                         if case let .commandValue(v) = $0 {
                             return v.string

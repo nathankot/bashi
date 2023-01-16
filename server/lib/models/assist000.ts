@@ -210,18 +210,18 @@ export async function run(
 function makePrompt(commands: CommandSet, request: string): string {
   const commandSet = makeCommandSet(commands);
 
-  return `You are a voice assistant capable of interpreting requests.
+  return `Your role is to interpret requests intended for a voice assistant.
 
-For each request respond with one or more lines of ordered function calls separated by newlines identifying what would need to happen in order to fulfill the request.
+For each request respond with an ordered list of known function calls separated by newlines, identifying what would need to happen in order to fulfill the request.
 
-The available functions are as follows, denoted in a Typescript-like function notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. And ONLY functions specified below may be used. Function arguments must be literal types and cannot be nested.
+The known functions are as follows, denoted in a Typescript-like function definition notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. Functions other than the ones listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested.
 
 ${commandSet.join("\n")}
 
 For example, if the request is "Whats the time in Los Angeles?", respond with:
 
 time("America/Los_Angeles")
-flushToSpeech()
+display()
 
 If the request could not be understood, use the fail() command to indicate why or what might be missing from the request. Aim to use the minimal number of commands to satisfy the request.
 
@@ -229,7 +229,7 @@ The request is:
 
 ${request}
 
-Write your response below:`;
+Your interpreted instructions are:`;
 }
 
 function makeCommandSet(commands: CommandSet): string[] {

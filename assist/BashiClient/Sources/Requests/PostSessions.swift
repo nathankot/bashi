@@ -88,6 +88,8 @@ extension BashiClient {
 
                     /** TODO */
                     public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+                        case display = "display"
+                        case write = "write"
                         case answer = "answer"
                         case math = "math"
                         case time = "time"
@@ -96,8 +98,6 @@ extension BashiClient {
                         case generateCode = "generateCode"
                         case translate = "translate"
                         case fail = "fail"
-                        case flushToSpeech = "flushToSpeech"
-                        case flushToText = "flushToText"
                     }
 
                     public var bestOf: Double?

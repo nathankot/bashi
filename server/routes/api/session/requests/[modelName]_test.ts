@@ -33,7 +33,6 @@ translate("English", "should not work because disabled by conf")
 time("America/New_York")
 sendEmail("not enough args")
 sendEmail("blah@blah.com", "some subject", "some body")
-flushToSpeech()
 reminder("in 5 days", "some reminder name")`,
             },
           ],

@@ -20,6 +20,8 @@ public class BashiSession: APIModel {
     public class Configuration: APIModel {
 
         public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+            case display = "display"
+            case write = "write"
             case answer = "answer"
             case math = "math"
             case time = "time"
@@ -28,8 +30,6 @@ public class BashiSession: APIModel {
             case generateCode = "generateCode"
             case translate = "translate"
             case fail = "fail"
-            case flushToSpeech = "flushToSpeech"
-            case flushToText = "flushToText"
         }
 
         public var locale: String

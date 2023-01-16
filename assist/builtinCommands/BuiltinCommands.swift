@@ -16,7 +16,7 @@ public class BuiltinCommands: BundledPlugin {
         return BuiltinCommands()
     }
 
-    public func prepare() async throws {}
+    public func prepare() async throws { }
 
     public func provideCommands() -> [Command] {
         return [
@@ -41,6 +41,26 @@ public class BuiltinCommands: BundledPlugin {
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
                         await ctx.append(builtinAction: .display)
+                    }
+                }),
+            AnonymousCommand(
+                name: "write",
+                description: "<builtin>",
+                prepareFn: { api, ctx, args, _ in
+                    AnonymousPreparedCommand(
+                        shouldSkipConfirmation: true,
+                        confirmationMessage: "") {
+                        fatalError("not implemented")
+                    }
+                }),
+            AnonymousCommand(
+                name: "fail",
+                description: "<builtin>",
+                prepareFn: { api, ctx, args, _ in
+                    AnonymousPreparedCommand(
+                        shouldSkipConfirmation: true,
+                        confirmationMessage: "") {
+                        fatalError("not implemented")
                     }
                 })
         ]

@@ -1,6 +1,7 @@
 import type { Session } from "@lib/session.ts";
 import type { CommandSet } from "@lib/command/types.ts";
 import type { HandlerContext } from "$fresh/server.ts";
+import builtinCommands from "@lib/command/builtinCommands.ts";
 
 export const now = new Date(1671439270000);
 
@@ -68,7 +69,7 @@ export const session: Session = {
     locale: "en-US",
     maxResponseTokens: 1000,
     bestOf: 1,
-    disabledBuiltinCommands: [],
+    enabledBuiltinCommands: Object.keys(builtinCommands) as any,
     timezoneUtcOffset: 0,
   },
   modelConfigurations: {

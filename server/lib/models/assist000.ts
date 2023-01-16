@@ -101,16 +101,21 @@ export async function run(
     }
 
     const request = input.request.trim();
-    const filteredBuiltinCommands: Partial<typeof builtinCommands> = {
-      ...builtinCommands,
-    };
-    for (const disabledFn of modelDeps.session.configuration
-      .disabledBuiltinCommands) {
-      delete filteredBuiltinCommands[disabledFn];
-    }
+    const enabledBuiltinCommands: Partial<typeof builtinCommands> =
+      modelDeps.session.configuration.enabledBuiltinCommands.reduce(
+        (a, enabledCommand) =>
+          builtinCommands[enabledCommand] == null
+            ? a
+            : {
+                ...a,
+                [enabledCommand]: builtinCommands[enabledCommand],
+              },
+        {}
+      );
+
     const commandSet = filterUnnecessary(request, {
       ...configuration.commands,
-      ...filteredBuiltinCommands,
+      ...enabledBuiltinCommands,
     });
     const prompt = makePrompt(commandSet, request);
 

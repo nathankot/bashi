@@ -19,7 +19,7 @@ public class BashiSession: APIModel {
 
     public class Configuration: APIModel {
 
-        public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+        public enum EnabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
             case display = "display"
             case write = "write"
             case answer = "answer"
@@ -40,14 +40,14 @@ public class BashiSession: APIModel {
 
         public var bestOf: Double
 
-        public var disabledBuiltinCommands: [DisabledBuiltinCommands]
+        public var enabledBuiltinCommands: [EnabledBuiltinCommands]
 
-        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, disabledBuiltinCommands: [DisabledBuiltinCommands]) {
+        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, enabledBuiltinCommands: [EnabledBuiltinCommands]) {
             self.locale = locale
             self.timezoneUtcOffset = timezoneUtcOffset
             self.maxResponseTokens = maxResponseTokens
             self.bestOf = bestOf
-            self.disabledBuiltinCommands = disabledBuiltinCommands
+            self.enabledBuiltinCommands = enabledBuiltinCommands
         }
 
         public required init(from decoder: Decoder) throws {
@@ -57,7 +57,7 @@ public class BashiSession: APIModel {
             timezoneUtcOffset = try container.decode("timezoneUtcOffset")
             maxResponseTokens = try container.decode("maxResponseTokens")
             bestOf = try container.decode("bestOf")
-            disabledBuiltinCommands = try container.decodeArray("disabledBuiltinCommands")
+            enabledBuiltinCommands = try container.decodeArray("enabledBuiltinCommands")
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -67,7 +67,7 @@ public class BashiSession: APIModel {
             try container.encode(timezoneUtcOffset, forKey: "timezoneUtcOffset")
             try container.encode(maxResponseTokens, forKey: "maxResponseTokens")
             try container.encode(bestOf, forKey: "bestOf")
-            try container.encode(disabledBuiltinCommands, forKey: "disabledBuiltinCommands")
+            try container.encode(enabledBuiltinCommands, forKey: "enabledBuiltinCommands")
         }
 
         public func isEqual(to object: Any?) -> Bool {
@@ -76,7 +76,7 @@ public class BashiSession: APIModel {
           guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
           guard self.maxResponseTokens == object.maxResponseTokens else { return false }
           guard self.bestOf == object.bestOf else { return false }
-          guard self.disabledBuiltinCommands == object.disabledBuiltinCommands else { return false }
+          guard self.enabledBuiltinCommands == object.enabledBuiltinCommands else { return false }
           return true
         }
 

@@ -31,11 +31,25 @@ public actor CommandsController {
 
     let pluginAPI: PluginAPI
     let pluginsController: PluginsController
-
+    
     public init(pluginAPI: PluginAPI, pluginsController: PluginsController) {
         self.pluginAPI = pluginAPI
         self.pluginsController = pluginsController
     }
+    
+    public func getEnabledBuiltinCommands() async -> [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] {
+        let commands = await pluginsController.commandDefinitions
+        var result: [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] = []
+        
+        for c in BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands.allCases {
+            if commands[c.rawValue] != nil {
+                result.append(c)
+            }
+        }
+        
+        return result
+    }
+
 
     public func handle(
         assistResponse: ModelsAssist000Output,

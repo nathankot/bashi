@@ -49,6 +49,7 @@ extension AppController {
         let timezoneOffset = Double(TimeZone.current.secondsFromGMT() / 60)
         let locale = Locale.current.identifier(.bcp47)
 
+        let enabledBuiltinCommands = await commandsController.getEnabledBuiltinCommands()
         let commandDefinitions = await pluginsController.commandDefinitions
         let accountNumber = await state.accountNumber
         if !force {
@@ -81,6 +82,7 @@ extension AppController {
                             .mapValues { $0.def.toAPIRepresentation() }
                     )),
                 configuration: .init(
+                    enabledBuiltinCommands: enabledBuiltinCommands,
                     locale: locale,
                     timezoneUtcOffset: timezoneOffset
                 )

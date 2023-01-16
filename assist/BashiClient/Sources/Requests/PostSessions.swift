@@ -87,7 +87,7 @@ extension BashiClient {
                 public class Configuration: APIModel {
 
                     /** TODO */
-                    public enum DisabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
+                    public enum EnabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
                         case display = "display"
                         case write = "write"
                         case answer = "answer"
@@ -102,7 +102,7 @@ extension BashiClient {
 
                     public var bestOf: Double?
 
-                    public var disabledBuiltinCommands: [DisabledBuiltinCommands]?
+                    public var enabledBuiltinCommands: [EnabledBuiltinCommands]?
 
                     public var locale: String?
 
@@ -110,9 +110,9 @@ extension BashiClient {
 
                     public var timezoneUtcOffset: Double?
 
-                    public init(bestOf: Double? = nil, disabledBuiltinCommands: [DisabledBuiltinCommands]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
+                    public init(bestOf: Double? = nil, enabledBuiltinCommands: [EnabledBuiltinCommands]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
                         self.bestOf = bestOf
-                        self.disabledBuiltinCommands = disabledBuiltinCommands
+                        self.enabledBuiltinCommands = enabledBuiltinCommands
                         self.locale = locale
                         self.maxResponseTokens = maxResponseTokens
                         self.timezoneUtcOffset = timezoneUtcOffset
@@ -122,7 +122,7 @@ extension BashiClient {
                         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
                         bestOf = try container.decodeIfPresent("bestOf")
-                        disabledBuiltinCommands = try container.decodeArrayIfPresent("disabledBuiltinCommands")
+                        enabledBuiltinCommands = try container.decodeArrayIfPresent("enabledBuiltinCommands")
                         locale = try container.decodeIfPresent("locale")
                         maxResponseTokens = try container.decodeIfPresent("maxResponseTokens")
                         timezoneUtcOffset = try container.decodeIfPresent("timezoneUtcOffset")
@@ -132,7 +132,7 @@ extension BashiClient {
                         var container = encoder.container(keyedBy: StringCodingKey.self)
 
                         try container.encodeIfPresent(bestOf, forKey: "bestOf")
-                        try container.encodeIfPresent(disabledBuiltinCommands, forKey: "disabledBuiltinCommands")
+                        try container.encodeIfPresent(enabledBuiltinCommands, forKey: "enabledBuiltinCommands")
                         try container.encodeIfPresent(locale, forKey: "locale")
                         try container.encodeIfPresent(maxResponseTokens, forKey: "maxResponseTokens")
                         try container.encodeIfPresent(timezoneUtcOffset, forKey: "timezoneUtcOffset")
@@ -141,7 +141,7 @@ extension BashiClient {
                     public func isEqual(to object: Any?) -> Bool {
                       guard let object = object as? Configuration else { return false }
                       guard self.bestOf == object.bestOf else { return false }
-                      guard self.disabledBuiltinCommands == object.disabledBuiltinCommands else { return false }
+                      guard self.enabledBuiltinCommands == object.enabledBuiltinCommands else { return false }
                       guard self.locale == object.locale else { return false }
                       guard self.maxResponseTokens == object.maxResponseTokens else { return false }
                       guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }

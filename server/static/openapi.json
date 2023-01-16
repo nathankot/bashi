@@ -71,7 +71,7 @@
                       "bestOf": {
                         "type": "number"
                       },
-                      "disabledBuiltinCommands": {
+                      "enabledBuiltinCommands": {
                         "type": "array",
                         "items": {
                           "enum": [
@@ -1148,7 +1148,7 @@
               "timezoneUtcOffset",
               "maxResponseTokens",
               "bestOf",
-              "disabledBuiltinCommands"
+              "enabledBuiltinCommands"
             ],
             "properties": {
               "locale": {
@@ -1163,7 +1163,7 @@
               "bestOf": {
                 "type": "number"
               },
-              "disabledBuiltinCommands": {
+              "enabledBuiltinCommands": {
                 "type": "array",
                 "items": {
                   "enum": [

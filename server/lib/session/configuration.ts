@@ -8,15 +8,19 @@ export const Configuration = t.type({
   timezoneUtcOffset: t.number,
   maxResponseTokens: t.number,
   bestOf: t.number,
-  disabledBuiltinCommands: t.array(t.keyof(builtinCommands)),
+  enabledBuiltinCommands: t.array(t.keyof(builtinCommands)),
 });
 
 export type Configuration = t.TypeOf<typeof Configuration>;
+
+const allBuiltinCommands = Object.keys(
+  builtinCommands
+) as (keyof typeof builtinCommands)[];
 
 export const defaultConfiguration: Configuration = {
   locale: "en-US",
   maxResponseTokens: DEFAULT_MAX_RESPONSE_TOKENS,
   bestOf: 2,
-  disabledBuiltinCommands: [],
+  enabledBuiltinCommands: allBuiltinCommands,
   timezoneUtcOffset: 0,
 };

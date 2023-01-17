@@ -15,15 +15,12 @@ public class ModelsAssist000Output: APIModel {
 
     public var request: String
 
-    public var commands: [Command]
+    public var result: AssistResult
 
-    public var missingRequestContext: RequestContextRequirement?
-
-    public init(model: Model, request: String, commands: [Command], missingRequestContext: RequestContextRequirement? = nil) {
+    public init(model: Model, request: String, result: AssistResult) {
         self.model = model
         self.request = request
-        self.commands = commands
-        self.missingRequestContext = missingRequestContext
+        self.result = result
     }
 
     public required init(from decoder: Decoder) throws {
@@ -31,8 +28,7 @@ public class ModelsAssist000Output: APIModel {
 
         model = try container.decode("model")
         request = try container.decode("request")
-        commands = try container.decodeArray("commands")
-        missingRequestContext = try container.decodeIfPresent("missingRequestContext")
+        result = try container.decode("result")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -40,16 +36,14 @@ public class ModelsAssist000Output: APIModel {
 
         try container.encode(model, forKey: "model")
         try container.encode(request, forKey: "request")
-        try container.encode(commands, forKey: "commands")
-        try container.encodeIfPresent(missingRequestContext, forKey: "missingRequestContext")
+        try container.encode(result, forKey: "result")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ModelsAssist000Output else { return false }
       guard self.model == object.model else { return false }
       guard self.request == object.request else { return false }
-      guard self.commands == object.commands else { return false }
-      guard self.missingRequestContext == object.missingRequestContext else { return false }
+      guard self.result == object.result else { return false }
       return true
     }
 

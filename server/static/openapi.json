@@ -818,7 +818,7 @@
           }
         }
       },
-      "ResultOK": {
+      "AssistResultOK": {
         "type": "object",
         "required": [
           "type",
@@ -839,7 +839,7 @@
           }
         }
       },
-      "ResultNeedsClarification": {
+      "AssistResultNeedsClarification": {
         "type": "object",
         "required": [
           "type",
@@ -860,7 +860,7 @@
           }
         }
       },
-      "ResultNeedsRequestContext": {
+      "AssistResultNeedsRequestContext": {
         "type": "object",
         "required": [
           "type",
@@ -878,24 +878,24 @@
           }
         }
       },
-      "Result": {
+      "AssistResult": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ResultOK"
+            "$ref": "#/components/schemas/AssistResultOK"
           },
           {
-            "$ref": "#/components/schemas/ResultNeedsRequestContext"
+            "$ref": "#/components/schemas/AssistResultNeedsRequestContext"
           },
           {
-            "$ref": "#/components/schemas/ResultNeedsClarification"
+            "$ref": "#/components/schemas/AssistResultNeedsClarification"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "ok": "#/components/schemas/ResultOK",
-            "needs_request_context": "#/components/schemas/ResultNeedsRequestContext",
-            "needs_clarification": "#/components/schemas/ResultNeedsClarification"
+            "ok": "#/components/schemas/AssistResultOK",
+            "needs_request_context": "#/components/schemas/AssistResultNeedsRequestContext",
+            "needs_clarification": "#/components/schemas/AssistResultNeedsClarification"
           }
         }
       },
@@ -946,7 +946,7 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/Result"
+            "$ref": "#/components/schemas/AssistResult"
           }
         }
       },

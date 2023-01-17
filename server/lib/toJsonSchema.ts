@@ -395,13 +395,14 @@ namedJSONSchemaObjects["#/components/schemas/CommandDefinition"] =
   toJSONSchema(CommandDefinition);
 namedJSONSchemaObjects["#/components/schemas/Command"] = toJSONSchema(Command);
 
-namedJSONSchemaObjects["#/components/schemas/ResultOK"] =
+namedJSONSchemaObjects["#/components/schemas/AssistResultOK"] =
   toJSONSchema(ResultOK);
-namedJSONSchemaObjects["#/components/schemas/ResultNeedsClarification"] =
+namedJSONSchemaObjects["#/components/schemas/AssistResultNeedsClarification"] =
   toJSONSchema(ResultNeedsClarification);
-namedJSONSchemaObjects["#/components/schemas/ResultNeedsRequestContext"] =
+namedJSONSchemaObjects["#/components/schemas/AssistResultNeedsRequestContext"] =
   toJSONSchema(ResultNeedsRequestContext);
-namedJSONSchemaObjects["#/components/schemas/Result"] = toJSONSchema(Result);
+namedJSONSchemaObjects["#/components/schemas/AssistResult"] =
+  toJSONSchema(Result);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

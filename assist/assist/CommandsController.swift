@@ -57,8 +57,15 @@ public actor CommandsController {
         onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
         confirmationHandler: (String) async -> Bool
     ) async throws -> HandleResult {
-        if let missingRequestContext = assistResponse.missingRequestContext {
-            throw AppError.Internal("fulfillment of missing request context not yet implemented: \(missingRequestContext)")
+        
+        var okResult: AssistResultOK!
+        switch assistResponse.result {
+        case .assistResultNeedsRequestContext(let r):
+            throw AppError.Internal("fulfillment of missing request context not yet implemented: \(r.missingRequestContext)")
+        case .assistResultNeedsClarification(let r):
+            throw AppError.Internal("fulfillment of missing clarifications not yet implemented: \(r.clarificationQuestions)")
+        case .assistResultOK(let r):
+            okResult = r
         }
 
         var updateCommandContext = true
@@ -68,7 +75,7 @@ public actor CommandsController {
         var renderToString: [String] = []
         var lastFlushToDisplayIndex = -1
 
-        for command in assistResponse.commands {
+        for command in okResult.commands {
             if updateCommandContext {
                 updateCommandContext = false
                 try await onUpdatedContext?(commandContext)

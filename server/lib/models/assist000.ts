@@ -5,6 +5,7 @@ import {
   Commands,
   parseFromModelResult,
   builtinCommands,
+  privateCommands,
   filterUnnecessary,
   commandInterceptors,
 } from "@lib/command.ts";
@@ -30,6 +31,12 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 export const Input = t.partial({
   request: t.string,
   requestContext: RequestContext,
+  clarifications: t.array(
+    t.type({
+      question: t.string,
+      answer: t.string,
+    })
+  ),
 });
 export type Input = t.TypeOf<typeof Input>;
 
@@ -45,7 +52,7 @@ export const ResultNeedsRequestContext = t.type({
 
 export const ResultNeedsClarification = t.type({
   type: t.literal("needs_clarification"),
-  clarificationRequest: t.string,
+  clarificationQuestions: t.array(t.string),
 });
 
 export const Result = t.union([
@@ -72,51 +79,67 @@ export async function run(
 ): Promise<Output> {
   let log = modelDeps.log;
 
-  if (!("request" in input || "requestContext" in input)) {
+  if (
+    !(
+      "request" in input ||
+      "requestContext" in input ||
+      "clarifications" in input
+    )
+  ) {
     throw new HTTPError(
-      `at least one of 'request' or 'requestContext' must be populated`,
+      `at least one of 'request', 'requestContext' or 'clarifications' must be populated`,
       400
     );
   }
 
-  const requestContext: RequestContext = !("requestContext" in input)
-    ? {}
-    : input.requestContext == null
-    ? {}
-    : input.requestContext;
+  const pendingRequest =
+    input.request != null ? null : modelDeps.session.pendingAssistRequest;
 
-  let output = await (async (): Promise<
-    Exclude<Output, { missingRequestContext: RequestContextRequirement }>
-  > => {
-    if (!("request" in input) || input.request == null) {
-      const outputAwaitingContext = modelDeps.session.outputAwaitingContext;
-      // if there is no request field, then we assume missing request context is being fulfilled:
-      if (outputAwaitingContext == null) {
-        throw new HTTPError(
-          "the request field it not populated, " +
-            "but no pending request awaiting context found",
-          400
-        );
-      }
-      if (!Output.is(outputAwaitingContext)) {
-        throw new HTTPError(
-          "pending request awaiting context was for a different model",
-          400
-        );
-      }
-      if ("missingRequestContext" in outputAwaitingContext) {
-        throw new Error(
-          `key "missingRequestContext" unexpectedly found in stored output`
-        );
-      }
-      modelDeps.setUpdatedSession({
-        ...modelDeps.session,
-        outputAwaitingContext: undefined,
-      });
-      return outputAwaitingContext;
+  const requestContext: RequestContext = {
+    ...pendingRequest?.requestContext,
+    ...input.requestContext,
+  };
+
+  const clarifications: { question: string; answer: string }[] = [
+    ...(pendingRequest?.clarifications ?? []),
+    ...(input.clarifications ?? []),
+  ];
+
+  let request = input.request ?? pendingRequest?.request;
+
+  if (request == null) {
+    throw new HTTPError(
+      "no request could be found, either in the 'request' field, " +
+        " or in a pending request",
+      400
+    );
+  }
+
+  if (
+    pendingRequest != null &&
+    clarifications.length === 0 &&
+    Object.keys(requestContext).length === 0
+  ) {
+    throw new HTTPError(
+      "additional information must be provided in the 'requestContext' or " +
+        " 'clarifications' fields in order to proceed with the previous request",
+      400
+    );
+  }
+
+  // by default we want to clear the pending request if any:
+  modelDeps.setUpdatedSession({
+    ...modelDeps.session,
+    pendingAssistRequest: undefined,
+  });
+
+  let commands = await (async (): Promise<Commands> => {
+    // we can re-use the previously stored commands as long as there were
+    // no clarifications added to this request:
+    if ((input.clarifications?.length ?? 0) === 0 && pendingRequest != null) {
+      return pendingRequest.commands;
     }
 
-    const request = input.request.trim();
     const enabledBuiltinCommands: Partial<typeof builtinCommands> =
       modelDeps.session.configuration.enabledBuiltinCommands.reduce(
         (a, enabledCommand) =>
@@ -132,8 +155,10 @@ export async function run(
     const commandSet = filterUnnecessary(request, {
       ...configuration.commands,
       ...enabledBuiltinCommands,
+      ...privateCommands,
     });
-    const prompt = makePrompt(commandSet, request);
+
+    const prompt = makePrompt(commandSet, clarifications, request.trim());
 
     const completion = await modelDeps.openai.createCompletion(
       {
@@ -153,7 +178,7 @@ export async function run(
 
     const text = completion.data.choices[0]?.text ?? "";
 
-    const commands = parseFromModelResult(
+    return parseFromModelResult(
       {
         log,
         now: modelDeps.now(),
@@ -162,25 +187,44 @@ export async function run(
       },
       text
     );
-
-    return {
-      model: "assist-000",
-      request,
-      result: {
-        type: "ok",
-        commands,
-      },
-    };
   })();
 
-  // No need for further processing if we are not at an 'ok' result at this stage:
-  if (output.result.type !== "ok") {
-    return output;
+  const pendingAssistRequest = {
+    clarifications,
+    requestContext,
+    commands,
+    request,
+  };
+
+  // Return if the model indicates that any clarifications are needed:
+  const clarificationQuestions = commands
+    .map((command) => {
+      if (command.type === "parsed" && command.name == "clarify") {
+        const arg = command.args[0];
+        if (arg != null && arg.type === "string") {
+          return arg.value;
+        }
+      }
+      return "";
+    })
+    .filter((r) => r !== "");
+  if (clarificationQuestions.length > 0) {
+    modelDeps.setUpdatedSession({
+      ...modelDeps.session,
+      pendingAssistRequest,
+    });
+    return {
+      model: "assist-000",
+      request: input.request ?? "",
+      result: {
+        type: "needs_clarification",
+        clarificationQuestions,
+      },
+    };
   }
 
-  // First ensure that all interceptors have the request context that they need:
+  // Check interceptors have the request context that they need:
   let missingRequestContext: null | RequestContextRequirement = null;
-  const commands = output.result.commands;
   const commandNames = commands.reduce(
     (a: Record<string, null>, c) =>
       c.type !== "parsed" ? a : { ...a, [c.name]: null },
@@ -201,13 +245,12 @@ export async function run(
       ...validateResult,
     };
   }
-
   // If we have request context that is missing, update session state to
   // keep track of what we have so far, and let the user know.
   if (missingRequestContext != null) {
     modelDeps.setUpdatedSession({
       ...modelDeps.session,
-      outputAwaitingContext: output,
+      pendingAssistRequest,
     });
     return {
       model: "assist-000",
@@ -219,24 +262,37 @@ export async function run(
     };
   }
 
-  // Then run all of the command interceptors:
+  let okResult: Output = {
+    model: "assist-000",
+    request,
+    result: {
+      type: "ok",
+      commands,
+    },
+  };
+
+  // Run all of the command interceptors:
   for (const interceptor of commandInterceptors) {
     const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
       async ({ signal }) =>
-        interceptor.interceptor({ ...modelDeps, signal }, input, output)
+        interceptor.interceptor({ ...modelDeps, signal }, input, okResult)
     );
     if ("missingRequestContext" in interceptedOutput) {
       throw new Error(
         `command intercepts must not return missinGrequestContext - this should happen at the validation step`
       );
     }
-    output = interceptedOutput;
+    okResult = interceptedOutput;
   }
 
-  return output;
+  return okResult;
 }
 
-function makePrompt(commands: CommandSet, request: string): string {
+function makePrompt(
+  commands: CommandSet,
+  clarifications: { question: string; answer: string }[],
+  request: string
+): string {
   const commandSet = makeCommandSet(commands);
 
   return `Your role is to interpret requests intended for a voice assistant.
@@ -257,6 +313,14 @@ If the request could not be understood, use the fail() command to indicate why o
 The request is:
 
 ${request}
+
+${
+  clarifications.length === 0
+    ? ""
+    : `The provided clarifications are:\n${clarifications
+        .map((c) => `Q: ${c.question}\nA: ${c.answer}`)
+        .join("\n\n")}`
+}
 
 Your interpreted instructions are:`;
 }

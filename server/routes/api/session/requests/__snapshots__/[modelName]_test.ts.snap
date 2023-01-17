@@ -2,129 +2,132 @@ export const snapshot = {};
 
 snapshot[`POST /api/session/requests/assist-000: success 1`] = `
 {
-  commands: [
-    {
-      args: [
-        {
-          type: "string",
-          value: "mock response",
-        },
-      ],
-      argsParsed: [
-        {},
-      ],
-      line: 'answer("mock response")',
-      name: "answer",
-      type: "parsed",
-    },
-    {
-      args: [
-        {
-          type: "number",
-          value: 123,
-        },
-      ],
-      invalidReason: "unknown_command",
-      line: "   unknownCall(123)",
-      name: "unknownCall",
-      type: "invalid",
-    },
-    {
-      error: "<END-OF-FILE>: Unable to consume token: <END-OF-FILE>",
-      line: "unparseable(",
-      type: "parse_error",
-    },
-    {
-      args: [
-        {
-          type: "string",
-          value: "English",
-        },
-        {
-          type: "string",
-          value: "should not work because disabled by conf",
-        },
-      ],
-      invalidReason: "unknown_command",
-      line: 'translate("English", "should not work because disabled by conf")',
-      name: "translate",
-      type: "invalid",
-    },
-    {
-      args: [
-        {
-          type: "string",
-          value: "America/New_York",
-        },
-      ],
-      argsParsed: [
-        {},
-      ],
-      line: 'time("America/New_York")',
-      name: "time",
-      returnValues: [
-        {
-          type: "string",
-          value: "12/19/2022, 3:41:10 AM",
-        },
-      ],
-      type: "executed",
-    },
-    {
-      args: [
-        {
-          type: "string",
-          value: "not enough args",
-        },
-      ],
-      invalidReason: "invalid_arguments",
-      line: 'sendEmail("not enough args")',
-      name: "sendEmail",
-      type: "invalid",
-    },
-    {
-      args: [
-        {
-          type: "string",
-          value: "blah@blah.com",
-        },
-        {
-          type: "string",
-          value: "some subject",
-        },
-        {
-          type: "string",
-          value: "some body",
-        },
-      ],
-      argsParsed: [
-        {},
-        {},
-        {},
-      ],
-      line: 'sendEmail("blah@blah.com", "some subject", "some body")',
-      name: "sendEmail",
-      type: "parsed",
-    },
-    {
-      args: [
-        {
-          type: "string",
-          value: "in 5 days",
-        },
-        {
-          type: "string",
-          value: "some reminder name",
-        },
-      ],
-      invalidReason: "unknown_command",
-      line: 'reminder("in 5 days", "some reminder name")',
-      name: "reminder",
-      type: "invalid",
-    },
-  ],
   model: "assist-000",
   request: "whats the time in new york? email translate",
+  result: {
+    commands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "mock response",
+          },
+        ],
+        argsParsed: [
+          {},
+        ],
+        line: 'answer("mock response")',
+        name: "answer",
+        type: "parsed",
+      },
+      {
+        args: [
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        invalidReason: "unknown_command",
+        line: "   unknownCall(123)",
+        name: "unknownCall",
+        type: "invalid",
+      },
+      {
+        error: "<END-OF-FILE>: Unable to consume token: <END-OF-FILE>",
+        line: "unparseable(",
+        type: "parse_error",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "English",
+          },
+          {
+            type: "string",
+            value: "should not work because disabled by conf",
+          },
+        ],
+        invalidReason: "unknown_command",
+        line: 'translate("English", "should not work because disabled by conf")',
+        name: "translate",
+        type: "invalid",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        argsParsed: [
+          {},
+        ],
+        line: 'time("America/New_York")',
+        name: "time",
+        returnValues: [
+          {
+            type: "string",
+            value: "12/19/2022, 3:41:10 AM",
+          },
+        ],
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "not enough args",
+          },
+        ],
+        invalidReason: "invalid_arguments",
+        line: 'sendEmail("not enough args")',
+        name: "sendEmail",
+        type: "invalid",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "blah@blah.com",
+          },
+          {
+            type: "string",
+            value: "some subject",
+          },
+          {
+            type: "string",
+            value: "some body",
+          },
+        ],
+        argsParsed: [
+          {},
+          {},
+          {},
+        ],
+        line: 'sendEmail("blah@blah.com", "some subject", "some body")',
+        name: "sendEmail",
+        type: "parsed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5 days",
+          },
+          {
+            type: "string",
+            value: "some reminder name",
+          },
+        ],
+        invalidReason: "unknown_command",
+        line: 'reminder("in 5 days", "some reminder name")',
+        name: "reminder",
+        type: "invalid",
+      },
+    ],
+    type: "ok",
+  },
 }
 `;
 

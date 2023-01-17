@@ -7,7 +7,7 @@ const interceptor = interceptCommand(
       {
         type: "string",
         value: now().toLocaleString(session.configuration.locale, {
-          timeZone: timeZone.value,
+          timeZone: timeZone.value.replaceAll(" ", "_"),
         }),
       },
     ];

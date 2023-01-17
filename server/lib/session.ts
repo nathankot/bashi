@@ -1,10 +1,10 @@
 import * as t from "io-ts";
 import { date } from "io-ts-types";
 
-import {
-  Configuration as ModelConfiguration,
-  AllOutput as ModelOutput,
-} from "@lib/models.ts";
+import { Configuration as ModelConfiguration } from "@lib/models.ts";
+
+import { Commands } from "@lib/command/types.ts";
+import { RequestContext } from "@lib/requestContext.ts";
 
 import {
   Configuration,
@@ -23,7 +23,17 @@ export type SessionPublic = t.TypeOf<typeof SessionPublic>;
 export const Session = t.intersection([
   SessionPublic,
   t.partial({
-    outputAwaitingContext: ModelOutput,
+    pendingAssistRequest: t.type({
+      request: t.string,
+      commands: Commands,
+      requestContext: RequestContext,
+      clarifications: t.array(
+        t.type({
+          question: t.string,
+          answer: t.string,
+        })
+      ),
+    }),
   }),
 ]);
 

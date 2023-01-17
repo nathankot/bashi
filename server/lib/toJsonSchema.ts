@@ -8,6 +8,7 @@ import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 import {
   Result,
+  ResultNeedsClarification,
   ResultNeedsRequestContext,
   ResultOK,
 } from "@lib/models/assist000.ts";
@@ -396,6 +397,8 @@ namedJSONSchemaObjects["#/components/schemas/Command"] = toJSONSchema(Command);
 
 namedJSONSchemaObjects["#/components/schemas/ResultOK"] =
   toJSONSchema(ResultOK);
+namedJSONSchemaObjects["#/components/schemas/ResultNeedsClarification"] =
+  toJSONSchema(ResultNeedsClarification);
 namedJSONSchemaObjects["#/components/schemas/ResultNeedsRequestContext"] =
   toJSONSchema(ResultNeedsRequestContext);
 namedJSONSchemaObjects["#/components/schemas/Result"] = toJSONSchema(Result);

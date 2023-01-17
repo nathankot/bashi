@@ -17,14 +17,17 @@ export const Example = t.intersection([
   }),
   t.partial({
     requestContext: RequestContext,
+    clarifications: t.array(t.type({ question: t.string, answer: t.string })),
   }),
 ]);
 
 export type Example = t.TypeOf<typeof Example>;
 
 const INPUTS: {
+  variant?: string;
   prompt: string;
   requestContext?: RequestContext;
+  clarifications?: { question: string; answer: string }[];
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
@@ -94,6 +97,20 @@ function doSomething() int {
       },
     },
   },
+  {
+    prompt: "make a calendar event",
+  },
+  {
+    prompt: "make a calendar event",
+    variant: "clarifications provided",
+    clarifications: [
+      {
+        question:
+          "What time should the event start and what is the event name?",
+        answer: "Next Tuesday noon, lunch with Bill",
+      },
+    ],
+  },
 
   // TODO: something like 'highlight the selected string', will it be able to differentiate from
   // having the request string be in the request?
@@ -137,34 +154,38 @@ export default async function updateExamples(examplesFile: string) {
   let hasChanges = false;
 
   for (const input of INPUTS) {
-    const existing = existingExamples[input.prompt];
+    const promptWithVariant =
+      input.prompt + (input.variant == null ? "" : " - " + input.variant);
+    const existing = existingExamples[promptWithVariant];
     if (existing != null) {
       newExamples.push(existing);
       continue;
     }
     log(
       "info",
-      `found new example, running model with prompt: ${input.prompt}`
+      `found new example, running model with prompt: ${promptWithVariant}`
     );
     const output = await run(modelDeps, "assist-000", {
       request: input.prompt,
       requestContext: input.requestContext,
+      clarifications: input.clarifications,
     });
     if (!("result" in output)) {
       throw new Error(`unexpected output: ${JSON.stringify(output)}`);
     }
 
-    log("info", `got result for: ${input.prompt}`);
+    log("info", `got result for: ${promptWithVariant}`);
     hasChanges = true;
     newExamples.push({
       updated: new Date().toISOString(),
-      prompt: input.prompt,
+      prompt: promptWithVariant,
       result: output.result,
       completion:
         output.result.type === "ok"
           ? output.result.commands.map((c) => c.line).join("\n")
           : "",
       requestContext: input.requestContext ?? {},
+      clarifications: input.clarifications ?? [],
     });
   }
 

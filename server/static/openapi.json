@@ -839,6 +839,27 @@
           }
         }
       },
+      "ResultNeedsClarification": {
+        "type": "object",
+        "required": [
+          "type",
+          "clarificationQuestions"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "needs_clarification"
+            ],
+            "type": "string"
+          },
+          "clarificationQuestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "ResultNeedsRequestContext": {
         "type": "object",
         "required": [
@@ -864,13 +885,17 @@
           },
           {
             "$ref": "#/components/schemas/ResultNeedsRequestContext"
+          },
+          {
+            "$ref": "#/components/schemas/ResultNeedsClarification"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "ok": "#/components/schemas/ResultOK",
-            "needs_request_context": "#/components/schemas/ResultNeedsRequestContext"
+            "needs_request_context": "#/components/schemas/ResultNeedsRequestContext",
+            "needs_clarification": "#/components/schemas/ResultNeedsClarification"
           }
         }
       },
@@ -882,6 +907,24 @@
           },
           "requestContext": {
             "$ref": "#/components/schemas/RequestContext"
+          },
+          "clarifications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "question",
+                "answer"
+              ],
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },

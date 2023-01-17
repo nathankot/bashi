@@ -19,7 +19,7 @@ The requirement is '${editingRequirement.value satisfies string}':
 
 ${text satisfies string}`,
     });
-    return { type: "string", value: output.result.trim() };
+    return [{ type: "string", value: output.result.trim() }];
   },
   async (ctx) => {
     if ((ctx.text?.value.length ?? 0) === 0) {

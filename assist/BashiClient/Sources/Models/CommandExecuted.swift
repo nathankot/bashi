@@ -19,14 +19,14 @@ public class CommandExecuted: APIModel {
 
     public var args: [Value]
 
-    public var returnValue: Value
+    public var returnValues: [Value]
 
-    public init(line: String, type: `Type`, name: String, args: [Value], returnValue: Value) {
+    public init(line: String, type: `Type`, name: String, args: [Value], returnValues: [Value]) {
         self.line = line
         self.type = type
         self.name = name
         self.args = args
-        self.returnValue = returnValue
+        self.returnValues = returnValues
     }
 
     public required init(from decoder: Decoder) throws {
@@ -36,7 +36,7 @@ public class CommandExecuted: APIModel {
         type = try container.decode("type")
         name = try container.decode("name")
         args = try container.decodeArray("args")
-        returnValue = try container.decode("returnValue")
+        returnValues = try container.decodeArray("returnValues")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -46,7 +46,7 @@ public class CommandExecuted: APIModel {
         try container.encode(type, forKey: "type")
         try container.encode(name, forKey: "name")
         try container.encode(args, forKey: "args")
-        try container.encode(returnValue, forKey: "returnValue")
+        try container.encode(returnValues, forKey: "returnValues")
     }
 
     public func isEqual(to object: Any?) -> Bool {
@@ -55,7 +55,7 @@ public class CommandExecuted: APIModel {
       guard self.type == object.type else { return false }
       guard self.name == object.name else { return false }
       guard self.args == object.args else { return false }
-      guard self.returnValue == object.returnValue else { return false }
+      guard self.returnValues == object.returnValues else { return false }
       return true
     }
 

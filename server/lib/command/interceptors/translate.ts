@@ -9,7 +9,7 @@ const interceptor = interceptCommand(
       request: request.value,
       targetLanguage: targetLanguage.value,
     });
-    return { type: "string", value: output.result.trim() };
+    return [{ type: "string", value: output.result.trim() }];
   }
 );
 

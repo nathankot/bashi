@@ -19,7 +19,7 @@ public actor CommandsController {
         case commandCouldNotBePrepared(name: String)
         case mismatchArgs(String)
     }
-    
+
     public enum HandleResult {
         case Success(renderResult: String?)
         case HasErrors(
@@ -31,22 +31,22 @@ public actor CommandsController {
 
     let pluginAPI: PluginAPI
     let pluginsController: PluginsController
-    
+
     public init(pluginAPI: PluginAPI, pluginsController: PluginsController) {
         self.pluginAPI = pluginAPI
         self.pluginsController = pluginsController
     }
-    
+
     public func getEnabledBuiltinCommands() async -> [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] {
         let commands = await pluginsController.commandDefinitions
         var result: [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] = []
-        
+
         for c in BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands.allCases {
             if commands[c.rawValue] != nil {
                 result.append(c)
             }
         }
-        
+
         return result
     }
 
@@ -62,9 +62,9 @@ public actor CommandsController {
         }
 
         var updateCommandContext = true
-        
+
         var successfulCommandsCount = 0
-        
+
         var renderToString: [String] = []
         var lastFlushToDisplayIndex = -1
 
@@ -81,16 +81,18 @@ public actor CommandsController {
                 await commandContext.append(error: CommandError.commandParseError(c.error))
             case .commandExecuted(let c):
                 updateCommandContext = true
-                switch c.returnValue {
-                case .stringValue(let v):
-                    await commandContext.append(
-                        returnValue: CommandValue(.string(v.value)))
-                case .numberValue(let v):
-                    await commandContext.append(
-                        returnValue: CommandValue(.number(v.value)))
-                case .booleanValue(let v):
-                    await commandContext.append(
-                        returnValue: CommandValue(.boolean(v.value)))
+                for returnValue in c.returnValues {
+                    switch returnValue {
+                    case .stringValue(let v):
+                        await commandContext.append(
+                            returnValue: CommandValue(.string(v.value)))
+                    case .numberValue(let v):
+                        await commandContext.append(
+                            returnValue: CommandValue(.number(v.value)))
+                    case .booleanValue(let v):
+                        await commandContext.append(
+                            returnValue: CommandValue(.boolean(v.value)))
+                    }
                 }
                 successfulCommandsCount += 1
             case .commandParsed(let c):
@@ -110,7 +112,7 @@ public actor CommandsController {
                     let type = invalidArgs.first?.0.type.asString() ?? "<unknown>"
                     throw CommandError.mismatchArgs("the argument '\(name)' expects a \(type)")
                 }
-                
+
                 let argsParsed = c.argsParsed?.map { $0.mapValues { CommandValue.init(from: $0) } }
                 if let argsParsed = argsParsed, commandDef.args.count != argsParsed.count {
                     throw CommandError.mismatchArgs(
@@ -136,11 +138,11 @@ public actor CommandsController {
                 try await prepared.run()
                 successfulCommandsCount += 1
             }
-            
+
             let returnValues = await commandContext._returnValues
-            for (i, v) in returnValues[(lastFlushToDisplayIndex+1)...].enumerated() {
+            for (i, v) in returnValues[(lastFlushToDisplayIndex + 1)...].enumerated() {
                 if case .action(.display) = v, i > lastFlushToDisplayIndex {
-                    let stringsSinceLastCommand = returnValues[(lastFlushToDisplayIndex+1)..<i].compactMap {
+                    let stringsSinceLastCommand = returnValues[(lastFlushToDisplayIndex + 1)..<i].compactMap {
                         if case let .commandValue(v) = $0 {
                             return v.string
                         }
@@ -152,15 +154,15 @@ public actor CommandsController {
                     lastFlushToDisplayIndex = i
                 }
             }
-            
+
             await commandContext.update(
                 partialResult: renderToString.count == 0
-                ? nil : renderToString.joined(separator: "\n"))
+                    ? nil : renderToString.joined(separator: "\n"))
         }
-        
+
         let renderResult = renderToString.count == 0
             ? nil : renderToString.joined(separator: "\n")
-        
+
         let errors = await commandContext.getErrors()
         if errors.count > 0 {
             return .HasErrors(
@@ -168,7 +170,7 @@ public actor CommandsController {
                 successfulCommandsCount: successfulCommandsCount,
                 errors: errors)
         }
-        
+
         return .Success(renderResult: renderResult)
     }
 
@@ -188,7 +190,7 @@ public actor CommandContext: BashiPlugin.CommandContext {
 
     fileprivate var _returnValues: [ReturnValue] = []
     private var errors: [Error] = []
-    
+
     public var partialRenderedResult: String? = nil
 
     public static func from(request: String, requestContext: RequestContext) -> CommandContext {
@@ -253,11 +255,11 @@ public actor CommandContext: BashiPlugin.CommandContext {
     public func append(builtinAction: BashiPlugin.CommandBuiltinAction) async {
         _returnValues.append(.action(builtinAction))
     }
-    
+
     public func update(partialResult: String?) {
         partialRenderedResult = partialResult
     }
-    
+
     public func getReturnValues() async -> [BashiPlugin.CommandValue] {
         return _returnValues.compactMap({
             switch $0 {
@@ -266,7 +268,7 @@ public actor CommandContext: BashiPlugin.CommandContext {
             }
         })
     }
-    
+
     public func getErrors() async -> [Error] {
         return errors
     }

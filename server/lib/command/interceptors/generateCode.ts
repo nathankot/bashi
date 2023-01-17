@@ -10,7 +10,7 @@ const interceptor = interceptCommand(
       whatIsBeingGenerated: whatIsBeingGenerated.value,
       targetLanguage: targetLanguage.value,
     });
-    return { type: "string", value: output.result.trim() };
+    return [{ type: "string", value: output.result.trim() }];
   }
 );
 

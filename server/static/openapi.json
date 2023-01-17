@@ -624,7 +624,7 @@
           "type",
           "name",
           "args",
-          "returnValue"
+          "returnValues"
         ],
         "properties": {
           "line": {
@@ -645,8 +645,11 @@
               "$ref": "#/components/schemas/Value"
             }
           },
-          "returnValue": {
-            "$ref": "#/components/schemas/Value"
+          "returnValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Value"
+            }
           }
         }
       },

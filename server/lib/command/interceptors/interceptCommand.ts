@@ -29,7 +29,7 @@ export function interceptCommand<
     deps: Parameters<ModelInterceptor<N>>[0],
     input: t.TypeOf<typeof models[N]["Input"]>,
     args: BuiltinCommandDefinitionArgs<typeof builtinCommands[FN]["args"]>
-  ) => Promise<CommandReturnValue | null>,
+  ) => Promise<CommandReturnValue[] | null>,
   validateFn?: (
     reqCtx: RequestContext
   ) => Promise<true | RequestContextRequirement>
@@ -61,14 +61,14 @@ export function interceptCommand<
         typeof builtinCommands[FN]["args"]
       >;
       try {
-        const maybeReturnValue = await interceptFn(deps, input, args);
-        if (maybeReturnValue == null) {
+        const maybeReturnValues = await interceptFn(deps, input, args);
+        if (maybeReturnValues == null) {
           continue;
         }
         newCommands[i] = {
           ...call,
           type: "executed",
-          returnValue: maybeReturnValue,
+          returnValues: maybeReturnValues,
         };
       } catch (e) {
         log("error", e);

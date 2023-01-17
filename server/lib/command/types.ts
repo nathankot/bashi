@@ -91,7 +91,7 @@ export const CommandExecuted = t.type({
   type: t.literal("executed"),
   name: t.string,
   args: t.array(Argument),
-  returnValue: Value,
+  returnValues: t.array(Value),
 });
 export type CommandExecuted = t.TypeOf<typeof CommandExecuted>;
 

@@ -44,23 +44,13 @@ public class BuiltinCommands: BundledPlugin {
                     }
                 }),
             AnonymousCommand(
-                name: "write",
-                description: "<builtin>",
-                prepareFn: { api, ctx, args, _ in
-                    AnonymousPreparedCommand(
-                        shouldSkipConfirmation: true,
-                        confirmationMessage: "") {
-                        fatalError("not implemented")
-                    }
-                }),
-            AnonymousCommand(
                 name: "fail",
                 description: "<builtin>",
                 prepareFn: { api, ctx, args, _ in
                     AnonymousPreparedCommand(
                         shouldSkipConfirmation: true,
                         confirmationMessage: "") {
-                        fatalError("not implemented")
+                        fatalError("fail() is not implemented yet")
                     }
                 })
         ]

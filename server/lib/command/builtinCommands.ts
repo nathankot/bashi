@@ -103,7 +103,6 @@ const fail: BuiltinCommandDefinition<["string"]> = {
 const write: BuiltinCommandDefinition<[]> = {
   description: `write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written`,
   args: [],
-  mustNotBeDisabled: true,
 };
 
 const display: BuiltinCommandDefinition<[]> = {

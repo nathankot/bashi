@@ -2,18 +2,17 @@ import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
 import { RequestContext } from "@lib/requestContext.ts";
-import { ModelDeps, run } from "@lib/models.ts";
+import { ModelDeps, run, models } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint } from "@lib/clients.ts";
-import { Commands } from "@lib/command.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 
 export const Example = t.intersection([
   t.type({
     updated: t.string,
+    result: models["assist-000"].Output.props.result,
     prompt: t.string,
-    commands: Commands,
     completion: t.string,
   }),
   t.partial({
@@ -151,7 +150,7 @@ export default async function updateExamples(examplesFile: string) {
       request: input.prompt,
       requestContext: input.requestContext,
     });
-    if (!("commands" in output)) {
+    if (!("result" in output)) {
       throw new Error(`unexpected output: ${JSON.stringify(output)}`);
     }
 
@@ -160,8 +159,11 @@ export default async function updateExamples(examplesFile: string) {
     newExamples.push({
       updated: new Date().toISOString(),
       prompt: input.prompt,
-      commands: output.commands,
-      completion: output.commands.map((c) => c.line).join("\n"),
+      result: output.result,
+      completion:
+        output.result.type === "ok"
+          ? output.result.commands.map((c) => c.line).join("\n")
+          : "",
       requestContext: input.requestContext ?? {},
     });
   }

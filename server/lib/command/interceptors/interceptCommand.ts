@@ -5,7 +5,6 @@ import { ModelInterceptor } from "@lib/interceptors.ts";
 import {
   BuiltinCommandDefinitionArgs,
   CommandReturnValue,
-  Commands,
   checkArgumentsValid,
   builtinCommands,
 } from "@lib/command.ts";
@@ -17,11 +16,16 @@ import {
   RequestContext,
 } from "@lib/requestContext.ts";
 
+type SupportedModels = {
+  [K in ModelName]: t.TypeOf<typeof models[K]["Output"]> extends {
+    result: { type: string };
+  }
+    ? K
+    : never;
+}[ModelName];
+
 export function interceptCommand<
-  N extends Extract<
-    t.TypeOf<typeof models[ModelName]["Output"]>,
-    { model: string; commands: Commands }
-  >["model"],
+  N extends SupportedModels,
   FN extends keyof typeof builtinCommands
 >(
   commandName: FN,
@@ -39,13 +43,16 @@ export function interceptCommand<
   validateRequestContext: NonNullable<typeof validateFn>;
 } {
   const interceptor: ModelInterceptor<N> = async (deps, input, output) => {
-    if (!("commands" in output)) {
+    if (!("result" in output)) {
       return output;
     }
-
+    const result = output.result;
+    if (result.type !== "ok") {
+      return output;
+    }
     const { log } = deps;
     const fnDef = builtinCommands[commandName];
-    const newCommands = [...output.commands];
+    const newCommands = [...result.commands];
     for (let i = 0; i < newCommands.length; i++) {
       const call = newCommands[i]!;
       if (call.type !== "parsed") {
@@ -82,7 +89,10 @@ export function interceptCommand<
 
     return {
       ...output,
-      commands: newCommands,
+      result: {
+        ...result,
+        commands: newCommands,
+      },
     };
   };
 

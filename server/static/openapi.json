@@ -818,6 +818,62 @@
           }
         }
       },
+      "ResultOK": {
+        "type": "object",
+        "required": [
+          "type",
+          "commands"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "ok"
+            ],
+            "type": "string"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Command"
+            }
+          }
+        }
+      },
+      "ResultNeedsRequestContext": {
+        "type": "object",
+        "required": [
+          "type",
+          "missingRequestContext"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "needs_request_context"
+            ],
+            "type": "string"
+          },
+          "missingRequestContext": {
+            "$ref": "#/components/schemas/RequestContextRequirement"
+          }
+        }
+      },
+      "Result": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ResultOK"
+          },
+          {
+            "$ref": "#/components/schemas/ResultNeedsRequestContext"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "ok": "#/components/schemas/ResultOK",
+            "needs_request_context": "#/components/schemas/ResultNeedsRequestContext"
+          }
+        }
+      },
       "models_assist-000_Input": {
         "type": "object",
         "properties": {
@@ -834,7 +890,7 @@
         "required": [
           "model",
           "request",
-          "commands"
+          "result"
         ],
         "properties": {
           "model": {
@@ -846,14 +902,8 @@
           "request": {
             "type": "string"
           },
-          "commands": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Command"
-            }
-          },
-          "missingRequestContext": {
-            "$ref": "#/components/schemas/RequestContextRequirement"
+          "result": {
+            "$ref": "#/components/schemas/Result"
           }
         }
       },

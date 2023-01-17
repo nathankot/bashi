@@ -33,16 +33,32 @@ export const Input = t.partial({
 });
 export type Input = t.TypeOf<typeof Input>;
 
-export const Output = t.intersection([
-  t.type({
-    model: Name,
-    request: t.string,
-    commands: Commands,
-  }),
-  t.partial({
-    missingRequestContext: RequestContextRequirement,
-  }),
+export const ResultOK = t.type({
+  type: t.literal("ok"),
+  commands: Commands,
+});
+
+export const ResultNeedsRequestContext = t.type({
+  type: t.literal("needs_request_context"),
+  missingRequestContext: RequestContextRequirement,
+});
+
+export const ResultNeedsClarification = t.type({
+  type: t.literal("needs_clarification"),
+  clarificationRequest: t.string,
+});
+
+export const Result = t.union([
+  ResultOK,
+  ResultNeedsRequestContext,
+  ResultNeedsClarification,
 ]);
+
+export const Output = t.type({
+  model: Name,
+  request: t.string,
+  result: Result,
+});
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
@@ -74,7 +90,7 @@ export async function run(
   > => {
     if (!("request" in input) || input.request == null) {
       const outputAwaitingContext = modelDeps.session.outputAwaitingContext;
-      // we assume missing request context is being fulfilled:
+      // if there is no request field, then we assume missing request context is being fulfilled:
       if (outputAwaitingContext == null) {
         throw new HTTPError(
           "the request field it not populated, " +
@@ -150,20 +166,26 @@ export async function run(
     return {
       model: "assist-000",
       request,
-      commands,
+      result: {
+        type: "ok",
+        commands,
+      },
     };
   })();
 
-  const commands = output.commands;
+  // No need for further processing if we are not at an 'ok' result at this stage:
+  if (output.result.type !== "ok") {
+    return output;
+  }
 
+  // First ensure that all interceptors have the request context that they need:
+  let missingRequestContext: null | RequestContextRequirement = null;
+  const commands = output.result.commands;
   const commandNames = commands.reduce(
     (a: Record<string, null>, c) =>
       c.type !== "parsed" ? a : { ...a, [c.name]: null },
     {}
   );
-
-  let missingRequestContext: null | RequestContextRequirement = null;
-  // First ensure that all interceptors have the request context that they need:
   for (const interceptor of commandInterceptors) {
     if (!(interceptor.commandName in commandNames)) {
       continue;
@@ -190,8 +212,10 @@ export async function run(
     return {
       model: "assist-000",
       request: input.request ?? "",
-      commands: [],
-      missingRequestContext,
+      result: {
+        type: "needs_request_context",
+        missingRequestContext,
+      },
     };
   }
 

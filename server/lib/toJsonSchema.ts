@@ -6,6 +6,11 @@ import { OpenAPIV3 } from "openapi-types";
 import { models } from "@lib/models.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
+import {
+  Result,
+  ResultNeedsRequestContext,
+  ResultOK,
+} from "@lib/models/assist000.ts";
 
 import {
   StringValue,
@@ -388,6 +393,12 @@ namedJSONSchemaObjects["#/components/schemas/CommandParsed"] =
 namedJSONSchemaObjects["#/components/schemas/CommandDefinition"] =
   toJSONSchema(CommandDefinition);
 namedJSONSchemaObjects["#/components/schemas/Command"] = toJSONSchema(Command);
+
+namedJSONSchemaObjects["#/components/schemas/ResultOK"] =
+  toJSONSchema(ResultOK);
+namedJSONSchemaObjects["#/components/schemas/ResultNeedsRequestContext"] =
+  toJSONSchema(ResultNeedsRequestContext);
+namedJSONSchemaObjects["#/components/schemas/Result"] = toJSONSchema(Result);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

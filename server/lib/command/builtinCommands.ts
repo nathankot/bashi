@@ -137,7 +137,7 @@ const write: BuiltinCommandDefinition<[]> = {
 const display: BuiltinCommandDefinition<[]> = {
   description: `display the results above to the user. should be favored over write() if it makes more sense`,
   args: [],
-  mustNotBeDisabled: true,
+  mustNotBeDisabled: false,
 };
 
 export const builtinCommands = {

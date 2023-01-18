@@ -295,7 +295,7 @@ function makePrompt(
 ): string {
   const commandSet = makeCommandSet(commands);
 
-  return `Your role is to interpret requests intended for a voice assistant.
+  return `Interpret requests intended for a voice assistant.
 
 For each request respond with an ordered list of known function calls separated by newlines, identifying what would need to happen in order to fulfill the request.
 
@@ -322,7 +322,7 @@ ${
         .join("\n\n")}`
 }
 
-Your interpreted instructions are:`;
+Begin!`;
 }
 
 function makeCommandSet(commands: CommandSet): string[] {

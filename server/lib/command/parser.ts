@@ -151,102 +151,104 @@ export function evaluate(expr: string): Command & { type: "parsed" } {
 
 type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
 
-export function parseFromModelResult(
-  {
-    log,
-    now,
-    knownCommands,
-    sessionConfiguration,
-  }: {
-    log: LogFn;
-    now: Date;
-    knownCommands: CommandSet;
-    sessionConfiguration: Configuration;
-  },
-  text: string
-): Command[] {
+type ParseDeps = {
+  log: LogFn;
+  now: Date;
+  knownCommands: CommandSet;
+  sessionConfiguration: Configuration;
+};
+
+export function parseCommand(
+  { log, now, knownCommands, sessionConfiguration }: ParseDeps,
+  line: string
+): Command | null {
+  if (line.trim() === "") {
+    return null;
+  }
+  if (line.length < 3) {
+    // min number of chars for a valid function is 3
+    return null;
+  }
+  try {
+    const parsed = {
+      ...evaluate(line),
+      line,
+    };
+    const command = knownCommands[parsed.name];
+    // Check that the command is known
+    if (command == null) {
+      return {
+        ...parsed,
+        type: "invalid",
+        invalidReason: "unknown_command",
+      };
+    }
+    if (!checkArgumentsValid(command, parsed.args)) {
+      return {
+        ...parsed,
+        type: "invalid",
+        invalidReason: "invalid_arguments",
+      };
+    }
+
+    // Do any additional argument parsing:
+    parsed.argsParsed = command.args.map((argDef, i) =>
+      (argDef.parse ?? []).reduce((a, e) => {
+        const value = parsed.args[i];
+        if (value == null) {
+          return a;
+        }
+        try {
+          const argParser = argumentParsers[e];
+          if (argParser.inputType != value.type) {
+            throw new Error(
+              `expected parser input to be ${argParser.inputType} got ${value.type}`
+            );
+          }
+          let v: Value | null = argParser.fn(
+            {
+              now,
+              chronoParseDate: parseDate,
+              timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
+            },
+            value.value
+          );
+
+          if (v == null) {
+            return a;
+          }
+
+          return {
+            ...a,
+            [e]: v,
+          } satisfies ArgParsed;
+        } catch (e) {
+          log("error", e);
+          return a;
+        }
+      }, {})
+    );
+
+    return parsed;
+  } catch (e) {
+    return {
+      type: "parse_error",
+      line,
+      error: (e as any).message ?? "",
+    };
+  }
+}
+
+export function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
   let result: Command[] = [];
 
   for (const line of text.split("\n")) {
-    if (line.trim() === "") {
-      continue;
-    }
-    if (line.length < 3) {
-      // min number of chars for a valid function is 3
-      continue;
-    }
     if (line === "```") {
       continue;
     }
-    try {
-      const parsed = {
-        ...evaluate(line),
-        line,
-      };
-      const command = knownCommands[parsed.name];
-      // Check that the command is known
-      if (command == null) {
-        result.push({
-          ...parsed,
-          type: "invalid",
-          invalidReason: "unknown_command",
-        });
-        continue;
-      }
-      if (!checkArgumentsValid(command, parsed.args)) {
-        result.push({
-          ...parsed,
-          type: "invalid",
-          invalidReason: "invalid_arguments",
-        });
-        continue;
-      }
-
-      // Do any additional argument parsing:
-      parsed.argsParsed = command.args.map((argDef, i) =>
-        (argDef.parse ?? []).reduce((a, e) => {
-          const value = parsed.args[i];
-          if (value == null) {
-            return a;
-          }
-          try {
-            const argParser = argumentParsers[e];
-            if (argParser.inputType != value.type) {
-              throw new Error(
-                `expected parser input to be ${argParser.inputType} got ${value.type}`
-              );
-            }
-            let v: Value | null = argParser.fn(
-              {
-                now,
-                chronoParseDate: parseDate,
-                timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
-              },
-              value.value
-            );
-
-            if (v == null) {
-              return a;
-            }
-
-            return {
-              ...a,
-              [e]: v,
-            } satisfies ArgParsed;
-          } catch (e) {
-            log("error", e);
-            return a;
-          }
-        }, {})
-      );
-
-      result.push(parsed);
-    } catch (e) {
-      result.push({
-        type: "parse_error",
-        line,
-        error: (e as any).message ?? "",
-      });
+    let command = parseCommand(deps, line);
+    if (command != null) {
+      result.push();
     }
   }
 

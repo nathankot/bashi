@@ -3,4 +3,3 @@ export * from "./command/parser.ts";
 export * from "./command/builtinCommands.ts";
 export * from "./command/filter.ts";
 export * from "./command/interceptors.ts";
-export * from "./command/privateCommands.ts";

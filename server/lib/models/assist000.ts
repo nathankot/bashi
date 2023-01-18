@@ -3,9 +3,9 @@ import * as t from "io-ts";
 import {
   CommandSet,
   Commands,
+  BuiltinCommandDefinition,
   parseFromModelResult,
   builtinCommands,
-  privateCommands,
   filterUnnecessary,
   commandInterceptors,
 } from "@lib/command.ts";
@@ -68,6 +68,15 @@ export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-000",
+};
+
+const privateCommands = {
+  clarify: {
+    description:
+      "ask more information necessary to interpret the request, " +
+      "must not be used with other functions",
+    args: [{ name: "question for missing information", type: "string" }],
+  } as BuiltinCommandDefinition<["string"]>,
 };
 
 export async function run(

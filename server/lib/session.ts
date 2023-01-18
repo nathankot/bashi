@@ -34,6 +34,13 @@ export const Session = t.intersection([
         })
       ),
     }),
+    pendingAssist001Request: t.type({
+      request: t.string,
+      scratch: t.string,
+      commands: Commands,
+      loopCount: t.number,
+      requestContext: RequestContext,
+    }),
   }),
 ]);
 

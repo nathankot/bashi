@@ -2,12 +2,12 @@ import * as t from "io-ts";
 
 import {
   CommandSet,
-  Commands,
-  parseFromModelResult,
+  Command,
+  BuiltinCommandDefinition,
   builtinCommands,
-  privateCommands,
   filterUnnecessary,
   commandInterceptors,
+  parseCommand,
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
@@ -38,12 +38,10 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 export const Input = t.partial({
   request: t.string,
   requestContext: RequestContext,
-  clarifications: t.array(
-    t.type({
-      question: t.string,
-      answer: t.string,
-    })
-  ),
+  clarification: t.type({
+    question: t.string,
+    answer: t.string,
+  }),
 });
 export type Input = t.TypeOf<typeof Input>;
 
@@ -58,6 +56,39 @@ export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-001",
 };
 
+const privateCommands = {
+  ask: {
+    description: "ask for more information, use only when necessary",
+    args: [{ name: "the question", type: "string" }],
+  } as BuiltinCommandDefinition<["string"]>,
+
+  answer: {
+    description:
+      "answer the original question directly based on existing knowledge. this is preferred",
+    args: [
+      {
+        name: "answer",
+        type: "string",
+      },
+    ],
+  } as BuiltinCommandDefinition<["string"]>,
+
+  now: {
+    description: "get the current time in ISO8601 format",
+    args: [],
+  } as BuiltinCommandDefinition<[]>,
+
+  relativeTime: {
+    description: "get the time relative to now in ISO8601 format",
+    args: [
+      {
+        name: "natural language description of relative time",
+        type: "string",
+      },
+    ],
+  } as BuiltinCommandDefinition<["string"]>,
+};
+
 export async function run(
   modelDeps: ModelDeps,
   configuration: Configuration,
@@ -69,31 +100,31 @@ export async function run(
     !(
       "request" in input ||
       "requestContext" in input ||
-      "clarifications" in input
+      "clarification" in input
     )
   ) {
     throw new HTTPError(
-      `at least one of 'request', 'requestContext' or 'clarifications' must be populated`,
+      `at least one of 'request', 'requestContext' or 'clarification' must be populated`,
       400
     );
   }
 
-  const pendingRequest =
-    input.request != null ? null : modelDeps.session.pendingAssistRequest;
-
+  const session = modelDeps.session;
+  const isContinue = input.request == null;
+  const pendingAssistRequest = isContinue
+    ? session.pendingAssist001Request
+    : undefined;
+  const request = input.request ?? pendingAssistRequest?.request;
   const requestContext: RequestContext = {
-    ...pendingRequest?.requestContext,
     ...input.requestContext,
+    ...pendingAssistRequest?.requestContext,
   };
 
-  const clarifications: { question: string; answer: string }[] = [
-    ...(pendingRequest?.clarifications ?? []),
-    ...(input.clarifications ?? []),
-  ];
+  const beginSection =
+    pendingAssistRequest?.scratch ??
+    (request != null ? `Begin!\n\nRequest: ${request.trim()}\nThought:` : null);
 
-  let request = input.request ?? pendingRequest?.request;
-
-  if (request == null) {
+  if (beginSection == null || request == null) {
     throw new HTTPError(
       "no request could be found, either in the 'request' field, " +
         " or in a pending request",
@@ -101,154 +132,189 @@ export async function run(
     );
   }
 
-  if (
-    pendingRequest != null &&
-    clarifications.length === 0 &&
-    Object.keys(requestContext).length === 0
-  ) {
-    throw new HTTPError(
-      "additional information must be provided in the 'requestContext' or " +
-        " 'clarifications' fields in order to proceed with the previous request",
-      400
-    );
+  if (input.clarification != null) {
+    // TODO add observation/result to the begin section
+    // TODO: actually this should just be a client-resolved result of the ask() command?
   }
 
-  // by default we want to clear the pending request if any:
-  modelDeps.setUpdatedSession({
-    ...modelDeps.session,
-    pendingAssistRequest: undefined,
-  });
+  let isFinished = false;
+  let commands = pendingAssistRequest?.commands ?? [];
 
-  let commands = await (async (): Promise<Commands> => {
-    // we can re-use the previously stored commands as long as there were
-    // no clarifications added to this request:
-    if ((input.clarifications?.length ?? 0) === 0 && pendingRequest != null) {
-      return pendingRequest.commands;
-    }
+  const maxLoops = 5; // TODO turn into config
+  let n = pendingAssistRequest?.loopCount ?? 0;
+  let scratch = beginSection;
 
-    const enabledBuiltinCommands: Partial<typeof builtinCommands> =
-      modelDeps.session.configuration.enabledBuiltinCommands.reduce(
-        (a, enabledCommand) =>
-          builtinCommands[enabledCommand] == null
-            ? a
-            : {
-                ...a,
-                [enabledCommand]: builtinCommands[enabledCommand],
-              },
-        {}
+  try {
+    while (true) {
+      // Always try to resolve any unresolved commands first.
+      for (const command of commands) {
+        if (command.type === "executed") {
+          continue;
+        }
+
+        if (command.type === "parse_error" || command.type === "invalid") {
+          log(
+            "error",
+            `failed to interpret command: ${JSON.stringify(command)}`
+          );
+          throw new HTTPError("could not interpret model result", 400);
+        }
+
+        // TODO: process private commands:
+
+        // Check interceptors have the request context that they need:
+        let missingRequestContext: null | RequestContextRequirement = null;
+        const commandName = command.name;
+        for (const interceptor of Object.values(commandInterceptors)) {
+          if (interceptor.commandName !== commandName) {
+            continue;
+          }
+          const validateResult = await interceptor.validateRequestContext(
+            requestContext
+          );
+          if (validateResult === true) {
+            continue;
+          }
+
+          missingRequestContext = {
+            ...(missingRequestContext ?? {}),
+            ...validateResult,
+          };
+        }
+        // If we have request context that is missing, update session state to
+        // keep track of what we have so far, and let the user know.
+        if (missingRequestContext != null) {
+          return {
+            model: "assist-001",
+            request,
+            result: {
+              type: "needs_request_context",
+              missingRequestContext,
+            },
+          };
+        }
+      }
+
+      // Run all of the command interceptors:
+      for (const interceptor of Object.values(commandInterceptors)) {
+        commands = await modelDeps.faultHandlingPolicy.execute(
+          async ({ signal }) =>
+            interceptor.commandsInterceptor(
+              { ...modelDeps, signal },
+              input,
+              commands
+            )
+        );
+      }
+
+      if (isFinished) {
+        break;
+      }
+
+      if (n >= maxLoops) {
+        throw new HTTPError(`max iteration count of ${maxLoops} reached`, 400);
+      }
+      n++;
+
+      const enabledBuiltinCommands: Partial<typeof builtinCommands> =
+        session.configuration.enabledBuiltinCommands.reduce(
+          (a, enabledCommand) =>
+            builtinCommands[enabledCommand] == null
+              ? a
+              : {
+                  ...a,
+                  [enabledCommand]: builtinCommands[enabledCommand],
+                },
+          {}
+        );
+
+      const commandSet = filterUnnecessary(scratch, {
+        ...configuration.commands,
+        ...enabledBuiltinCommands,
+        ...privateCommands,
+      });
+
+      const prompt = makePrompt(commandSet, scratch);
+
+      console.log("NKDEBUG prompt is", prompt);
+
+      const completion = await modelDeps.openai.createCompletion(
+        {
+          model: "text-davinci-003",
+          max_tokens: session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
+          best_of: session.configuration.bestOf,
+          echo: false,
+          prompt: [prompt],
+          stop: "\nResult:",
+        },
+        {
+          signal: modelDeps.signal,
+        }
       );
 
-    const commandSet = filterUnnecessary(request, {
-      ...configuration.commands,
-      ...enabledBuiltinCommands,
-      ...privateCommands,
-    });
+      log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
+      log("info", { message: "tokens used" });
 
-    const prompt = makePrompt(commandSet, clarifications, request.trim());
+      const text = completion.data.choices[0]?.text ?? "";
+      console.log("NKDEBUG", text);
 
-    const completion = await modelDeps.openai.createCompletion(
-      {
-        model: "text-davinci-003",
-        max_tokens: modelDeps.session.configuration.maxResponseTokens, // TODO return error if completion tokens has reached this limit
-        best_of: modelDeps.session.configuration.bestOf,
-        echo: false,
-        prompt: [prompt],
-      },
-      {
-        signal: modelDeps.signal,
-      }
-    );
-
-    log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
-    log("info", { message: "tokens used" });
-
-    const text = completion.data.choices[0]?.text ?? "";
-
-    return parseFromModelResult(
-      {
+      const parseDeps = {
         log,
         now: modelDeps.now(),
         knownCommands: commandSet,
         sessionConfiguration: modelDeps.session.configuration,
-      },
-      text
-    );
-  })();
+      };
 
-  const pendingAssistRequest = {
-    clarifications,
-    requestContext,
-    commands,
-    request,
-  };
-
-  // Return if the model indicates that any clarifications are needed:
-  const clarificationQuestions = commands
-    .map((command) => {
-      if (command.type === "parsed" && command.name == "clarify") {
-        const arg = command.args[0];
-        if (arg != null && arg.type === "string") {
-          return arg.value;
+      scratch = scratch + text;
+      let pendingCommands: Command[] = [];
+      for (const line of text.split("\n")) {
+        if (line == null) {
+          continue;
+        }
+        let actionLine: string | null = null;
+        if (line.toLowerCase().startsWith("action:")) {
+          actionLine = line.substring("action:".length).trim();
+        }
+        if (line.toLowerCase().startsWith("final action:")) {
+          actionLine = line.substring("final action:".length).trim();
+        }
+        if (actionLine == null) {
+          continue;
+        }
+        for (const component of actionLine.split("|")) {
+          const parsed = parseCommand(parseDeps, component.trim());
+          if (parsed != null) {
+            pendingCommands.push(parsed);
+          }
         }
       }
-      return "";
-    })
-    .filter((r) => r !== "");
-  if (clarificationQuestions.length > 0) {
+
+      if (pendingCommands.length === 0) {
+        isFinished = true;
+      }
+
+      commands = [...commands, ...pendingCommands];
+    }
+  } catch (e) {
+    isFinished = true;
+    throw e;
+  } finally {
     modelDeps.setUpdatedSession({
-      ...modelDeps.session,
-      pendingAssistRequest,
+      ...session,
+      pendingAssist001Request: isFinished
+        ? undefined
+        : {
+            request,
+            requestContext,
+            loopCount: n,
+            commands,
+            scratch,
+          },
     });
-    return {
-      model: "assist-001",
-      request: input.request ?? "",
-      result: {
-        type: "needs_clarification",
-        clarificationQuestions,
-      },
-    };
   }
 
-  // Check interceptors have the request context that they need:
-  let missingRequestContext: null | RequestContextRequirement = null;
-  const commandNames = commands.reduce(
-    (a: Record<string, null>, c) =>
-      c.type !== "parsed" ? a : { ...a, [c.name]: null },
-    {}
-  );
-  for (const interceptor of Object.values(commandInterceptors)) {
-    if (!(interceptor.commandName in commandNames)) {
-      continue;
-    }
-    const validateResult = await interceptor.validateRequestContext(
-      requestContext
-    );
-    if (validateResult === true) {
-      continue;
-    }
-    missingRequestContext = {
-      ...(missingRequestContext ?? {}),
-      ...validateResult,
-    };
-  }
-  // If we have request context that is missing, update session state to
-  // keep track of what we have so far, and let the user know.
-  if (missingRequestContext != null) {
-    modelDeps.setUpdatedSession({
-      ...modelDeps.session,
-      pendingAssistRequest,
-    });
-    return {
-      model: "assist-001",
-      request: input.request ?? "",
-      result: {
-        type: "needs_request_context",
-        missingRequestContext,
-      },
-    };
-  }
-
-  let okResult: Output = {
+  // If we reach here, then both command execution and the model has been resolved:
+  return {
     model: "assist-001",
     request,
     result: {
@@ -256,36 +322,17 @@ export async function run(
       commands,
     },
   };
-
-  // Run all of the command interceptors:
-  for (const interceptor of Object.values(commandInterceptors)) {
-    const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
-      async ({ signal }) =>
-        interceptor.interceptor(
-          "assist-001",
-          { ...modelDeps, signal },
-          input,
-          okResult
-        )
-    );
-    if ("missingRequestContext" in interceptedOutput) {
-      throw new Error(
-        `command intercepts must not return missingRequestContext - this should happen at the validation step`
-      );
-    }
-    okResult = interceptedOutput;
-  }
-
-  return okResult;
 }
 
-function makePrompt(
-  commands: CommandSet,
-  clarifications: { question: string; answer: string }[],
-  request: string
-): string {
+function makePrompt(commands: CommandSet, beginSection: string): string {
+  if (!beginSection.startsWith("Begin!")) {
+    throw new Error("beginSection must start with Begin!");
+  }
+
   const commandSet = makeCommandSet(commands);
-  return `Answer the following questions/requests as best you can. You have access to the following tools/functions denoted in a Typescript-like definition. When used, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. Functions other than the ones listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+  return `Answer the following questions as best you can.
+
+You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
 
 ${commandSet.join("\n")}
 
@@ -293,15 +340,13 @@ Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Function: a function to call following the requirements mentioned above
+Action: function(s) to call following the above requirements, delimited by |
 Result: the result of the function call
-... (this Thought/Function/Function Input/Result can repeat N times)
-Thought: I now know the final answer or have completed the request
-Final result: the final an answer to the original question or an acknowledgement that the request is fulfilled
+... (this Thought/Action/Result can repeat N times)
+Thought: I have completed the request
+Final Action: a final function call to fulfill the request. for example answer("an answer to the original question")
 
-Begin!
-
-Request: ${request}`;
+${beginSection}`;
 }
 
 function makeCommandSet(commands: CommandSet): string[] {

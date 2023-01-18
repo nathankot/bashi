@@ -1,14 +1,17 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
-import { WEB_EXAMPLE_MODEL } from "@lib/constants.ts";
 
 import type { Input } from "@lib/models/assist000.ts";
 
-export default function AudioPrompt(props: { sessionId: string }) {
+export default function AudioPrompt(props: {
+  sessionId: string;
+  model: "assist-000" | "assist-001";
+}) {
   if (!IS_BROWSER) {
     return <div></div>;
   }
 
+  const model = props.model;
   const [mediaRecorder, setMediaRecorder] = useState<null | MediaRecorder>(
     null
   );
@@ -47,7 +50,7 @@ export default function AudioPrompt(props: { sessionId: string }) {
       const request: Input = {
         request: transcribeResult.transcribed,
       };
-      const result = await fetch(`/api/session/requests/${WEB_EXAMPLE_MODEL}`, {
+      const result = await fetch(`/api/session/requests/${model}`, {
         method: "POST",
         body: JSON.stringify(request),
         headers: {

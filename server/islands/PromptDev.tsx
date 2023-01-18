@@ -14,9 +14,25 @@ export default function PromptDev() {
 
   useEffect(() => {
     let body: PostSessionRequest = {
+      configuration: {
+        enabledBuiltinCommands: [
+          "time",
+          "translate",
+          "editCode",
+          "editProse",
+          "generateCode",
+          "math",
+          "fail",
+          "answer",
+        ],
+      },
       modelConfigurations: {
         "assist-000": {
           model: "assist-000",
+          commands,
+        },
+        "assist-001": {
+          model: "assist-001",
           commands,
         },
       },
@@ -53,16 +69,18 @@ export default function PromptDev() {
     return <div>Loading session</div>;
   }
 
+  const model = "assist-001" as const;
+
   return (
     <div>
       <div class="my-8">
         <h2 class="text-lg mb-2">Text prompt</h2>
-        <TextPrompt sessionId={sessionId} />
+        <TextPrompt sessionId={sessionId} model={model} />
       </div>
 
       <div class="my-8">
         <h2 class="text-lg mb-2">Audio prompt</h2>
-        <AudioPrompt sessionId={sessionId} />
+        <AudioPrompt sessionId={sessionId} model={model} />
       </div>
 
       <hr />

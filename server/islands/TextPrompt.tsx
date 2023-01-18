@@ -1,16 +1,19 @@
 import { useState } from "preact/hooks";
 import type { Input } from "@lib/models/assist000.ts";
-import { WEB_EXAMPLE_MODEL } from "@lib/constants.ts";
 
-export default function TextPrompt(props: { sessionId: string }) {
+export default function TextPrompt(props: {
+  sessionId: string;
+  model: "assist-000" | "assist-001";
+}) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
 
+  const model = props.model;
   const submit = async () => {
     const request: Input = {
       request: prompt,
     };
-    const result = await fetch(`/api/session/requests/${WEB_EXAMPLE_MODEL}`, {
+    const result = await fetch(`/api/session/requests/${model}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer 0`,

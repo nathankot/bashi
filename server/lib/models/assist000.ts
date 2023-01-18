@@ -279,7 +279,7 @@ export async function run(
     );
     if ("missingRequestContext" in interceptedOutput) {
       throw new Error(
-        `command intercepts must not return missinGrequestContext - this should happen at the validation step`
+        `command intercepts must not return missingRequestContext - this should happen at the validation step`
       );
     }
     okResult = interceptedOutput;

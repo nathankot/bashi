@@ -23,7 +23,7 @@ export function interceptCommand<
 >(
   commandName: FN,
   interceptFn: (
-    deps: Parameters<ModelInterceptor<N>>[0],
+    deps: Parameters<ModelInterceptor<N>>[1],
     input: t.TypeOf<typeof models[N]["Input"]>,
     args: BuiltinCommandDefinitionArgs<typeof builtinCommands[FN]["args"]>
   ) => Promise<CommandReturnValue[] | null>,
@@ -35,7 +35,12 @@ export function interceptCommand<
   interceptor: ModelInterceptor<N>;
   validateRequestContext: NonNullable<typeof validateFn>;
 } {
-  const interceptor: ModelInterceptor<N> = async (deps, input, output) => {
+  const interceptor: ModelInterceptor<N> = async (
+    modelName,
+    deps,
+    input,
+    output
+  ) => {
     if (!("result" in output)) {
       return output;
     }

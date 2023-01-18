@@ -275,7 +275,12 @@ export async function run(
   for (const interceptor of Object.values(commandInterceptors)) {
     const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
       async ({ signal }) =>
-        interceptor.interceptor({ ...modelDeps, signal }, input, okResult)
+        interceptor.interceptor(
+          "assist-000",
+          { ...modelDeps, signal },
+          input,
+          okResult
+        )
     );
     if ("missingRequestContext" in interceptedOutput) {
       throw new Error(

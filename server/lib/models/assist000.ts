@@ -100,7 +100,7 @@ export async function run(
   }
 
   const pendingRequest =
-    input.request != null ? null : modelDeps.session.pendingAssistRequest;
+    input.request != null ? null : modelDeps.session.pendingAssist000Request;
 
   const requestContext: RequestContext = {
     ...pendingRequest?.requestContext,
@@ -137,7 +137,7 @@ export async function run(
   // by default we want to clear the pending request if any:
   modelDeps.setUpdatedSession({
     ...modelDeps.session,
-    pendingAssistRequest: undefined,
+    pendingAssist000Request: undefined,
   });
 
   let commands = await (async (): Promise<Commands> => {
@@ -219,11 +219,11 @@ export async function run(
   if (clarificationQuestion != null) {
     modelDeps.setUpdatedSession({
       ...modelDeps.session,
-      pendingAssistRequest,
+      pendingAssist000Request: pendingAssistRequest,
     });
     return {
       model: "assist-000",
-      request: input.request ?? "",
+      request: request,
       result: {
         type: "needs_clarification",
         clarificationQuestion,
@@ -258,11 +258,11 @@ export async function run(
   if (missingRequestContext != null) {
     modelDeps.setUpdatedSession({
       ...modelDeps.session,
-      pendingAssistRequest,
+      pendingAssist000Request: pendingAssistRequest,
     });
     return {
       model: "assist-000",
-      request: input.request ?? "",
+      request: request,
       result: {
         type: "needs_request_context",
         missingRequestContext,

@@ -23,7 +23,7 @@ export type SessionPublic = t.TypeOf<typeof SessionPublic>;
 export const Session = t.intersection([
   SessionPublic,
   t.partial({
-    pendingAssistRequest: t.type({
+    pendingAssist000Request: t.type({
       request: t.string,
       commands: Commands,
       requestContext: RequestContext,

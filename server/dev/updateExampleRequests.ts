@@ -17,7 +17,7 @@ export const Example = t.intersection([
   }),
   t.partial({
     requestContext: RequestContext,
-    clarifications: t.array(t.type({ question: t.string, answer: t.string })),
+    clarification: t.type({ question: t.string, answer: t.string }),
   }),
 ]);
 
@@ -27,7 +27,7 @@ const INPUTS: {
   variant?: string;
   prompt: string;
   requestContext?: RequestContext;
-  clarifications?: { question: string; answer: string }[];
+  clarification?: { question: string; answer: string };
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
@@ -103,13 +103,10 @@ function doSomething() int {
   {
     prompt: "make a calendar event",
     variant: "clarifications provided",
-    clarifications: [
-      {
-        question:
-          "What time should the event start and what is the event name?",
-        answer: "Next Tuesday noon, lunch with Bill",
-      },
-    ],
+    clarification: {
+      question: "What time should the event start and what is the event name?",
+      answer: "Next Tuesday noon, lunch with Bill",
+    },
   },
 
   // TODO: something like 'highlight the selected string', will it be able to differentiate from
@@ -168,7 +165,7 @@ export default async function updateExamples(examplesFile: string) {
     const output = await run(modelDeps, "assist-000", {
       request: input.prompt,
       requestContext: input.requestContext,
-      clarifications: input.clarifications,
+      clarification: input.clarification,
     });
     if (!("result" in output)) {
       throw new Error(`unexpected output: ${JSON.stringify(output)}`);
@@ -185,7 +182,7 @@ export default async function updateExamples(examplesFile: string) {
           ? output.result.commands.map((c) => c.line).join("\n")
           : "",
       requestContext: input.requestContext ?? {},
-      clarifications: input.clarifications ?? [],
+      clarification: input.clarification,
     });
   }
 

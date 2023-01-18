@@ -19,7 +19,14 @@ import { wrap } from "@lib/log.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
 
-export const Name = t.literal("assist-000");
+import {
+  Result,
+  // ResultOK,
+  // ResultNeedsClarification,
+  // ResultNeedsRequestContext,
+} from "./assist000.ts";
+
+export const Name = t.literal("assist-001");
 export type Name = t.TypeOf<typeof Name>;
 
 export const Configuration = t.type({
@@ -31,33 +38,14 @@ export type Configuration = t.TypeOf<typeof Configuration>;
 export const Input = t.partial({
   request: t.string,
   requestContext: RequestContext,
-  clarification: t.type({
-    question: t.string,
-    answer: t.string,
-  }),
+  clarifications: t.array(
+    t.type({
+      question: t.string,
+      answer: t.string,
+    })
+  ),
 });
 export type Input = t.TypeOf<typeof Input>;
-
-export const ResultOK = t.type({
-  type: t.literal("ok"),
-  commands: Commands,
-});
-
-export const ResultNeedsRequestContext = t.type({
-  type: t.literal("needs_request_context"),
-  missingRequestContext: RequestContextRequirement,
-});
-
-export const ResultNeedsClarification = t.type({
-  type: t.literal("needs_clarification"),
-  clarificationQuestion: t.string,
-});
-
-export const Result = t.union([
-  ResultOK,
-  ResultNeedsRequestContext,
-  ResultNeedsClarification,
-]);
 
 export const Output = t.type({
   model: Name,
@@ -67,7 +55,7 @@ export const Output = t.type({
 export type Output = t.TypeOf<typeof Output>;
 
 export const defaultConfiguration: Partial<Configuration> = {
-  model: "assist-000",
+  model: "assist-001",
 };
 
 export async function run(
@@ -81,11 +69,11 @@ export async function run(
     !(
       "request" in input ||
       "requestContext" in input ||
-      "clarification" in input
+      "clarifications" in input
     )
   ) {
     throw new HTTPError(
-      `at least one of 'request', 'requestContext' or 'clarification' must be populated`,
+      `at least one of 'request', 'requestContext' or 'clarifications' must be populated`,
       400
     );
   }
@@ -100,7 +88,7 @@ export async function run(
 
   const clarifications: { question: string; answer: string }[] = [
     ...(pendingRequest?.clarifications ?? []),
-    ...(input.clarification != null ? [input.clarification] : []),
+    ...(input.clarifications ?? []),
   ];
 
   let request = input.request ?? pendingRequest?.request;
@@ -120,7 +108,7 @@ export async function run(
   ) {
     throw new HTTPError(
       "additional information must be provided in the 'requestContext' or " +
-        " 'clarification' fields in order to proceed with the previous request",
+        " 'clarifications' fields in order to proceed with the previous request",
       400
     );
   }
@@ -134,7 +122,7 @@ export async function run(
   let commands = await (async (): Promise<Commands> => {
     // we can re-use the previously stored commands as long as there were
     // no clarifications added to this request:
-    if (input.clarification == null && pendingRequest != null) {
+    if ((input.clarifications?.length ?? 0) === 0 && pendingRequest != null) {
       return pendingRequest.commands;
     }
 
@@ -195,7 +183,7 @@ export async function run(
   };
 
   // Return if the model indicates that any clarifications are needed:
-  const clarificationQuestion = commands
+  const clarificationQuestions = commands
     .map((command) => {
       if (command.type === "parsed" && command.name == "clarify") {
         const arg = command.args[0];
@@ -203,21 +191,20 @@ export async function run(
           return arg.value;
         }
       }
-      return null;
+      return "";
     })
-    .filter((c) => c != null)[0];
-
-  if (clarificationQuestion != null) {
+    .filter((r) => r !== "");
+  if (clarificationQuestions.length > 0) {
     modelDeps.setUpdatedSession({
       ...modelDeps.session,
       pendingAssistRequest,
     });
     return {
-      model: "assist-000",
+      model: "assist-001",
       request: input.request ?? "",
       result: {
         type: "needs_clarification",
-        clarificationQuestion,
+        clarificationQuestions,
       },
     };
   }
@@ -252,7 +239,7 @@ export async function run(
       pendingAssistRequest,
     });
     return {
-      model: "assist-000",
+      model: "assist-001",
       request: input.request ?? "",
       result: {
         type: "needs_request_context",
@@ -262,7 +249,7 @@ export async function run(
   }
 
   let okResult: Output = {
-    model: "assist-000",
+    model: "assist-001",
     request,
     result: {
       type: "ok",
@@ -275,7 +262,7 @@ export async function run(
     const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
       async ({ signal }) =>
         interceptor.interceptor(
-          "assist-000",
+          "assist-001",
           { ...modelDeps, signal },
           input,
           okResult
@@ -298,35 +285,23 @@ function makePrompt(
   request: string
 ): string {
   const commandSet = makeCommandSet(commands);
-
-  return `Interpret requests intended for a voice assistant.
-
-For each request respond with an ordered list of known function calls separated by newlines, identifying what would need to happen in order to fulfill the request.
-
-The known functions are as follows, denoted in a Typescript-like function definition notation. When responding, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. Functions other than the ones listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested.
+  return `Answer the following questions/requests as best you can. You have access to the following tools/functions denoted in a Typescript-like definition. When used, string arguments MUST be quoted and any quotes inside them MUST be escaped. Each function call MUST have the exact number of arguments specified. Functions other than the ones listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
 
 ${commandSet.join("\n")}
 
-For example, if the request is "Whats the time in Los Angeles?", respond with:
+Use the following format:
 
-time("America/Los_Angeles")
-display()
+Request: the input question or request you must answer
+Thought: you should always think about what to do
+Function: a function to call following the requirements mentioned above
+Result: the result of the function call
+... (this Thought/Function/Function Input/Result can repeat N times)
+Thought: I now know the final answer or have completed the request
+Final result: the final an answer to the original question or an acknowledgement that the request is fulfilled
 
-If the request could not be understood, use the fail() command to indicate why or what might be missing from the request. Aim to use the minimal number of commands to satisfy the request.
+Begin!
 
-The request is:
-
-${request}
-
-${
-  clarifications.length === 0
-    ? ""
-    : `The provided clarifications are:\n${clarifications
-        .map((c) => `Q: ${c.question}\nA: ${c.answer}`)
-        .join("\n\n")}`
-}
-
-Begin!`;
+Request: ${request}`;
 }
 
 function makeCommandSet(commands: CommandSet): string[] {

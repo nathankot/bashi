@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import type { Input } from "@lib/models/assist000.ts";
+import { WEB_EXAMPLE_MODEL } from "@lib/constants.ts";
 
 export default function TextPrompt(props: { sessionId: string }) {
   const [prompt, setPrompt] = useState("");
@@ -9,7 +10,7 @@ export default function TextPrompt(props: { sessionId: string }) {
     const request: Input = {
       request: prompt,
     };
-    const result = await fetch("/api/session/requests/assist-000", {
+    const result = await fetch(`/api/session/requests/${WEB_EXAMPLE_MODEL}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer 0`,

@@ -1,5 +1,6 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
+import { WEB_EXAMPLE_MODEL } from "@lib/constants.ts";
 
 import type { Input } from "@lib/models/assist000.ts";
 
@@ -46,7 +47,7 @@ export default function AudioPrompt(props: { sessionId: string }) {
       const request: Input = {
         request: transcribeResult.transcribed,
       };
-      const result = await fetch("/api/session/requests/assist-000", {
+      const result = await fetch(`/api/session/requests/${WEB_EXAMPLE_MODEL}`, {
         method: "POST",
         body: JSON.stringify(request),
         headers: {

@@ -39,6 +39,9 @@
                       "assist-000": {
                         "$ref": "#/components/schemas/models_assist-000_Configuration"
                       },
+                      "assist-001": {
+                        "$ref": "#/components/schemas/models_assist-001_Configuration"
+                      },
                       "translate-000": {
                         "$ref": "#/components/schemas/models_translate-000_Configuration"
                       },
@@ -154,6 +157,54 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/models_assist-000_Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/error"
+          },
+          "401": {
+            "$ref": "#/components/responses/error"
+          },
+          "403": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/session/requests/assist-001": {
+      "post": {
+        "operationId": "post_session_assist-001",
+        "summary": "TODO",
+        "description": "TODO",
+        "security": [
+          {
+            "account_number": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "requestBody": {
+          "description": "TODO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/models_assist-000_Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models_assist-001_Output"
                 }
               }
             }
@@ -857,7 +908,7 @@
         "type": "object",
         "required": [
           "type",
-          "clarificationQuestions"
+          "clarificationQuestion"
         ],
         "properties": {
           "type": {
@@ -866,11 +917,8 @@
             ],
             "type": "string"
           },
-          "clarificationQuestions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "clarificationQuestion": {
+            "type": "string"
           }
         }
       },
@@ -922,21 +970,18 @@
           "requestContext": {
             "$ref": "#/components/schemas/RequestContext"
           },
-          "clarifications": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "question",
-                "answer"
-              ],
-              "properties": {
-                "question": {
-                  "type": "string"
-                },
-                "answer": {
-                  "type": "string"
-                }
+          "clarification": {
+            "type": "object",
+            "required": [
+              "question",
+              "answer"
+            ],
+            "properties": {
+              "question": {
+                "type": "string"
+              },
+              "answer": {
+                "type": "string"
               }
             }
           }
@@ -974,6 +1019,52 @@
           "model": {
             "enum": [
               "assist-000"
+            ],
+            "type": "string"
+          },
+          "commands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CommandDefinition"
+            }
+          }
+        }
+      },
+      "models_assist-001_Input": {
+        "$ref": "#/components/schemas/models_assist-000_Input"
+      },
+      "models_assist-001_Output": {
+        "type": "object",
+        "required": [
+          "model",
+          "request",
+          "result"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "assist-001"
+            ],
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AssistResult"
+          }
+        }
+      },
+      "models_assist-001_Configuration": {
+        "type": "object",
+        "required": [
+          "model",
+          "commands"
+        ],
+        "properties": {
+          "model": {
+            "enum": [
+              "assist-001"
             ],
             "type": "string"
           },
@@ -1286,6 +1377,9 @@
             "properties": {
               "assist-000": {
                 "$ref": "#/components/schemas/models_assist-000_Configuration"
+              },
+              "assist-001": {
+                "$ref": "#/components/schemas/models_assist-001_Configuration"
               },
               "translate-000": {
                 "$ref": "#/components/schemas/models_translate-000_Configuration"

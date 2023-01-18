@@ -7,11 +7,9 @@ import {
   wrap,
 } from "cockatiel";
 
-import { HTTPError } from "@lib/errors.ts";
+import { RetryableError } from "@lib/errors.ts";
 
-const handleInternalError = handleWhen(
-  (e) => !(e instanceof HTTPError) || e.statusCode >= 500
-);
+const handleInternalError = handleWhen((e) => e instanceof RetryableError);
 
 export const retryPolicy = retry(handleInternalError, {
   maxAttempts: 3,

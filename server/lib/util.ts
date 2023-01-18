@@ -1,7 +1,10 @@
-import { HTTPError } from "./errors.ts";
+import { HTTPError, RetryableError } from "./errors.ts";
 import { LogFn } from "@lib/log.ts";
 
 export function handleError(log: LogFn, e: unknown): Response {
+  if (e instanceof RetryableError) {
+    e = e.wrapped;
+  }
   if (e instanceof HTTPError) {
     return e.render();
   }

@@ -4,6 +4,19 @@ import { renderError } from "./util.ts";
 
 type SupportedCode = 400 | 401 | 404 | 500;
 
+export class RetryableError extends Error {
+  wrapped: Error;
+
+  constructor(wrapped: Error) {
+    super(wrapped.message, {
+      cause: wrapped.cause,
+    });
+    this.wrapped = wrapped;
+    this.name = wrapped.name;
+    this.stack = wrapped.stack;
+  }
+}
+
 export class HTTPError extends Error {
   statusCode: SupportedCode;
 

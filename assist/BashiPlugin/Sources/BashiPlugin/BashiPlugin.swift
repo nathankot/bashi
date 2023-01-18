@@ -29,9 +29,6 @@ import Foundation
     }
 }
 
-@objc public enum CommandBuiltinAction: Int, Equatable {
-    case display
-}
 
 @objc public enum CommandArgParser: Int, Equatable {
     case naturalLanguageDateTime
@@ -42,6 +39,10 @@ import Foundation
             return "naturalLanguageDateTime"
         }
     }
+}
+
+@objc public enum CommandBuiltinAction: Int, Equatable {
+    case display
 }
 
 @objc public class CommandArgDef: NSObject {
@@ -119,6 +120,8 @@ import Foundation
 @objc public protocol PreparedCommand {
     var shouldSkipConfirmation: Bool { get }
     var confirmationMessage: String { get }
+    // Other fields to support confirmation can be added here, such
+    // as confirmation display layout, image etc.
     func run() async throws
 }
 

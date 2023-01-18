@@ -40,3 +40,8 @@ export const Session = t.intersection([
 export type Session = t.TypeOf<typeof Session>;
 
 export { Configuration, defaultConfiguration };
+
+export {
+  ServerExecutedCommand,
+  KnownBuiltinCommand,
+} from "./session/configuration.ts";

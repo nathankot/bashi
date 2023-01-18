@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 
 import { ModelInterceptor } from "@lib/interceptors.ts";
+import { CommandSupportedModels as SupportedModels } from "@lib/command/supportedModels.ts";
 
 import {
   BuiltinCommandDefinitionArgs,
@@ -9,20 +10,12 @@ import {
   builtinCommands,
 } from "@lib/command.ts";
 
-import { ModelName, models } from "@lib/models.ts";
+import { models } from "@lib/models.ts";
 
 import {
   RequestContextRequirement,
   RequestContext,
 } from "@lib/requestContext.ts";
-
-type SupportedModels = {
-  [K in ModelName]: t.TypeOf<typeof models[K]["Output"]> extends {
-    result: { type: string };
-  }
-    ? K
-    : never;
-}[ModelName];
 
 export function interceptCommand<
   N extends SupportedModels,

@@ -37,11 +37,13 @@ public actor CommandsController {
         self.pluginsController = pluginsController
     }
 
-    public func getEnabledBuiltinCommands() async -> [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] {
+    public func getEnabledBuiltinCommands() async -> [KnownBuiltinCommand] {
         let commands = await pluginsController.commandDefinitions
-        var result: [BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands] = []
+        var result: [KnownBuiltinCommand] = ImplementationUnnecessaryBuiltinCommand
+            .allCases
+            .compactMap { KnownBuiltinCommand(rawValue: $0.rawValue) }
 
-        for c in BashiClient.PostSessions.Request.Body.Configuration.EnabledBuiltinCommands.allCases {
+        for c in KnownBuiltinCommand.allCases {
             if commands[c.rawValue] != nil {
                 result.append(c)
             }
@@ -57,7 +59,7 @@ public actor CommandsController {
         onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
         confirmationHandler: (String) async -> Bool
     ) async throws -> HandleResult {
-        
+
         var okResult: AssistResultOK!
         switch assistResponse.result {
         case .assistResultNeedsRequestContext(let r):

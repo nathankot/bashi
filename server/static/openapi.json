@@ -74,19 +74,7 @@
                       "enabledBuiltinCommands": {
                         "type": "array",
                         "items": {
-                          "enum": [
-                            "display",
-                            "write",
-                            "answer",
-                            "math",
-                            "time",
-                            "editProse",
-                            "editCode",
-                            "generateCode",
-                            "translate",
-                            "fail"
-                          ],
-                          "type": "string"
+                          "$ref": "#/components/schemas/KnownBuiltinCommand"
                         }
                       }
                     }
@@ -616,6 +604,32 @@
             "$ref": "#/components/schemas/StringValueRequirement"
           }
         }
+      },
+      "KnownBuiltinCommand": {
+        "enum": [
+          "display",
+          "write",
+          "answer",
+          "math",
+          "time",
+          "editProse",
+          "editCode",
+          "generateCode",
+          "translate",
+          "fail"
+        ],
+        "type": "string"
+      },
+      "ImplementationUnnecessaryBuiltinCommand": {
+        "enum": [
+          "math",
+          "time",
+          "translate",
+          "generateCode",
+          "editProse",
+          "editCode"
+        ],
+        "type": "string"
       },
       "CommandExecuted": {
         "type": "object",
@@ -1262,19 +1276,7 @@
               "enabledBuiltinCommands": {
                 "type": "array",
                 "items": {
-                  "enum": [
-                    "display",
-                    "write",
-                    "answer",
-                    "math",
-                    "time",
-                    "editProse",
-                    "editCode",
-                    "generateCode",
-                    "translate",
-                    "fail"
-                  ],
-                  "type": "string"
+                  "$ref": "#/components/schemas/KnownBuiltinCommand"
                 }
               }
             }

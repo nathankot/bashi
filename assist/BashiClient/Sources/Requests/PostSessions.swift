@@ -86,23 +86,9 @@ extension BashiClient {
                 /** TODO */
                 public class Configuration: APIModel {
 
-                    /** TODO */
-                    public enum EnabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
-                        case display = "display"
-                        case write = "write"
-                        case answer = "answer"
-                        case math = "math"
-                        case time = "time"
-                        case editProse = "editProse"
-                        case editCode = "editCode"
-                        case generateCode = "generateCode"
-                        case translate = "translate"
-                        case fail = "fail"
-                    }
-
                     public var bestOf: Double?
 
-                    public var enabledBuiltinCommands: [EnabledBuiltinCommands]?
+                    public var enabledBuiltinCommands: [KnownBuiltinCommand]?
 
                     public var locale: String?
 
@@ -110,7 +96,7 @@ extension BashiClient {
 
                     public var timezoneUtcOffset: Double?
 
-                    public init(bestOf: Double? = nil, enabledBuiltinCommands: [EnabledBuiltinCommands]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
+                    public init(bestOf: Double? = nil, enabledBuiltinCommands: [KnownBuiltinCommand]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
                         self.bestOf = bestOf
                         self.enabledBuiltinCommands = enabledBuiltinCommands
                         self.locale = locale

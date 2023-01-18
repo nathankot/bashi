@@ -19,19 +19,6 @@ public class BashiSession: APIModel {
 
     public class Configuration: APIModel {
 
-        public enum EnabledBuiltinCommands: String, Codable, Equatable, CaseIterable {
-            case display = "display"
-            case write = "write"
-            case answer = "answer"
-            case math = "math"
-            case time = "time"
-            case editProse = "editProse"
-            case editCode = "editCode"
-            case generateCode = "generateCode"
-            case translate = "translate"
-            case fail = "fail"
-        }
-
         public var locale: String
 
         public var timezoneUtcOffset: Double
@@ -40,9 +27,9 @@ public class BashiSession: APIModel {
 
         public var bestOf: Double
 
-        public var enabledBuiltinCommands: [EnabledBuiltinCommands]
+        public var enabledBuiltinCommands: [KnownBuiltinCommand]
 
-        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, enabledBuiltinCommands: [EnabledBuiltinCommands]) {
+        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, enabledBuiltinCommands: [KnownBuiltinCommand]) {
             self.locale = locale
             self.timezoneUtcOffset = timezoneUtcOffset
             self.maxResponseTokens = maxResponseTokens

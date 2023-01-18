@@ -230,7 +230,7 @@ export async function run(
       c.type !== "parsed" ? a : { ...a, [c.name]: null },
     {}
   );
-  for (const interceptor of commandInterceptors) {
+  for (const interceptor of Object.values(commandInterceptors)) {
     if (!(interceptor.commandName in commandNames)) {
       continue;
     }
@@ -272,7 +272,7 @@ export async function run(
   };
 
   // Run all of the command interceptors:
-  for (const interceptor of commandInterceptors) {
+  for (const interceptor of Object.values(commandInterceptors)) {
     const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
       async ({ signal }) =>
         interceptor.interceptor({ ...modelDeps, signal }, input, okResult)

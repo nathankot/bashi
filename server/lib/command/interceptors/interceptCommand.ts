@@ -4,6 +4,7 @@ import { ModelInterceptor } from "@lib/interceptors.ts";
 import { CommandSupportedModels as SupportedModels } from "@lib/command/supportedModels.ts";
 
 import {
+  Commands,
   BuiltinCommandDefinitionArgs,
   CommandReturnValue,
   checkArgumentsValid,
@@ -32,25 +33,22 @@ export function interceptCommand<
   ) => Promise<true | RequestContextRequirement>
 ): {
   commandName: FN;
+  commandsInterceptor: (
+    deps: Parameters<ModelInterceptor<N>>[1],
+    input: t.TypeOf<typeof models[N]["Input"]>,
+    commands: Commands
+  ) => Promise<Commands>;
   interceptor: ModelInterceptor<N>;
   validateRequestContext: NonNullable<typeof validateFn>;
 } {
-  const interceptor: ModelInterceptor<N> = async (
-    modelName,
-    deps,
-    input,
-    output
-  ) => {
-    if (!("result" in output)) {
-      return output;
-    }
-    const result = output.result;
-    if (result.type !== "ok") {
-      return output;
-    }
+  const commandsInterceptor: (
+    deps: Parameters<ModelInterceptor<N>>[1],
+    input: t.TypeOf<typeof models[N]["Input"]>,
+    commands: Commands
+  ) => Promise<Commands> = async (deps, input, commands) => {
     const { log } = deps;
     const fnDef = builtinCommands[commandName];
-    const newCommands = [...result.commands];
+    const newCommands = [...commands];
     for (let i = 0; i < newCommands.length; i++) {
       const call = newCommands[i]!;
       if (call.type !== "parsed") {
@@ -84,7 +82,23 @@ export function interceptCommand<
         };
       }
     }
+    return newCommands;
+  };
 
+  const interceptor: ModelInterceptor<N> = async (
+    modelName,
+    deps,
+    input,
+    output
+  ) => {
+    if (!("result" in output)) {
+      return output;
+    }
+    const result = output.result;
+    if (result.type !== "ok") {
+      return output;
+    }
+    const newCommands = await commandsInterceptor(deps, input, result.commands);
     return {
       ...output,
       result: {
@@ -98,6 +112,7 @@ export function interceptCommand<
 
   return {
     commandName,
+    commandsInterceptor,
     interceptor,
     validateRequestContext,
   };

@@ -1,13 +1,14 @@
 import * as t from "io-ts";
 
 import {
+  ParseDeps,
   CommandSet,
+  Command,
   Commands,
   BuiltinCommandDefinition,
-  parseFromModelResult,
   builtinCommands,
   filterUnnecessary,
-  commandInterceptors,
+  parseCommand,
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
@@ -221,44 +222,44 @@ export async function run(
     };
   }
 
-  // Check interceptors have the request context that they need:
-  let missingRequestContext: null | RequestContextRequirement = null;
-  const commandNames = commands.reduce(
-    (a: Record<string, null>, c) =>
-      c.type !== "parsed" ? a : { ...a, [c.name]: null },
-    {}
-  );
-  for (const interceptor of Object.values(commandInterceptors)) {
-    if (!(interceptor.commandName in commandNames)) {
-      continue;
-    }
-    const validateResult = await interceptor.validateRequestContext(
-      requestContext
-    );
-    if (validateResult === true) {
-      continue;
-    }
-    missingRequestContext = {
-      ...(missingRequestContext ?? {}),
-      ...validateResult,
-    };
-  }
-  // If we have request context that is missing, update session state to
-  // keep track of what we have so far, and let the user know.
-  if (missingRequestContext != null) {
-    modelDeps.setUpdatedSession({
-      ...modelDeps.session,
-      pendingAssist000Request: pendingAssistRequest,
-    });
-    return {
-      model: "assist-000",
-      request: request,
-      result: {
-        type: "needs_request_context",
-        missingRequestContext,
-      },
-    };
-  }
+  // // Check interceptors have the request context that they need:
+  // let missingRequestContext: null | RequestContextRequirement = null;
+  // const commandNames = commands.reduce(
+  //   (a: Record<string, null>, c) =>
+  //     c.type !== "parsed" ? a : { ...a, [c.name]: null },
+  //   {}
+  // );
+  // for (const interceptor of Object.values(commandInterceptors)) {
+  //   if (!(interceptor.commandName in commandNames)) {
+  //     continue;
+  //   }
+  //   const validateResult = await interceptor.validateRequestContext(
+  //     requestContext
+  //   );
+  //   if (validateResult === true) {
+  //     continue;
+  //   }
+  //   missingRequestContext = {
+  //     ...(missingRequestContext ?? {}),
+  //     ...validateResult,
+  //   };
+  // }
+  // // If we have request context that is missing, update session state to
+  // // keep track of what we have so far, and let the user know.
+  // if (missingRequestContext != null) {
+  //   modelDeps.setUpdatedSession({
+  //     ...modelDeps.session,
+  //     pendingAssist000Request: pendingAssistRequest,
+  //   });
+  //   return {
+  //     model: "assist-000",
+  //     request: request,
+  //     result: {
+  //       type: "needs_request_context",
+  //       missingRequestContext,
+  //     },
+  //   };
+  // }
 
   let okResult: Output = {
     model: "assist-000",
@@ -270,23 +271,23 @@ export async function run(
   };
 
   // Run all of the command interceptors:
-  for (const interceptor of Object.values(commandInterceptors)) {
-    const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
-      async ({ signal }) =>
-        interceptor.interceptor(
-          "assist-000",
-          { ...modelDeps, signal },
-          input,
-          okResult
-        )
-    );
-    if ("missingRequestContext" in interceptedOutput) {
-      throw new Error(
-        `command intercepts must not return missingRequestContext - this should happen at the validation step`
-      );
-    }
-    okResult = interceptedOutput;
-  }
+  // for (const interceptor of Object.values(commandInterceptors)) {
+  //   const interceptedOutput = await modelDeps.faultHandlingPolicy.execute(
+  //     async ({ signal }) =>
+  //       interceptor.interceptor(
+  //         "assist-000",
+  //         { ...modelDeps, signal },
+  //         input,
+  //         okResult
+  //       )
+  //   );
+  //   if ("missingRequestContext" in interceptedOutput) {
+  //     throw new Error(
+  //       `command intercepts must not return missingRequestContext - this should happen at the validation step`
+  //     );
+  //   }
+  //   okResult = interceptedOutput;
+  // }
 
   return okResult;
 }
@@ -333,4 +334,20 @@ function makeCommandSet(commands: CommandSet): string[] {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
     return `\`${name}(${args.join(", ")})\` - ${c.description}`;
   });
+}
+
+function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
+  let result: Command[] = [];
+
+  for (const line of text.split("\n")) {
+    if (line === "```") {
+      continue;
+    }
+    let command = parseCommand(deps, line);
+    if (command != null) {
+      result.push();
+    }
+  }
+
+  return result;
 }

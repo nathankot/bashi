@@ -70,20 +70,12 @@ export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =
 export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;
 
-export const CommandParsed = t.intersection([
-  t.type({
-    line: t.string,
-    type: t.literal("parsed"),
-    name: t.string,
-    args: t.array(Argument),
-  }),
-  t.partial({
-    argsParsed: t.array(
-      // this produces a partial record:
-      t.union([t.partial({}), t.record(ArgumentParser, Argument)])
-    ),
-  }),
-]);
+export const CommandParsed = t.type({
+  line: t.string,
+  type: t.literal("parsed"),
+  name: t.string,
+  args: t.array(Argument),
+});
 export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
 export const CommandExecuted = t.type({

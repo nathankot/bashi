@@ -1,16 +1,12 @@
 import * as t from "io-ts";
-import { parseDate } from "chrono";
 
 import type { Configuration as SessionConfiguration } from "@lib/session.ts";
 import { LogFn } from "@lib/log.ts";
-
-import argumentParsers from "@lib/command/argumentParsers.ts";
 
 import {
   CommandSet,
   Command,
   Commands,
-  CommandParsed,
   BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
@@ -19,7 +15,6 @@ import {
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
-import { Value } from "@lib/valueTypes.ts";
 import {
   RequestContext,
   RequestContextRequirement,
@@ -360,8 +355,6 @@ function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
   return result;
 }
 
-type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
-
 type ParseDeps = {
   log: LogFn;
   now: Date;
@@ -397,42 +390,42 @@ function preprocessCommand(
   // TODO: this should probably be lifted outside of the parser:
 
   // Do any additional argument parsing:
-  parsed.argsParsed = command.args.map((argDef, i) =>
-    (argDef.parse ?? []).reduce((a, e) => {
-      const value = parsed.args[i];
-      if (value == null) {
-        return a;
-      }
-      try {
-        const argParser = argumentParsers[e];
-        if (argParser.inputType != value.type) {
-          throw new Error(
-            `expected parser input to be ${argParser.inputType} got ${value.type}`
-          );
-        }
-        let v: Value | null = argParser.fn(
-          {
-            now,
-            chronoParseDate: parseDate,
-            timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
-          },
-          value.value
-        );
+  // parsed.argsparsed = command.args.map((argdef, i) =>
+  //   (argdef.parse ?? []).reduce((a, e) => {
+  //     const value = parsed.args[i];
+  //     if (value == null) {
+  //       return a;
+  //     }
+  //     try {
+  //       const argparser = argumentparsers[e];
+  //       if (argparser.inputtype != value.type) {
+  //         throw new error(
+  //           `expected parser input to be ${argparser.inputtype} got ${value.type}`
+  //         );
+  //       }
+  //       let v: value | null = argparser.fn(
+  //         {
+  //           now,
+  //           chronoparsedate: parsedate,
+  //           timezoneutcoffset: sessionconfiguration.timezoneutcoffset,
+  //         },
+  //         value.value
+  //       );
 
-        if (v == null) {
-          return a;
-        }
+  //       if (v == null) {
+  //         return a;
+  //       }
 
-        return {
-          ...a,
-          [e]: v,
-        } satisfies ArgParsed;
-      } catch (e) {
-        log("error", e);
-        return a;
-      }
-    }, {})
-  );
+  //       return {
+  //         ...a,
+  //         [e]: v,
+  //       } satisfies argparsed;
+  //     } catch (e) {
+  //       log("error", e);
+  //       return a;
+  //     }
+  //   }, {})
+  // );
 
   return parsed;
 }

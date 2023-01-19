@@ -338,6 +338,8 @@ ${beginSection}`;
 function makeCommandSet(commands: CommandSet): string[] {
   return Object.entries(commands).map(([name, c]) => {
     const args = c.args.map((a) => `${a.name}: ${a.type}`);
-    return `\`${name}(${args.join(", ")})\` - ${c.description}`;
+    return `\`${name}(${args.join(", ")}) => ${c.returnType}\` - ${
+      c.description
+    }`;
   });
 }

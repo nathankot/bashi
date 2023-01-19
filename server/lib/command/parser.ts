@@ -10,6 +10,18 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
+export type FunctionCall = {
+  name: string;
+  args: Value[];
+};
+
+export type ActionGroup = {
+  thought: string;
+  action: string;
+  functionCalls: FunctionCall[];
+  result?: string;
+};
+
 enum ActionTokenKind {
   KeywordThought,
   KeywordAction,
@@ -28,15 +40,9 @@ const actionLexer = buildLexer([
 
   [true, /^:.*/g, ActionTokenKind.String],
 
-  [true, /^(\n|\r\n|\r)*/g, ActionTokenKind.Newline],
+  [true, /^(\n|\r\n|\r)+/g, ActionTokenKind.Newline],
   [false, /^\s+/g, ActionTokenKind.Space],
 ]);
-
-export type ActionGroup = {
-  thought: string;
-  action: string;
-  result?: string;
-};
 
 const ACTION_GROUP = rule<ActionTokenKind, ActionGroup>();
 ACTION_GROUP.setPattern(
@@ -70,11 +76,15 @@ ACTION_GROUP.setPattern(
         )
       )
     ),
-    ([thought, , action, result]) => ({
-      thought,
-      action,
-      result,
-    })
+    ([thought, , action, result]) => {
+      const functionCalls = parseFunctionCalls(action);
+      return {
+        thought,
+        action,
+        result,
+        functionCalls,
+      };
+    }
   )
 );
 
@@ -84,12 +94,7 @@ export function parseActionGroup(expr: string): ActionGroup {
   );
 }
 
-export type FunctionCall = {
-  name: string;
-  args: Value[];
-};
-
-enum TokenKind {
+enum FunctionTokenKind {
   Identifier,
 
   TrueLiteral,
@@ -103,58 +108,60 @@ enum TokenKind {
   RParen,
   Space,
   Comma,
+  Pipe,
 }
 
-const lexer = buildLexer([
-  [true, /^'([^'\\]|\\.)*'/g, TokenKind.SingleQuoteStringLiteral],
-  [true, /^"([^"\\]|\\.)*"/g, TokenKind.DoubleQuoteStringLiteral],
-  [true, /^`([^`\\]|\\.)*`/g, TokenKind.BackQuoteStringLiteral],
-  [true, /^[\+\-]?\d+(\.\d+)?/g, TokenKind.NumberLiteral],
-  [true, /^true/g, TokenKind.TrueLiteral],
-  [true, /^false/g, TokenKind.FalseLiteral],
+const functionLexer = buildLexer([
+  [true, /^'([^'\\]|\\.)*'/g, FunctionTokenKind.SingleQuoteStringLiteral],
+  [true, /^"([^"\\]|\\.)*"/g, FunctionTokenKind.DoubleQuoteStringLiteral],
+  [true, /^`([^`\\]|\\.)*`/g, FunctionTokenKind.BackQuoteStringLiteral],
+  [true, /^[\+\-]?\d+(\.\d+)?/g, FunctionTokenKind.NumberLiteral],
+  [true, /^true/g, FunctionTokenKind.TrueLiteral],
+  [true, /^false/g, FunctionTokenKind.FalseLiteral],
 
-  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, TokenKind.Identifier],
+  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, FunctionTokenKind.Identifier],
 
-  [true, /^\(/g, TokenKind.LParen],
-  [true, /^\)/g, TokenKind.RParen],
-  [true, /^\,/g, TokenKind.Comma],
-  [false, /^\s+/g, TokenKind.Space],
+  [true, /^\(/g, FunctionTokenKind.LParen],
+  [true, /^\)/g, FunctionTokenKind.RParen],
+  [true, /^\,/g, FunctionTokenKind.Comma],
+  [true, /^\|/g, FunctionTokenKind.Pipe],
+  [false, /^\s+/g, FunctionTokenKind.Space],
 ]);
 
-const ARG = rule<TokenKind, Value>();
+const ARG = rule<FunctionTokenKind, Value>();
 ARG.setPattern(
   p.apply(
     p.alt(
-      p.tok(TokenKind.TrueLiteral),
-      p.tok(TokenKind.FalseLiteral),
-      p.tok(TokenKind.NumberLiteral),
-      p.tok(TokenKind.SingleQuoteStringLiteral),
-      p.tok(TokenKind.DoubleQuoteStringLiteral),
-      p.tok(TokenKind.BackQuoteStringLiteral)
+      p.tok(FunctionTokenKind.TrueLiteral),
+      p.tok(FunctionTokenKind.FalseLiteral),
+      p.tok(FunctionTokenKind.NumberLiteral),
+      p.tok(FunctionTokenKind.SingleQuoteStringLiteral),
+      p.tok(FunctionTokenKind.DoubleQuoteStringLiteral),
+      p.tok(FunctionTokenKind.BackQuoteStringLiteral)
     ),
     (tok) => {
       switch (tok.kind) {
-        case TokenKind.TrueLiteral:
+        case FunctionTokenKind.TrueLiteral:
           return { type: "boolean", value: true };
-        case TokenKind.FalseLiteral:
+        case FunctionTokenKind.FalseLiteral:
           return { type: "boolean", value: false };
-        case TokenKind.NumberLiteral:
+        case FunctionTokenKind.NumberLiteral:
           return { type: "number", value: +tok.text };
-        case TokenKind.SingleQuoteStringLiteral:
+        case FunctionTokenKind.SingleQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
               .substring(1, tok.text.length - 1)
               .replaceAll(`\\'`, `'`),
           };
-        case TokenKind.DoubleQuoteStringLiteral:
+        case FunctionTokenKind.DoubleQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
               .substring(1, tok.text.length - 1)
               .replaceAll(`\\"`, `"`),
           };
-        case TokenKind.BackQuoteStringLiteral:
+        case FunctionTokenKind.BackQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
@@ -171,25 +178,31 @@ ARG.setPattern(
   )
 );
 
-const CALL = rule<TokenKind, FunctionCall>();
+const CALL = rule<FunctionTokenKind, FunctionCall>();
 CALL.setPattern(
   p.apply(
     p.seq(
-      p.tok(TokenKind.Identifier),
-      p.tok(TokenKind.LParen),
-      p.opt(p.list(ARG, p.tok(TokenKind.Comma))),
-      p.tok(TokenKind.RParen)
+      p.tok(FunctionTokenKind.Identifier),
+      p.tok(FunctionTokenKind.LParen),
+      p.opt(p.list(ARG, p.tok(FunctionTokenKind.Comma))),
+      p.tok(FunctionTokenKind.RParen)
     ),
-    (toks) => {
-      const [{ text: name }, , maybeArgs] = toks;
-      return {
-        name,
-        args: maybeArgs ?? [],
-      };
-    }
+    ([{ text: name }, , maybeArgs]) => ({
+      name,
+      args: maybeArgs ?? [],
+    })
   )
 );
 
+const CALLS = rule<FunctionTokenKind, FunctionCall[]>();
+CALLS.setPattern(
+  p.apply(p.list(CALL, p.tok(FunctionTokenKind.Pipe)), (calls) => calls)
+);
+
 export function parseFunctionCall(expr: string): FunctionCall {
-  return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
+  return expectSingleResult(expectEOF(CALL.parse(functionLexer.parse(expr))));
+}
+
+export function parseFunctionCalls(expr: string): FunctionCall[] {
+  return expectSingleResult(expectEOF(CALLS.parse(functionLexer.parse(expr))));
 }

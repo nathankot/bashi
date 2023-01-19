@@ -19,10 +19,18 @@ export class RetryableError extends Error {
 }
 
 export class HTTPError extends Error {
+  wrapped: Error | null = null;
   statusCode: SupportedCode;
 
-  constructor(message: string, statusCode: SupportedCode) {
-    super(message);
+  constructor(message: string | Error, statusCode: SupportedCode) {
+    if (typeof message === "string") {
+      super(message);
+    } else {
+      super(message.message, {
+        cause: message.cause,
+      });
+      this.wrapped = message;
+    }
     this.statusCode = statusCode;
   }
 

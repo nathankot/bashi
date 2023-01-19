@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import * as p from "typescript-parsec";
 
 import {
@@ -10,17 +11,23 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
-export type FunctionCall = {
-  name: string;
-  args: Value[];
-};
+export const FunctionCall = t.type({
+  name: t.string,
+  args: t.array(Value),
+});
+export type FunctionCall = t.TypeOf<typeof FunctionCall>;
 
-export type ActionGroup = {
-  thought: string;
-  action: string;
-  functionCalls: FunctionCall[];
-  result?: string;
-};
+export const ActionGroup = t.intersection([
+  t.type({
+    thought: t.string,
+    action: t.string,
+    functionCalls: t.array(FunctionCall),
+  }),
+  t.partial({
+    result: t.string,
+  }),
+]);
+export type ActionGroup = t.TypeOf<typeof ActionGroup>;
 
 enum ActionTokenKind {
   KeywordThought,

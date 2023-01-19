@@ -70,26 +70,6 @@ export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =
 export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;
 
-export const CommandParseError = t.type({
-  type: t.literal("parse_error"),
-  line: t.string,
-  error: t.string,
-});
-export type CommandParseError = t.TypeOf<typeof CommandParseError>;
-
-export const CommandInvalid = t.type({
-  line: t.string,
-  type: t.literal("invalid"),
-  name: t.string,
-  args: t.array(Argument),
-  invalidReason: t.keyof({
-    unknown_command: null,
-    invalid_arguments: null,
-    failed_execution: null,
-  }),
-});
-export type CommandInvalid = t.TypeOf<typeof CommandInvalid>;
-
 export const CommandParsed = t.intersection([
   t.type({
     line: t.string,
@@ -115,12 +95,7 @@ export const CommandExecuted = t.type({
 });
 export type CommandExecuted = t.TypeOf<typeof CommandExecuted>;
 
-export const Command = t.union([
-  CommandParseError,
-  CommandInvalid,
-  CommandParsed,
-  CommandExecuted,
-]);
+export const Command = t.union([CommandParsed, CommandExecuted]);
 export type Command = t.TypeOf<typeof Command>;
 
 export const Commands = t.array(Command);

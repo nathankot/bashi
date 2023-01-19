@@ -69,7 +69,6 @@ export async function runBuiltinCommand<
   input: t.TypeOf<typeof models[N]["Input"]>,
   command: Command
 ): Promise<Command> {
-  const log = deps.log;
   if (command.type !== "parsed") {
     throw new Error("command type is must be 'parsed'");
   }
@@ -80,29 +79,18 @@ export async function runBuiltinCommand<
   if (!checkRequestContext(definition, input.requestContext ?? {})) {
     throw new Error("request context requirements are missing");
   }
-  try {
-    const returnValue = await definition.run(
-      deps,
-      input.requestContext ?? {},
-      args
-    );
-    return {
-      type: "executed",
-      returnValues: [returnValue],
-      args: command.args,
-      line: command.line,
-      name: command.name,
-    };
-  } catch (e) {
-    log("error", e);
-    return {
-      type: "invalid",
-      invalidReason: "failed_execution",
-      args: command.args,
-      line: command.line,
-      name: command.name,
-    };
-  }
+  const returnValue = await definition.run(
+    deps,
+    input.requestContext ?? {},
+    args
+  );
+  return {
+    type: "executed",
+    returnValues: [returnValue],
+    args: command.args,
+    line: command.line,
+    name: command.name,
+  };
 }
 
 function checkBuiltinCommandArgumentsValid<

@@ -27,8 +27,6 @@ import {
   CommandDefinition,
   Command,
   CommandExecuted,
-  CommandInvalid,
-  CommandParseError,
   CommandParsed,
 } from "@lib/command/types.ts";
 
@@ -387,10 +385,6 @@ namedJSONSchemaObjects["#/components/schemas/RequestContextRequirement"] =
 
 namedJSONSchemaObjects["#/components/schemas/CommandExecuted"] =
   toJSONSchema(CommandExecuted);
-namedJSONSchemaObjects["#/components/schemas/CommandInvalid"] =
-  toJSONSchema(CommandInvalid);
-namedJSONSchemaObjects["#/components/schemas/CommandParseError"] =
-  toJSONSchema(CommandParseError);
 namedJSONSchemaObjects["#/components/schemas/CommandParsed"] =
   toJSONSchema(CommandParsed);
 

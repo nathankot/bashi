@@ -380,75 +380,59 @@ function preprocessCommand(
     // min number of chars for a valid function is 3
     return null;
   }
-  try {
-    const parsed: Command = {
-      type: "parsed",
-      ...parseFunctionCall(line),
-      line,
-    };
-    const command = knownCommands[parsed.name];
-    // Check that the command is known
-    if (command == null) {
-      return {
-        ...parsed,
-        type: "invalid",
-        invalidReason: "unknown_command",
-      };
-    }
-    if (!checkArgumentsValid(command, parsed.args)) {
-      return {
-        ...parsed,
-        type: "invalid",
-        invalidReason: "invalid_arguments",
-      };
-    }
-
-    // TODO: this should probably be lifted outside of the parser:
-
-    // Do any additional argument parsing:
-    parsed.argsParsed = command.args.map((argDef, i) =>
-      (argDef.parse ?? []).reduce((a, e) => {
-        const value = parsed.args[i];
-        if (value == null) {
-          return a;
-        }
-        try {
-          const argParser = argumentParsers[e];
-          if (argParser.inputType != value.type) {
-            throw new Error(
-              `expected parser input to be ${argParser.inputType} got ${value.type}`
-            );
-          }
-          let v: Value | null = argParser.fn(
-            {
-              now,
-              chronoParseDate: parseDate,
-              timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
-            },
-            value.value
-          );
-
-          if (v == null) {
-            return a;
-          }
-
-          return {
-            ...a,
-            [e]: v,
-          } satisfies ArgParsed;
-        } catch (e) {
-          log("error", e);
-          return a;
-        }
-      }, {})
-    );
-
-    return parsed;
-  } catch (e) {
-    return {
-      type: "parse_error",
-      line,
-      error: (e as any).message ?? "",
-    };
+  const parsed: Command = {
+    type: "parsed",
+    ...parseFunctionCall(line),
+    line,
+  };
+  const command = knownCommands[parsed.name];
+  // Check that the command is known
+  if (command == null) {
+    throw new Error(`unknown command: ${parsed.name}`);
   }
+  if (!checkArgumentsValid(command, parsed.args)) {
+    throw new Error(`arguments for command ${parsed.name} are invalid`);
+  }
+
+  // TODO: this should probably be lifted outside of the parser:
+
+  // Do any additional argument parsing:
+  parsed.argsParsed = command.args.map((argDef, i) =>
+    (argDef.parse ?? []).reduce((a, e) => {
+      const value = parsed.args[i];
+      if (value == null) {
+        return a;
+      }
+      try {
+        const argParser = argumentParsers[e];
+        if (argParser.inputType != value.type) {
+          throw new Error(
+            `expected parser input to be ${argParser.inputType} got ${value.type}`
+          );
+        }
+        let v: Value | null = argParser.fn(
+          {
+            now,
+            chronoParseDate: parseDate,
+            timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
+          },
+          value.value
+        );
+
+        if (v == null) {
+          return a;
+        }
+
+        return {
+          ...a,
+          [e]: v,
+        } satisfies ArgParsed;
+      } catch (e) {
+        log("error", e);
+        return a;
+      }
+    }, {})
+  );
+
+  return parsed;
 }

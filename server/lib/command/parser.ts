@@ -108,7 +108,7 @@ enum FunctionTokenKind {
   RParen,
   Space,
   Comma,
-  Pipe,
+  SemiColon,
 }
 
 const functionLexer = buildLexer([
@@ -124,7 +124,7 @@ const functionLexer = buildLexer([
   [true, /^\(/g, FunctionTokenKind.LParen],
   [true, /^\)/g, FunctionTokenKind.RParen],
   [true, /^\,/g, FunctionTokenKind.Comma],
-  [true, /^\|/g, FunctionTokenKind.Pipe],
+  [true, /^;/g, FunctionTokenKind.SemiColon],
   [false, /^\s+/g, FunctionTokenKind.Space],
 ]);
 
@@ -196,7 +196,7 @@ CALL.setPattern(
 
 const CALLS = rule<FunctionTokenKind, FunctionCall[]>();
 CALLS.setPattern(
-  p.apply(p.list(CALL, p.tok(FunctionTokenKind.Pipe)), (calls) => calls)
+  p.apply(p.list(CALL, p.tok(FunctionTokenKind.SemiColon)), (calls) => calls)
 );
 
 export function parseFunctionCall(expr: string): FunctionCall {

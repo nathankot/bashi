@@ -6,7 +6,7 @@ import {
 } from "./parser.ts";
 
 for (const expr of [
-  `someFunction() | someOtherFunction(" aa() | bbb()")`,
+  `someFunction(); someOtherFunction(" aa() ; bbb()")`,
   "someCall()",
   "someCall('a', 111)",
   "someCall('a \\'ha\\'', 111)",
@@ -51,15 +51,15 @@ for (const expr of [
 Action: someFunction(123, "str", true)
 Result: blah blah blah blah`,
   `Thought: I need to do something action: thought: hmmm
-Action: someFunction() | someOtherFunction(" aa() | bbb()")
+Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
 Result: blah blah blah blah`,
   `Thought: I need to do something
-Action: someFunction(true) | someOtherFunction(true, 123, 'str', "str2")`,
+Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
   `tHOUght: I need to do something
-aCTion  :    someFunction() | someOtherFunction()`,
+aCTion  :    someFunction(); someOtherFunction()`,
   `Thought: I need to do something Action: head fake
 
-Action: someFunction() | someOtherFunction()
+Action: someFunction(); someOtherFunction()
 Result: blah blah blah blah`,
 
   // Invalid examples:

@@ -1,8 +1,8 @@
 export const snapshot = {};
 
-snapshot[`parseFunctionCall(s): someFunction() | someOtherFunction(" aa() | bbb()") 1`] = `'{"index":15,"rowBegin":1,"columnBegin":16,"rowEnd":1,"columnEnd":17}: The parser cannot reach the end of file, stops at "|" at position {"index":15,"rowBegin":1,"columnBegin":16,"rowEnd":1,"columnEnd":17}.'`;
+snapshot[`parseFunctionCall(s): someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: The parser cannot reach the end of file, stops at ";" at position {"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}.'`;
 
-snapshot[`parseFunctionCall(s): someFunction() | someOtherFunction(" aa() | bbb()") 2`] = `
+snapshot[`parseFunctionCall(s): someFunction(); someOtherFunction(" aa() ; bbb()") 2`] = `
 [
   {
     args: [
@@ -13,7 +13,7 @@ snapshot[`parseFunctionCall(s): someFunction() | someOtherFunction(" aa() | bbb(
     args: [
       {
         type: "string",
-        value: " aa() | bbb()",
+        value: " aa() ; bbb()",
       },
     ],
     name: "someOtherFunction",
@@ -517,10 +517,10 @@ Result: blah blah blah blah 1`] = `
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
-Action: someFunction() | someOtherFunction(" aa() | bbb()")
+Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
 Result: blah blah blah blah 1`] = `
 {
-  action: 'someFunction() | someOtherFunction(" aa() | bbb()")',
+  action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
   functionCalls: [
     {
       args: [
@@ -531,7 +531,7 @@ Result: blah blah blah blah 1`] = `
       args: [
         {
           type: "string",
-          value: " aa() | bbb()",
+          value: " aa() ; bbb()",
         },
       ],
       name: "someOtherFunction",
@@ -543,9 +543,9 @@ Result: blah blah blah blah 1`] = `
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-Action: someFunction(true) | someOtherFunction(true, 123, 'str', "str2") 1`] = `
+Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
 {
-  action: \`someFunction(true) | someOtherFunction(true, 123, 'str', "str2")\`,
+  action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
   functionCalls: [
     {
       args: [
@@ -584,9 +584,9 @@ Action: someFunction(true) | someOtherFunction(true, 123, 'str', "str2") 1`] = `
 `;
 
 snapshot[`parseActionGroup: tHOUght: I need to do something
-aCTion  :    someFunction() | someOtherFunction() 1`] = `
+aCTion  :    someFunction(); someOtherFunction() 1`] = `
 {
-  action: "someFunction() | someOtherFunction()",
+  action: "someFunction(); someOtherFunction()",
   functionCalls: [
     {
       args: [
@@ -606,10 +606,10 @@ aCTion  :    someFunction() | someOtherFunction() 1`] = `
 
 snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
 
-Action: someFunction() | someOtherFunction()
+Action: someFunction(); someOtherFunction()
 Result: blah blah blah blah 1`] = `
 {
-  action: "someFunction() | someOtherFunction()",
+  action: "someFunction(); someOtherFunction()",
   functionCalls: [
     {
       args: [

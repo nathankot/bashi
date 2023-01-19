@@ -6,15 +6,13 @@ import {
   BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
-  commandInterceptors,
   parseCommand,
+  checkRequestContext,
+  runBuiltinCommand,
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
-import {
-  RequestContext,
-  RequestContextRequirement,
-} from "@lib/requestContext.ts";
+import { RequestContext } from "@lib/requestContext.ts";
 import { wrap } from "@lib/log.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
@@ -119,7 +117,7 @@ export async function run(
   };
 
   const beginSection =
-    pendingAssistRequest?.scratch ??
+    pendingAssistRequest?.scratch + `\nThought:` ??
     (request != null ? `Begin!\n\nRequest: ${request.trim()}\nThought:` : null);
 
   if (beginSection == null || request == null) {
@@ -130,81 +128,25 @@ export async function run(
     );
   }
 
-  if (input.clarification != null) {
-    // TODO add observation/result to the begin section
-    // TODO: actually this should just be a client-resolved result of the ask() command?
-  }
-
   let isFinished = false;
   let commands = pendingAssistRequest?.commands ?? [];
+  let pendingActions = pendingAssistRequest?.pendingActions ?? [];
 
   const maxLoops = 5; // TODO turn into config
   let n = pendingAssistRequest?.loopCount ?? 0;
   let scratch = beginSection;
 
   try {
+    // Interpreter loop that does the following:
+    //
+    // 1. Plugs the prompt into the model to ask for thought/actions to take
+    // 2. Parse the completion into pending thought/actions
+    // 3. For each pending thought/action, evaluate into a command result
+    //   3a. This evaluation may involve a redirection to the client, in order to evaluate
+    //       commands that need to happen there.
+    // 4. Update state with the current results, exit if we have reached a sink, otherwise goto (1)
+    //    with results added to the prompt
     while (true) {
-      // Always try to resolve any unresolved commands first.
-      for (const command of commands) {
-        if (command.type === "executed") {
-          continue;
-        }
-
-        if (command.type === "parse_error" || command.type === "invalid") {
-          log(
-            "error",
-            `failed to interpret command: ${JSON.stringify(command)}`
-          );
-          throw new HTTPError("could not interpret model result", 400);
-        }
-
-        // TODO: process private commands:
-
-        // Check interceptors have the request context that they need:
-        let missingRequestContext: null | RequestContextRequirement = null;
-        const commandName = command.name;
-        for (const interceptor of Object.values(commandInterceptors)) {
-          if (interceptor.commandName !== commandName) {
-            continue;
-          }
-          const validateResult = await interceptor.validateRequestContext(
-            requestContext
-          );
-          if (validateResult === true) {
-            continue;
-          }
-
-          missingRequestContext = {
-            ...(missingRequestContext ?? {}),
-            ...validateResult,
-          };
-        }
-        // If we have request context that is missing, update session state to
-        // keep track of what we have so far, and let the user know.
-        if (missingRequestContext != null) {
-          return {
-            model: "assist-001",
-            request,
-            result: {
-              type: "needs_request_context",
-              missingRequestContext,
-            },
-          };
-        }
-      }
-
-      // Run all of the command interceptors:
-      for (const interceptor of Object.values(commandInterceptors)) {
-        commands = await modelDeps.faultHandlingPolicy.execute(
-          async ({ signal }) =>
-            interceptor.commandsInterceptor(
-              { ...modelDeps, signal },
-              input,
-              commands
-            )
-        );
-      }
-
       if (isFinished) {
         break;
       }
@@ -214,16 +156,21 @@ export async function run(
       }
       n++;
 
-      const commandSet = filterUnnecessary(scratch, {
-        ...configuration.commands,
+      const serverCommands = {
         ...builtinCommands,
         ...privateCommands,
+      };
+
+      const commandSet = filterUnnecessary(scratch, {
+        ...configuration.commands,
+        ...serverCommands,
       });
 
       const prompt = makePrompt(commandSet, scratch);
 
       console.log("NKDEBUG prompt is", prompt);
 
+      // 1. Plugs the prompt into the model to ask for thought/actions to take
       const completion = await modelDeps.openai.createCompletion(
         {
           model: "text-davinci-003",
@@ -252,7 +199,7 @@ export async function run(
       };
 
       scratch = scratch + text;
-      let pendingCommands: Command[] = [];
+      let thought = "";
       for (const line of text.split("\n")) {
         if (line == null) {
           continue;
@@ -270,16 +217,64 @@ export async function run(
         for (const component of actionLine.split("|")) {
           const parsed = parseCommand(parseDeps, component.trim());
           if (parsed != null) {
-            pendingCommands.push(parsed);
+            pendingActions.push(parsed);
           }
         }
       }
 
-      if (pendingCommands.length === 0) {
+      if (pendingActions.length === 0) {
         isFinished = true;
+        continue;
       }
 
-      commands = [...commands, ...pendingCommands];
+      for (const command of pendingActions) {
+        if (command.type === "executed") {
+          commands.push(command);
+          continue;
+        }
+
+        if (command.type === "parse_error" || command.type === "invalid") {
+          log(
+            "error",
+            `failed command interpretation: ${JSON.stringify(command)}`
+          );
+          throw new HTTPError("could not interpret model result", 400);
+        }
+
+        const commandName = command.name;
+        if (!isBuiltinCommand(commandName)) {
+          continue;
+        }
+
+        const commandDef = serverCommands[commandName];
+
+        const missingRequestContext = checkRequestContext(
+          commandDef,
+          requestContext
+        );
+        if (missingRequestContext !== true) {
+          return {
+            model: "assist-001",
+            request,
+            result: {
+              type: "needs_request_context",
+              missingRequestContext,
+            },
+          };
+        }
+
+        commands[i] = await runBuiltinCommand(
+          commandDef,
+          modelDeps,
+          input,
+          command
+        );
+      }
+
+      // TODO: update scratch with actions/results
+      // reset pending actions,
+      // update commands
+      commands = [...commands, ...pendingActions];
     }
   } catch (e) {
     isFinished = true;

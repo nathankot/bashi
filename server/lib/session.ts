@@ -3,7 +3,7 @@ import { date } from "io-ts-types";
 
 import { Configuration as ModelConfiguration } from "@lib/models.ts";
 
-import { Commands } from "@lib/command/types.ts";
+import { Command, Commands } from "@lib/command/types.ts";
 import { RequestContext } from "@lib/requestContext.ts";
 
 import {
@@ -38,6 +38,13 @@ export const Session = t.intersection([
       request: t.string,
       scratch: t.string,
       commands: Commands,
+      pendingActions: t.array(
+        t.type({
+          thought: t.string,
+          action: t.string,
+          command: Command,
+        })
+      ),
       loopCount: t.number,
       requestContext: RequestContext,
     }),

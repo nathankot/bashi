@@ -20,10 +20,10 @@ export default function PromptDev() {
           model: "assist-000",
           commands,
         },
-        "assist-001": {
-          model: "assist-001",
-          commands,
-        },
+        // "assist-001": {
+        // model: "assist-001",
+        // commands,
+        // },
       },
     };
 

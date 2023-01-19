@@ -1,5 +1,5 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import { parseCommand, parseActionGroup } from "./parser.ts";
+import { parseFunctionCall, parseActionGroup } from "./parser.ts";
 
 for (const expr of [
   "someCall()",
@@ -23,7 +23,7 @@ for (const expr of [
 ]) {
   Deno.test(expr === "" ? "empty string" : expr, (t) => {
     try {
-      const result = parseCommand(expr);
+      const result = parseFunctionCall(expr);
       assertSnapshot(t, result);
     } catch (e) {
       assertSnapshot(t, (e as Error).message);

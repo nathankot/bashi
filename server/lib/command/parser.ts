@@ -9,15 +9,7 @@ import {
   expectSingleResult,
 } from "typescript-parsec";
 
-import type { Configuration } from "@lib/session.ts";
-
-import { LogFn } from "@lib/log.ts";
-
 import { Value } from "@lib/valueTypes.ts";
-import { checkArgumentsValid } from "@lib/command.ts";
-import argumentParsers from "./argumentParsers.ts";
-
-import { Command, CommandSet, CommandParsed, Argument } from "./types.ts";
 
 enum ActionTokenKind {
   KeywordThought,
@@ -92,6 +84,11 @@ export function parseActionGroup(expr: string): ActionGroup {
     expectEOF(ACTION_GROUP.parse(actionLexer.parse(expr)))
   );
 }
+
+export type FunctionCall = {
+  name: string;
+  args: Value[];
+};
 
 enum TokenKind {
   Identifier,
@@ -175,7 +172,7 @@ ARG.setPattern(
   )
 );
 
-const CALL = rule<TokenKind, Command & { type: "parsed" }>();
+const CALL = rule<TokenKind, FunctionCall>();
 CALL.setPattern(
   p.apply(
     p.seq(
@@ -187,8 +184,6 @@ CALL.setPattern(
     (toks) => {
       const [{ text: name }, , maybeArgs] = toks;
       return {
-        type: "parsed",
-        line: "",
         name,
         args: maybeArgs ?? [],
       };
@@ -196,11 +191,19 @@ CALL.setPattern(
   )
 );
 
-export function parseCommand(expr: string): Command & { type: "parsed" } {
+export function parseFunctionCall(expr: string): FunctionCall {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
 }
 
 // TODO: none of below really belows in the parser
+
+import type { Configuration } from "@lib/session.ts";
+
+import { LogFn } from "@lib/log.ts";
+
+import { checkArgumentsValid } from "@lib/command.ts";
+import argumentParsers from "./argumentParsers.ts";
+import { Command, CommandSet, CommandParsed, Argument } from "./types.ts";
 
 type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
 
@@ -223,8 +226,9 @@ export function preprocessCommand(
     return null;
   }
   try {
-    const parsed = {
-      ...parseCommand(line),
+    const parsed: Command = {
+      type: "parsed",
+      ...parseFunctionCall(line),
       line,
     };
     const command = knownCommands[parsed.name];

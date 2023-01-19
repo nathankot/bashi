@@ -6,7 +6,7 @@ import {
   BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
-  parseCommand,
+  preprocessCommand,
   checkRequestContext,
   runBuiltinCommand,
 } from "@lib/command.ts";
@@ -215,7 +215,7 @@ export async function run(
           continue;
         }
         for (const component of actionLine.split("|")) {
-          const parsed = parseCommand(parseDeps, component.trim());
+          const parsed = preprocessCommand(parseDeps, component.trim());
           if (parsed != null) {
             pendingActions.push(parsed);
           }

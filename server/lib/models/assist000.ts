@@ -8,7 +8,7 @@ import {
   BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
-  parseCommand,
+  preprocessCommand,
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
@@ -343,7 +343,7 @@ function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
     if (line === "```") {
       continue;
     }
-    let command = parseCommand(deps, line);
+    let command = preprocessCommand(deps, line);
     if (command != null) {
       result.push();
     }

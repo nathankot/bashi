@@ -87,6 +87,7 @@ export async function runBuiltinCommand<
   return {
     type: "executed",
     returnValues: [returnValue],
+    id: command.id,
     args: command.args,
     line: command.line,
     name: command.name,

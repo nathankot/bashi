@@ -342,11 +342,11 @@ function makeCommandSet(commands: CommandSet): string[] {
 function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
   let result: Command[] = [];
 
-  for (const line of text.split("\n")) {
+  for (const [i, line] of text.split("\n").entries()) {
     if (line === "```") {
       continue;
     }
-    let command = preprocessCommand(deps, line);
+    let command = preprocessCommand(deps, i, line);
     if (command != null) {
       result.push();
     }
@@ -364,6 +364,7 @@ type ParseDeps = {
 
 function preprocessCommand(
   { log, now, knownCommands, sessionConfiguration }: ParseDeps,
+  index: number,
   line: string
 ): Command | null {
   if (line.trim() === "") {
@@ -374,6 +375,7 @@ function preprocessCommand(
     return null;
   }
   const parsed: Command = {
+    id: index,
     type: "parsed",
     ...parseFunctionCall(line),
     line,

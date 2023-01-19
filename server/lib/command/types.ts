@@ -71,6 +71,7 @@ export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;
 
 export const CommandParsed = t.type({
+  id: t.number,
   line: t.string,
   type: t.literal("parsed"),
   name: t.string,
@@ -79,6 +80,7 @@ export const CommandParsed = t.type({
 export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
 export const CommandExecuted = t.type({
+  id: t.number,
   line: t.string,
   type: t.literal("executed"),
   name: t.string,

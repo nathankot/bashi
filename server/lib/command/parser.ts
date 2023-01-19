@@ -1,5 +1,4 @@
 import * as p from "typescript-parsec";
-import { parseDate } from "chrono";
 
 import {
   // Token,
@@ -122,7 +121,7 @@ const lexer = buildLexer([
   [false, /^\s+/g, TokenKind.Space],
 ]);
 
-const ARG = rule<TokenKind, Argument>();
+const ARG = rule<TokenKind, Value>();
 ARG.setPattern(
   p.apply(
     p.alt(
@@ -165,7 +164,7 @@ ARG.setPattern(
         default:
           const exhaustiveCheck: never = tok;
           throw new Error(
-            `Unsupported argument kind: ${(exhaustiveCheck as any).text}`
+            `Unsupported value kind: ${(exhaustiveCheck as any).text}`
           );
       }
     }
@@ -193,107 +192,4 @@ CALL.setPattern(
 
 export function parseFunctionCall(expr: string): FunctionCall {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
-}
-
-// TODO: none of below really belows in the parser
-
-import type { Configuration } from "@lib/session.ts";
-
-import { LogFn } from "@lib/log.ts";
-
-import { checkArgumentsValid } from "@lib/command.ts";
-import argumentParsers from "./argumentParsers.ts";
-import { Command, CommandSet, CommandParsed, Argument } from "./types.ts";
-
-type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
-
-export type ParseDeps = {
-  log: LogFn;
-  now: Date;
-  knownCommands: CommandSet;
-  sessionConfiguration: Configuration;
-};
-
-export function preprocessCommand(
-  { log, now, knownCommands, sessionConfiguration }: ParseDeps,
-  line: string
-): Command | null {
-  if (line.trim() === "") {
-    return null;
-  }
-  if (line.length < 3) {
-    // min number of chars for a valid function is 3
-    return null;
-  }
-  try {
-    const parsed: Command = {
-      type: "parsed",
-      ...parseFunctionCall(line),
-      line,
-    };
-    const command = knownCommands[parsed.name];
-    // Check that the command is known
-    if (command == null) {
-      return {
-        ...parsed,
-        type: "invalid",
-        invalidReason: "unknown_command",
-      };
-    }
-    if (!checkArgumentsValid(command, parsed.args)) {
-      return {
-        ...parsed,
-        type: "invalid",
-        invalidReason: "invalid_arguments",
-      };
-    }
-
-    // TODO: this should probably be lifted outside of the parser:
-
-    // Do any additional argument parsing:
-    parsed.argsParsed = command.args.map((argDef, i) =>
-      (argDef.parse ?? []).reduce((a, e) => {
-        const value = parsed.args[i];
-        if (value == null) {
-          return a;
-        }
-        try {
-          const argParser = argumentParsers[e];
-          if (argParser.inputType != value.type) {
-            throw new Error(
-              `expected parser input to be ${argParser.inputType} got ${value.type}`
-            );
-          }
-          let v: Value | null = argParser.fn(
-            {
-              now,
-              chronoParseDate: parseDate,
-              timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
-            },
-            value.value
-          );
-
-          if (v == null) {
-            return a;
-          }
-
-          return {
-            ...a,
-            [e]: v,
-          } satisfies ArgParsed;
-        } catch (e) {
-          log("error", e);
-          return a;
-        }
-      }, {})
-    );
-
-    return parsed;
-  } catch (e) {
-    return {
-      type: "parse_error",
-      line,
-      error: (e as any).message ?? "",
-    };
-  }
 }

@@ -1,17 +1,25 @@
 import * as t from "io-ts";
+import { parseDate } from "chrono";
+
+import type { Configuration as SessionConfiguration } from "@lib/session.ts";
+import { LogFn } from "@lib/log.ts";
+
+import argumentParsers from "@lib/command/argumentParsers.ts";
 
 import {
-  ParseDeps,
   CommandSet,
   Command,
   Commands,
+  CommandParsed,
   BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
-  preprocessCommand,
+  parseFunctionCall,
+  checkArgumentsValid,
 } from "@lib/command.ts";
 
 import { HTTPError } from "@lib/errors.ts";
+import { Value } from "@lib/valueTypes.ts";
 import {
   RequestContext,
   RequestContextRequirement,
@@ -350,4 +358,97 @@ function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
   }
 
   return result;
+}
+
+type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
+
+type ParseDeps = {
+  log: LogFn;
+  now: Date;
+  knownCommands: CommandSet;
+  sessionConfiguration: SessionConfiguration;
+};
+
+function preprocessCommand(
+  { log, now, knownCommands, sessionConfiguration }: ParseDeps,
+  line: string
+): Command | null {
+  if (line.trim() === "") {
+    return null;
+  }
+  if (line.length < 3) {
+    // min number of chars for a valid function is 3
+    return null;
+  }
+  try {
+    const parsed: Command = {
+      type: "parsed",
+      ...parseFunctionCall(line),
+      line,
+    };
+    const command = knownCommands[parsed.name];
+    // Check that the command is known
+    if (command == null) {
+      return {
+        ...parsed,
+        type: "invalid",
+        invalidReason: "unknown_command",
+      };
+    }
+    if (!checkArgumentsValid(command, parsed.args)) {
+      return {
+        ...parsed,
+        type: "invalid",
+        invalidReason: "invalid_arguments",
+      };
+    }
+
+    // TODO: this should probably be lifted outside of the parser:
+
+    // Do any additional argument parsing:
+    parsed.argsParsed = command.args.map((argDef, i) =>
+      (argDef.parse ?? []).reduce((a, e) => {
+        const value = parsed.args[i];
+        if (value == null) {
+          return a;
+        }
+        try {
+          const argParser = argumentParsers[e];
+          if (argParser.inputType != value.type) {
+            throw new Error(
+              `expected parser input to be ${argParser.inputType} got ${value.type}`
+            );
+          }
+          let v: Value | null = argParser.fn(
+            {
+              now,
+              chronoParseDate: parseDate,
+              timezoneUtcOffset: sessionConfiguration.timezoneUtcOffset,
+            },
+            value.value
+          );
+
+          if (v == null) {
+            return a;
+          }
+
+          return {
+            ...a,
+            [e]: v,
+          } satisfies ArgParsed;
+        } catch (e) {
+          log("error", e);
+          return a;
+        }
+      }, {})
+    );
+
+    return parsed;
+  } catch (e) {
+    return {
+      type: "parse_error",
+      line,
+      error: (e as any).message ?? "",
+    };
+  }
 }

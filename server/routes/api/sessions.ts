@@ -120,23 +120,6 @@ export const handler: Handlers<POSTResponse, State> = {
         }
       }
 
-      // Ensure the minimal set of builtin commands are enabled
-      const missingBuiltinCommands = Object.entries(builtinCommands)
-        .map(([name, def]) => (def.mustNotBeDisabled === true ? name : null))
-        .filter((n): n is keyof typeof builtinCommands => n != null)
-        .filter(
-          (n) => !session.configuration.enabledBuiltinCommands.includes(n)
-        );
-
-      if (missingBuiltinCommands.length > 0) {
-        throw new HTTPError(
-          `the following builtin commands and must be enabled: ${missingBuiltinCommands.join(
-            ", "
-          )}`,
-          400
-        );
-      }
-
       const sessionSerialized = msgpack.serialize(session);
 
       await ctx.state.clients.withRedis((client) =>

@@ -11,6 +11,7 @@ export class RetryableError extends Error {
     super(wrapped.message, {
       cause: wrapped.cause,
     });
+
     this.wrapped = wrapped;
     this.name = wrapped.name;
     this.stack = wrapped.stack;

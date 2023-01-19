@@ -71,22 +71,17 @@ const privateCommands = {
         type: "string",
       },
     ],
+    run: async (_, __, [answer]) => answer,
   } as BuiltinCommandDefinition<["string"]>,
 
   now: {
     description: "get the current time in ISO8601 format",
     args: [],
+    run: async (_, __, []) => ({
+      type: "string",
+      value: new Date().toISOString(),
+    }),
   } as BuiltinCommandDefinition<[]>,
-
-  relativeTime: {
-    description: "get the time relative to now in ISO8601 format",
-    args: [
-      {
-        name: "natural language description of relative time",
-        type: "string",
-      },
-    ],
-  } as BuiltinCommandDefinition<["string"]>,
 };
 
 export async function run(
@@ -216,21 +211,9 @@ export async function run(
       }
       n++;
 
-      const enabledBuiltinCommands: Partial<typeof builtinCommands> =
-        session.configuration.enabledBuiltinCommands.reduce(
-          (a, enabledCommand) =>
-            builtinCommands[enabledCommand] == null
-              ? a
-              : {
-                  ...a,
-                  [enabledCommand]: builtinCommands[enabledCommand],
-                },
-          {}
-        );
-
       const commandSet = filterUnnecessary(scratch, {
         ...configuration.commands,
-        ...enabledBuiltinCommands,
+        ...builtinCommands,
         ...privateCommands,
       });
 

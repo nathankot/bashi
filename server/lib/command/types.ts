@@ -1,10 +1,15 @@
 import * as t from "io-ts";
 
 import { Value } from "@lib/valueTypes.ts";
+import { ModelDeps } from "@lib/models.ts";
+import {
+  RequestContextRequirement,
+  RequestContext,
+} from "@lib/requestContext.ts";
+
 import { Argument, ArgumentParser } from "./argumentParsers.ts";
 
 export { Argument, ArgumentParser };
-
 export { Value as CommandReturnValue };
 
 export const ArgumentType = t.keyof({
@@ -39,8 +44,20 @@ export type BuiltinCommandDefinition<A extends ArgumentType[]> = Omit<
   CommandDefinition,
   "args"
 > & {
-  args: { [K in keyof A]: { type: A[K]; name: string } };
-  mustNotBeDisabled?: boolean;
+  args: {
+    [K in keyof A]: {
+      type: A[K];
+      name: string;
+    };
+  };
+  requestContextRequirement?: RequestContextRequirement;
+  run: (
+    deps: ModelDeps,
+    input: RequestContext,
+    args: BuiltinCommandDefinitionArgs<{
+      [K in keyof A]: { type: A[K]; name: string };
+    }>
+  ) => Promise<Value>;
 };
 
 export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =

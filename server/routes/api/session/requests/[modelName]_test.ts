@@ -17,7 +17,6 @@ for (const test of [
       ...fixtures.session,
       configuration: {
         ...fixtures.session.configuration,
-        enabledBuiltinCommands: ["answer", "time"],
       },
     } as Session,
     openAiFn: async () =>

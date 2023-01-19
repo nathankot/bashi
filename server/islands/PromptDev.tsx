@@ -14,18 +14,7 @@ export default function PromptDev() {
 
   useEffect(() => {
     let body: PostSessionRequest = {
-      configuration: {
-        enabledBuiltinCommands: [
-          "time",
-          "translate",
-          "editCode",
-          "editProse",
-          "generateCode",
-          "math",
-          "fail",
-          "answer",
-        ],
-      },
+      configuration: {},
       modelConfigurations: {
         "assist-000": {
           model: "assist-000",

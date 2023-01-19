@@ -147,21 +147,9 @@ export async function run(
       return pendingRequest.commands;
     }
 
-    const enabledBuiltinCommands: Partial<typeof builtinCommands> =
-      modelDeps.session.configuration.enabledBuiltinCommands.reduce(
-        (a, enabledCommand) =>
-          builtinCommands[enabledCommand] == null
-            ? a
-            : {
-                ...a,
-                [enabledCommand]: builtinCommands[enabledCommand],
-              },
-        {}
-      );
-
     const commandSet = filterUnnecessary(request, {
       ...configuration.commands,
-      ...enabledBuiltinCommands,
+      ...builtinCommands,
       ...privateCommands,
     });
 

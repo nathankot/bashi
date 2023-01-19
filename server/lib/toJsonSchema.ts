@@ -4,11 +4,7 @@ import { equal } from "std/testing/asserts.ts";
 import { OpenAPIV3 } from "openapi-types";
 
 import { models } from "@lib/models.ts";
-import {
-  SessionPublic,
-  KnownBuiltinCommand,
-  ServerExecutedCommand,
-} from "@lib/session.ts";
+import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 import {
   Result,
@@ -385,12 +381,6 @@ namedJSONSchemaObjects["#/components/schemas/RequestContextRequirement"] =
   toJSONSchema(RequestContextRequirement);
 // namedJSONSchemaObjects["#/components/schemas/RequestContextDefinitionType"] =
 //   toJSONSchema(RequestContextDef.types[1].codomain);
-
-namedJSONSchemaObjects["#/components/schemas/KnownBuiltinCommand"] =
-  toJSONSchema(KnownBuiltinCommand);
-namedJSONSchemaObjects[
-  "#/components/schemas/ImplementationUnnecessaryBuiltinCommand"
-] = toJSONSchema(ServerExecutedCommand);
 
 namedJSONSchemaObjects["#/components/schemas/CommandExecuted"] =
   toJSONSchema(CommandExecuted);

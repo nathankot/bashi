@@ -1,5 +1,5 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import { evaluate } from "./parser.ts";
+import { parseCommand, parseActionGroup } from "./parser.ts";
 
 for (const expr of [
   "someCall()",
@@ -23,7 +23,40 @@ for (const expr of [
 ]) {
   Deno.test(expr === "" ? "empty string" : expr, (t) => {
     try {
-      const result = evaluate(expr);
+      const result = parseCommand(expr);
+      assertSnapshot(t, result);
+    } catch (e) {
+      assertSnapshot(t, (e as Error).message);
+    }
+  });
+}
+
+for (const expr of [
+  `Thought: I need to do something
+Action: someFunction() | someOtherFunction()
+Result: blah blah blah blah`,
+  `Thought: I need to do something action: thought: hmmm
+Action: someFunction() | someOtherFunction()
+Result: blah blah blah blah`,
+  `Thought: I need to do something
+Action: someFunction() | someOtherFunction()`,
+  `tHOUght: I need to do something
+aCTion  :    someFunction() | someOtherFunction()`,
+  `Thought: I need to do something Action: head fake
+
+Action: someFunction() | someOtherFunction()
+Result: blah blah blah blah`,
+
+  // Invalid examples:
+
+  `Thought no colon doesnt work\nAction hahaha`,
+  `Action: action should not come first\nThought: ha`,
+  `completely invalid`,
+  ``,
+]) {
+  Deno.test(expr === "" ? "empty string" : expr, (t) => {
+    try {
+      const result = parseActionGroup(expr);
       assertSnapshot(t, result);
     } catch (e) {
       assertSnapshot(t, (e as Error).message);

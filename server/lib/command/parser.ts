@@ -1,27 +1,97 @@
 import * as p from "typescript-parsec";
 import { parseDate } from "chrono";
-import type { Configuration } from "@lib/session.ts";
 
 import {
-  Token,
+  // Token,
   buildLexer,
   rule,
   expectEOF,
   expectSingleResult,
 } from "typescript-parsec";
 
+import type { Configuration } from "@lib/session.ts";
+
 import { LogFn } from "@lib/log.ts";
 
 import { Value } from "@lib/valueTypes.ts";
+import { checkArgumentsValid } from "@lib/command.ts";
 import argumentParsers from "./argumentParsers.ts";
 
-import {
-  Command,
-  CommandSet,
-  CommandDefinition,
-  CommandParsed,
-  Argument,
-} from "./types.ts";
+import { Command, CommandSet, CommandParsed, Argument } from "./types.ts";
+
+enum ActionTokenKind {
+  KeywordThought,
+  KeywordAction,
+  KeywordResult,
+
+  String,
+
+  Newline,
+  Space,
+}
+
+const actionLexer = buildLexer([
+  [true, /^Action/gi, ActionTokenKind.KeywordAction],
+  [true, /^Thought/gi, ActionTokenKind.KeywordThought],
+  [true, /^Result/gi, ActionTokenKind.KeywordResult],
+
+  [true, /^:.*/g, ActionTokenKind.String],
+
+  [true, /^(\n|\r\n|\r)*/g, ActionTokenKind.Newline],
+  [false, /^\s+/g, ActionTokenKind.Space],
+]);
+
+export type ActionGroup = {
+  thought: string;
+  action: string;
+  result?: string;
+};
+
+const ACTION_GROUP = rule<ActionTokenKind, ActionGroup>();
+ACTION_GROUP.setPattern(
+  p.apply(
+    p.seq(
+      p.apply(
+        p.seq(
+          p.tok(ActionTokenKind.KeywordThought),
+          p.tok(ActionTokenKind.String)
+        ),
+        ([, str]) => str.text.slice(1).trim()
+      ),
+      p.tok(ActionTokenKind.Newline),
+      p.apply(
+        p.seq(
+          p.tok(ActionTokenKind.KeywordAction),
+          p.tok(ActionTokenKind.String)
+        ),
+        ([, str]) => str.text.slice(1).trim()
+      ),
+      p.opt(
+        p.apply(
+          p.seq(
+            p.tok(ActionTokenKind.Newline),
+            p.seq(
+              p.tok(ActionTokenKind.KeywordResult),
+              p.tok(ActionTokenKind.String)
+            )
+          ),
+          ([, [, str]]) => str.text.slice(1).trim()
+        )
+      )
+    ),
+    ([thought, , action, result]) => ({
+      thought,
+      action,
+      result,
+    })
+  )
+);
+
+export function parseActionGroup(expr: string): ActionGroup {
+  return expectSingleResult(
+    expectEOF(ACTION_GROUP.parse(actionLexer.parse(expr)))
+  );
+}
 
 enum TokenKind {
   Identifier,
@@ -55,68 +125,6 @@ const lexer = buildLexer([
   [false, /^\s+/g, TokenKind.Space],
 ]);
 
-function applyLiteral(
-  tok:
-    | Token<TokenKind.TrueLiteral>
-    | Token<TokenKind.FalseLiteral>
-    | Token<TokenKind.NumberLiteral>
-    | Token<TokenKind.SingleQuoteStringLiteral>
-    | Token<TokenKind.DoubleQuoteStringLiteral>
-    | Token<TokenKind.BackQuoteStringLiteral>
-): Argument {
-  switch (tok.kind) {
-    case TokenKind.TrueLiteral:
-      return { type: "boolean", value: true };
-    case TokenKind.FalseLiteral:
-      return { type: "boolean", value: false };
-    case TokenKind.NumberLiteral:
-      return { type: "number", value: +tok.text };
-    case TokenKind.SingleQuoteStringLiteral:
-      return {
-        type: "string",
-        value: tok.text
-          .substring(1, tok.text.length - 1)
-          .replaceAll(`\\'`, `'`),
-      };
-    case TokenKind.DoubleQuoteStringLiteral:
-      return {
-        type: "string",
-        value: tok.text
-          .substring(1, tok.text.length - 1)
-          .replaceAll(`\\"`, `"`),
-      };
-    case TokenKind.BackQuoteStringLiteral:
-      return {
-        type: "string",
-        value: tok.text
-          .substring(1, tok.text.length - 1)
-          .replaceAll("\\`", "`"),
-      };
-    default:
-      const exhaustiveCheck: never = tok;
-      throw new Error(
-        `Unsupported argument kind: ${(exhaustiveCheck as any).text}`
-      );
-  }
-}
-
-function applyCall(
-  toks: [
-    Token<TokenKind.Identifier>,
-    Token<TokenKind.LParen>,
-    undefined | Argument[],
-    Token<TokenKind.RParen>
-  ]
-): Command & { type: "parsed" } {
-  const [{ text: name }, , maybeArgs] = toks;
-  return {
-    type: "parsed",
-    line: "",
-    name,
-    args: maybeArgs ?? [],
-  };
-}
-
 const ARG = rule<TokenKind, Argument>();
 ARG.setPattern(
   p.apply(
@@ -128,7 +136,42 @@ ARG.setPattern(
       p.tok(TokenKind.DoubleQuoteStringLiteral),
       p.tok(TokenKind.BackQuoteStringLiteral)
     ),
-    applyLiteral
+    (tok) => {
+      switch (tok.kind) {
+        case TokenKind.TrueLiteral:
+          return { type: "boolean", value: true };
+        case TokenKind.FalseLiteral:
+          return { type: "boolean", value: false };
+        case TokenKind.NumberLiteral:
+          return { type: "number", value: +tok.text };
+        case TokenKind.SingleQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll(`\\'`, `'`),
+          };
+        case TokenKind.DoubleQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll(`\\"`, `"`),
+          };
+        case TokenKind.BackQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll("\\`", "`"),
+          };
+        default:
+          const exhaustiveCheck: never = tok;
+          throw new Error(
+            `Unsupported argument kind: ${(exhaustiveCheck as any).text}`
+          );
+      }
+    }
   )
 );
 
@@ -141,24 +184,34 @@ CALL.setPattern(
       p.opt(p.list(ARG, p.tok(TokenKind.Comma))),
       p.tok(TokenKind.RParen)
     ),
-    applyCall
+    (toks) => {
+      const [{ text: name }, , maybeArgs] = toks;
+      return {
+        type: "parsed",
+        line: "",
+        name,
+        args: maybeArgs ?? [],
+      };
+    }
   )
 );
 
-export function evaluate(expr: string): Command & { type: "parsed" } {
+export function parseCommand(expr: string): Command & { type: "parsed" } {
   return expectSingleResult(expectEOF(CALL.parse(lexer.parse(expr))));
 }
 
+// TODO: none of below really belows in the parser
+
 type ArgParsed = Exclude<CommandParsed["argsParsed"], undefined>[number];
 
-type ParseDeps = {
+export type ParseDeps = {
   log: LogFn;
   now: Date;
   knownCommands: CommandSet;
   sessionConfiguration: Configuration;
 };
 
-export function parseCommand(
+export function preprocessCommand(
   { log, now, knownCommands, sessionConfiguration }: ParseDeps,
   line: string
 ): Command | null {
@@ -171,7 +224,7 @@ export function parseCommand(
   }
   try {
     const parsed = {
-      ...evaluate(line),
+      ...parseCommand(line),
       line,
     };
     const command = knownCommands[parsed.name];
@@ -190,6 +243,8 @@ export function parseCommand(
         invalidReason: "invalid_arguments",
       };
     }
+
+    // TODO: this should probably be lifted outside of the parser:
 
     // Do any additional argument parsing:
     parsed.argsParsed = command.args.map((argDef, i) =>
@@ -237,37 +292,4 @@ export function parseCommand(
       error: (e as any).message ?? "",
     };
   }
-}
-
-export function parseFromModelResult(deps: ParseDeps, text: string): Command[] {
-  let result: Command[] = [];
-
-  for (const line of text.split("\n")) {
-    if (line === "```") {
-      continue;
-    }
-    let command = parseCommand(deps, line);
-    if (command != null) {
-      result.push();
-    }
-  }
-
-  return result;
-}
-
-export function checkArgumentsValid(
-  knownCommand: CommandDefinition,
-  args: Argument[]
-): boolean {
-  if (knownCommand.args.length !== args.length) {
-    return false;
-  }
-  for (let i = 0; i < knownCommand.args.length; i++) {
-    const argDef = knownCommand.args[i]!;
-    const arg = args[i]!;
-    if (arg.type !== argDef.type) {
-      return false;
-    }
-  }
-  return true;
 }

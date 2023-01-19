@@ -41,3 +41,21 @@ export const Value = t.union([
 export type Value = t.TypeOf<typeof Value>;
 
 export type ValueForType<T extends ValueType> = Value & { type: T };
+
+export function valueToString(value: Value): string {
+  switch (value.type) {
+    case "null":
+      return "null";
+    case "boolean":
+      return value.value ? "true" : "false";
+    case "number":
+      return `${value.value}`;
+    case "string":
+      return value.value;
+    default:
+      const exhaustiveCheck: never = value;
+      throw new Error(
+        `the value ${JSON.stringify(exhaustiveCheck)} is unknown`
+      );
+  }
+}

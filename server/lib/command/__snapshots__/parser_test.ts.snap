@@ -516,6 +516,64 @@ Result: blah blah blah blah 1`] = `
 }
 `;
 
+snapshot[`parseActionGroup: Thought: I need to do something
+Action: someFunction(123, "str", true)
+Result: 1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+Action: someFunction(123, "str", true)
+Result:  1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
 snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
 Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
 Result: blah blah blah blah 1`] = `

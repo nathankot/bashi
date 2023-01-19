@@ -79,7 +79,13 @@ ACTION_GROUP.setPattern(
               p.tok(ActionTokenKind.String)
             )
           ),
-          ([, [, str]]) => str.text.slice(1).trim()
+          ([, [, str]]) => {
+            const result = str.text.slice(1).trim();
+            if (result.length === 0) {
+              return undefined;
+            }
+            return result;
+          }
         )
       )
     ),

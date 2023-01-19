@@ -50,6 +50,12 @@ for (const expr of [
   `Thought: I need to do something
 Action: someFunction(123, "str", true)
 Result: blah blah blah blah`,
+  `Thought: I need to do something
+Action: someFunction(123, "str", true)
+Result:`,
+  `Thought: I need to do something
+Action: someFunction(123, "str", true)
+Result: `,
   `Thought: I need to do something action: thought: hmmm
 Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
 Result: blah blah blah blah`,

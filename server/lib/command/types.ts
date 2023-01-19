@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-import { Value } from "@lib/valueTypes.ts";
+import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
 import { ModelDeps } from "@lib/models.ts";
 import {
   RequestContextRequirement,
@@ -33,6 +33,7 @@ export const CommandDefinition = t.intersection([
         }),
       ])
     ),
+    returnType: ValueType,
   }),
   t.partial({
     triggerTokens: t.array(t.string),
@@ -40,10 +41,11 @@ export const CommandDefinition = t.intersection([
 ]);
 export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
 
-export type BuiltinCommandDefinition<A extends ArgumentType[]> = Omit<
-  CommandDefinition,
-  "args"
-> & {
+export type BuiltinCommandDefinition<
+  A extends ArgumentType[],
+  R extends ValueType
+> = Omit<CommandDefinition, "args" | "returnType"> & {
+  returnType: R;
   args: {
     [K in keyof A]: {
       type: A[K];
@@ -57,7 +59,7 @@ export type BuiltinCommandDefinition<A extends ArgumentType[]> = Omit<
     args: BuiltinCommandDefinitionArgs<{
       [K in keyof A]: { type: A[K]; name: string };
     }>
-  ) => Promise<Value>;
+  ) => Promise<ValueForType<R>>;
 };
 
 export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =

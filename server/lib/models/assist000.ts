@@ -76,7 +76,9 @@ const privateCommands = {
       "ask more information necessary to interpret the request, " +
       "must not be used with other functions",
     args: [{ name: "question for missing information", type: "string" }],
-  } as BuiltinCommandDefinition<["string"]>,
+    run: async () => ({ type: "null" }),
+    returnType: "null",
+  } as BuiltinCommandDefinition<["string"], "null">,
 };
 
 export async function run(

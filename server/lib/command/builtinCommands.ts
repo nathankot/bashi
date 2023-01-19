@@ -6,7 +6,8 @@ import { BuiltinCommandDefinition } from "./types.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { run } from "@lib/models.ts";
 
-const time: BuiltinCommandDefinition<["string"]> = {
+const time: BuiltinCommandDefinition<["string"], "string"> = {
+  returnType: "string",
   description: `check the time for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
@@ -20,7 +21,8 @@ const time: BuiltinCommandDefinition<["string"]> = {
   },
 };
 
-const math: BuiltinCommandDefinition<["string"]> = {
+const math: BuiltinCommandDefinition<["string"], "string"> = {
+  returnType: "string",
   description: `compute a math formula`,
   args: [{ name: "a mathjs expression ", type: "string" }],
   run: async ({ log, session }, reqCtx, [expr]) => {
@@ -34,7 +36,8 @@ const math: BuiltinCommandDefinition<["string"]> = {
   },
 };
 
-const translate: BuiltinCommandDefinition<["string", "string"]> = {
+const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
+  returnType: "string",
   description: `translate something into a target language`,
   args: [
     { name: "full name of the target language", type: "string" },
@@ -79,7 +82,8 @@ const translate: BuiltinCommandDefinition<["string", "string"]> = {
   ],
 };
 
-const editProse: BuiltinCommandDefinition<["string"]> = {
+const editProse: BuiltinCommandDefinition<["string"], "string"> = {
+  returnType: "string",
   description: `edit prose using the given requirements`,
   args: [{ name: "sentence describing desired changes", type: "string" }],
   run: async (modelDeps, reqCtx, [editingRequirement]) => {
@@ -112,7 +116,8 @@ ${text}`,
 };
 
 // TODO: maybe a code edit model will do better with this?
-const editCode: BuiltinCommandDefinition<["string", "string"]> = {
+const editCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
+  returnType: "string",
   description: `edit code using the given requirements`,
   args: [
     { name: "full name of the programming language", type: "string" },
@@ -158,7 +163,11 @@ ${text satisfies string}`,
   ],
 };
 
-const generateCode: BuiltinCommandDefinition<["string", "string", "string"]> = {
+const generateCode: BuiltinCommandDefinition<
+  ["string", "string", "string"],
+  "string"
+> = {
+  returnType: "string",
   description: `generate code for the given request`,
   args: [
     { name: "full name of target programming language", type: "string" },
@@ -198,7 +207,8 @@ const generateCode: BuiltinCommandDefinition<["string", "string", "string"]> = {
   ],
 };
 
-const relativeTime: BuiltinCommandDefinition<["string"]> = {
+const relativeTime: BuiltinCommandDefinition<["string"], "string"> = {
+  returnType: "string",
   description: "get the time relative to now in ISO8601 format",
   args: [
     {
@@ -221,28 +231,32 @@ const relativeTime: BuiltinCommandDefinition<["string"]> = {
   },
 };
 
-const answer: BuiltinCommandDefinition<["string"]> = {
+const answer: BuiltinCommandDefinition<["string"], "null"> = {
+  returnType: "null",
   description: `store an answer that is readily available if the request is a question`,
   args: [{ name: "answer", type: "string" }],
-  run: async (_, __, [answer]) => answer,
+  run: async (_, __, ___) => ({ type: "null" }),
 };
 
-const fail: BuiltinCommandDefinition<["string"]> = {
+const fail: BuiltinCommandDefinition<["string"], "null"> = {
+  returnType: "null",
   description: `indicate the request could not be interpreted`,
   args: [{ name: "reason", type: "string" }],
-  run: async (_, __, [reason]) => reason,
+  run: async (_, __, ___) => ({ type: "null" }),
 };
 
-const write: BuiltinCommandDefinition<[]> = {
+const write: BuiltinCommandDefinition<[], "null"> = {
+  returnType: "null",
   description: `write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written`,
   args: [],
-  run: async (_, __, ___) => ({ type: "boolean", value: true }),
+  run: async (_, __, ___) => ({ type: "null" }),
 };
 
-const display: BuiltinCommandDefinition<[]> = {
+const display: BuiltinCommandDefinition<[], "null"> = {
+  returnType: "null",
   description: `display the results above to the user. should be favored over write() if it makes more sense`,
   args: [],
-  run: async (_, __, ___) => ({ type: "boolean", value: true }),
+  run: async (_, __, ___) => ({ type: "null" }),
 };
 
 export const builtinCommands = {

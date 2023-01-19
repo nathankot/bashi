@@ -24,6 +24,7 @@ export const handlerCtx: HandlerContext<{}> = {
 export const commandSet: CommandSet = {
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
+    returnType: "null",
     args: [
       {
         name: "relative time supported by chrono-js",
@@ -39,6 +40,7 @@ export const commandSet: CommandSet = {
   },
   createReminder: {
     description: "create a reminder on a certain date and time",
+    returnType: "null",
     args: [
       {
         name: "relative time supported by chrono-js",
@@ -50,6 +52,7 @@ export const commandSet: CommandSet = {
     triggerTokens: ["remind", "reminder"],
   },
   sendEmail: {
+    returnType: "null",
     description: `send an email`,
     args: [
       { name: "recipient", type: "string" },

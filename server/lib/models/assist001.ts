@@ -60,7 +60,8 @@ const privateCommands = {
   ask: {
     description: "ask for more information, use only when necessary",
     args: [{ name: "the question", type: "string" }],
-  } as BuiltinCommandDefinition<["string"]>,
+    returnType: "null",
+  } as BuiltinCommandDefinition<["string"], "null">,
 
   answer: {
     description:
@@ -71,8 +72,9 @@ const privateCommands = {
         type: "string",
       },
     ],
-    run: async (_, __, [answer]) => answer,
-  } as BuiltinCommandDefinition<["string"]>,
+    run: async (_, __, [answer]) => ({ type: "null" }),
+    returnType: "null",
+  } as BuiltinCommandDefinition<["string"], "null">,
 
   now: {
     description: "get the current time in ISO8601 format",
@@ -81,7 +83,8 @@ const privateCommands = {
       type: "string",
       value: new Date().toISOString(),
     }),
-  } as BuiltinCommandDefinition<[]>,
+    returnType: "string",
+  } as BuiltinCommandDefinition<[], "string">,
 };
 
 export async function run(

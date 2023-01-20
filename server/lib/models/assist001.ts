@@ -26,6 +26,8 @@ import {
 
 type State = NonNullable<Session["assist001State"]>;
 
+export const MAX_LOOPS = 5;
+
 export const Name = t.literal("assist-001");
 export type Name = t.TypeOf<typeof Name>;
 
@@ -65,15 +67,14 @@ export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-001",
 };
 
+// TODO: should probably just be provided by the client:
 const requiredClientCommands: Record<string, CommandDefinition> = {
   ask: {
     description: "ask for more information, use only when necessary",
     args: [{ name: "the question", type: "string" }],
-    returnType: "null",
+    returnType: "string",
   },
-};
 
-const privateBuiltinCommands = {
   answer: {
     description:
       "answer the original question directly based on existing knowledge. this is preferred",
@@ -83,10 +84,11 @@ const privateBuiltinCommands = {
         type: "string",
       },
     ],
-    run: async (_, __, [answer]) => ({ type: "null" }),
     returnType: "null",
-  } as BuiltinCommandDefinition<["string"], "null">,
+  },
+};
 
+const privateBuiltinCommands = {
   now: {
     description: "get the current time in ISO8601 format",
     args: [],
@@ -155,7 +157,6 @@ export async function run(
   }
 
   // Key pieces of state:
-  const maxLoops = 5; // TODO turn into config
   let loopCount = state?.loopCount ?? 0;
   let pending = state?.pending;
   let resolvedCommands = state?.resolvedCommands ?? {};
@@ -223,6 +224,10 @@ export async function run(
             );
             commandResults.push(resolved.returnValue);
             resolvedCommands[pendingCommand.id] = resolved;
+            // Account for the special finish command
+            if (resolved.name === "finish") {
+              isFinished = true;
+            }
             continue;
           }
 
@@ -277,14 +282,13 @@ export async function run(
       if (isFinished) {
         break;
       }
-      if (loopCount >= maxLoops) {
-        throw new HTTPError(`max iteration count of ${maxLoops} reached`, 400);
+      if (loopCount >= MAX_LOOPS) {
+        throw new HTTPError(`max iteration count of ${MAX_LOOPS} reached`, 400);
       }
       loopCount++;
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
       const prompt = makePrompt(allCommands, request, resolvedActionGroups);
-      console.log("NKDEBUG prompt is", prompt);
       const completion = await modelDeps.openai.createCompletion(
         {
           model: "text-davinci-003",
@@ -399,7 +403,9 @@ Thought: `;
 
 function makeCommandSet(commands: CommandSet): string[] {
   return Object.entries(commands).map(([name, c]) => {
-    const args = c.args.map((a) => `${a.name}: ${a.type}`);
+    const args = c.args.map(
+      (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
+    );
     return `\`${name}(${args.join(", ")}) => ${c.returnType}\` - ${
       c.description
     }`;

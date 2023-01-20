@@ -47,11 +47,11 @@ export function valueToString(value: Value): string {
     case "null":
       return "null";
     case "boolean":
-      return value.value ? "true" : "false";
+      return JSON.stringify(value.value);
     case "number":
-      return `${value.value}`;
+      return JSON.stringify(value.value);
     case "string":
-      return value.value;
+      return JSON.stringify(value.value);
     default:
       const exhaustiveCheck: never = value;
       throw new Error(

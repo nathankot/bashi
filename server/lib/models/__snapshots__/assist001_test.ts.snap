@@ -1,6 +1,98 @@
 export const snapshot = {};
 
-snapshot[`blah 1`] = `
+snapshot[`all commands resolved on the server 1`] = `
+{
+  n: 2,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`all commands resolved on the server 2`] = `
+[
+  'Answer the following questions as best you can.
+
+You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+
+\`ask("the question": string) => string\` - ask for more information, use only when necessary
+\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
+\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
+\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`now() => string\` - get the current time in ISO8601 format
+\`finish() => null\` - mark that the request is finished
+
+Use the following format:
+
+Request: the input question or request you must answer
+Thought: you should always think about what to do
+Action: function(s) to call following the above requirements, delimited by ;
+Result: the result of the function call
+... (this Thought/Action/Result can repeat N times)
+Thought: I have completed the request
+Action: finish()
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Answer the following questions as best you can.
+
+You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+
+\`ask("the question": string) => string\` - ask for more information, use only when necessary
+\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
+\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
+\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`now() => string\` - get the current time in ISO8601 format
+\`finish() => null\` - mark that the request is finished
+
+Use the following format:
+
+Request: the input question or request you must answer
+Thought: you should always think about what to do
+Action: function(s) to call following the above requirements, delimited by ;
+Result: the result of the function call
+... (this Thought/Action/Result can repeat N times)
+Thought: I have completed the request
+Action: finish()
+
+Begin!
+
+Request: some request
+Thought: I need to do something
+Action: now(); math("pi^2 + 123")
+Result: "2022-12-19T08:41:10.000Z"; "132.86960440108936"
+Thought: ',
+]
+`;
+
+snapshot[`all commands resolved on the server - implicit finish 1`] = `
+{
+  n: 2,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`client resolved command 1`] = `
 {
   n: 1,
   output: {
@@ -80,11 +172,540 @@ snapshot[`blah 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2023-01-20T14:22:15.813Z",
+          value: "2022-12-19T08:41:10.000Z",
         },
         type: "executed",
       },
     },
   },
 }
+`;
+
+snapshot[`client resolved command - continue but unresolved 1`] = `
+{
+  n: 0,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: 1,
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    loopCount: 1,
+    pending: {
+      actionGroup: {
+        action: 'now(); ask("what do you want?")',
+        functionCalls: [
+          {
+            args: [
+            ],
+            name: "now",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "what do you want?",
+              },
+            ],
+            name: "ask",
+          },
+        ],
+        result: undefined,
+        thought: "I need to do something",
+      },
+      commands: [
+        {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          type: "parsed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: 1,
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0": {
+        args: [
+        ],
+        id: 0,
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`client resolved command - wrong return type 1`] = `
+Error: command ask expects return type string but got number
+    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:241:21)
+    at file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:28
+    at testStepSanitizer (deno:cli/js/40_testing.js:448:13)
+    at asyncOpSanitizer (deno:cli/js/40_testing.js:147:15)
+    at resourceSanitizer (deno:cli/js/40_testing.js:374:13)
+    at Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:15)
+    at runTest (deno:cli/js/40_testing.js:836:18)
+    at runTests (deno:cli/js/40_testing.js:1094:28)
+`;
+
+snapshot[`client resolved command - fulfilled 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`client resolved command - fulfilled 2`] = `
+[
+  'Answer the following questions as best you can.
+
+You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+
+\`ask("the question": string) => string\` - ask for more information, use only when necessary
+\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
+\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
+\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`now() => string\` - get the current time in ISO8601 format
+\`finish() => null\` - mark that the request is finished
+
+Use the following format:
+
+Request: the input question or request you must answer
+Thought: you should always think about what to do
+Action: function(s) to call following the above requirements, delimited by ;
+Result: the result of the function call
+... (this Thought/Action/Result can repeat N times)
+Thought: I have completed the request
+Action: finish()
+
+Begin!
+
+Request: some request
+Thought: I need to do something
+Action: now(); ask("what do you want?")
+Result: "2022-12-19T08:41:10.000Z"; "to test you"
+Thought: ',
+]
+`;
+
+snapshot[`request needs more context 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      missingRequestContext: {
+        text: {
+          type: "string",
+        },
+      },
+      type: "needs_request_context",
+    },
+  },
+  state: {
+    loopCount: 1,
+    pending: {
+      actionGroup: {
+        action: 'now(); editProse("convert to poem"); now()',
+        functionCalls: [
+          {
+            args: [
+            ],
+            name: "now",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "convert to poem",
+              },
+            ],
+            name: "editProse",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+          },
+        ],
+        result: undefined,
+        thought: "I need to do something",
+      },
+      commands: [
+        {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          type: "parsed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          id: 1,
+          name: "editProse",
+          type: "parsed",
+        },
+        {
+          args: [
+          ],
+          id: 2,
+          name: "now",
+          type: "parsed",
+        },
+      ],
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0": {
+        args: [
+        ],
+        id: 0,
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`request needs more context - still missing 1`] = `
+{
+  n: 0,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      missingRequestContext: {
+        text: {
+          type: "string",
+        },
+      },
+      type: "needs_request_context",
+    },
+  },
+  state: {
+    loopCount: 1,
+    pending: {
+      actionGroup: {
+        action: 'editProse("convert to poem"); now()',
+        functionCalls: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "convert to poem",
+              },
+            ],
+            name: "editProse",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+          },
+        ],
+        result: undefined,
+        thought: "I need to do something",
+      },
+      commands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          id: 1,
+          name: "editProse",
+          type: "parsed",
+        },
+        {
+          args: [
+          ],
+          id: 2,
+          name: "now",
+          type: "parsed",
+        },
+      ],
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        functionCalls: [
+          {
+            args: [
+            ],
+            name: "someCommand",
+          },
+        ],
+        result: '"blah"',
+        thought: "I need to call some command",
+      },
+    ],
+    resolvedCommands: {
+      "0": {
+        args: [
+        ],
+        id: 0,
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`request needs more context - wrong type 1`] = `
+{
+  n: 0,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      missingRequestContext: {
+        text: {
+          type: "string",
+        },
+      },
+      type: "needs_request_context",
+    },
+  },
+  state: {
+    loopCount: 1,
+    pending: {
+      actionGroup: {
+        action: 'editProse("convert to poem"); now()',
+        functionCalls: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "convert to poem",
+              },
+            ],
+            name: "editProse",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+          },
+        ],
+        result: undefined,
+        thought: "I need to do something",
+      },
+      commands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          id: 1,
+          name: "editProse",
+          type: "parsed",
+        },
+        {
+          args: [
+          ],
+          id: 2,
+          name: "now",
+          type: "parsed",
+        },
+      ],
+    },
+    request: "some request",
+    requestContext: {
+      text: {
+        type: "number",
+        value: 123,
+      },
+    },
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        functionCalls: [
+          {
+            args: [
+            ],
+            name: "someCommand",
+          },
+        ],
+        result: '"blah"',
+        thought: "I need to call some command",
+      },
+    ],
+    resolvedCommands: {
+      "0": {
+        args: [
+        ],
+        id: 0,
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`request needs more context - fulfilled 1`] = `
+{
+  n: 2,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`request needs more context - fulfilled 2`] = `
+[
+  "Rewrite and edit the following text. The requirement is 'convert to poem':
+
+some text",
+  'Answer the following questions as best you can.
+
+You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+
+\`ask("the question": string) => string\` - ask for more information, use only when necessary
+\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
+\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
+\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`now() => string\` - get the current time in ISO8601 format
+\`finish() => null\` - mark that the request is finished
+
+Use the following format:
+
+Request: the input question or request you must answer
+Thought: you should always think about what to do
+Action: function(s) to call following the above requirements, delimited by ;
+Result: the result of the function call
+... (this Thought/Action/Result can repeat N times)
+Thought: I have completed the request
+Action: finish()
+
+Begin!
+
+Request: some request
+Thought: I need to call some command
+Action: someCommand()
+Result: "blah"
+Thought: I need to do something
+Action: editProse("convert to poem"); now()
+Result: "the result of editProse()"; "2022-12-19T08:41:10.000Z"
+Thought: ',
+]
+`;
+
+snapshot[`fulfilled but max loops 1`] = `
+Error: max iteration count of 5 reached
+    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:286:15)
+    at file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:28
+    at testStepSanitizer (deno:cli/js/40_testing.js:448:13)
+    at asyncOpSanitizer (deno:cli/js/40_testing.js:147:15)
+    at resourceSanitizer (deno:cli/js/40_testing.js:374:13)
+    at Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:15)
+    at runTest (deno:cli/js/40_testing.js:836:18)
+    at runTests (deno:cli/js/40_testing.js:1094:28)
+`;
+
+snapshot[`wrong arg type 1`] = `
+Error: arguments are invalid
+    at runBuiltinCommand (file:///Users/nathan/Development/src/localhost/bashi/server/lib/command/run.ts:75:11)
+    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:219:36)
+    at async file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:22
+    at async testStepSanitizer (deno:cli/js/40_testing.js:448:7)
+    at async asyncOpSanitizer (deno:cli/js/40_testing.js:147:9)
+    at async resourceSanitizer (deno:cli/js/40_testing.js:374:7)
+    at async Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:9)
+    at async runTest (deno:cli/js/40_testing.js:836:7)
+    at async runTests (deno:cli/js/40_testing.js:1094:22)
+`;
+
+snapshot[`wrong arg count 1`] = `
+Error: arguments are invalid
+    at runBuiltinCommand (file:///Users/nathan/Development/src/localhost/bashi/server/lib/command/run.ts:75:11)
+    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:219:36)
+    at async file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:22
+    at async testStepSanitizer (deno:cli/js/40_testing.js:448:7)
+    at async asyncOpSanitizer (deno:cli/js/40_testing.js:147:9)
+    at async resourceSanitizer (deno:cli/js/40_testing.js:374:7)
+    at async Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:9)
+    at async runTest (deno:cli/js/40_testing.js:836:7)
+    at async runTests (deno:cli/js/40_testing.js:1094:22)
 `;

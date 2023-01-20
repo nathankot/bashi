@@ -72,7 +72,6 @@ export type CommandSet = t.TypeOf<typeof CommandSet>;
 
 export const CommandParsed = t.type({
   id: t.number,
-  line: t.string,
   type: t.literal("parsed"),
   name: t.string,
   args: t.array(Argument),
@@ -81,7 +80,6 @@ export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
 export const CommandExecuted = t.type({
   id: t.number,
-  line: t.string,
   type: t.literal("executed"),
   name: t.string,
   args: t.array(Argument),

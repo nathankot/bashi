@@ -13,7 +13,6 @@ export const Example = t.intersection([
     updated: t.string,
     result: models["assist-000"].Output.props.result,
     prompt: t.string,
-    completion: t.string,
   }),
   t.partial({
     requestContext: RequestContext,
@@ -177,10 +176,6 @@ export default async function updateExamples(examplesFile: string) {
       updated: new Date().toISOString(),
       prompt: promptWithVariant,
       result: output.result,
-      completion:
-        output.result.type === "ok"
-          ? output.result.commands.map((c) => c.line).join("\n")
-          : "",
       requestContext: input.requestContext ?? {},
       clarification: input.clarification,
     });

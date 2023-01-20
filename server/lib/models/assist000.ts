@@ -378,7 +378,6 @@ function preprocessCommand(
     id: index,
     type: "parsed",
     ...parseFunctionCall(line),
-    line,
   };
   const command = knownCommands[parsed.name];
   // Check that the command is known

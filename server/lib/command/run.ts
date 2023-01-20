@@ -89,7 +89,6 @@ export async function runBuiltinCommand<
     returnValue,
     id: command.id,
     args: command.args,
-    line: command.line,
     name: command.name,
   };
 }

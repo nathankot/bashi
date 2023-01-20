@@ -282,7 +282,7 @@ Action: now(); math()`,
         throw e;
       }
 
-      await assertSnapshot(t, e);
+      await assertSnapshot(t, e.message);
     }
   });
 }

@@ -2,7 +2,6 @@ import * as t from "io-ts";
 import { parseDate } from "chrono";
 
 import { StringValue } from "@lib/valueTypes.ts";
-export { Value as Argument } from "@lib/valueTypes.ts";
 
 export type ArgumentParserContext = {
   now: Date;

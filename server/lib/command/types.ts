@@ -7,13 +7,8 @@ import {
   RequestContext,
 } from "@lib/requestContext.ts";
 
-import { Argument, ArgumentParser } from "./argumentParsers.ts";
-
-export { Argument, ArgumentParser };
-export { Value as CommandReturnValue };
-
-export const ArgumentType = ValueType;
-export type ArgumentType = t.TypeOf<typeof ArgumentType>;
+import { ArgumentParser } from "./argumentParsers.ts";
+export { ArgumentParser };
 
 export const CommandDefinition = t.intersection([
   t.type({
@@ -22,7 +17,7 @@ export const CommandDefinition = t.intersection([
       t.intersection([
         t.type({
           name: t.string,
-          type: ArgumentType,
+          type: ValueType,
         }),
         t.partial({
           parse: t.array(ArgumentParser),
@@ -38,7 +33,7 @@ export const CommandDefinition = t.intersection([
 export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
 
 export type BuiltinCommandDefinition<
-  A extends ArgumentType[],
+  A extends ValueType[],
   R extends ValueType
 > = Omit<CommandDefinition, "args" | "returnType"> & {
   returnType: R;
@@ -63,7 +58,7 @@ export const CommandParsed = t.type({
   id: t.number,
   type: t.literal("parsed"),
   name: t.string,
-  args: t.array(Argument),
+  args: t.array(Value),
 });
 export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
@@ -71,7 +66,7 @@ export const CommandExecuted = t.type({
   id: t.number,
   type: t.literal("executed"),
   name: t.string,
-  args: t.array(Argument),
+  args: t.array(Value),
   returnValue: Value,
 });
 export type CommandExecuted = t.TypeOf<typeof CommandExecuted>;

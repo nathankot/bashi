@@ -4,20 +4,15 @@ import {
 } from "@lib/requestContext.ts";
 
 import { ModelDeps } from "@lib/models.ts";
-import { Value, ValueForType } from "@lib/valueTypes.ts";
+import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
 
-import {
-  Argument,
-  ArgumentType,
-  CommandParsed,
-  CommandExecuted,
-} from "./types.ts";
+import { CommandParsed, CommandExecuted } from "./types.ts";
 
-export function checkArgumentsValid<A extends Argument[]>(
+export function checkArgumentsValid<A extends Value[]>(
   definition: {
     args: { [K in keyof A]: { type: A[K]["type"]; name: string } };
   },
-  args: Argument[]
+  args: Value[]
 ): args is A {
   if (definition.args.length !== args.length) {
     return false;
@@ -56,7 +51,7 @@ export function checkRequestContext<
   return missingRequirements;
 }
 
-export async function runBuiltinCommand<A extends ArgumentType[]>(
+export async function runBuiltinCommand<A extends ValueType[]>(
   definition: {
     args: { [K in keyof A]: { name: string; type: A[K] } };
     run: (

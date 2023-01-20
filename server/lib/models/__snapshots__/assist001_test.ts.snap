@@ -270,17 +270,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
 }
 `;
 
-snapshot[`client resolved command - wrong return type 1`] = `
-Error: command ask expects return type string but got number
-    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:241:21)
-    at file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:28
-    at testStepSanitizer (deno:cli/js/40_testing.js:448:13)
-    at asyncOpSanitizer (deno:cli/js/40_testing.js:147:15)
-    at resourceSanitizer (deno:cli/js/40_testing.js:374:13)
-    at Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:15)
-    at runTest (deno:cli/js/40_testing.js:836:18)
-    at runTests (deno:cli/js/40_testing.js:1094:28)
-`;
+snapshot[`client resolved command - wrong return type 1`] = `"command ask expects return type string but got number"`;
 
 snapshot[`client resolved command - fulfilled 1`] = `
 {
@@ -672,40 +662,8 @@ Thought: ',
 ]
 `;
 
-snapshot[`fulfilled but max loops 1`] = `
-Error: max iteration count of 5 reached
-    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:286:15)
-    at file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:28
-    at testStepSanitizer (deno:cli/js/40_testing.js:448:13)
-    at asyncOpSanitizer (deno:cli/js/40_testing.js:147:15)
-    at resourceSanitizer (deno:cli/js/40_testing.js:374:13)
-    at Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:15)
-    at runTest (deno:cli/js/40_testing.js:836:18)
-    at runTests (deno:cli/js/40_testing.js:1094:28)
-`;
+snapshot[`fulfilled but max loops 1`] = `"max iteration count of 5 reached"`;
 
-snapshot[`wrong arg type 1`] = `
-Error: arguments are invalid
-    at runBuiltinCommand (file:///Users/nathan/Development/src/localhost/bashi/server/lib/command/run.ts:75:11)
-    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:219:36)
-    at async file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:22
-    at async testStepSanitizer (deno:cli/js/40_testing.js:448:7)
-    at async asyncOpSanitizer (deno:cli/js/40_testing.js:147:9)
-    at async resourceSanitizer (deno:cli/js/40_testing.js:374:7)
-    at async Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:9)
-    at async runTest (deno:cli/js/40_testing.js:836:7)
-    at async runTests (deno:cli/js/40_testing.js:1094:22)
-`;
+snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
-snapshot[`wrong arg count 1`] = `
-Error: arguments are invalid
-    at runBuiltinCommand (file:///Users/nathan/Development/src/localhost/bashi/server/lib/command/run.ts:75:11)
-    at run (file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001.ts:219:36)
-    at async file:///Users/nathan/Development/src/localhost/bashi/server/lib/models/assist001_test.ts:251:22
-    at async testStepSanitizer (deno:cli/js/40_testing.js:448:7)
-    at async asyncOpSanitizer (deno:cli/js/40_testing.js:147:9)
-    at async resourceSanitizer (deno:cli/js/40_testing.js:374:7)
-    at async Object.exitSanitizer [as fn] (deno:cli/js/40_testing.js:431:9)
-    at async runTest (deno:cli/js/40_testing.js:836:7)
-    at async runTests (deno:cli/js/40_testing.js:1094:22)
-`;
+snapshot[`wrong arg count 1`] = `"arguments are invalid"`;

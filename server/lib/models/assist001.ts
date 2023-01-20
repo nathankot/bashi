@@ -90,9 +90,9 @@ const privateBuiltinCommands = {
   now: {
     description: "get the current time in ISO8601 format",
     args: [],
-    run: async (_, __, []) => ({
+    run: async (deps, __, []) => ({
       type: "string",
-      value: new Date().toISOString(),
+      value: deps.now().toISOString(),
     }),
     returnType: "string",
   } as BuiltinCommandDefinition<[], "string">,

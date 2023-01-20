@@ -12,11 +12,7 @@ import { Argument, ArgumentParser } from "./argumentParsers.ts";
 export { Argument, ArgumentParser };
 export { Value as CommandReturnValue };
 
-export const ArgumentType = t.keyof({
-  string: null,
-  number: null,
-  boolean: null,
-});
+export const ArgumentType = ValueType;
 export type ArgumentType = t.TypeOf<typeof ArgumentType>;
 
 export const CommandDefinition = t.intersection([
@@ -55,17 +51,10 @@ export type BuiltinCommandDefinition<
   requestContextRequirement?: RequestContextRequirement;
   run: (
     deps: ModelDeps,
-    input: RequestContext,
-    args: BuiltinCommandDefinitionArgs<{
-      [K in keyof A]: { type: A[K]; name: string };
-    }>
+    requestContext: RequestContext,
+    args: { [K in keyof A]: ValueForType<A[K]> }
   ) => Promise<ValueForType<R>>;
 };
-
-export type BuiltinCommandDefinitionArgs<A extends CommandDefinition["args"]> =
-  {
-    [K in keyof A]: Value & { type: A[K]["type"] };
-  };
 
 export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;

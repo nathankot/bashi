@@ -1,0 +1,90 @@
+export const snapshot = {};
+
+snapshot[`blah 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: 1,
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    loopCount: 1,
+    pending: {
+      actionGroup: {
+        action: 'now(); ask("what do you want?")',
+        functionCalls: [
+          {
+            args: [
+            ],
+            name: "now",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "what do you want?",
+              },
+            ],
+            name: "ask",
+          },
+        ],
+        result: undefined,
+        thought: "I need to do something",
+      },
+      commands: [
+        {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          type: "parsed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: 1,
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0": {
+        args: [
+        ],
+        id: 0,
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2023-01-20T14:22:15.813Z",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;

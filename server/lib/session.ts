@@ -3,8 +3,14 @@ import { date } from "io-ts-types";
 
 import { Configuration as ModelConfiguration } from "@lib/models.ts";
 
-import { Command, Commands } from "@lib/command/types.ts";
+import {
+  Commands,
+  CommandExecuted,
+  CommandParsed,
+} from "@lib/command/types.ts";
+
 import { RequestContext } from "@lib/requestContext.ts";
+import { ActionGroup } from "@lib/command.ts";
 
 import {
   Configuration,
@@ -34,19 +40,26 @@ export const Session = t.intersection([
         })
       ),
     }),
-    pendingAssist001Request: t.type({
+    assist001State: t.type({
       request: t.string,
-      scratch: t.string,
-      commands: Commands,
-      pendingActions: t.array(
-        t.type({
-          thought: t.string,
-          action: t.string,
-          command: Command,
-        })
-      ),
-      loopCount: t.number,
       requestContext: RequestContext,
+      loopCount: t.number,
+      resolvedActionGroups: t.array(
+        t.intersection([
+          ActionGroup,
+          t.type({
+            result: t.string,
+          }),
+        ])
+      ),
+      resolvedCommands: t.record(t.number, CommandExecuted),
+      pending: t.union([
+        t.null,
+        t.type({
+          actionGroup: ActionGroup,
+          commands: t.array(CommandParsed),
+        }),
+      ]),
     }),
   }),
 ]);

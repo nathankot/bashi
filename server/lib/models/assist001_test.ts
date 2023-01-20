@@ -1,9 +1,7 @@
 import { noop } from "cockatiel";
 
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import { stub } from "std/testing/mock.ts";
 import * as fixtures from "@lib/fixtures.ts";
-import * as clients from "@lib/clients.ts";
 
 import { Input, run } from "./assist001.ts";
 
@@ -13,42 +11,52 @@ for (const test of [
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: currentTime()`,
+Action: now(); ask("what do you want?")`,
     ],
   },
+
+  // request that needs more context
+  // resolving additional context
+  // resuming a request with resolved commands
+  // resuming a request without resolving missing commands
+  // resuming a request but there were no resolved commands
+  // multiple return values resolved from delimited actions
+  // model returns an empty result
+  // finish() sink
+  // test arg parsers (natural language)
+  // max loop count
+  // TODO: assert session afterwards
 ] satisfies {
   description: string;
-  input: Input;
   openAiResults?: string[];
+  input: Input;
 }[]) {
   Deno.test(test.description, async (t) => {
     let n = 0;
-    const openAiStub =
-      test.openAiResults == null
-        ? null
-        : stub(clients.openai, "createCompletion", async () => {
-            const text = test.openAiResults[n];
-            if (text == null) {
-              throw new Error(`openai mock on index ${n} not available`);
-            }
-            n++;
-            return { data: { choices: [{ text }] } } as any;
-          });
-
-    if (openAiStub != null) {
-      openAiStub.restore();
-    }
+    let session = fixtures.session;
+    const openAiClient = {
+      createCompletion() {
+        const text = test.openAiResults[n];
+        if (text == null) {
+          throw new Error(`openai mock on index ${n} not available`);
+        }
+        n++;
+        return { data: { choices: [{ text }] } };
+      },
+    };
 
     const output = await run(
       {
         faultHandlingPolicy: noop,
         log: () => {},
         now: () => fixtures.now,
-        openai: clients.openai,
+        openai: openAiClient as any,
         session: fixtures.session,
-        setUpdatedSession: () => {},
+        setUpdatedSession: (s) => {
+          session = s;
+        },
         signal: null as any,
-        whisperEndpoint: clients.whisperEndpoint,
+        whisperEndpoint: null as any,
       },
       {
         model: "assist-001",
@@ -57,6 +65,10 @@ Action: currentTime()`,
       test.input
     );
 
-    await assertSnapshot(t, output);
+    await assertSnapshot(t, {
+      output,
+      state: session?.assist001State,
+      n,
+    });
   });
 }

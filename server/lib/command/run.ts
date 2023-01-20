@@ -1,31 +1,29 @@
-import * as t from "io-ts";
-
 import {
   RequestContext,
   RequestContextRequirement,
 } from "@lib/requestContext.ts";
 
-import { ModelDeps, models } from "@lib/models.ts";
-import { ValueType, ValueForType } from "@lib/valueTypes.ts";
+import { ModelDeps } from "@lib/models.ts";
+import { Value, ValueForType } from "@lib/valueTypes.ts";
 
-import { CommandSupportedModels } from "./supportedModels.ts";
 import {
   Argument,
   ArgumentType,
-  Command,
-  CommandDefinition,
-  BuiltinCommandDefinition,
+  CommandParsed,
+  CommandExecuted,
 } from "./types.ts";
 
-export function checkArgumentsValid(
-  knownCommand: CommandDefinition,
+export function checkArgumentsValid<A extends Argument[]>(
+  definition: {
+    args: { [K in keyof A]: { type: A[K]["type"]; name: string } };
+  },
   args: Argument[]
-): boolean {
-  if (knownCommand.args.length !== args.length) {
+): args is A {
+  if (definition.args.length !== args.length) {
     return false;
   }
-  for (let i = 0; i < knownCommand.args.length; i++) {
-    const argDef = knownCommand.args[i]!;
+  for (let i = 0; i < definition.args.length; i++) {
+    const argDef = definition.args[i]!;
     const arg = args[i]!;
     if (arg.type !== argDef.type) {
       return false;
@@ -35,10 +33,9 @@ export function checkArgumentsValid(
 }
 
 export function checkRequestContext<
-  A extends ArgumentType[],
-  R extends ValueType
+  D extends { requestContextRequirement?: RequestContextRequirement }
 >(
-  definition: BuiltinCommandDefinition<A, R>,
+  definition: D,
   requestContext: RequestContext
 ): true | RequestContextRequirement {
   let missingRequirements = {
@@ -59,31 +56,28 @@ export function checkRequestContext<
   return missingRequirements;
 }
 
-export async function runBuiltinCommand<
-  N extends CommandSupportedModels,
-  A extends ArgumentType[],
-  R extends ValueType
->(
-  definition: BuiltinCommandDefinition<A, R>,
+export async function runBuiltinCommand<A extends ArgumentType[]>(
+  definition: {
+    args: { [K in keyof A]: { name: string; type: A[K] } };
+    run: (
+      deps: ModelDeps,
+      input: RequestContext,
+      args: { [K in keyof A]: ValueForType<A[K]> }
+    ) => Promise<Value>;
+    requestContextRequirement?: RequestContextRequirement;
+  },
   deps: ModelDeps,
-  input: t.TypeOf<typeof models[N]["Input"]>,
-  command: Command
-): Promise<Command> {
-  if (command.type !== "parsed") {
-    throw new Error("command type is must be 'parsed'");
-  }
+  requestContext: RequestContext,
+  command: CommandParsed
+): Promise<CommandExecuted> {
   const args = command.args;
-  if (!checkBuiltinCommandArgumentsValid(definition, args)) {
+  if (!checkArgumentsValid(definition, args)) {
     throw new Error("arguments are invalid");
   }
-  if (!checkRequestContext(definition, input.requestContext ?? {})) {
+  if (!checkRequestContext(definition, requestContext)) {
     throw new Error("request context requirements are missing");
   }
-  const returnValue = await definition.run(
-    deps,
-    input.requestContext ?? {},
-    args
-  );
+  const returnValue = await definition.run(deps, requestContext, args as any);
   return {
     type: "executed",
     returnValue,
@@ -91,14 +85,4 @@ export async function runBuiltinCommand<
     args: command.args,
     name: command.name,
   };
-}
-
-function checkBuiltinCommandArgumentsValid<
-  A extends ArgumentType[],
-  R extends ValueType
->(
-  knownCommand: BuiltinCommandDefinition<A, R>,
-  args: Argument[]
-): args is { [K in keyof A]: ValueForType<A[K]> } {
-  return checkArgumentsValid(knownCommand, args);
 }

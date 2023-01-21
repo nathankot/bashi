@@ -32,6 +32,16 @@ export const commandSet: CommandSet = {
       },
     ],
   },
+  ask: {
+    description: "ask for additional information",
+    returnType: "string",
+    args: [
+      {
+        name: "question",
+        type: "string",
+      },
+    ],
+  },
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
     returnType: "null",

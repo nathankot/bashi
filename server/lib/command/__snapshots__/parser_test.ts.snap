@@ -642,9 +642,9 @@ Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
 `;
 
 snapshot[`parseActionGroup: tHOUght: I need to do something
-aCTion  :    someFunction(); someOtherFunction() 1`] = `
+aCTion  :    someFunction();; someOtherFunction() 1`] = `
 {
-  action: "someFunction(); someOtherFunction()",
+  action: "someFunction();; someOtherFunction()",
   functionCalls: [
     {
       args: [

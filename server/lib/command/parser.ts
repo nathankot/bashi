@@ -56,30 +56,30 @@ ACTION_GROUP.setPattern(
   p.apply(
     p.seq(
       p.apply(
-        p.seq(
+        p.kright(
           p.tok(ActionTokenKind.KeywordThought),
           p.tok(ActionTokenKind.String)
         ),
-        ([, str]) => str.text.slice(1).trim()
+        (str) => str.text.slice(1).trim()
       ),
       p.tok(ActionTokenKind.Newline),
       p.apply(
-        p.seq(
+        p.kright(
           p.tok(ActionTokenKind.KeywordAction),
           p.tok(ActionTokenKind.String)
         ),
-        ([, str]) => str.text.slice(1).trim()
+        (str) => str.text.slice(1).trim()
       ),
-      p.opt(
+      p.opt_sc(
         p.apply(
-          p.seq(
+          p.kright(
             p.tok(ActionTokenKind.Newline),
-            p.seq(
+            p.kright(
               p.tok(ActionTokenKind.KeywordResult),
               p.tok(ActionTokenKind.String)
             )
           ),
-          ([, [, str]]) => {
+          (str) => {
             const result = str.text.slice(1).trim();
             if (result.length === 0) {
               return undefined;
@@ -197,7 +197,7 @@ CALL.setPattern(
     p.seq(
       p.tok(FunctionTokenKind.Identifier),
       p.tok(FunctionTokenKind.LParen),
-      p.opt(p.list(ARG, p.tok(FunctionTokenKind.Comma))),
+      p.opt_sc(p.list(ARG, p.tok(FunctionTokenKind.Comma))),
       p.tok(FunctionTokenKind.RParen)
     ),
     ([{ text: name }, , maybeArgs]) => ({
@@ -210,11 +210,17 @@ CALL.setPattern(
 const CALLS = rule<FunctionTokenKind, FunctionCall[]>();
 CALLS.setPattern(
   p.apply(
-    p.seq(
-      p.list(CALL, p.tok(FunctionTokenKind.SemiColon)),
-      p.opt(p.tok(FunctionTokenKind.SemiColon))
+    p.kleft(
+      p.list(
+        CALL,
+        p.seq(
+          p.tok(FunctionTokenKind.SemiColon),
+          p.rep_sc(p.tok(FunctionTokenKind.SemiColon))
+        )
+      ),
+      p.rep_sc(p.tok(FunctionTokenKind.SemiColon))
     ),
-    ([calls]) => calls
+    (calls) => calls
   )
 );
 

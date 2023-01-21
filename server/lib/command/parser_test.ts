@@ -62,7 +62,7 @@ Result: blah blah blah blah`,
   `Thought: I need to do something
 Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
   `tHOUght: I need to do something
-aCTion  :    someFunction(); someOtherFunction()`,
+aCTion  :    someFunction();; someOtherFunction()`,
   `Thought: I need to do something Action: head fake
 
 Action: someFunction(); someOtherFunction()

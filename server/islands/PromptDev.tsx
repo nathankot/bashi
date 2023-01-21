@@ -16,14 +16,10 @@ export default function PromptDev() {
     let body: PostSessionRequest = {
       configuration: {},
       modelConfigurations: {
-        "assist-000": {
-          model: "assist-000",
+        "assist-001": {
+          model: "assist-001",
           commands,
         },
-        // "assist-001": {
-        // model: "assist-001",
-        // commands,
-        // },
       },
     };
 

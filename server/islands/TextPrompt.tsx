@@ -1,9 +1,9 @@
 import { useState } from "preact/hooks";
-import type { Input } from "@lib/models/assist000.ts";
+import type { Input } from "@lib/models/assist001.ts";
 
 export default function TextPrompt(props: {
   sessionId: string;
-  model: "assist-000" | "assist-001";
+  model: "assist-001";
 }) {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");

@@ -4,7 +4,9 @@ import { parseDate } from "chrono";
 import { PROGRAMMING_LANGUAGES } from "@lib/constants.ts";
 import { BuiltinCommandDefinition } from "./types.ts";
 import { HTTPError } from "@lib/errors.ts";
-import { run } from "@lib/models.ts";
+import { run as runPassthrough } from "@lib/models/passthroughOpenai000.ts";
+import { run as runCode } from "@lib/models/code000.ts";
+import { run as runTranslate } from "@lib/models/translate000.ts";
 
 const time: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
@@ -44,11 +46,14 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
     { name: "string to translate", type: "string" },
   ],
   run: async (modelDeps, reqCtx, [targetLanguage, request]) => {
-    const model: "translate-000" = "translate-000";
-    const output = await run(modelDeps, model, {
-      request: request.value,
-      targetLanguage: targetLanguage.value,
-    });
+    const output = await runTranslate(
+      modelDeps,
+      { model: "translate-000" },
+      {
+        request: request.value,
+        targetLanguage: targetLanguage.value,
+      }
+    );
     return { type: "string", value: output.result.trim() };
   },
   triggerTokens: [
@@ -91,14 +96,18 @@ const editProse: BuiltinCommandDefinition<["string"], "string"> = {
     if (text == null) {
       throw new Error("context text unexpectedly null");
     }
-    const output = await run(modelDeps, "passthrough-openai-000", {
-      openAiModel: "text-davinci-003",
-      request: `Rewrite and edit the following text. The requirement is '${
-        editingRequirement.value satisfies string
-      }':
+    const output = await runPassthrough(
+      modelDeps,
+      { model: "passthrough-openai-000" },
+      {
+        openAiModel: "text-davinci-003",
+        request: `Rewrite and edit the following text. The requirement is '${
+          editingRequirement.value satisfies string
+        }':
 
 ${text}`,
-    });
+      }
+    );
     return { type: "string", value: output.result.trim() };
   },
   requestContextRequirement: {
@@ -128,16 +137,20 @@ const editCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
     if (text == null) {
       throw new Error("context text unexpectedly null");
     }
-    const output = await run(modelDeps, "passthrough-openai-000", {
-      openAiModel: "text-davinci-003",
-      request: `Edit or refactor the code below based on the given requirement.
+    const output = await runPassthrough(
+      modelDeps,
+      { model: "passthrough-openai-000" },
+      {
+        openAiModel: "text-davinci-003",
+        request: `Edit or refactor the code below based on the given requirement.
 Programming language is '${
-        (reqCtx.language?.value ?? language.value) satisfies string
-      }'.
+          (reqCtx.language?.value ?? language.value) satisfies string
+        }'.
 The requirement is '${editingRequirement.value satisfies string}':
 
 ${text satisfies string}`,
-    });
+      }
+    );
     return { type: "string", value: output.result.trim() };
   },
   requestContextRequirement: {
@@ -182,12 +195,15 @@ const generateCode: BuiltinCommandDefinition<
     reqCtx,
     [targetLanguage, whatIsBeingGenerated, request]
   ) => {
-    const model = "code-000" as const;
-    const output = await run(modelDeps, model, {
-      request: request.value,
-      whatIsBeingGenerated: whatIsBeingGenerated.value,
-      targetLanguage: targetLanguage.value,
-    });
+    const output = await runCode(
+      modelDeps,
+      { model: "code-000" },
+      {
+        request: request.value,
+        whatIsBeingGenerated: whatIsBeingGenerated.value,
+        targetLanguage: targetLanguage.value,
+      }
+    );
     return { type: "string", value: output.result.trim() };
   },
   triggerTokens: [

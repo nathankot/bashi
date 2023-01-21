@@ -74,8 +74,8 @@ export const session: Session = {
     timezoneUtcOffset: 0,
   },
   modelConfigurations: {
-    "assist-000": {
-      model: "assist-000",
+    "assist-001": {
+      model: "assist-001",
       commands: commandSet,
     },
   },

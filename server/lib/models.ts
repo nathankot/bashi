@@ -6,16 +6,17 @@ import { ModelDeps } from "./models/modelDeps.ts";
 ////////////////////////////////////////////////////
 // BEGIN section to edit when adding new models
 
-import * as assist000 from "./models/assist000.ts";
-// import * as assist001 from "./models/assist001.ts";
+import * as assist001 from "./models/assist001.ts";
 import * as translate000 from "./models/translate000.ts";
 import * as code000 from "./models/code000.ts";
 import * as noop from "./models/noop.ts";
 import * as whisper000 from "./models/whisper000.ts";
 import * as passthroughOpenAi000 from "./models/passthroughOpenai000.ts";
 
+console.log(assist001);
+
 export const models = {
-  "assist-000": assist000,
+  "assist-001": assist001,
   // "assist-001": assist001,
   "translate-000": translate000,
   "code-000": code000,
@@ -25,7 +26,7 @@ export const models = {
 };
 
 export const Configuration = t.partial({
-  "assist-000": assist000.Configuration,
+  "assist-001": assist001.Configuration,
   // "assist-001": assist001.Configuration,
   "translate-000": translate000.Configuration,
   "code-000": code000.Configuration,
@@ -35,7 +36,7 @@ export const Configuration = t.partial({
 });
 
 export const AllConfiguration = t.union([
-  assist000.Configuration,
+  assist001.Configuration,
   // assist001.Configuration,
   noop.Configuration,
   translate000.Configuration,
@@ -46,7 +47,7 @@ export const AllConfiguration = t.union([
 export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
 export const AllInput = t.union([
-  assist000.Input,
+  assist001.Input,
   // assist001.Input,
   noop.Input,
   translate000.Input,
@@ -57,7 +58,7 @@ export const AllInput = t.union([
 export type AllInput = t.TypeOf<typeof AllInput>;
 
 export const AllOutput = t.union([
-  assist000.Output,
+  assist001.Output,
   // assist001.Output,
   noop.Output,
   translate000.Output,

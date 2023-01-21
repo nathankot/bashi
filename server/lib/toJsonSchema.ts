@@ -7,11 +7,10 @@ import { models } from "@lib/models.ts";
 import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 import {
-  Result,
-  ResultNeedsClarification,
+  ResultFinished,
   ResultNeedsRequestContext,
-  ResultOK,
-} from "@lib/models/assist000.ts";
+  ResultPendingCommands,
+} from "@lib/models/assistShared.ts";
 
 import {
   StringValue,
@@ -392,14 +391,12 @@ namedJSONSchemaObjects["#/components/schemas/CommandDefinition"] =
   toJSONSchema(CommandDefinition);
 namedJSONSchemaObjects["#/components/schemas/Command"] = toJSONSchema(Command);
 
-namedJSONSchemaObjects["#/components/schemas/AssistResultOK"] =
-  toJSONSchema(ResultOK);
-namedJSONSchemaObjects["#/components/schemas/AssistResultNeedsClarification"] =
-  toJSONSchema(ResultNeedsClarification);
-namedJSONSchemaObjects["#/components/schemas/AssistResultNeedsRequestContext"] =
+namedJSONSchemaObjects["#/components/schemas/ResultFinished"] =
+  toJSONSchema(ResultFinished);
+namedJSONSchemaObjects["#/components/schemas/ResultPendingCommands"] =
+  toJSONSchema(ResultPendingCommands);
+namedJSONSchemaObjects["#/components/schemas/ResultNeedsRequestContext"] =
   toJSONSchema(ResultNeedsRequestContext);
-namedJSONSchemaObjects["#/components/schemas/AssistResult"] =
-  toJSONSchema(Result);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

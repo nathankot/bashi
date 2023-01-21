@@ -11,7 +11,7 @@ const nowFixture = fixtures.now;
 for (const test of [
   {
     description: "success",
-    model: "assist-000",
+    model: "assist-001",
     request: `{ "request": "whats the time in new york? email translate" }`,
     session: {
       ...fixtures.session,
@@ -24,15 +24,8 @@ for (const test of [
         data: {
           choices: [
             {
-              text: `
-answer("mock response")
-   unknownCall(123)
-unparseable(
-translate("English", "should not work because disabled by conf")
-time("America/New_York")
-sendEmail("not enough args")
-sendEmail("blah@blah.com", "some subject", "some body")
-reminder("in 5 days", "some reminder name")`,
+              text: `Thought run some actions
+Action: answer("mock response")`,
             },
           ],
         },
@@ -40,7 +33,7 @@ reminder("in 5 days", "some reminder name")`,
   },
   {
     description: "openai errors",
-    model: "assist-000",
+    model: "assist-001",
     request: `{ "request": "whats the time in new york?" }`,
     session: fixtures.session,
     openAiFn: async () => {
@@ -49,7 +42,7 @@ reminder("in 5 days", "some reminder name")`,
   },
   {
     description: "empty request",
-    model: "assist-000",
+    model: "assist-001",
     request: `{ "request": "" }`,
     session: fixtures.session,
   },
@@ -60,8 +53,6 @@ reminder("in 5 days", "some reminder name")`,
     session: fixtures.session,
     openAiFn: null,
   },
-  // missing request context
-  // adding request context
   // too many tokens
   // rate limited (or maybe handled by middleware?)
 ]) {

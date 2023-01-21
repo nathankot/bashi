@@ -4,8 +4,11 @@ import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
-import { parseActionGroup, parseFunctionCalls } from "@lib/command.ts";
-import { Session } from "@lib/session.ts";
+import {
+  ActionGroup,
+  parseActionGroup,
+  parseFunctionCalls,
+} from "@lib/command.ts";
 import {
   Input,
   ResultFinished,
@@ -16,6 +19,7 @@ import {
 import {
   CommandSet,
   CommandParsed,
+  CommandExecuted,
   CommandDefinition,
   BuiltinCommandDefinition,
   builtinCommands,
@@ -26,7 +30,28 @@ import {
 
 import { RequestContext } from "@lib/requestContext.ts";
 
-type State = NonNullable<Session["assist001State"]>;
+export const State = t.type({
+  request: t.string,
+  requestContext: RequestContext,
+  loopCount: t.number,
+  resolvedActionGroups: t.array(
+    t.intersection([
+      ActionGroup,
+      t.type({
+        result: t.string,
+      }),
+    ])
+  ),
+  resolvedCommands: t.record(t.number, CommandExecuted),
+  pending: t.union([
+    t.null,
+    t.type({
+      actionGroup: ActionGroup,
+      commands: t.array(CommandParsed),
+    }),
+  ]),
+});
+export type State = t.TypeOf<typeof State>;
 
 export const MAX_LOOPS = 5;
 

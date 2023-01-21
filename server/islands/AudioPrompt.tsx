@@ -1,11 +1,11 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useState, useEffect } from "preact/hooks";
 
-import type { Input } from "@lib/models/assist000.ts";
+import type { Input } from "@lib/models/assist001.ts";
 
 export default function AudioPrompt(props: {
   sessionId: string;
-  model: "assist-000" | "assist-001";
+  model: "assist-001";
 }) {
   if (!IS_BROWSER) {
     return <div></div>;

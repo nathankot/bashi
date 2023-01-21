@@ -11,17 +11,17 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
-export const FunctionCall = t.type({
+const Call = t.type({
   name: t.string,
   args: t.array(Value),
 });
-export type FunctionCall = t.TypeOf<typeof FunctionCall>;
+type Call = t.TypeOf<typeof Call>;
 
 export const ActionGroup = t.intersection([
   t.type({
     thought: t.string,
     action: t.string,
-    functionCalls: t.array(FunctionCall),
+    functionCalls: t.array(Call),
   }),
   t.partial({
     result: t.string,
@@ -141,8 +141,8 @@ const functionLexer = buildLexer([
   [false, /^\s+/g, FunctionTokenKind.Space],
 ]);
 
-const ARG = rule<FunctionTokenKind, Value>();
-ARG.setPattern(
+const VALUE = rule<FunctionTokenKind, Value>();
+VALUE.setPattern(
   p.apply(
     p.alt(
       p.tok(FunctionTokenKind.TrueLiteral),
@@ -191,13 +191,13 @@ ARG.setPattern(
   )
 );
 
-const CALL = rule<FunctionTokenKind, FunctionCall>();
+const CALL = rule<FunctionTokenKind, Call>();
 CALL.setPattern(
   p.apply(
     p.seq(
       p.tok(FunctionTokenKind.Identifier),
       p.tok(FunctionTokenKind.LParen),
-      p.opt_sc(p.list(ARG, p.tok(FunctionTokenKind.Comma))),
+      p.opt_sc(p.list(VALUE, p.tok(FunctionTokenKind.Comma))),
       p.tok(FunctionTokenKind.RParen)
     ),
     ([{ text: name }, , maybeArgs]) => ({
@@ -207,7 +207,7 @@ CALL.setPattern(
   )
 );
 
-const CALLS = rule<FunctionTokenKind, FunctionCall[]>();
+const CALLS = rule<FunctionTokenKind, Call[]>();
 CALLS.setPattern(
   p.apply(
     p.kleft(
@@ -224,10 +224,10 @@ CALLS.setPattern(
   )
 );
 
-export function parseFunctionCall(expr: string): FunctionCall {
+export function parseFunctionCall(expr: string): Call {
   return expectSingleResult(expectEOF(CALL.parse(functionLexer.parse(expr))));
 }
 
-export function parseFunctionCalls(expr: string): FunctionCall[] {
+export function parseFunctionCalls(expr: string): Call[] {
   return expectSingleResult(expectEOF(CALLS.parse(functionLexer.parse(expr))));
 }

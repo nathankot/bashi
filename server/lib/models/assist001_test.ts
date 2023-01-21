@@ -216,6 +216,9 @@ Action: now(); math()`,
     snapshotError: true,
   },
 
+  //I need to get the current time in New York and create a calendar event 5 days from now
+  // Action: time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")
+
   // model uses wrong arg types
   // model uses wrong arg count
   // TODO: test arg parsers (natural language)
@@ -263,7 +266,7 @@ Action: now(); math()`,
         },
         {
           model: "assist-001",
-          commands: {},
+          commands: fixtures.commandSet,
         },
         test.input
       );

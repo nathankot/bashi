@@ -296,8 +296,7 @@ export async function run(
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
-
-      console.log("NKDEBUG result is", text);
+      console.log("NKDEBUG", text);
 
       if (text === "") {
         isFinished = true;
@@ -381,8 +380,6 @@ Action: finish()`;
       (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
     )
     .join("\n");
-
-  console.log("NKDEBUG existing action groups are:\n", existingActionGroups);
 
   const commandSet = makeCommandSet(
     filterUnnecessary(request + " " + existingActionGroups, commands)

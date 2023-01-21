@@ -7,6 +7,44 @@ snapshot[`all commands resolved on the server 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
+      resolvedCommands: {
+        "0": {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        "1": {
+          args: [
+            {
+              type: "string",
+              value: "pi^2 + 123",
+            },
+          ],
+          id: 1,
+          name: "math",
+          returnValue: {
+            type: "string",
+            value: "132.86960440108936",
+          },
+          type: "executed",
+        },
+        "2": {
+          args: [
+          ],
+          id: 2,
+          name: "finish",
+          returnValue: {
+            type: "null",
+          },
+          type: "executed",
+        },
+      },
       type: "finished",
     },
   },
@@ -16,25 +54,25 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Answer the following questions as best you can.
+  'Answer the following questions as directly and as best you can.
 
-You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`ask("the question": string) => string\` - ask for more information, use only when necessary
-\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
-\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
-\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`answer(answer: string) => null\` - answer the original question directly
+\`say(message: string) => null\` - say something
+\`write(message: string) => null\` - write/insert a message
+\`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call following the above requirements, delimited by ;
+Action: function(s) to call, delimited by ;
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -44,25 +82,25 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Answer the following questions as best you can.
+  'Answer the following questions as directly and as best you can.
 
-You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`ask("the question": string) => string\` - ask for more information, use only when necessary
-\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
-\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
-\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`answer(answer: string) => null\` - answer the original question directly
+\`say(message: string) => null\` - say something
+\`write(message: string) => null\` - write/insert a message
+\`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call following the above requirements, delimited by ;
+Action: function(s) to call, delimited by ;
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -85,6 +123,34 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
+      resolvedCommands: {
+        "0": {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        "1": {
+          args: [
+            {
+              type: "string",
+              value: "pi^2 + 123",
+            },
+          ],
+          id: 1,
+          name: "math",
+          returnValue: {
+            type: "string",
+            value: "132.86960440108936",
+          },
+          type: "executed",
+        },
+      },
       type: "finished",
     },
   },
@@ -279,6 +345,44 @@ snapshot[`client resolved command - fulfilled 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
+      resolvedCommands: {
+        "0": {
+          args: [
+          ],
+          id: 0,
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        "1": {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: 1,
+          name: "ask",
+          returnValue: {
+            type: "string",
+            value: "to test you",
+          },
+          type: "executed",
+        },
+        "2": {
+          args: [
+          ],
+          id: 2,
+          name: "finish",
+          returnValue: {
+            type: "null",
+          },
+          type: "executed",
+        },
+      },
       type: "finished",
     },
   },
@@ -288,25 +392,25 @@ snapshot[`client resolved command - fulfilled 1`] = `
 
 snapshot[`client resolved command - fulfilled 2`] = `
 [
-  'Answer the following questions as best you can.
+  'Answer the following questions as directly and as best you can.
 
-You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`ask("the question": string) => string\` - ask for more information, use only when necessary
-\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
-\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
-\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`answer(answer: string) => null\` - answer the original question directly
+\`say(message: string) => null\` - say something
+\`write(message: string) => null\` - write/insert a message
+\`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call following the above requirements, delimited by ;
+Action: function(s) to call, delimited by ;
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -613,6 +717,55 @@ snapshot[`request needs more context - fulfilled 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
+      resolvedCommands: {
+        "0": {
+          args: [
+          ],
+          id: 0,
+          name: "someCommand",
+          returnValue: {
+            type: "string",
+            value: "blah",
+          },
+          type: "executed",
+        },
+        "1": {
+          args: [
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          id: 1,
+          name: "editProse",
+          returnValue: {
+            type: "string",
+            value: "the result of editProse()",
+          },
+          type: "executed",
+        },
+        "2": {
+          args: [
+          ],
+          id: 2,
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        "3": {
+          args: [
+          ],
+          id: 3,
+          name: "finish",
+          returnValue: {
+            type: "null",
+          },
+          type: "executed",
+        },
+      },
       type: "finished",
     },
   },
@@ -625,25 +778,25 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Answer the following questions as best you can.
+  'Answer the following questions as directly and as best you can.
 
-You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:
+You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`ask("the question": string) => string\` - ask for more information, use only when necessary
-\`answer(answer: string) => null\` - store an answer that is readily available if the request is a question
-\`display() => null\` - display the results above to the user. should be favored over write() if it makes more sense
-\`write() => null\` - write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`answer(answer: string) => null\` - answer the original question directly
+\`say(message: string) => null\` - say something
+\`write(message: string) => null\` - write/insert a message
+\`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
+\`math("a mathjs expression ": string) => string\` - compute a math formula
+\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
+\`fail(reason: string) => null\` - indicate the request could not be interpreted
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call following the above requirements, delimited by ;
+Action: function(s) to call, delimited by ;
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request

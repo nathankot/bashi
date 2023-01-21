@@ -22,6 +22,16 @@ export const handlerCtx: HandlerContext<{}> = {
 };
 
 export const commandSet: CommandSet = {
+  answer: {
+    description: "respond with an answer to the original question",
+    returnType: "null",
+    args: [
+      {
+        name: "answer",
+        type: "string",
+      },
+    ],
+  },
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
     returnType: "null",

@@ -5,19 +5,21 @@ import {
   RequestContextRequirement,
 } from "@lib/requestContext.ts";
 
-import { Command } from "@lib/command.ts";
+import { ActionGroup, Command, CommandExecuted } from "@lib/command.ts";
 
 import { Value } from "@lib/valueTypes.ts";
 
 export const Input = t.partial({
   request: t.string,
   requestContext: RequestContext,
-  resolvedCommands: t.record(t.number, Value),
+  resolvedCommands: t.record(t.string, Value),
 });
 export type Input = t.TypeOf<typeof Input>;
 
 export const ResultFinished = t.type({
   type: t.literal("finished"),
+  resolvedActionGroups: t.array(ActionGroup),
+  resolvedCommands: t.record(t.string, CommandExecuted),
 });
 export type ResultFinished = t.TypeOf<typeof ResultFinished>;
 

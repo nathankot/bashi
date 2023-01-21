@@ -8,6 +8,40 @@ import { run as runPassthrough } from "@lib/models/passthroughOpenai000.ts";
 import { run as runCode } from "@lib/models/code000.ts";
 import { run as runTranslate } from "@lib/models/translate000.ts";
 
+const now: BuiltinCommandDefinition<[], "string"> = {
+  description: "get the current time in ISO8601 format",
+  args: [],
+  run: async (deps, __, []) => ({
+    type: "string",
+    value: deps.now().toISOString(),
+  }),
+  returnType: "string",
+};
+
+const relativeTime: BuiltinCommandDefinition<["string"], "string"> = {
+  returnType: "string",
+  description: "get the time relative to now in ISO8601 format",
+  args: [
+    {
+      name: "natural language description of relative time",
+      type: "string",
+    },
+  ],
+  run: async (deps, __, [description]) => {
+    const d = parseDate(description.value, {
+      instant: deps.now(),
+      timezone: deps.session.configuration.timezoneUtcOffset,
+    });
+    if (d == null) {
+      throw new HTTPError("could not parse relative time", 500);
+    }
+    return {
+      type: "string",
+      value: d.toISOString(),
+    };
+  },
+};
+
 const time: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
   description: `check the time for the given timezone`,
@@ -223,69 +257,14 @@ const generateCode: BuiltinCommandDefinition<
   ],
 };
 
-const relativeTime: BuiltinCommandDefinition<["string"], "string"> = {
-  returnType: "string",
-  description: "get the time relative to now in ISO8601 format",
-  args: [
-    {
-      name: "natural language description of relative time",
-      type: "string",
-    },
-  ],
-  run: async (deps, __, [description]) => {
-    const d = parseDate(description.value, {
-      instant: deps.now(),
-      timezone: deps.session.configuration.timezoneUtcOffset,
-    });
-    if (d == null) {
-      throw new HTTPError("could not parse relative time", 500);
-    }
-    return {
-      type: "string",
-      value: d.toISOString(),
-    };
-  },
-};
-
-const answer: BuiltinCommandDefinition<["string"], "null"> = {
-  returnType: "null",
-  description: `store an answer that is readily available if the request is a question`,
-  args: [{ name: "answer", type: "string" }],
-  run: async (_, __, ___) => ({ type: "null" }),
-};
-
-const fail: BuiltinCommandDefinition<["string"], "null"> = {
-  returnType: "null",
-  description: `indicate the request could not be interpreted`,
-  args: [{ name: "reason", type: "string" }],
-  run: async (_, __, ___) => ({ type: "null" }),
-};
-
-const write: BuiltinCommandDefinition<[], "null"> = {
-  returnType: "null",
-  description: `write/insert the results above into the current context. use sparingly and only if the instruction indicates that results should be written`,
-  args: [],
-  run: async (_, __, ___) => ({ type: "null" }),
-};
-
-const display: BuiltinCommandDefinition<[], "null"> = {
-  returnType: "null",
-  description: `display the results above to the user. should be favored over write() if it makes more sense`,
-  args: [],
-  run: async (_, __, ___) => ({ type: "null" }),
-};
-
 export const builtinCommands = {
-  display,
-  write,
-  answer,
+  now,
   math,
   time,
   editProse,
   editCode,
   generateCode,
   translate,
-  fail,
   relativeTime,
 };
 

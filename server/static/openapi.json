@@ -36,9 +36,6 @@
                   "modelConfigurations": {
                     "type": "object",
                     "properties": {
-                      "assist-000": {
-                        "$ref": "#/components/schemas/models_assist-000_Configuration"
-                      },
                       "assist-001": {
                         "$ref": "#/components/schemas/models_assist-001_Configuration"
                       },
@@ -73,12 +70,6 @@
                       },
                       "bestOf": {
                         "type": "number"
-                      },
-                      "enabledBuiltinCommands": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/KnownBuiltinCommand"
-                        }
                       }
                     }
                   }
@@ -125,54 +116,6 @@
         }
       }
     },
-    "/session/requests/assist-000": {
-      "post": {
-        "operationId": "post_session_assist-000",
-        "summary": "TODO",
-        "description": "TODO",
-        "security": [
-          {
-            "account_number": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/session_id"
-          }
-        ],
-        "requestBody": {
-          "description": "TODO",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/models_assist-000_Input"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "TODO",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/models_assist-000_Output"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/error"
-          },
-          "401": {
-            "$ref": "#/components/responses/error"
-          },
-          "403": {
-            "$ref": "#/components/responses/error"
-          }
-        }
-      }
-    },
     "/session/requests/assist-001": {
       "post": {
         "operationId": "post_session_assist-001",
@@ -193,7 +136,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/models_assist-000_Input"
+                "$ref": "#/components/schemas/models_assist-001_Input"
               }
             }
           }
@@ -530,6 +473,20 @@
           }
         }
       },
+      "NullValue": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "null"
+            ],
+            "type": "string"
+          }
+        }
+      },
       "Value": {
         "oneOf": [
           {
@@ -540,6 +497,9 @@
           },
           {
             "$ref": "#/components/schemas/BooleanValue"
+          },
+          {
+            "$ref": "#/components/schemas/NullValue"
           }
         ],
         "discriminator": {
@@ -547,7 +507,8 @@
           "mapping": {
             "string": "#/components/schemas/StringValue",
             "number": "#/components/schemas/NumberValue",
-            "boolean": "#/components/schemas/BooleanValue"
+            "boolean": "#/components/schemas/BooleanValue",
+            "null": "#/components/schemas/NullValue"
           }
         }
       },
@@ -556,7 +517,8 @@
         "enum": [
           "string",
           "number",
-          "boolean"
+          "boolean",
+          "null"
         ]
       },
       "ArgumentParser": {
@@ -656,44 +618,18 @@
           }
         }
       },
-      "KnownBuiltinCommand": {
-        "enum": [
-          "display",
-          "write",
-          "answer",
-          "math",
-          "time",
-          "editProse",
-          "editCode",
-          "generateCode",
-          "translate",
-          "fail"
-        ],
-        "type": "string"
-      },
-      "ImplementationUnnecessaryBuiltinCommand": {
-        "enum": [
-          "math",
-          "time",
-          "translate",
-          "generateCode",
-          "editProse",
-          "editCode"
-        ],
-        "type": "string"
-      },
       "CommandExecuted": {
         "type": "object",
         "required": [
-          "line",
+          "id",
           "type",
           "name",
           "args",
-          "returnValues"
+          "returnValue"
         ],
         "properties": {
-          "line": {
-            "type": "string"
+          "id": {
+            "type": "number"
           },
           "type": {
             "enum": [
@@ -710,85 +646,22 @@
               "$ref": "#/components/schemas/Value"
             }
           },
-          "returnValues": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Value"
-            }
-          }
-        }
-      },
-      "CommandInvalid": {
-        "type": "object",
-        "required": [
-          "line",
-          "type",
-          "name",
-          "args",
-          "invalidReason"
-        ],
-        "properties": {
-          "line": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "invalid"
-            ],
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "args": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Value"
-            }
-          },
-          "invalidReason": {
-            "enum": [
-              "unknown_command",
-              "invalid_arguments",
-              "failed_execution"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "CommandParseError": {
-        "type": "object",
-        "required": [
-          "type",
-          "line",
-          "error"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "parse_error"
-            ],
-            "type": "string"
-          },
-          "line": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
+          "returnValue": {
+            "$ref": "#/components/schemas/Value"
           }
         }
       },
       "CommandParsed": {
         "type": "object",
         "required": [
-          "line",
+          "id",
           "type",
           "name",
           "args"
         ],
         "properties": {
-          "line": {
-            "type": "string"
+          "id": {
+            "type": "number"
           },
           "type": {
             "enum": [
@@ -804,15 +677,6 @@
             "items": {
               "$ref": "#/components/schemas/Value"
             }
-          },
-          "argsParsed": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/components/schemas/Value"
-              }
-            }
           }
         }
       },
@@ -820,7 +684,8 @@
         "type": "object",
         "required": [
           "description",
-          "args"
+          "args",
+          "returnType"
         ],
         "properties": {
           "description": {
@@ -850,6 +715,9 @@
               }
             }
           },
+          "returnType": {
+            "$ref": "#/components/schemas/ValueType"
+          },
           "triggerTokens": {
             "type": "array",
             "items": {
@@ -861,12 +729,6 @@
       "Command": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/CommandParseError"
-          },
-          {
-            "$ref": "#/components/schemas/CommandInvalid"
-          },
-          {
             "$ref": "#/components/schemas/CommandParsed"
           },
           {
@@ -876,27 +738,90 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "parse_error": "#/components/schemas/CommandParseError",
-            "invalid": "#/components/schemas/CommandInvalid",
             "parsed": "#/components/schemas/CommandParsed",
             "executed": "#/components/schemas/CommandExecuted"
           }
         }
       },
-      "AssistResultOK": {
+      "ResultFinished": {
         "type": "object",
         "required": [
           "type",
-          "commands"
+          "resolvedActionGroups",
+          "resolvedCommands"
         ],
         "properties": {
           "type": {
             "enum": [
-              "ok"
+              "finished"
             ],
             "type": "string"
           },
-          "commands": {
+          "resolvedActionGroups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "thought",
+                "action",
+                "functionCalls"
+              ],
+              "properties": {
+                "thought": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "functionCalls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "args"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "args": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Value"
+                        }
+                      }
+                    }
+                  }
+                },
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "resolvedCommands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CommandExecuted"
+            }
+          }
+        }
+      },
+      "ResultPendingCommands": {
+        "type": "object",
+        "required": [
+          "type",
+          "pendingCommands"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "pending_commands"
+            ],
+            "type": "string"
+          },
+          "pendingCommands": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Command"
@@ -904,25 +829,7 @@
           }
         }
       },
-      "AssistResultNeedsClarification": {
-        "type": "object",
-        "required": [
-          "type",
-          "clarificationQuestion"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "needs_clarification"
-            ],
-            "type": "string"
-          },
-          "clarificationQuestion": {
-            "type": "string"
-          }
-        }
-      },
-      "AssistResultNeedsRequestContext": {
+      "ResultNeedsRequestContext": {
         "type": "object",
         "required": [
           "type",
@@ -940,28 +847,7 @@
           }
         }
       },
-      "AssistResult": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/AssistResultOK"
-          },
-          {
-            "$ref": "#/components/schemas/AssistResultNeedsRequestContext"
-          },
-          {
-            "$ref": "#/components/schemas/AssistResultNeedsClarification"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "ok": "#/components/schemas/AssistResultOK",
-            "needs_request_context": "#/components/schemas/AssistResultNeedsRequestContext",
-            "needs_clarification": "#/components/schemas/AssistResultNeedsClarification"
-          }
-        }
-      },
-      "models_assist-000_Input": {
+      "models_assist-001_Input": {
         "type": "object",
         "properties": {
           "request": {
@@ -970,68 +856,13 @@
           "requestContext": {
             "$ref": "#/components/schemas/RequestContext"
           },
-          "clarification": {
-            "type": "object",
-            "required": [
-              "question",
-              "answer"
-            ],
-            "properties": {
-              "question": {
-                "type": "string"
-              },
-              "answer": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "models_assist-000_Output": {
-        "type": "object",
-        "required": [
-          "model",
-          "request",
-          "result"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "assist-000"
-            ],
-            "type": "string"
-          },
-          "request": {
-            "type": "string"
-          },
-          "result": {
-            "$ref": "#/components/schemas/AssistResult"
-          }
-        }
-      },
-      "models_assist-000_Configuration": {
-        "type": "object",
-        "required": [
-          "model",
-          "commands"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "assist-000"
-            ],
-            "type": "string"
-          },
-          "commands": {
+          "resolvedCommands": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/CommandDefinition"
+              "$ref": "#/components/schemas/Value"
             }
           }
         }
-      },
-      "models_assist-001_Input": {
-        "$ref": "#/components/schemas/models_assist-000_Input"
       },
       "models_assist-001_Output": {
         "type": "object",
@@ -1051,7 +882,25 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/AssistResult"
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResultFinished"
+              },
+              {
+                "$ref": "#/components/schemas/ResultNeedsRequestContext"
+              },
+              {
+                "$ref": "#/components/schemas/ResultPendingCommands"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "finished": "#/components/schemas/ResultFinished",
+                "needs_request_context": "#/components/schemas/ResultNeedsRequestContext",
+                "pending_commands": "#/components/schemas/ResultPendingCommands"
+              }
+            }
           }
         }
       },
@@ -1348,8 +1197,7 @@
               "locale",
               "timezoneUtcOffset",
               "maxResponseTokens",
-              "bestOf",
-              "enabledBuiltinCommands"
+              "bestOf"
             ],
             "properties": {
               "locale": {
@@ -1363,21 +1211,12 @@
               },
               "bestOf": {
                 "type": "number"
-              },
-              "enabledBuiltinCommands": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/KnownBuiltinCommand"
-                }
               }
             }
           },
           "modelConfigurations": {
             "type": "object",
             "properties": {
-              "assist-000": {
-                "$ref": "#/components/schemas/models_assist-000_Configuration"
-              },
               "assist-001": {
                 "$ref": "#/components/schemas/models_assist-001_Configuration"
               },

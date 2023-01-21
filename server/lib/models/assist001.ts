@@ -42,7 +42,7 @@ export const State = t.type({
       }),
     ])
   ),
-  resolvedCommands: t.record(t.number, CommandExecuted),
+  resolvedCommands: t.record(t.string, CommandExecuted),
   pending: t.union([
     t.null,
     t.type({
@@ -103,22 +103,18 @@ const requiredClientCommands: Record<string, CommandDefinition> = {
 };
 
 const privateBuiltinCommands = {
-  now: {
-    description: "get the current time in ISO8601 format",
-    args: [],
-    run: async (deps, __, []) => ({
-      type: "string",
-      value: deps.now().toISOString(),
-    }),
-    returnType: "string",
-  } as BuiltinCommandDefinition<[], "string">,
-
   finish: {
     description: "mark that the request is finished",
     args: [],
     run: async (_, __, []) => ({ type: "null" }),
     returnType: "null",
   } as BuiltinCommandDefinition<[], "null">,
+  fail: {
+    returnType: "null",
+    description: `indicate the request could not be interpreted`,
+    args: [{ name: "reason", type: "string" }],
+    run: async (_, __, ___) => ({ type: "null" }),
+  } as BuiltinCommandDefinition<["string"], "null">,
 };
 
 const serverCommands = {
@@ -207,7 +203,8 @@ export async function run(
             throw new Error(`the command ${commandName} is unknown`);
           }
 
-          const maybeAlreadyResolved = resolvedCommands[pendingCommand.id];
+          const maybeAlreadyResolved =
+            resolvedCommands[pendingCommand.id.toString()];
           if (maybeAlreadyResolved != null) {
             commandResults.push(maybeAlreadyResolved.returnValue);
             continue;
@@ -237,7 +234,7 @@ export async function run(
               pendingCommand
             );
             commandResults.push(resolved.returnValue);
-            resolvedCommands[pendingCommand.id] = resolved;
+            resolvedCommands[pendingCommand.id.toString()] = resolved;
             // Account for the special finish command
             if (resolved.name === "finish") {
               isFinished = true;
@@ -249,7 +246,7 @@ export async function run(
           const maybeClientResolution =
             input.resolvedCommands == null
               ? null
-              : input.resolvedCommands[pendingCommand.id];
+              : input.resolvedCommands[pendingCommand.id.toString()];
           if (maybeClientResolution) {
             if (maybeClientResolution.type !== commandDef.returnType) {
               throw new HTTPError(
@@ -259,7 +256,7 @@ export async function run(
               );
             }
             commandResults.push(maybeClientResolution);
-            resolvedCommands[pendingCommand.id] = {
+            resolvedCommands[pendingCommand.id.toString()] = {
               ...pendingCommand,
               type: "executed",
               returnValue: maybeClientResolution,
@@ -320,6 +317,9 @@ export async function run(
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
+
+      console.log("NKDEBUG result is", text);
+
       if (text === "") {
         isFinished = true;
         break;
@@ -364,11 +364,14 @@ export async function run(
     });
   }
 
-  // If we reach here, then both command execution and the model has been resolved:
   return {
     model: "assist-001",
     request,
-    result: { type: "finished" },
+    result: {
+      type: "finished",
+      resolvedCommands,
+      resolvedActionGroups,
+    },
   };
 }
 
@@ -396,6 +399,8 @@ Action: finish()`;
       (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
     )
     .join("\n");
+
+  console.log("NKDEBUG existing action groups are:\n", existingActionGroups);
 
   const commandSet = makeCommandSet(
     filterUnnecessary(request + " " + existingActionGroups, commands)

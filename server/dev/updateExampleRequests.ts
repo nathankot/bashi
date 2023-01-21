@@ -31,7 +31,7 @@ const INPUTS: {
   >;
 }[] = [
   { prompt: "hello" },
-  //   { prompt: "What is pi squared?" },
+  { prompt: "What is pi squared?" },
   //   { prompt: "What is the time in New York?" },
   //   { prompt: "Say you are my best friend in Japanese." },
   //   { prompt: "Write you are my best friend in Japanese." },
@@ -179,7 +179,7 @@ export default async function updateExamples(examplesFile: string) {
       prompt: promptWithVariant,
       result: output.result,
       requestContext: input.requestContext ?? {},
-      resolvedCommands: input.resolvedCommands ?? [],
+      resolvedCommands: input.resolvedCommands ?? {},
     });
   }
 

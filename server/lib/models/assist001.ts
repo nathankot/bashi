@@ -370,7 +370,6 @@ export async function run(
     result: {
       type: "finished",
       resolvedCommands,
-      resolvedActionGroups,
     },
   };
 }

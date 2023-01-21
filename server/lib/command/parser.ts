@@ -209,7 +209,13 @@ CALL.setPattern(
 
 const CALLS = rule<FunctionTokenKind, FunctionCall[]>();
 CALLS.setPattern(
-  p.apply(p.list(CALL, p.tok(FunctionTokenKind.SemiColon)), (calls) => calls)
+  p.apply(
+    p.seq(
+      p.list(CALL, p.tok(FunctionTokenKind.SemiColon)),
+      p.opt(p.tok(FunctionTokenKind.SemiColon))
+    ),
+    ([calls]) => calls
+  )
 );
 
 export function parseFunctionCall(expr: string): FunctionCall {

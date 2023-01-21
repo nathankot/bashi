@@ -6,10 +6,15 @@ import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 import { parseActionGroup, parseFunctionCalls } from "@lib/command.ts";
 import { Session } from "@lib/session.ts";
+import {
+  Input,
+  ResultFinished,
+  ResultNeedsRequestContext,
+  ResultPendingCommands,
+} from "./assistShared.ts";
 
 import {
   CommandSet,
-  Command,
   CommandParsed,
   CommandDefinition,
   BuiltinCommandDefinition,
@@ -19,10 +24,7 @@ import {
   runBuiltinCommand,
 } from "@lib/command.ts";
 
-import {
-  RequestContext,
-  RequestContextRequirement,
-} from "@lib/requestContext.ts";
+import { RequestContext } from "@lib/requestContext.ts";
 
 type State = NonNullable<Session["assist001State"]>;
 
@@ -37,28 +39,15 @@ export const Configuration = t.type({
 });
 export type Configuration = t.TypeOf<typeof Configuration>;
 
-export const Input = t.partial({
-  request: t.string,
-  requestContext: RequestContext,
-  resolvedCommands: t.record(t.number, Value),
-});
-export type Input = t.TypeOf<typeof Input>;
+export { Input };
 
 export const Output = t.type({
   model: Name,
   request: t.string,
   result: t.union([
-    t.type({
-      type: t.literal("finished"),
-    }),
-    t.type({
-      type: t.literal("needs_request_context"),
-      missingRequestContext: RequestContextRequirement,
-    }),
-    t.type({
-      type: t.literal("pending_commands"),
-      pendingCommands: t.array(Command),
-    }),
+    ResultFinished,
+    ResultNeedsRequestContext,
+    ResultPendingCommands,
   ]),
 });
 export type Output = t.TypeOf<typeof Output>;

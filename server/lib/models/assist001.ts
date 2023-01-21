@@ -81,27 +81,6 @@ export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-001",
 };
 
-// TODO: should probably just be provided by the client:
-const requiredClientCommands: Record<string, CommandDefinition> = {
-  ask: {
-    description: "ask for more information, use only when necessary",
-    args: [{ name: "the question", type: "string" }],
-    returnType: "string",
-  },
-
-  answer: {
-    description:
-      "answer the original question directly based on existing knowledge. this is preferred",
-    args: [
-      {
-        name: "answer",
-        type: "string",
-      },
-    ],
-    returnType: "null",
-  },
-};
-
 const privateBuiltinCommands = {
   finish: {
     description: "mark that the request is finished",
@@ -150,7 +129,6 @@ export async function run(
 
   const allCommands: Record<string, CommandDefinition> = {
     ...configuration.commands,
-    ...requiredClientCommands,
     ...serverCommands,
   };
 
@@ -307,6 +285,7 @@ export async function run(
           max_tokens: session.configuration.maxResponseTokens,
           best_of: session.configuration.bestOf,
           echo: false,
+          temperature: 0.5,
           prompt: [prompt],
           stop: "\nResult:",
         },
@@ -337,6 +316,10 @@ export async function run(
           type: "parsed",
           id: commandsSoFar + i,
         })
+      );
+      log(
+        "info",
+        `thought: ${newActionGroup.thought}; action: ${newActionGroup.action}`
       );
 
       // 5. Update state with the current results, exit if we have reached a sink, otherwise goto (1)
@@ -379,15 +362,15 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Answer the following questions as best you can.
+  const header = `Answer the following questions as directly and as best you can.
 
-You have access to the following tools/functions denoted in Typescript-like declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types and MUST NOT be nested:`;
+You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:`;
 
   const format = `Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call following the above requirements, delimited by ;
+Action: function(s) to call, delimited by ;
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request

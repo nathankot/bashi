@@ -32,21 +32,21 @@ const INPUTS: {
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
-  //   { prompt: "What is the time in New York?" },
-  //   { prompt: "Say you are my best friend in Japanese." },
-  //   { prompt: "Write you are my best friend in Japanese." },
-  //   { prompt: "Who is george lucas the director?" },
-  //   { prompt: "Who is george lucas?" },
-  //   { prompt: "What is the capital of California?" },
-  //   { prompt: "Who is Fred Rickerson? (not a real person)" },
-  //   {
-  //     prompt:
-  //       "Translate what rooms do you have available in French, Spanish and Japanese",
-  //   },
-  //   {
-  //     prompt:
-  //       "whats the time in new york? and make a calendar event for dinner with wife 5 days from now",
-  //   },
+  { prompt: "What is the time in New York?" },
+  { prompt: "Say you are my best friend in Japanese." },
+  { prompt: "Write you are my best friend in Japanese." },
+  { prompt: "Who is george lucas the director?" },
+  { prompt: "Who is george lucas?" },
+  { prompt: "What is the capital of California?" },
+  { prompt: "Who is Fred Rickerson? (not a real person)" },
+  {
+    prompt:
+      "Translate what rooms do you have available in French, Spanish and Japanese",
+  },
+  {
+    prompt:
+      "whats the time in new york? and make a calendar event for dinner with wife 5 days from now",
+  },
   //   { prompt: "how do you say behind the Comichi building in Japanese?" },
   //   { prompt: "what does the mode parameter do in the javascript fetch api?" },
   //   {

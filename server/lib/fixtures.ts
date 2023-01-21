@@ -23,11 +23,31 @@ export const handlerCtx: HandlerContext<{}> = {
 
 export const commandSet: CommandSet = {
   answer: {
-    description: "respond with an answer to the original question",
+    description: "answer the original question directly",
     returnType: "null",
     args: [
       {
         name: "answer",
+        type: "string",
+      },
+    ],
+  },
+  say: {
+    description: "say something",
+    returnType: "null",
+    args: [
+      {
+        name: "message",
+        type: "string",
+      },
+    ],
+  },
+  write: {
+    description: "write/insert a message",
+    returnType: "null",
+    args: [
+      {
+        name: "message",
         type: "string",
       },
     ],

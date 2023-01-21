@@ -747,7 +747,6 @@
         "type": "object",
         "required": [
           "type",
-          "resolvedActionGroups",
           "resolvedCommands"
         ],
         "properties": {
@@ -756,49 +755,6 @@
               "finished"
             ],
             "type": "string"
-          },
-          "resolvedActionGroups": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "thought",
-                "action",
-                "functionCalls"
-              ],
-              "properties": {
-                "thought": {
-                  "type": "string"
-                },
-                "action": {
-                  "type": "string"
-                },
-                "functionCalls": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "name",
-                      "args"
-                    ],
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "args": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Value"
-                        }
-                      }
-                    }
-                  }
-                },
-                "result": {
-                  "type": "string"
-                }
-              }
-            }
           },
           "resolvedCommands": {
             "type": "object",

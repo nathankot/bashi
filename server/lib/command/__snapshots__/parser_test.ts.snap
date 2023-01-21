@@ -579,6 +579,154 @@ snapshot[`parseFunctionCall(s): someCall(true, a(b(), 123), "hello") 2`] = `
 ]
 `;
 
+snapshot[`parseFunctionCall(s): someCall(true, a(b(), 123), "hello",) 1`] = `
+{
+  args: [
+    {
+      type: "boolean",
+      value: true,
+    },
+    {
+      args: [
+        {
+          args: [
+          ],
+          name: "b",
+          type: "call",
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+      ],
+      name: "a",
+      type: "call",
+    },
+    {
+      type: "string",
+      value: "hello",
+    },
+  ],
+  name: "someCall",
+  type: "call",
+}
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(b(), 123), "hello",) 2`] = `
+[
+  {
+    args: [
+      {
+        type: "boolean",
+        value: true,
+      },
+      {
+        args: [
+          {
+            args: [
+            ],
+            name: "b",
+            type: "call",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "a",
+        type: "call",
+      },
+      {
+        type: "string",
+        value: "hello",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a((), 123), "hello",) 1`] = `'{"index":17,"rowBegin":1,"columnBegin":18,"rowEnd":1,"columnEnd":19}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a((), 123), "hello",) 2`] = `'{"index":17,"rowBegin":1,"columnBegin":18,"rowEnd":1,"columnEnd":19}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true, 123), "hello",) 1`] = `
+{
+  args: [
+    {
+      type: "boolean",
+      value: true,
+    },
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+      ],
+      name: "a",
+      type: "call",
+    },
+    {
+      type: "string",
+      value: "hello",
+    },
+  ],
+  name: "someCall",
+  type: "call",
+}
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true, 123), "hello",) 2`] = `
+[
+  {
+    args: [
+      {
+        type: "boolean",
+        value: true,
+      },
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "a",
+        type: "call",
+      },
+      {
+        type: "string",
+        value: "hello",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123), "hello",) 2`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123()), "hello",) 2`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(true(), 123()), "hello"(),) 2`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+
 snapshot[`parseFunctionCall(s): testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
 
 snapshot[`parseFunctionCall(s): testing blah 2`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;

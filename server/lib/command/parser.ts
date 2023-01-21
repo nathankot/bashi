@@ -205,7 +205,12 @@ CALL.setPattern(
     p.seq(
       p.tok(FunctionTokenKind.Identifier),
       p.tok(FunctionTokenKind.LParen),
-      p.opt_sc(p.list(p.alt(VALUE, CALL), p.tok(FunctionTokenKind.Comma))),
+      p.opt_sc(
+        p.kleft(
+          p.list(p.alt(VALUE, CALL), p.tok(FunctionTokenKind.Comma)),
+          p.opt_sc(p.tok(FunctionTokenKind.Comma))
+        )
+      ),
       p.tok(FunctionTokenKind.RParen)
     ),
     ([{ text: name }, , maybeArgs]) => ({

@@ -24,6 +24,12 @@ for (const expr of [
   `malformed("a"`,
   `someCall(-123.500)`,
   `someCall(true, a(b(), 123), "hello")`,
+  `someCall(true, a(b(), 123), "hello",)`,
+  `someCall(true, a((), 123), "hello",)`,
+  `someCall(true, a(true, 123), "hello",)`,
+  `someCall(true, a(true(), 123), "hello",)`,
+  `someCall(true, a(true(), 123()), "hello",)`,
+  `someCall(true, a(true(), 123()), "hello"(),)`,
   "testing blah",
   "",
 ]) {

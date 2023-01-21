@@ -11,11 +11,19 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
-const Call = t.type({
-  name: t.string,
-  args: t.array(Value),
-});
-type Call = t.TypeOf<typeof Call>;
+interface Call {
+  type: "call";
+  name: string;
+  args: (Value | Call)[];
+}
+
+const Call: t.Type<Call> = t.recursion("Call", () =>
+  t.type({
+    type: t.literal("call"),
+    name: t.string,
+    args: t.array(t.union([Value, Call])),
+  })
+);
 
 export const ActionGroup = t.intersection([
   t.type({
@@ -197,10 +205,11 @@ CALL.setPattern(
     p.seq(
       p.tok(FunctionTokenKind.Identifier),
       p.tok(FunctionTokenKind.LParen),
-      p.opt_sc(p.list(VALUE, p.tok(FunctionTokenKind.Comma))),
+      p.opt_sc(p.list(p.alt(VALUE, CALL), p.tok(FunctionTokenKind.Comma))),
       p.tok(FunctionTokenKind.RParen)
     ),
     ([{ text: name }, , maybeArgs]) => ({
+      type: "call",
       name,
       args: maybeArgs ?? [],
     })

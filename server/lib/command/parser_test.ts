@@ -23,6 +23,7 @@ for (const expr of [
   `SOMECALL()`,
   `malformed("a"`,
   `someCall(-123.500)`,
+  `someCall(true, a(b(), 123), "hello")`,
   "testing blah",
   "",
 ]) {

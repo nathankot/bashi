@@ -8,6 +8,7 @@ snapshot[`parseFunctionCall(s): someFunction(); someOtherFunction(" aa() ; bbb()
     args: [
     ],
     name: "someFunction",
+    type: "call",
   },
   {
     args: [
@@ -17,6 +18,7 @@ snapshot[`parseFunctionCall(s): someFunction(); someOtherFunction(" aa() ; bbb()
       },
     ],
     name: "someOtherFunction",
+    type: "call",
   },
 ]
 `;
@@ -26,6 +28,7 @@ snapshot[`parseFunctionCall(s): someCall() 1`] = `
   args: [
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -35,6 +38,7 @@ snapshot[`parseFunctionCall(s): someCall() 2`] = `
     args: [
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -52,6 +56,7 @@ snapshot[`parseFunctionCall(s): someCall('a', 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -69,6 +74,7 @@ snapshot[`parseFunctionCall(s): someCall('a', 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -86,6 +92,7 @@ snapshot[`parseFunctionCall(s): someCall('a \\'ha\\'', 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -103,6 +110,7 @@ snapshot[`parseFunctionCall(s): someCall('a \\'ha\\'', 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -120,6 +128,7 @@ snapshot[`parseFunctionCall(s): someCall(\`a\`, 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -137,6 +146,7 @@ snapshot[`parseFunctionCall(s): someCall(\`a\`, 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -154,6 +164,7 @@ snapshot[`parseFunctionCall(s): someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -171,6 +182,7 @@ snapshot[`parseFunctionCall(s): someCall(\`a \\\`ha\\\`\`, 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -188,6 +200,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -205,6 +218,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -222,6 +236,7 @@ snapshot[`parseFunctionCall(s): someCall("a \\"ha\\"", 111) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -239,6 +254,7 @@ snapshot[`parseFunctionCall(s): someCall("a \\"ha\\"", 111) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -260,6 +276,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111,true) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -281,6 +298,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111,true) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -302,6 +320,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111, false) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -323,6 +342,7 @@ snapshot[`parseFunctionCall(s): someCall("a", 111, false) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -344,6 +364,7 @@ snapshot[`parseFunctionCall(s): someCall("a false true 123 b", 111, false) 1`] =
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -365,6 +386,7 @@ snapshot[`parseFunctionCall(s): someCall("a false true 123 b", 111, false) 2`] =
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -378,6 +400,7 @@ snapshot[`parseFunctionCall(s): someCall(-123) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -391,6 +414,7 @@ snapshot[`parseFunctionCall(s): someCall(-123) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -400,6 +424,7 @@ snapshot[`parseFunctionCall(s): some_call() 1`] = `
   args: [
   ],
   name: "some_call",
+  type: "call",
 }
 `;
 
@@ -409,6 +434,7 @@ snapshot[`parseFunctionCall(s): some_call() 2`] = `
     args: [
     ],
     name: "some_call",
+    type: "call",
   },
 ]
 `;
@@ -418,6 +444,7 @@ snapshot[`parseFunctionCall(s): some-call() 1`] = `
   args: [
   ],
   name: "some-call",
+  type: "call",
 }
 `;
 
@@ -427,6 +454,7 @@ snapshot[`parseFunctionCall(s): some-call() 2`] = `
     args: [
     ],
     name: "some-call",
+    type: "call",
   },
 ]
 `;
@@ -436,6 +464,7 @@ snapshot[`parseFunctionCall(s): SOMECALL() 1`] = `
   args: [
   ],
   name: "SOMECALL",
+  type: "call",
 }
 `;
 
@@ -445,6 +474,7 @@ snapshot[`parseFunctionCall(s): SOMECALL() 2`] = `
     args: [
     ],
     name: "SOMECALL",
+    type: "call",
   },
 ]
 `;
@@ -462,6 +492,7 @@ snapshot[`parseFunctionCall(s): someCall(-123.500) 1`] = `
     },
   ],
   name: "someCall",
+  type: "call",
 }
 `;
 
@@ -475,6 +506,75 @@ snapshot[`parseFunctionCall(s): someCall(-123.500) 2`] = `
       },
     ],
     name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(b(), 123), "hello") 1`] = `
+{
+  args: [
+    {
+      type: "boolean",
+      value: true,
+    },
+    {
+      args: [
+        {
+          args: [
+          ],
+          name: "b",
+          type: "call",
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+      ],
+      name: "a",
+      type: "call",
+    },
+    {
+      type: "string",
+      value: "hello",
+    },
+  ],
+  name: "someCall",
+  type: "call",
+}
+`;
+
+snapshot[`parseFunctionCall(s): someCall(true, a(b(), 123), "hello") 2`] = `
+[
+  {
+    args: [
+      {
+        type: "boolean",
+        value: true,
+      },
+      {
+        args: [
+          {
+            args: [
+            ],
+            name: "b",
+            type: "call",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "a",
+        type: "call",
+      },
+      {
+        type: "string",
+        value: "hello",
+      },
+    ],
+    name: "someCall",
+    type: "call",
   },
 ]
 `;
@@ -509,6 +609,7 @@ Result: blah blah blah blah 1`] = `
         },
       ],
       name: "someFunction",
+      type: "call",
     },
   ],
   result: "blah blah blah blah",
@@ -538,6 +639,7 @@ Result: 1`] = `
         },
       ],
       name: "someFunction",
+      type: "call",
     },
   ],
   result: undefined,
@@ -567,6 +669,7 @@ Result:  1`] = `
         },
       ],
       name: "someFunction",
+      type: "call",
     },
   ],
   result: undefined,
@@ -584,6 +687,7 @@ Result: blah blah blah blah 1`] = `
       args: [
       ],
       name: "someFunction",
+      type: "call",
     },
     {
       args: [
@@ -593,6 +697,7 @@ Result: blah blah blah blah 1`] = `
         },
       ],
       name: "someOtherFunction",
+      type: "call",
     },
   ],
   result: "blah blah blah blah",
@@ -613,6 +718,7 @@ Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
         },
       ],
       name: "someFunction",
+      type: "call",
     },
     {
       args: [
@@ -634,6 +740,7 @@ Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
         },
       ],
       name: "someOtherFunction",
+      type: "call",
     },
   ],
   result: undefined,
@@ -650,11 +757,13 @@ aCTion  :    someFunction();; someOtherFunction() 1`] = `
       args: [
       ],
       name: "someFunction",
+      type: "call",
     },
     {
       args: [
       ],
       name: "someOtherFunction",
+      type: "call",
     },
   ],
   result: undefined,
@@ -673,11 +782,13 @@ Result: blah blah blah blah 1`] = `
       args: [
       ],
       name: "someFunction",
+      type: "call",
     },
     {
       args: [
       ],
       name: "someOtherFunction",
+      type: "call",
     },
   ],
   result: "blah blah blah blah",

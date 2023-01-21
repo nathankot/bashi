@@ -13,8 +13,6 @@ import * as noop from "./models/noop.ts";
 import * as whisper000 from "./models/whisper000.ts";
 import * as passthroughOpenAi000 from "./models/passthroughOpenai000.ts";
 
-console.log(assist001);
-
 export const models = {
   "assist-001": assist001,
   // "assist-001": assist001,

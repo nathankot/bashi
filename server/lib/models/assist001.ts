@@ -5,11 +5,6 @@ import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 import {
-  ActionGroup,
-  parseActionGroup,
-  parseFunctionCalls,
-} from "@lib/command.ts";
-import {
   Input,
   ResultFinished,
   ResultNeedsRequestContext,
@@ -17,6 +12,10 @@ import {
 } from "./assistShared.ts";
 
 import {
+  Call,
+  ActionGroup,
+  parseActionGroup,
+  parseFunctionCalls,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -309,13 +308,16 @@ export async function run(
       }
       const commandsSoFar = Object.values(resolvedCommands).length;
       const newActionGroup = parseActionGroup(text);
-      const newCommands = parseFunctionCalls(newActionGroup.action).map(
-        (f, i): CommandParsed => ({
-          ...f,
-          type: "parsed",
-          id: commandsSoFar + i,
-        })
-      );
+      const newCommands = parseFunctionCalls(newActionGroup.action)
+        .filter((f) => !f.args.some((a) => a.type === "call"))
+        .map(
+          (f, i): CommandParsed => ({
+            args: f.args as any,
+            name: f.name,
+            type: "parsed",
+            id: (commandsSoFar + i).toString(),
+          })
+        );
       log(
         "info",
         `thought: ${newActionGroup.thought}; action: ${newActionGroup.action}`
@@ -408,4 +410,72 @@ function makeCommandSet(commands: CommandSet): string[] {
       c.description
     }`;
   });
+}
+
+export function pendingCommandsForCallOrResult(
+  commandId: string,
+  call: Call,
+  resolvedCommmands: Record<string, CommandExecuted>
+): { pendingCommands: CommandParsed[] } | { result: Value } {
+  // See if its already resolved
+  const maybeAlreadyResolved = resolvedCommmands[commandId];
+  if (maybeAlreadyResolved != null) {
+    if (maybeAlreadyResolved.name != call.name) {
+      throw new Error(
+        `corruption! expected resolved call to be ${call.name} ` +
+          `but got ${maybeAlreadyResolved.name}`
+      );
+    }
+    const result = maybeAlreadyResolved.returnValue;
+    return {
+      result,
+    };
+  }
+
+  // Build up a list of nested commands that must be resolved,
+  // or if they are all resolved build up a list of resolved arguments.
+  let pendingCommands: CommandParsed[] = [];
+  let resolvedArguments: Value[] | null = [];
+  for (const [i, arg] of Object.entries(call.args)) {
+    if (arg.type !== "call") {
+      resolvedArguments?.push(arg);
+      continue;
+    }
+    const argResult = pendingCommandsForCallOrResult(
+      commandId + "." + i,
+      arg,
+      resolvedCommmands
+    );
+    if ("pendingCommands" in argResult) {
+      pendingCommands = [...pendingCommands, ...argResult.pendingCommands];
+      // if at least 1 arg is still pending, then we don't have resolved arguments:
+      resolvedArguments = null;
+      continue;
+    }
+    resolvedArguments?.push(argResult.result);
+  }
+
+  // If all of the arguments are resolved then this call
+  // becomes pending:
+  if (resolvedArguments != null) {
+    if (resolvedArguments.length !== call.args.length) {
+      throw new Error(
+        `corruption! for ${call.name} expected ${call.args.length} ` +
+          `arguments but got ${resolvedArguments.length}`
+      );
+    }
+    return {
+      pendingCommands: [
+        {
+          type: "parsed",
+          args: resolvedArguments,
+          id: commandId,
+          name: call.name,
+        },
+      ],
+    };
+  }
+
+  // Otherwise we need to resolve the nested children first:
+  return { pendingCommands };
 }

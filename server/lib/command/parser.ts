@@ -11,7 +11,7 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
-interface Call {
+export interface Call {
   type: "call";
   name: string;
   args: (Value | Call)[];

@@ -3,8 +3,14 @@ import { noop } from "cockatiel";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
+import { CommandExecuted, parseFunctionCall } from "@lib/command.ts";
 
-import { MAX_LOOPS, Input, run } from "./assist001.ts";
+import {
+  MAX_LOOPS,
+  Input,
+  run,
+  pendingCommandsForCallOrResult,
+} from "./assist001.ts";
 
 const pendingClientCommandState = {
   loopCount: 1,
@@ -12,8 +18,9 @@ const pendingClientCommandState = {
     actionGroup: {
       action: 'now(); ask("what do you want?")',
       functionCalls: [
-        { args: [], name: "now" },
+        { type: "call", args: [], name: "now" },
         {
+          type: "call",
           args: [{ type: "string", value: "what do you want?" }],
           name: "ask",
         },
@@ -22,10 +29,10 @@ const pendingClientCommandState = {
       thought: "I need to do something",
     },
     commands: [
-      { args: [], id: 0, name: "now", type: "parsed" },
+      { args: [], id: "0", name: "now", type: "parsed" },
       {
         args: [{ type: "string", value: "what do you want?" }],
-        id: 1,
+        id: "1",
         name: "ask",
         type: "parsed",
       },
@@ -37,7 +44,7 @@ const pendingClientCommandState = {
   resolvedCommands: {
     "0": {
       args: [],
-      id: 0,
+      id: "0",
       name: "now",
       returnValue: { type: "string", value: "2022-12-19T08:41:10.000Z" },
       type: "executed",
@@ -52,10 +59,12 @@ const pendingRequestContextState = {
       action: 'editProse("convert to poem"); now()',
       functionCalls: [
         {
+          type: "call",
           args: [{ type: "string", value: "convert to poem" }],
           name: "editProse",
         },
         {
+          type: "call",
           args: [],
           name: "now",
         },
@@ -66,13 +75,13 @@ const pendingRequestContextState = {
     commands: [
       {
         args: [{ type: "string", value: "convert to poem" }],
-        id: 1,
+        id: "1",
         name: "editProse",
         type: "parsed",
       },
       {
         args: [],
-        id: 2,
+        id: "2",
         name: "now",
         type: "parsed",
       },
@@ -87,6 +96,7 @@ const pendingRequestContextState = {
       thought: "I need to call some command",
       functionCalls: [
         {
+          type: "call",
           args: [],
           name: "someCommand",
         },
@@ -97,7 +107,7 @@ const pendingRequestContextState = {
     0: {
       type: "executed",
       args: [],
-      id: 0,
+      id: "0",
       name: "someCommand",
       returnValue: { type: "string", value: "blah" },
     },
@@ -285,6 +295,86 @@ Action: now(); math()`,
         throw e;
       }
 
+      await assertSnapshot(t, e.message);
+    }
+  });
+}
+
+for (const test of [
+  {
+    description: "example A step 1",
+    commandId: "0",
+    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    resolvedCommands: {},
+  },
+  {
+    description: "example A step 2",
+    commandId: "0",
+    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    resolvedCommands: {
+      "0.0": {
+        type: "executed",
+        args: [],
+        id: "0.0",
+        name: "a",
+        returnValue: { type: "number", value: 123 },
+      },
+      "0.1.1": {
+        type: "executed",
+        args: [],
+        id: "0.1.1",
+        name: "c",
+        returnValue: { type: "string", value: "blah" },
+      },
+    } as Record<string, CommandExecuted>,
+  },
+  {
+    description: "example A step 3",
+    commandId: "0",
+    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    resolvedCommands: {
+      "0.0": {
+        type: "executed",
+        args: [],
+        id: "0.0",
+        name: "a",
+        returnValue: { type: "number", value: 123 },
+      },
+      "0.1": {
+        type: "executed",
+        args: [],
+        id: "0.1",
+        name: "b",
+        returnValue: { type: "string", value: "ha" },
+      },
+    } as Record<string, CommandExecuted>,
+  },
+  {
+    description: "example A step 4",
+    commandId: "0",
+    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    resolvedCommands: {
+      "0": {
+        type: "executed",
+        args: [],
+        id: "0",
+        name: "test",
+        returnValue: { type: "number", value: 123 },
+      },
+    } as Record<string, CommandExecuted>,
+  },
+]) {
+  Deno.test(test.description, async (t) => {
+    try {
+      await assertSnapshot(
+        t,
+        pendingCommandsForCallOrResult(
+          test.commandId,
+          test.call,
+          test.resolvedCommands
+        )
+      );
+    } catch (e) {
       await assertSnapshot(t, e.message);
     }
   });

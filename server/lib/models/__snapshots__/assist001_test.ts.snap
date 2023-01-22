@@ -11,7 +11,7 @@ snapshot[`all commands resolved on the server 1`] = `
         "0": {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           returnValue: {
             type: "string",
@@ -26,7 +26,7 @@ snapshot[`all commands resolved on the server 1`] = `
               value: "pi^2 + 123",
             },
           ],
-          id: 1,
+          id: "1",
           name: "math",
           returnValue: {
             type: "string",
@@ -37,7 +37,7 @@ snapshot[`all commands resolved on the server 1`] = `
         "2": {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "finish",
           returnValue: {
             type: "null",
@@ -127,7 +127,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
         "0": {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           returnValue: {
             type: "string",
@@ -142,7 +142,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
               value: "pi^2 + 123",
             },
           ],
-          id: 1,
+          id: "1",
           name: "math",
           returnValue: {
             type: "string",
@@ -173,7 +173,7 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          id: 1,
+          id: "1",
           name: "ask",
           type: "parsed",
         },
@@ -191,6 +191,7 @@ snapshot[`client resolved command 1`] = `
             args: [
             ],
             name: "now",
+            type: "call",
           },
           {
             args: [
@@ -200,6 +201,7 @@ snapshot[`client resolved command 1`] = `
               },
             ],
             name: "ask",
+            type: "call",
           },
         ],
         result: undefined,
@@ -209,7 +211,7 @@ snapshot[`client resolved command 1`] = `
         {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           type: "parsed",
         },
@@ -220,7 +222,7 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          id: 1,
+          id: "1",
           name: "ask",
           type: "parsed",
         },
@@ -234,7 +236,7 @@ snapshot[`client resolved command 1`] = `
       "0": {
         args: [
         ],
-        id: 0,
+        id: "0",
         name: "now",
         returnValue: {
           type: "string",
@@ -262,7 +264,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "what do you want?",
             },
           ],
-          id: 1,
+          id: "1",
           name: "ask",
           type: "parsed",
         },
@@ -280,6 +282,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
             args: [
             ],
             name: "now",
+            type: "call",
           },
           {
             args: [
@@ -289,6 +292,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               },
             ],
             name: "ask",
+            type: "call",
           },
         ],
         result: undefined,
@@ -298,7 +302,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
         {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           type: "parsed",
         },
@@ -309,7 +313,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "what do you want?",
             },
           ],
-          id: 1,
+          id: "1",
           name: "ask",
           type: "parsed",
         },
@@ -323,7 +327,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
       "0": {
         args: [
         ],
-        id: 0,
+        id: "0",
         name: "now",
         returnValue: {
           type: "string",
@@ -349,7 +353,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
         "0": {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           returnValue: {
             type: "string",
@@ -364,7 +368,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
               value: "what do you want?",
             },
           ],
-          id: 1,
+          id: "1",
           name: "ask",
           returnValue: {
             type: "string",
@@ -375,7 +379,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
         "2": {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "finish",
           returnValue: {
             type: "null",
@@ -451,6 +455,7 @@ snapshot[`request needs more context 1`] = `
             args: [
             ],
             name: "now",
+            type: "call",
           },
           {
             args: [
@@ -460,11 +465,13 @@ snapshot[`request needs more context 1`] = `
               },
             ],
             name: "editProse",
+            type: "call",
           },
           {
             args: [
             ],
             name: "now",
+            type: "call",
           },
         ],
         result: undefined,
@@ -474,7 +481,7 @@ snapshot[`request needs more context 1`] = `
         {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "now",
           type: "parsed",
         },
@@ -485,14 +492,14 @@ snapshot[`request needs more context 1`] = `
               value: "convert to poem",
             },
           ],
-          id: 1,
+          id: "1",
           name: "editProse",
           type: "parsed",
         },
         {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "now",
           type: "parsed",
         },
@@ -506,7 +513,7 @@ snapshot[`request needs more context 1`] = `
       "0": {
         args: [
         ],
-        id: 0,
+        id: "0",
         name: "now",
         returnValue: {
           type: "string",
@@ -548,11 +555,13 @@ snapshot[`request needs more context - still missing 1`] = `
               },
             ],
             name: "editProse",
+            type: "call",
           },
           {
             args: [
             ],
             name: "now",
+            type: "call",
           },
         ],
         result: undefined,
@@ -566,14 +575,14 @@ snapshot[`request needs more context - still missing 1`] = `
               value: "convert to poem",
             },
           ],
-          id: 1,
+          id: "1",
           name: "editProse",
           type: "parsed",
         },
         {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "now",
           type: "parsed",
         },
@@ -589,6 +598,7 @@ snapshot[`request needs more context - still missing 1`] = `
             args: [
             ],
             name: "someCommand",
+            type: "call",
           },
         ],
         result: '"blah"',
@@ -599,7 +609,7 @@ snapshot[`request needs more context - still missing 1`] = `
       "0": {
         args: [
         ],
-        id: 0,
+        id: "0",
         name: "someCommand",
         returnValue: {
           type: "string",
@@ -641,11 +651,13 @@ snapshot[`request needs more context - wrong type 1`] = `
               },
             ],
             name: "editProse",
+            type: "call",
           },
           {
             args: [
             ],
             name: "now",
+            type: "call",
           },
         ],
         result: undefined,
@@ -659,14 +671,14 @@ snapshot[`request needs more context - wrong type 1`] = `
               value: "convert to poem",
             },
           ],
-          id: 1,
+          id: "1",
           name: "editProse",
           type: "parsed",
         },
         {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "now",
           type: "parsed",
         },
@@ -687,6 +699,7 @@ snapshot[`request needs more context - wrong type 1`] = `
             args: [
             ],
             name: "someCommand",
+            type: "call",
           },
         ],
         result: '"blah"',
@@ -697,7 +710,7 @@ snapshot[`request needs more context - wrong type 1`] = `
       "0": {
         args: [
         ],
-        id: 0,
+        id: "0",
         name: "someCommand",
         returnValue: {
           type: "string",
@@ -721,7 +734,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
         "0": {
           args: [
           ],
-          id: 0,
+          id: "0",
           name: "someCommand",
           returnValue: {
             type: "string",
@@ -736,7 +749,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
               value: "convert to poem",
             },
           ],
-          id: 1,
+          id: "1",
           name: "editProse",
           returnValue: {
             type: "string",
@@ -747,7 +760,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
         "2": {
           args: [
           ],
-          id: 2,
+          id: "2",
           name: "now",
           returnValue: {
             type: "string",
@@ -758,7 +771,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
         "3": {
           args: [
           ],
-          id: 3,
+          id: "3",
           name: "finish",
           returnValue: {
             type: "null",
@@ -820,3 +833,77 @@ snapshot[`fulfilled but max loops 1`] = `"max iteration count of 5 reached"`;
 snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
 snapshot[`wrong arg count 1`] = `"arguments are invalid"`;
+
+snapshot[`example A step 1 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+      ],
+      id: "0.0",
+      name: "a",
+      type: "parsed",
+    },
+    {
+      args: [
+      ],
+      id: "0.1.1",
+      name: "c",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 2 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "blah",
+        },
+      ],
+      id: "0.1",
+      name: "b",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 3 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "ha",
+        },
+      ],
+      id: "0",
+      name: "test",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 4 1`] = `
+{
+  result: {
+    type: "number",
+    value: 123,
+  },
+}
+`;

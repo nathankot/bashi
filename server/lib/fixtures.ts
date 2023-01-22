@@ -67,9 +67,8 @@ export const commandSet: CommandSet = {
     returnType: "void",
     args: [
       {
-        name: "relative time supported by chrono-js",
+        name: "iso8601Date",
         type: "string",
-        parse: ["naturalLanguageDateTime"],
       },
       {
         name: "name",
@@ -83,9 +82,8 @@ export const commandSet: CommandSet = {
     returnType: "void",
     args: [
       {
-        name: "relative time supported by chrono-js",
+        name: "iso8601Date",
         type: "string",
-        parse: ["naturalLanguageDateTime"],
       },
       { name: "name", type: "string" },
     ],

@@ -22,7 +22,6 @@ import {
 } from "@lib/valueTypes.ts";
 
 import {
-  ArgumentParser,
   CommandDefinition,
   Command,
   CommandExecuted,
@@ -362,9 +361,6 @@ namedJSONSchemaObjects["#/components/schemas/VoidValue"] =
 namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
 namedJSONSchemaObjects["#/components/schemas/ValueType"] =
   toJSONSchema(ValueType);
-
-namedJSONSchemaObjects["#/components/schemas/ArgumentParser"] =
-  toJSONSchema(ArgumentParser);
 
 namedJSONSchemaObjects["#/components/schemas/StringValueRequirement"] =
   toJSONSchema(StringValueRequirement);

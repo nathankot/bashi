@@ -521,12 +521,6 @@
           "void"
         ]
       },
-      "ArgumentParser": {
-        "enum": [
-          "naturalLanguageDateTime"
-        ],
-        "type": "string"
-      },
       "StringValueRequirement": {
         "type": "object",
         "required": [
@@ -705,12 +699,6 @@
                 },
                 "type": {
                   "$ref": "#/components/schemas/ValueType"
-                },
-                "parse": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArgumentParser"
-                  }
                 }
               }
             }

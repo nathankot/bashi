@@ -7,22 +7,14 @@ import {
   RequestContext,
 } from "@lib/requestContext.ts";
 
-import { ArgumentParser } from "./argumentParsers.ts";
-export { ArgumentParser };
-
 export const CommandDefinition = t.intersection([
   t.type({
     description: t.string,
     args: t.array(
-      t.intersection([
-        t.type({
-          name: t.string,
-          type: ValueType,
-        }),
-        t.partial({
-          parse: t.array(ArgumentParser),
-        }),
-      ])
+      t.type({
+        name: t.string,
+        type: ValueType,
+      })
     ),
     returnType: ValueType,
   }),

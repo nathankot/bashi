@@ -14,10 +14,10 @@ import Foundation
 
 extension AppController {
 
-    func assist(request: String, requestContext: RequestContext) async throws -> ModelsAssist000Output {
+    func assist(request: String, requestContext: RequestContext) async throws -> ModelsAssist001Output {
         let session = try await refreshSession()
         let apiClient = await makeApiClient()
-        let request = BashiClient.PostSessionAssist000.Request(
+        let request = BashiClient.PostSessionAssist001.Request(
             body: .init(request: request, requestContext: requestContext),
             options: .init(sessionID: session.sessionId))
 
@@ -49,7 +49,6 @@ extension AppController {
         let timezoneOffset = Double(TimeZone.current.secondsFromGMT() / 60)
         let locale = Locale.current.identifier(.bcp47)
 
-        let enabledBuiltinCommands = await commandsController.getEnabledBuiltinCommands()
         let commandDefinitions = await pluginsController.commandDefinitions
         let accountNumber = await state.accountNumber
         if !force {
@@ -75,14 +74,13 @@ extension AppController {
         let request = BashiClient.PostSessions.Request(
             body: .init(
                 modelConfigurations: .init(
-                    assist000: .init(
-                        model: .assist000,
+                    assist001: .init(
+                        model: .assist001,
                         commands: commandDefinitions
                             .filter { $0.value.pluginId != BUILTIN_COMMANDS_PLUGIN_ID }
                             .mapValues { $0.def.toAPIRepresentation() }
                     )),
                 configuration: .init(
-                    enabledBuiltinCommands: enabledBuiltinCommands,
                     locale: locale,
                     timezoneUtcOffset: timezoneOffset
                 )

@@ -19,12 +19,14 @@ import Foundation
     case string
     case number
     case boolean
+    case void
 
     public func asString() -> String {
         switch self {
         case .string: return "string"
         case .boolean: return "boolean"
         case .number: return "number"
+        case .void: return "void"
         }
     }
 }
@@ -60,6 +62,7 @@ import Foundation
     public private(set) var string: String? = nil
     public private(set) var number: NSNumber? = nil
     public private(set) var boolean: NSNumber? = nil
+    public private(set) var void: Bool? = nil
     
     public private(set) var type: CommandArgType
     
@@ -73,6 +76,9 @@ import Foundation
         if let v = boolean {
             return "\(v == 0 ? false : true)"
         }
+        if let v = void, v {
+            return "void"
+        }
         return "<unknown value>"
     }
 
@@ -80,6 +86,7 @@ import Foundation
         case string(String)
         case number(Double)
         case boolean(Bool)
+        case void
     }
 
     public init(_ option: InitOption) {
@@ -93,6 +100,9 @@ import Foundation
         case .number(let v):
             self.number = v as NSNumber
             self.type = .number
+        case .void:
+            self.void = true
+            self.type = .void
         }
     }
     
@@ -109,6 +119,7 @@ import Foundation
     var description: String { get }
     var args: [CommandArgDef] { get }
     var triggerTokens: [String]? { get }
+    var returnType: CommandArgType { get }
     func prepare(
         api: PluginAPI,
         context: CommandContext,
@@ -169,6 +180,7 @@ public class AnonymousCommand: Command {
     public let name: String
     public let description: String
     public let args: [CommandArgDef]
+    public var returnType: CommandArgType
     public let triggerTokens: [String]?
     private let prepareFn: (
         PluginAPI,
@@ -181,6 +193,7 @@ public class AnonymousCommand: Command {
         name: String,
         description: String,
         args: [CommandArgDef] = [],
+        returnType: CommandArgType = .void,
         triggerTokens: [String]? = nil,
         prepareFn: @escaping (
             PluginAPI,
@@ -192,6 +205,7 @@ public class AnonymousCommand: Command {
         self.name = name
         self.description = description
         self.args = args
+        self.returnType = returnType
         self.triggerTokens = triggerTokens
         self.prepareFn = prepareFn
     }

@@ -93,6 +93,7 @@ extension CommandArgType {
         case .string: return .string
         case .boolean: return .boolean
         case .number: return .number
+        case .void: return .void
         }
     }
 }
@@ -116,6 +117,7 @@ extension Command {
                     parse: $0.parsers.map { $0.toAPIRepresentation() }
                 )
             },
+            returnType: self.returnType.toAPIRepresentation(),
             triggerTokens: self.triggerTokens
         )
     }

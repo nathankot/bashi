@@ -9,14 +9,14 @@ export type NumberType = t.TypeOf<typeof NumberType>;
 export const BooleanType = t.literal("boolean");
 export type BooleanType = t.TypeOf<typeof BooleanType>;
 
-export const NullType = t.literal("null");
-export type NullType = t.TypeOf<typeof NullType>;
+export const VoidType = t.literal("void");
+export type VoidType = t.TypeOf<typeof VoidType>;
 
 export const ValueType = t.union([
   StringType,
   NumberType,
   BooleanType,
-  NullType,
+  VoidType,
 ]);
 export type ValueType = t.TypeOf<typeof ValueType>;
 
@@ -29,14 +29,14 @@ export type NumberValue = t.TypeOf<typeof NumberValue>;
 export const BooleanValue = t.type({ type: BooleanType, value: t.boolean });
 export type BooleanValue = t.TypeOf<typeof BooleanValue>;
 
-export const NullValue = t.type({ type: NullType });
-export type NullValue = t.TypeOf<typeof NullValue>;
+export const VoidValue = t.type({ type: VoidType });
+export type VoidValue = t.TypeOf<typeof VoidValue>;
 
 export const Value = t.union([
   StringValue,
   NumberValue,
   BooleanValue,
-  NullValue,
+  VoidValue,
 ]);
 export type Value = t.TypeOf<typeof Value>;
 
@@ -44,8 +44,8 @@ export type ValueForType<T extends ValueType> = Value & { type: T };
 
 export function valueToString(value: Value): string {
   switch (value.type) {
-    case "null":
-      return "null";
+    case "void":
+      return "void";
     case "boolean":
       return JSON.stringify(value.value);
     case "number":

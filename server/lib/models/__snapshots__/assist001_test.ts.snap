@@ -40,7 +40,7 @@ snapshot[`all commands resolved on the server 1`] = `
           id: "1.0",
           name: "finish",
           returnValue: {
-            type: "null",
+            type: "void",
           },
           type: "executed",
         },
@@ -849,7 +849,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           id: "2.0",
           name: "finish",
           returnValue: {
-            type: "null",
+            type: "void",
           },
           type: "executed",
         },
@@ -1014,7 +1014,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           id: "1.0",
           name: "finish",
           returnValue: {
-            type: "null",
+            type: "void",
           },
           type: "executed",
         },

@@ -24,7 +24,7 @@ export const handlerCtx: HandlerContext<{}> = {
 export const commandSet: CommandSet = {
   answer: {
     description: "answer the original question directly",
-    returnType: "null",
+    returnType: "void",
     args: [
       {
         name: "answer",
@@ -34,7 +34,7 @@ export const commandSet: CommandSet = {
   },
   say: {
     description: "say something",
-    returnType: "null",
+    returnType: "void",
     args: [
       {
         name: "message",
@@ -44,7 +44,7 @@ export const commandSet: CommandSet = {
   },
   write: {
     description: "write/insert a message",
-    returnType: "null",
+    returnType: "void",
     args: [
       {
         name: "message",
@@ -64,7 +64,7 @@ export const commandSet: CommandSet = {
   },
   createCalendarEvent: {
     description: "create a calendar event on a certain date and time",
-    returnType: "null",
+    returnType: "void",
     args: [
       {
         name: "relative time supported by chrono-js",
@@ -80,7 +80,7 @@ export const commandSet: CommandSet = {
   },
   createReminder: {
     description: "create a reminder on a certain date and time",
-    returnType: "null",
+    returnType: "void",
     args: [
       {
         name: "relative time supported by chrono-js",
@@ -92,7 +92,7 @@ export const commandSet: CommandSet = {
     triggerTokens: ["remind", "reminder"],
   },
   sendEmail: {
-    returnType: "null",
+    returnType: "void",
     description: `send an email`,
     args: [
       { name: "recipient", type: "string" },

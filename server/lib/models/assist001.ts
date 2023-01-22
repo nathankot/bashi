@@ -79,15 +79,15 @@ const privateBuiltinCommands = {
   finish: {
     description: "mark that the request is finished",
     args: [],
-    run: async (_, __, []) => ({ type: "null" }),
-    returnType: "null",
-  } as BuiltinCommandDefinition<[], "null">,
+    run: async (_, __, []) => ({ type: "void" }),
+    returnType: "void",
+  } as BuiltinCommandDefinition<[], "void">,
   fail: {
-    returnType: "null",
+    returnType: "void",
     description: `indicate the request could not be interpreted`,
     args: [{ name: "reason", type: "string" }],
-    run: async (_, __, ___) => ({ type: "null" }),
-  } as BuiltinCommandDefinition<["string"], "null">,
+    run: async (_, __, ___) => ({ type: "void" }),
+  } as BuiltinCommandDefinition<["string"], "void">,
 };
 
 const serverCommands = {

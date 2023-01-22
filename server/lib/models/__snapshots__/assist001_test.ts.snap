@@ -64,7 +64,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
 \`fail(reason: string) => null\` - indicate the request could not be interpreted
 
@@ -92,7 +92,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
 \`fail(reason: string) => null\` - indicate the request could not be interpreted
 
@@ -469,7 +469,7 @@ snapshot[`nested calls 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")',
+      action: 'time("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
       functionCalls: [
         {
           args: [
@@ -490,7 +490,7 @@ snapshot[`nested calls 1`] = `
                   value: "5 days from now",
                 },
               ],
-              name: "relativeTime",
+              name: "parseRelativeTime",
               type: "call",
             },
             {
@@ -533,7 +533,7 @@ snapshot[`nested calls 1`] = `
           },
         ],
         id: "0.1.0",
-        name: "relativeTime",
+        name: "parseRelativeTime",
         returnValue: {
           type: "string",
           value: "2022-12-24T08:41:10.000Z",
@@ -557,7 +557,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
 \`fail(reason: string) => null\` - indicate the request could not be interpreted
 
@@ -876,7 +876,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`relativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
+\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
 \`finish() => null\` - mark that the request is finished
 \`fail(reason: string) => null\` - indicate the request could not be interpreted
 

@@ -147,7 +147,7 @@ Action: now(); ask("what do you want?")`,
     input: { request: "some request" },
     openAiResults: [
       `I need to get the current time in New York and create a calendar event 5 days from now
-Action: time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")`,
+Action: time("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")`,
     ],
     snapshotPrompts: true,
   },

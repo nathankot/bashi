@@ -77,14 +77,14 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 const privateBuiltinCommands = {
   finish: {
-    description: "mark that the request is finished",
+    description: "mark request/question as fulfilled",
     args: [],
     run: async (_, __, []) => ({ type: "void" }),
     returnType: "void",
   } as BuiltinCommandDefinition<[], "void">,
   fail: {
     returnType: "void",
-    description: `indicate the request could not be interpreted`,
+    description: `explain why request/question is unable to be fulfilled`,
     args: [{ name: "reason", type: "string" }],
     run: async (_, __, ___) => ({ type: "void" }),
   } as BuiltinCommandDefinition<["string"], "void">,
@@ -379,7 +379,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call, delimited by ;
+Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request

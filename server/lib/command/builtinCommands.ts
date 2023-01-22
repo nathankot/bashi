@@ -18,12 +18,12 @@ const now: BuiltinCommandDefinition<[], "string"> = {
   returnType: "string",
 };
 
-const relativeTime: BuiltinCommandDefinition<["string"], "string"> = {
+const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
-  description: "get the time relative to now in ISO8601 format",
+  description: "get time relative to now in ISO8601 format",
   args: [
     {
-      name: "natural language description of relative time",
+      name: "naturalLanguageRelativeTime",
       type: "string",
     },
   ],
@@ -265,7 +265,7 @@ export const builtinCommands = {
   editCode,
   generateCode,
   translate,
-  relativeTime,
+  parseRelativeTime,
 };
 
 export default builtinCommands;

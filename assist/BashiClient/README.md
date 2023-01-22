@@ -151,25 +151,17 @@ To add support for a specific asynchronous library, just add an extension on `AP
 ## Models
 
 - **ArgumentParser**
-- **AssistResult**
-- **AssistResultNeedsClarification**
-- **AssistResultNeedsRequestContext**
-- **AssistResultOK**
 - **BashiSession**
 - **BooleanValue**
 - **BooleanValueRequirement**
 - **Command**
 - **CommandDefinition**
 - **CommandExecuted**
-- **CommandInvalid**
-- **CommandParseError**
 - **CommandParsed**
 - **ErrorType**
-- **ImplementationUnnecessaryBuiltinCommand**
-- **KnownBuiltinCommand**
-- **ModelsAssist000Configuration**
-- **ModelsAssist000Input**
-- **ModelsAssist000Output**
+- **ModelsAssist001Configuration**
+- **ModelsAssist001Input**
+- **ModelsAssist001Output**
 - **ModelsCode000Configuration**
 - **ModelsCode000Input**
 - **ModelsCode000Output**
@@ -188,15 +180,19 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **NumberValueRequirement**
 - **RequestContext**
 - **RequestContextRequirement**
+- **ResultFinished**
+- **ResultNeedsRequestContext**
+- **ResultPendingCommands**
 - **StringValue**
 - **StringValueRequirement**
 - **Value**
 - **ValueRequirement**
 - **ValueType**
+- **VoidValue**
 
 ## Requests
 
-- **BashiClient.PostSessionAssist000**: POST `/session/requests/assist-000`
+- **BashiClient.PostSessionAssist001**: POST `/session/requests/assist-001`
 - **BashiClient.PostSessionCode000**: POST `/session/requests/code-000`
 - **BashiClient.PostSessionNoop**: POST `/session/requests/noop`
 - **BashiClient.PostSessionPassthroughOpenai000**: POST `/session/requests/passthrough-openai-000`

@@ -5,10 +5,10 @@
 
 import Foundation
 
-public class ModelsAssist000Configuration: APIModel {
+public class ModelsAssist001Configuration: APIModel {
 
     public enum Model: String, Codable, Equatable, CaseIterable {
-        case assist000 = "assist-000"
+        case assist001 = "assist-001"
     }
 
     public var model: Model
@@ -35,13 +35,13 @@ public class ModelsAssist000Configuration: APIModel {
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? ModelsAssist000Configuration else { return false }
+      guard let object = object as? ModelsAssist001Configuration else { return false }
       guard self.model == object.model else { return false }
       guard self.commands == object.commands else { return false }
       return true
     }
 
-    public static func == (lhs: ModelsAssist000Configuration, rhs: ModelsAssist000Configuration) -> Bool {
+    public static func == (lhs: ModelsAssist001Configuration, rhs: ModelsAssist001Configuration) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

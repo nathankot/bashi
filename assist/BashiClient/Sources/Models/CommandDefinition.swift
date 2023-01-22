@@ -11,6 +11,8 @@ public class CommandDefinition: APIModel {
 
     public var args: [Args]
 
+    public var returnType: ValueType
+
     public var triggerTokens: [String]?
 
     public class Args: APIModel {
@@ -56,9 +58,10 @@ public class CommandDefinition: APIModel {
         }
     }
 
-    public init(description: String, args: [Args], triggerTokens: [String]? = nil) {
+    public init(description: String, args: [Args], returnType: ValueType, triggerTokens: [String]? = nil) {
         self.description = description
         self.args = args
+        self.returnType = returnType
         self.triggerTokens = triggerTokens
     }
 
@@ -67,6 +70,7 @@ public class CommandDefinition: APIModel {
 
         description = try container.decode("description")
         args = try container.decodeArray("args")
+        returnType = try container.decode("returnType")
         triggerTokens = try container.decodeArrayIfPresent("triggerTokens")
     }
 
@@ -75,6 +79,7 @@ public class CommandDefinition: APIModel {
 
         try container.encode(description, forKey: "description")
         try container.encode(args, forKey: "args")
+        try container.encode(returnType, forKey: "returnType")
         try container.encodeIfPresent(triggerTokens, forKey: "triggerTokens")
     }
 
@@ -82,6 +87,7 @@ public class CommandDefinition: APIModel {
       guard let object = object as? CommandDefinition else { return false }
       guard self.description == object.description else { return false }
       guard self.args == object.args else { return false }
+      guard self.returnType == object.returnType else { return false }
       guard self.triggerTokens == object.triggerTokens else { return false }
       return true
     }

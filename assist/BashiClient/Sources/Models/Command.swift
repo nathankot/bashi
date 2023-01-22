@@ -6,8 +6,6 @@
 import Foundation
 
 public enum Command: Codable, Equatable {
-    case commandParseError(CommandParseError)
-    case commandInvalid(CommandInvalid)
     case commandParsed(CommandParsed)
     case commandExecuted(CommandExecuted)
 
@@ -17,10 +15,6 @@ public enum Command: Codable, Equatable {
         switch discriminator {
         case "executed":
             self = .commandExecuted(try CommandExecuted(from: decoder))
-        case "invalid":
-            self = .commandInvalid(try CommandInvalid(from: decoder))
-        case "parse_error":
-            self = .commandParseError(try CommandParseError(from: decoder))
         case "parsed":
             self = .commandParsed(try CommandParsed(from: decoder))
         default:
@@ -31,10 +25,6 @@ public enum Command: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case .commandParseError(let content):
-            try container.encode(content)
-        case .commandInvalid(let content):
-            try container.encode(content)
         case .commandParsed(let content):
             try container.encode(content)
         case .commandExecuted(let content):

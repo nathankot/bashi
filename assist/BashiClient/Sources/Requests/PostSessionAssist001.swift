@@ -8,9 +8,9 @@ import Foundation
 extension BashiClient {
 
     /** TODO */
-    public enum PostSessionAssist000 {
+    public enum PostSessionAssist001 {
 
-        public static let service = APIService<Response>(id: "post_session_assist-000", tag: "", method: "POST", path: "/session/requests/assist-000", hasBody: true, securityRequirements: [SecurityRequirement(type: "account_number", scopes: [])])
+        public static let service = APIService<Response>(id: "post_session_assist-001", tag: "", method: "POST", path: "/session/requests/assist-001", hasBody: true, securityRequirements: [SecurityRequirement(type: "account_number", scopes: [])])
 
         public final class Request: APIRequest<Response> {
 
@@ -26,18 +26,18 @@ extension BashiClient {
 
             public var options: Options
 
-            public var body: ModelsAssist000Input?
+            public var body: ModelsAssist001Input?
 
-            public init(body: ModelsAssist000Input?, options: Options, encoder: RequestEncoder? = nil) {
+            public init(body: ModelsAssist001Input?, options: Options, encoder: RequestEncoder? = nil) {
                 self.body = body
                 self.options = options
-                super.init(service: PostSessionAssist000.service) { defaultEncoder in
+                super.init(service: PostSessionAssist001.service) { defaultEncoder in
                     return try (encoder ?? defaultEncoder).encode(body)
                 }
             }
 
             /// convenience initialiser so an Option doesn't have to be created
-            public convenience init(sessionID: String, body: ModelsAssist000Input? = nil) {
+            public convenience init(sessionID: String, body: ModelsAssist001Input? = nil) {
                 let options = Options(sessionID: sessionID)
                 self.init(body: body, options: options)
             }
@@ -50,10 +50,10 @@ extension BashiClient {
         }
 
         public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
-            public typealias SuccessType = ModelsAssist000Output
+            public typealias SuccessType = ModelsAssist001Output
 
             /** TODO */
-            case status200(ModelsAssist000Output)
+            case status200(ModelsAssist001Output)
 
             /** TODO */
             case status400(ErrorType)
@@ -64,7 +64,7 @@ extension BashiClient {
             /** TODO */
             case status403(ErrorType)
 
-            public var success: ModelsAssist000Output? {
+            public var success: ModelsAssist001Output? {
                 switch self {
                 case .status200(let response): return response
                 default: return nil
@@ -81,7 +81,7 @@ extension BashiClient {
             }
 
             /// either success or failure value. Success is anything in the 200..<300 status code range
-            public var responseResult: APIResponseResult<ModelsAssist000Output, ErrorType> {
+            public var responseResult: APIResponseResult<ModelsAssist001Output, ErrorType> {
                 if let successValue = success {
                     return .success(successValue)
                 } else if let failureValue = failure {
@@ -120,7 +120,7 @@ extension BashiClient {
 
             public init(statusCode: Int, data: Data, decoder: ResponseDecoder) throws {
                 switch statusCode {
-                case 200: self = try .status200(decoder.decode(ModelsAssist000Output.self, from: data))
+                case 200: self = try .status200(decoder.decode(ModelsAssist001Output.self, from: data))
                 case 400: self = try .status400(decoder.decode(ErrorType.self, from: data))
                 case 401: self = try .status401(decoder.decode(ErrorType.self, from: data))
                 case 403: self = try .status403(decoder.decode(ErrorType.self, from: data))

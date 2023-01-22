@@ -24,7 +24,7 @@ extension BashiClient {
                 /** TODO */
                 public class ModelConfigurations: APIModel {
 
-                    public var assist000: ModelsAssist000Configuration?
+                    public var assist001: ModelsAssist001Configuration?
 
                     public var code000: ModelsCode000Configuration?
 
@@ -36,8 +36,8 @@ extension BashiClient {
 
                     public var whisper000: ModelsWhisper000Configuration?
 
-                    public init(assist000: ModelsAssist000Configuration? = nil, code000: ModelsCode000Configuration? = nil, noop: ModelsNoopConfiguration? = nil, passthroughOpenai000: ModelsPassthroughOpenai000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
-                        self.assist000 = assist000
+                    public init(assist001: ModelsAssist001Configuration? = nil, code000: ModelsCode000Configuration? = nil, noop: ModelsNoopConfiguration? = nil, passthroughOpenai000: ModelsPassthroughOpenai000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
+                        self.assist001 = assist001
                         self.code000 = code000
                         self.noop = noop
                         self.passthroughOpenai000 = passthroughOpenai000
@@ -48,7 +48,7 @@ extension BashiClient {
                     public required init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
-                        assist000 = try container.decodeIfPresent("assist-000")
+                        assist001 = try container.decodeIfPresent("assist-001")
                         code000 = try container.decodeIfPresent("code-000")
                         noop = try container.decodeIfPresent("noop")
                         passthroughOpenai000 = try container.decodeIfPresent("passthrough-openai-000")
@@ -59,7 +59,7 @@ extension BashiClient {
                     public func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: StringCodingKey.self)
 
-                        try container.encodeIfPresent(assist000, forKey: "assist-000")
+                        try container.encodeIfPresent(assist001, forKey: "assist-001")
                         try container.encodeIfPresent(code000, forKey: "code-000")
                         try container.encodeIfPresent(noop, forKey: "noop")
                         try container.encodeIfPresent(passthroughOpenai000, forKey: "passthrough-openai-000")
@@ -69,7 +69,7 @@ extension BashiClient {
 
                     public func isEqual(to object: Any?) -> Bool {
                       guard let object = object as? ModelConfigurations else { return false }
-                      guard self.assist000 == object.assist000 else { return false }
+                      guard self.assist001 == object.assist001 else { return false }
                       guard self.code000 == object.code000 else { return false }
                       guard self.noop == object.noop else { return false }
                       guard self.passthroughOpenai000 == object.passthroughOpenai000 else { return false }
@@ -88,17 +88,14 @@ extension BashiClient {
 
                     public var bestOf: Double?
 
-                    public var enabledBuiltinCommands: [KnownBuiltinCommand]?
-
                     public var locale: String?
 
                     public var maxResponseTokens: Double?
 
                     public var timezoneUtcOffset: Double?
 
-                    public init(bestOf: Double? = nil, enabledBuiltinCommands: [KnownBuiltinCommand]? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
+                    public init(bestOf: Double? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
                         self.bestOf = bestOf
-                        self.enabledBuiltinCommands = enabledBuiltinCommands
                         self.locale = locale
                         self.maxResponseTokens = maxResponseTokens
                         self.timezoneUtcOffset = timezoneUtcOffset
@@ -108,7 +105,6 @@ extension BashiClient {
                         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
                         bestOf = try container.decodeIfPresent("bestOf")
-                        enabledBuiltinCommands = try container.decodeArrayIfPresent("enabledBuiltinCommands")
                         locale = try container.decodeIfPresent("locale")
                         maxResponseTokens = try container.decodeIfPresent("maxResponseTokens")
                         timezoneUtcOffset = try container.decodeIfPresent("timezoneUtcOffset")
@@ -118,7 +114,6 @@ extension BashiClient {
                         var container = encoder.container(keyedBy: StringCodingKey.self)
 
                         try container.encodeIfPresent(bestOf, forKey: "bestOf")
-                        try container.encodeIfPresent(enabledBuiltinCommands, forKey: "enabledBuiltinCommands")
                         try container.encodeIfPresent(locale, forKey: "locale")
                         try container.encodeIfPresent(maxResponseTokens, forKey: "maxResponseTokens")
                         try container.encodeIfPresent(timezoneUtcOffset, forKey: "timezoneUtcOffset")
@@ -127,7 +122,6 @@ extension BashiClient {
                     public func isEqual(to object: Any?) -> Bool {
                       guard let object = object as? Configuration else { return false }
                       guard self.bestOf == object.bestOf else { return false }
-                      guard self.enabledBuiltinCommands == object.enabledBuiltinCommands else { return false }
                       guard self.locale == object.locale else { return false }
                       guard self.maxResponseTokens == object.maxResponseTokens else { return false }
                       guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }

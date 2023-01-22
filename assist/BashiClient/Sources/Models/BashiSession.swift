@@ -27,14 +27,11 @@ public class BashiSession: APIModel {
 
         public var bestOf: Double
 
-        public var enabledBuiltinCommands: [KnownBuiltinCommand]
-
-        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double, enabledBuiltinCommands: [KnownBuiltinCommand]) {
+        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double) {
             self.locale = locale
             self.timezoneUtcOffset = timezoneUtcOffset
             self.maxResponseTokens = maxResponseTokens
             self.bestOf = bestOf
-            self.enabledBuiltinCommands = enabledBuiltinCommands
         }
 
         public required init(from decoder: Decoder) throws {
@@ -44,7 +41,6 @@ public class BashiSession: APIModel {
             timezoneUtcOffset = try container.decode("timezoneUtcOffset")
             maxResponseTokens = try container.decode("maxResponseTokens")
             bestOf = try container.decode("bestOf")
-            enabledBuiltinCommands = try container.decodeArray("enabledBuiltinCommands")
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -54,7 +50,6 @@ public class BashiSession: APIModel {
             try container.encode(timezoneUtcOffset, forKey: "timezoneUtcOffset")
             try container.encode(maxResponseTokens, forKey: "maxResponseTokens")
             try container.encode(bestOf, forKey: "bestOf")
-            try container.encode(enabledBuiltinCommands, forKey: "enabledBuiltinCommands")
         }
 
         public func isEqual(to object: Any?) -> Bool {
@@ -63,7 +58,6 @@ public class BashiSession: APIModel {
           guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
           guard self.maxResponseTokens == object.maxResponseTokens else { return false }
           guard self.bestOf == object.bestOf else { return false }
-          guard self.enabledBuiltinCommands == object.enabledBuiltinCommands else { return false }
           return true
         }
 
@@ -74,7 +68,7 @@ public class BashiSession: APIModel {
 
     public class ModelConfigurations: APIModel {
 
-        public var assist000: ModelsAssist000Configuration?
+        public var assist001: ModelsAssist001Configuration?
 
         public var code000: ModelsCode000Configuration?
 
@@ -86,8 +80,8 @@ public class BashiSession: APIModel {
 
         public var whisper000: ModelsWhisper000Configuration?
 
-        public init(assist000: ModelsAssist000Configuration? = nil, code000: ModelsCode000Configuration? = nil, noop: ModelsNoopConfiguration? = nil, passthroughOpenai000: ModelsPassthroughOpenai000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
-            self.assist000 = assist000
+        public init(assist001: ModelsAssist001Configuration? = nil, code000: ModelsCode000Configuration? = nil, noop: ModelsNoopConfiguration? = nil, passthroughOpenai000: ModelsPassthroughOpenai000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
+            self.assist001 = assist001
             self.code000 = code000
             self.noop = noop
             self.passthroughOpenai000 = passthroughOpenai000
@@ -98,7 +92,7 @@ public class BashiSession: APIModel {
         public required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: StringCodingKey.self)
 
-            assist000 = try container.decodeIfPresent("assist-000")
+            assist001 = try container.decodeIfPresent("assist-001")
             code000 = try container.decodeIfPresent("code-000")
             noop = try container.decodeIfPresent("noop")
             passthroughOpenai000 = try container.decodeIfPresent("passthrough-openai-000")
@@ -109,7 +103,7 @@ public class BashiSession: APIModel {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: StringCodingKey.self)
 
-            try container.encodeIfPresent(assist000, forKey: "assist-000")
+            try container.encodeIfPresent(assist001, forKey: "assist-001")
             try container.encodeIfPresent(code000, forKey: "code-000")
             try container.encodeIfPresent(noop, forKey: "noop")
             try container.encodeIfPresent(passthroughOpenai000, forKey: "passthrough-openai-000")
@@ -119,7 +113,7 @@ public class BashiSession: APIModel {
 
         public func isEqual(to object: Any?) -> Bool {
           guard let object = object as? ModelConfigurations else { return false }
-          guard self.assist000 == object.assist000 else { return false }
+          guard self.assist001 == object.assist001 else { return false }
           guard self.code000 == object.code000 else { return false }
           guard self.noop == object.noop else { return false }
           guard self.passthroughOpenai000 == object.passthroughOpenai000 else { return false }

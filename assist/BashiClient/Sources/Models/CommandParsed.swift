@@ -11,7 +11,7 @@ public class CommandParsed: APIModel {
         case parsed = "parsed"
     }
 
-    public var line: String
+    public var id: String
 
     public var type: `Type`
 
@@ -19,43 +19,37 @@ public class CommandParsed: APIModel {
 
     public var args: [Value]
 
-    public var argsParsed: [[String: Value]]?
-
-    public init(line: String, type: `Type`, name: String, args: [Value], argsParsed: [[String: Value]]? = nil) {
-        self.line = line
+    public init(id: String, type: `Type`, name: String, args: [Value]) {
+        self.id = id
         self.type = type
         self.name = name
         self.args = args
-        self.argsParsed = argsParsed
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
-        line = try container.decode("line")
+        id = try container.decode("id")
         type = try container.decode("type")
         name = try container.decode("name")
         args = try container.decodeArray("args")
-        argsParsed = try container.decodeArrayIfPresent("argsParsed")
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
-        try container.encode(line, forKey: "line")
+        try container.encode(id, forKey: "id")
         try container.encode(type, forKey: "type")
         try container.encode(name, forKey: "name")
         try container.encode(args, forKey: "args")
-        try container.encodeIfPresent(argsParsed, forKey: "argsParsed")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? CommandParsed else { return false }
-      guard self.line == object.line else { return false }
+      guard self.id == object.id else { return false }
       guard self.type == object.type else { return false }
       guard self.name == object.name else { return false }
       guard self.args == object.args else { return false }
-      guard self.argsParsed == object.argsParsed else { return false }
       return true
     }
 

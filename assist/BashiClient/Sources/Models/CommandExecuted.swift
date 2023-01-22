@@ -11,7 +11,7 @@ public class CommandExecuted: APIModel {
         case executed = "executed"
     }
 
-    public var line: String
+    public var id: String
 
     public var type: `Type`
 
@@ -19,43 +19,43 @@ public class CommandExecuted: APIModel {
 
     public var args: [Value]
 
-    public var returnValues: [Value]
+    public var returnValue: Value
 
-    public init(line: String, type: `Type`, name: String, args: [Value], returnValues: [Value]) {
-        self.line = line
+    public init(id: String, type: `Type`, name: String, args: [Value], returnValue: Value) {
+        self.id = id
         self.type = type
         self.name = name
         self.args = args
-        self.returnValues = returnValues
+        self.returnValue = returnValue
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
-        line = try container.decode("line")
+        id = try container.decode("id")
         type = try container.decode("type")
         name = try container.decode("name")
         args = try container.decodeArray("args")
-        returnValues = try container.decodeArray("returnValues")
+        returnValue = try container.decode("returnValue")
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
-        try container.encode(line, forKey: "line")
+        try container.encode(id, forKey: "id")
         try container.encode(type, forKey: "type")
         try container.encode(name, forKey: "name")
         try container.encode(args, forKey: "args")
-        try container.encode(returnValues, forKey: "returnValues")
+        try container.encode(returnValue, forKey: "returnValue")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? CommandExecuted else { return false }
-      guard self.line == object.line else { return false }
+      guard self.id == object.id else { return false }
       guard self.type == object.type else { return false }
       guard self.name == object.name else { return false }
       guard self.args == object.args else { return false }
-      guard self.returnValues == object.returnValues else { return false }
+      guard self.returnValue == object.returnValue else { return false }
       return true
     }
 

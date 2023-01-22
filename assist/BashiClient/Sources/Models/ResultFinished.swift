@@ -5,43 +5,43 @@
 
 import Foundation
 
-public class AssistResultNeedsClarification: APIModel {
+public class ResultFinished: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
-        case needsClarification = "needs_clarification"
+        case finished = "finished"
     }
 
     public var type: `Type`
 
-    public var clarificationQuestions: [String]
+    public var resolvedCommands: [String: CommandExecuted]
 
-    public init(type: `Type`, clarificationQuestions: [String]) {
+    public init(type: `Type`, resolvedCommands: [String: CommandExecuted]) {
         self.type = type
-        self.clarificationQuestions = clarificationQuestions
+        self.resolvedCommands = resolvedCommands
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
         type = try container.decode("type")
-        clarificationQuestions = try container.decodeArray("clarificationQuestions")
+        resolvedCommands = try container.decode("resolvedCommands")
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
         try container.encode(type, forKey: "type")
-        try container.encode(clarificationQuestions, forKey: "clarificationQuestions")
+        try container.encode(resolvedCommands, forKey: "resolvedCommands")
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? AssistResultNeedsClarification else { return false }
+      guard let object = object as? ResultFinished else { return false }
       guard self.type == object.type else { return false }
-      guard self.clarificationQuestions == object.clarificationQuestions else { return false }
+      guard self.resolvedCommands == object.resolvedCommands else { return false }
       return true
     }
 
-    public static func == (lhs: AssistResultNeedsClarification, rhs: AssistResultNeedsClarification) -> Bool {
+    public static func == (lhs: ResultFinished, rhs: ResultFinished) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

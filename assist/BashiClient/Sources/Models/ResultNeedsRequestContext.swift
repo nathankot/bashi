@@ -5,7 +5,7 @@
 
 import Foundation
 
-public class AssistResultNeedsRequestContext: APIModel {
+public class ResultNeedsRequestContext: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
         case needsRequestContext = "needs_request_context"
@@ -15,9 +15,12 @@ public class AssistResultNeedsRequestContext: APIModel {
 
     public var missingRequestContext: RequestContextRequirement
 
-    public init(type: `Type`, missingRequestContext: RequestContextRequirement) {
+    public var resolvedCommands: [String: CommandExecuted]
+
+    public init(type: `Type`, missingRequestContext: RequestContextRequirement, resolvedCommands: [String: CommandExecuted]) {
         self.type = type
         self.missingRequestContext = missingRequestContext
+        self.resolvedCommands = resolvedCommands
     }
 
     public required init(from decoder: Decoder) throws {
@@ -25,6 +28,7 @@ public class AssistResultNeedsRequestContext: APIModel {
 
         type = try container.decode("type")
         missingRequestContext = try container.decode("missingRequestContext")
+        resolvedCommands = try container.decode("resolvedCommands")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,16 +36,18 @@ public class AssistResultNeedsRequestContext: APIModel {
 
         try container.encode(type, forKey: "type")
         try container.encode(missingRequestContext, forKey: "missingRequestContext")
+        try container.encode(resolvedCommands, forKey: "resolvedCommands")
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? AssistResultNeedsRequestContext else { return false }
+      guard let object = object as? ResultNeedsRequestContext else { return false }
       guard self.type == object.type else { return false }
       guard self.missingRequestContext == object.missingRequestContext else { return false }
+      guard self.resolvedCommands == object.resolvedCommands else { return false }
       return true
     }
 
-    public static func == (lhs: AssistResultNeedsRequestContext, rhs: AssistResultNeedsRequestContext) -> Bool {
+    public static func == (lhs: ResultNeedsRequestContext, rhs: ResultNeedsRequestContext) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

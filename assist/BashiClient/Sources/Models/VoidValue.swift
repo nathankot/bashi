@@ -5,49 +5,37 @@
 
 import Foundation
 
-public class CommandParseError: APIModel {
+public class VoidValue: APIModel {
 
     public enum `Type`: String, Codable, Equatable, CaseIterable {
-        case parseError = "parse_error"
+        case void = "void"
     }
 
     public var type: `Type`
 
-    public var line: String
-
-    public var error: String
-
-    public init(type: `Type`, line: String, error: String) {
+    public init(type: `Type`) {
         self.type = type
-        self.line = line
-        self.error = error
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
         type = try container.decode("type")
-        line = try container.decode("line")
-        error = try container.decode("error")
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
         try container.encode(type, forKey: "type")
-        try container.encode(line, forKey: "line")
-        try container.encode(error, forKey: "error")
     }
 
     public func isEqual(to object: Any?) -> Bool {
-      guard let object = object as? CommandParseError else { return false }
+      guard let object = object as? VoidValue else { return false }
       guard self.type == object.type else { return false }
-      guard self.line == object.line else { return false }
-      guard self.error == object.error else { return false }
       return true
     }
 
-    public static func == (lhs: CommandParseError, rhs: CommandParseError) -> Bool {
+    public static func == (lhs: VoidValue, rhs: VoidValue) -> Bool {
         return lhs.isEqual(to: rhs)
     }
 }

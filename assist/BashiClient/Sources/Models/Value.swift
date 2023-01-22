@@ -9,6 +9,7 @@ public enum Value: Codable, Equatable {
     case stringValue(StringValue)
     case numberValue(NumberValue)
     case booleanValue(BooleanValue)
+    case voidValue(VoidValue)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
@@ -20,6 +21,8 @@ public enum Value: Codable, Equatable {
             self = .numberValue(try NumberValue(from: decoder))
         case "string":
             self = .stringValue(try StringValue(from: decoder))
+        case "void":
+            self = .voidValue(try VoidValue(from: decoder))
         default:
             throw DecodingError.dataCorrupted(DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "Couldn't find type to decode with discriminator \(discriminator)"))
         }
@@ -33,6 +36,8 @@ public enum Value: Codable, Equatable {
         case .numberValue(let content):
             try container.encode(content)
         case .booleanValue(let content):
+            try container.encode(content)
+        case .voidValue(let content):
             try container.encode(content)
         }
     }

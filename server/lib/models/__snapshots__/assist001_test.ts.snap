@@ -8,10 +8,10 @@ snapshot[`all commands resolved on the server 1`] = `
     request: "some request",
     result: {
       resolvedCommands: {
-        "0": {
+        "0.0": {
           args: [
           ],
-          id: "0",
+          id: "0.0",
           name: "now",
           returnValue: {
             type: "string",
@@ -19,14 +19,14 @@ snapshot[`all commands resolved on the server 1`] = `
           },
           type: "executed",
         },
-        "1": {
+        "0.1": {
           args: [
             {
               type: "string",
               value: "pi^2 + 123",
             },
           ],
-          id: "1",
+          id: "0.1",
           name: "math",
           returnValue: {
             type: "string",
@@ -34,10 +34,10 @@ snapshot[`all commands resolved on the server 1`] = `
           },
           type: "executed",
         },
-        "2": {
+        "1.0": {
           args: [
           ],
-          id: "2",
+          id: "1.0",
           name: "finish",
           returnValue: {
             type: "null",
@@ -124,10 +124,10 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     request: "some request",
     result: {
       resolvedCommands: {
-        "0": {
+        "0.0": {
           args: [
           ],
-          id: "0",
+          id: "0.0",
           name: "now",
           returnValue: {
             type: "string",
@@ -135,14 +135,14 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
           },
           type: "executed",
         },
-        "1": {
+        "0.1": {
           args: [
             {
               type: "string",
               value: "pi^2 + 123",
             },
           ],
-          id: "1",
+          id: "0.1",
           name: "math",
           returnValue: {
             type: "string",
@@ -173,7 +173,7 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          id: "1",
+          id: "0.1",
           name: "ask",
           type: "parsed",
         },
@@ -182,38 +182,15 @@ snapshot[`client resolved command 1`] = `
     },
   },
   state: {
-    loopCount: 1,
+    modelCallCount: 1,
     pending: {
-      actionGroup: {
-        action: 'now(); ask("what do you want?")',
-        functionCalls: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "what do you want?",
-              },
-            ],
-            name: "ask",
-            type: "call",
-          },
-        ],
-        result: undefined,
-        thought: "I need to do something",
-      },
-      commands: [
+      action: 'now(); ask("what do you want?")',
+      functionCalls: [
         {
           args: [
           ],
-          id: "0",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
@@ -222,21 +199,22 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          id: "1",
           name: "ask",
-          type: "parsed",
+          type: "call",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
     request: "some request",
     requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: {
-      "0": {
+      "0.0": {
         args: [
         ],
-        id: "0",
+        id: "0.0",
         name: "now",
         returnValue: {
           type: "string",
@@ -264,7 +242,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "what do you want?",
             },
           ],
-          id: "1",
+          id: "0.1",
           name: "ask",
           type: "parsed",
         },
@@ -273,38 +251,15 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     },
   },
   state: {
-    loopCount: 1,
+    modelCallCount: 1,
     pending: {
-      actionGroup: {
-        action: 'now(); ask("what do you want?")',
-        functionCalls: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "what do you want?",
-              },
-            ],
-            name: "ask",
-            type: "call",
-          },
-        ],
-        result: undefined,
-        thought: "I need to do something",
-      },
-      commands: [
+      action: 'now(); ask("what do you want?")',
+      functionCalls: [
         {
           args: [
           ],
-          id: "0",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
@@ -313,18 +268,19 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "what do you want?",
             },
           ],
-          id: "1",
           name: "ask",
-          type: "parsed",
+          type: "call",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
     request: "some request",
     requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: {
-      "0": {
+      "0.0": {
         args: [
         ],
         id: "0",
@@ -340,61 +296,256 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
 }
 `;
 
-snapshot[`client resolved command - wrong return type 1`] = `"command ask expects return type string but got number"`;
-
-snapshot[`client resolved command - fulfilled 1`] = `
+snapshot[`client resolved command - wrong return type 1`] = `
 {
-  n: 1,
+  n: 0,
   output: {
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: {
-        "0": {
-          args: [
-          ],
-          id: "0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
-        },
-        "1": {
+      pendingCommands: [
+        {
           args: [
             {
               type: "string",
               value: "what do you want?",
             },
           ],
-          id: "1",
+          id: "0.1",
           name: "ask",
-          returnValue: {
-            type: "string",
-            value: "to test you",
-          },
-          type: "executed",
+          type: "parsed",
         },
-        "2": {
-          args: [
-          ],
-          id: "2",
-          name: "finish",
-          returnValue: {
-            type: "null",
-          },
-          type: "executed",
-        },
-      },
-      type: "finished",
+      ],
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); ask("what do you want?")',
+      functionCalls: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "ask",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0.0": {
+        args: [
+        ],
+        id: "0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`client resolved command - fulfilled 1`] = `
+{
+  n: 0,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: "0.1",
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); ask("what do you want?")',
+      functionCalls: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "ask",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0.0": {
+        args: [
+        ],
+        id: "0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    },
+  },
 }
 `;
 
 snapshot[`client resolved command - fulfilled 2`] = `
+[
+]
+`;
+
+snapshot[`nested calls 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10.000Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")',
+      functionCalls: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "time",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "5 days from now",
+                },
+              ],
+              name: "relativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {
+      "0.0": {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0",
+        name: "time",
+        returnValue: {
+          type: "string",
+          value: "12/19/2022, 3:41:10 AM",
+        },
+        type: "executed",
+      },
+      "0.1.0": {
+        args: [
+          {
+            type: "string",
+            value: "5 days from now",
+          },
+        ],
+        id: "0.1.0",
+        name: "relativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    },
+  },
+}
+`;
+
+snapshot[`nested calls 2`] = `
 [
   'Answer the following questions as directly and as best you can.
 
@@ -423,9 +574,6 @@ Action: finish()
 Begin!
 
 Request: some request
-Thought: I need to do something
-Action: now(); ask("what do you want?")
-Result: "2022-12-19T08:41:10.000Z"; "to test you"
 Thought: ',
 ]
 `;
@@ -446,44 +594,15 @@ snapshot[`request needs more context 1`] = `
     },
   },
   state: {
-    loopCount: 1,
+    modelCallCount: 1,
     pending: {
-      actionGroup: {
-        action: 'now(); editProse("convert to poem"); now()',
-        functionCalls: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "convert to poem",
-              },
-            ],
-            name: "editProse",
-            type: "call",
-          },
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-        ],
-        result: undefined,
-        thought: "I need to do something",
-      },
-      commands: [
+      action: 'now(); editProse("convert to poem"); now()',
+      functionCalls: [
         {
           args: [
           ],
-          id: "0",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
@@ -492,28 +611,28 @@ snapshot[`request needs more context 1`] = `
               value: "convert to poem",
             },
           ],
-          id: "1",
           name: "editProse",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
           ],
-          id: "2",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
     request: "some request",
     requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: {
-      "0": {
+      "0.0": {
         args: [
         ],
-        id: "0",
+        id: "0.0",
         name: "now",
         returnValue: {
           type: "string",
@@ -542,32 +661,10 @@ snapshot[`request needs more context - still missing 1`] = `
     },
   },
   state: {
-    loopCount: 1,
+    modelCallCount: 1,
     pending: {
-      actionGroup: {
-        action: 'editProse("convert to poem"); now()',
-        functionCalls: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "convert to poem",
-              },
-            ],
-            name: "editProse",
-            type: "call",
-          },
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-        ],
-        result: undefined,
-        thought: "I need to do something",
-      },
-      commands: [
+      action: 'editProse("convert to poem"); now()',
+      functionCalls: [
         {
           args: [
             {
@@ -575,18 +672,18 @@ snapshot[`request needs more context - still missing 1`] = `
               value: "convert to poem",
             },
           ],
-          id: "1",
           name: "editProse",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
           ],
-          id: "2",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
     request: "some request",
     requestContext: {},
@@ -606,7 +703,7 @@ snapshot[`request needs more context - still missing 1`] = `
       },
     ],
     resolvedCommands: {
-      "0": {
+      "0.0": {
         args: [
         ],
         id: "0",
@@ -638,32 +735,10 @@ snapshot[`request needs more context - wrong type 1`] = `
     },
   },
   state: {
-    loopCount: 1,
+    modelCallCount: 1,
     pending: {
-      actionGroup: {
-        action: 'editProse("convert to poem"); now()',
-        functionCalls: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "convert to poem",
-              },
-            ],
-            name: "editProse",
-            type: "call",
-          },
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
-        ],
-        result: undefined,
-        thought: "I need to do something",
-      },
-      commands: [
+      action: 'editProse("convert to poem"); now()',
+      functionCalls: [
         {
           args: [
             {
@@ -671,18 +746,18 @@ snapshot[`request needs more context - wrong type 1`] = `
               value: "convert to poem",
             },
           ],
-          id: "1",
           name: "editProse",
-          type: "parsed",
+          type: "call",
         },
         {
           args: [
           ],
-          id: "2",
           name: "now",
-          type: "parsed",
+          type: "call",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
     request: "some request",
     requestContext: {
@@ -707,7 +782,7 @@ snapshot[`request needs more context - wrong type 1`] = `
       },
     ],
     resolvedCommands: {
-      "0": {
+      "0.0": {
         args: [
         ],
         id: "0",
@@ -731,7 +806,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
     request: "some request",
     result: {
       resolvedCommands: {
-        "0": {
+        "0.0": {
           args: [
           ],
           id: "0",
@@ -742,14 +817,14 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "1": {
+        "1.0": {
           args: [
             {
               type: "string",
               value: "convert to poem",
             },
           ],
-          id: "1",
+          id: "1.0",
           name: "editProse",
           returnValue: {
             type: "string",
@@ -757,10 +832,10 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "2": {
+        "1.1": {
           args: [
           ],
-          id: "2",
+          id: "1.1",
           name: "now",
           returnValue: {
             type: "string",
@@ -768,10 +843,10 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "3": {
+        "2.0": {
           args: [
           ],
-          id: "3",
+          id: "2.0",
           name: "finish",
           returnValue: {
             type: "null",

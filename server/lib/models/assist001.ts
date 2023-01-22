@@ -32,7 +32,7 @@ import { RequestContext } from "@lib/requestContext.ts";
 export const State = t.type({
   request: t.string,
   requestContext: RequestContext,
-  loopCount: t.number,
+  modelCallCount: t.number,
   resolvedActionGroups: t.array(
     t.intersection([
       ActionGroup,
@@ -42,17 +42,12 @@ export const State = t.type({
     ])
   ),
   resolvedCommands: t.record(t.string, CommandExecuted),
-  pending: t.union([
-    t.null,
-    t.type({
-      actionGroup: ActionGroup,
-      commands: t.array(CommandParsed),
-    }),
-  ]),
+  pending: t.union([t.null, ActionGroup]),
 });
 export type State = t.TypeOf<typeof State>;
 
-export const MAX_LOOPS = 5;
+export const MAX_LOOPS = 15;
+export const MAX_MODEL_CALLS = 5;
 
 export const Name = t.literal("assist-001");
 export type Name = t.TypeOf<typeof Name>;
@@ -144,7 +139,7 @@ export async function run(
   }
 
   // Key pieces of state:
-  let loopCount = state?.loopCount ?? 0;
+  let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending;
   let resolvedCommands = state?.resolvedCommands ?? {};
   let resolvedActionGroups = state?.resolvedActionGroups ?? [];
@@ -156,8 +151,8 @@ export async function run(
   // Interpreter loop that does the following:
   //
   // 1. For each pending thought/action, find commands and try to resolve them
-  //   1a. Any commands that can be resolved server side should be
-  //   1b. If the client provided any resolutions, use them
+  //   1a. If the client provided any resolutions, use them
+  //   1b. Any commands that can be resolved server side should be
   //   1c. Some commands may need a redirection to the client
   // 2. Any resolutions from the above go into the new prompt
   // 3. Plugs the prompt into the model to ask for thought/actions to take
@@ -167,27 +162,63 @@ export async function run(
   let isFinished = false;
 
   try {
-    while (true) {
+    let loopNumber = 0;
+    commandResolutionLoop: while (true) {
+      if (loopNumber >= MAX_LOOPS)
+        throw new Error(`max loops of ${MAX_LOOPS} reached`);
+      loopNumber++;
       // 1. For each pending thought/action, find commands and try to resolve them
       if (pending != null) {
-        let commandsToSendToClient: CommandParsed[] = [];
-        let commandResults: Value[] = [];
+        const actionGroupsSofar = Object.values(resolvedActionGroups).length;
+        const topLevelCalls = parseFunctionCalls(pending.action);
+        // Get the first top level call that is still pending, we want
+        // to handle each top level call in sequence.
+        let pendingCommands: CommandParsed[] = [];
+        let topLevelCommandResults: Value[] = [];
+        for (const [i, topLevelCall] of topLevelCalls.entries()) {
+          const pendingCommandsOrResult = getPendingCommandsOrResult(
+            `${actionGroupsSofar}.${i}`,
+            topLevelCall,
+            resolvedCommands
+          );
+          if ("result" in pendingCommandsOrResult) {
+            topLevelCommandResults.push(pendingCommandsOrResult.result);
+          }
+          if ("pendingCommands" in pendingCommandsOrResult) {
+            pendingCommands = pendingCommandsOrResult.pendingCommands;
+            break;
+          }
+        }
 
-        for (const pendingCommand of pending.commands) {
+        let commandsToSendToClient: CommandParsed[] = [];
+        for (const pendingCommand of pendingCommands) {
           const commandName = pendingCommand.name;
           const commandDef = allCommands[commandName];
           if (commandDef == null) {
             throw new Error(`the command ${commandName} is unknown`);
           }
-
-          const maybeAlreadyResolved =
-            resolvedCommands[pendingCommand.id.toString()];
-          if (maybeAlreadyResolved != null) {
-            commandResults.push(maybeAlreadyResolved.returnValue);
+          //   1a. If the client provided any resolutions, use them
+          const maybeClientResolution =
+            input.resolvedCommands == null
+              ? null
+              : input.resolvedCommands[pendingCommand.id.toString()];
+          if (maybeClientResolution) {
+            if (maybeClientResolution.type !== commandDef.returnType) {
+              throw new HTTPError(
+                `command ${commandName} expects return type ` +
+                  `${commandDef.returnType} but got ${maybeClientResolution.type}`,
+                400
+              );
+            }
+            resolvedCommands[pendingCommand.id.toString()] = {
+              ...pendingCommand,
+              type: "executed",
+              returnValue: maybeClientResolution,
+            };
             continue;
           }
 
-          // 1a. Any commands that can be resolved server side should be
+          // 1b. Any commands that can be resolved server side should be
           if (isServerCommand(commandName)) {
             const serverCommandDef = serverCommands[commandName];
             const missingRequestContext = checkRequestContext(
@@ -210,34 +241,7 @@ export async function run(
               input.requestContext ?? {},
               pendingCommand
             );
-            commandResults.push(resolved.returnValue);
             resolvedCommands[pendingCommand.id.toString()] = resolved;
-            // Account for the special finish command
-            if (resolved.name === "finish") {
-              isFinished = true;
-            }
-            continue;
-          }
-
-          //   1b. If the client provided any resolutions, use them
-          const maybeClientResolution =
-            input.resolvedCommands == null
-              ? null
-              : input.resolvedCommands[pendingCommand.id.toString()];
-          if (maybeClientResolution) {
-            if (maybeClientResolution.type !== commandDef.returnType) {
-              throw new HTTPError(
-                `command ${commandName} expects return type ` +
-                  `${commandDef.returnType} but got ${maybeClientResolution.type}`,
-                400
-              );
-            }
-            commandResults.push(maybeClientResolution);
-            resolvedCommands[pendingCommand.id.toString()] = {
-              ...pendingCommand,
-              type: "executed",
-              returnValue: maybeClientResolution,
-            };
             continue;
           }
 
@@ -256,24 +260,44 @@ export async function run(
           };
         }
 
+        // Go through the loop again if we have not resolved all top-level commands:
+        if (topLevelCommandResults.length !== topLevelCalls.length) {
+          continue commandResolutionLoop;
+        }
+
         // 2. Any resolutions from the above go into the new prompt
         resolvedActionGroups.push({
-          ...pending.actionGroup,
-          result: commandResults.map(valueToString).join("; "),
+          ...pending,
+          result: topLevelCommandResults.map(valueToString).join("; "),
         });
-      }
 
-      // Reaching here implies that anything pending has been
-      // dealt with and we are ready for more model output:
-      pending = null;
+        // Reaching here implies that anything pending has been
+        // dealt with and we are ready for more model output:
+        pending = null;
+
+        // Mark as finished if any of the top level commands were sinks:
+        for (const topLevelCall of topLevelCalls) {
+          switch (topLevelCall.name) {
+            case "finish":
+              isFinished = true;
+              break;
+            default:
+              continue;
+          }
+        }
+      }
 
       if (isFinished) {
         break;
       }
-      if (loopCount >= MAX_LOOPS) {
-        throw new HTTPError(`max iteration count of ${MAX_LOOPS} reached`, 400);
+
+      if (modelCallCount >= MAX_MODEL_CALLS) {
+        throw new HTTPError(
+          `max iteration count of ${MAX_MODEL_CALLS} reached`,
+          400
+        );
       }
-      loopCount++;
+      modelCallCount++;
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
       const prompt = makePrompt(allCommands, request, resolvedActionGroups);
@@ -295,7 +319,6 @@ export async function run(
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
-      console.log("NKDEBUG", text);
 
       if (text === "") {
         isFinished = true;
@@ -306,28 +329,11 @@ export async function run(
       if (!text.toLowerCase().startsWith("thought:")) {
         text = "Thought: " + text;
       }
-      const commandsSoFar = Object.values(resolvedCommands).length;
-      const newActionGroup = parseActionGroup(text);
-      const newCommands = parseFunctionCalls(newActionGroup.action)
-        .filter((f) => !f.args.some((a) => a.type === "call"))
-        .map(
-          (f, i): CommandParsed => ({
-            args: f.args as any,
-            name: f.name,
-            type: "parsed",
-            id: (commandsSoFar + i).toString(),
-          })
-        );
-      log(
-        "info",
-        `thought: ${newActionGroup.thought}; action: ${newActionGroup.action}`
-      );
 
-      // 5. Update state with the current results, exit if we have reached a sink, otherwise goto (1)
-      pending = {
-        actionGroup: newActionGroup,
-        commands: newCommands,
-      };
+      // 5. Update state with the current results, exit if we have reached a sink,
+      //    otherwise goto (1)
+      pending = parseActionGroup(text);
+      log("info", `thought: ${pending.thought}; action: ${pending.action}`);
     }
   } catch (e) {
     isFinished = true;
@@ -338,7 +344,7 @@ export async function run(
       assist001State: isFinished
         ? undefined
         : {
-            loopCount,
+            modelCallCount,
             request,
             requestContext,
             pending: pending ?? null,
@@ -412,7 +418,7 @@ function makeCommandSet(commands: CommandSet): string[] {
   });
 }
 
-export function pendingCommandsForCallOrResult(
+export function getPendingCommandsOrResult(
   commandId: string,
   call: Call,
   resolvedCommmands: Record<string, CommandExecuted>
@@ -441,7 +447,7 @@ export function pendingCommandsForCallOrResult(
       resolvedArguments?.push(arg);
       continue;
     }
-    const argResult = pendingCommandsForCallOrResult(
+    const argResult = getPendingCommandsOrResult(
       commandId + "." + i,
       arg,
       resolvedCommmands

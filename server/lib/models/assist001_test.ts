@@ -6,43 +6,32 @@ import { Session } from "@lib/session.ts";
 import { CommandExecuted, parseFunctionCall } from "@lib/command.ts";
 
 import {
-  MAX_LOOPS,
+  MAX_MODEL_CALLS,
   Input,
   run,
-  pendingCommandsForCallOrResult,
+  getPendingCommandsOrResult,
 } from "./assist001.ts";
 
 const pendingClientCommandState = {
-  loopCount: 1,
+  modelCallCount: 1,
   pending: {
-    actionGroup: {
-      action: 'now(); ask("what do you want?")',
-      functionCalls: [
-        { type: "call", args: [], name: "now" },
-        {
-          type: "call",
-          args: [{ type: "string", value: "what do you want?" }],
-          name: "ask",
-        },
-      ],
-      result: undefined,
-      thought: "I need to do something",
-    },
-    commands: [
-      { args: [], id: "0", name: "now", type: "parsed" },
+    action: 'now(); ask("what do you want?")',
+    functionCalls: [
+      { type: "call", args: [], name: "now" },
       {
+        type: "call",
         args: [{ type: "string", value: "what do you want?" }],
-        id: "1",
         name: "ask",
-        type: "parsed",
       },
     ],
+    result: undefined,
+    thought: "I need to do something",
   },
   request: "some request",
   requestContext: {},
   resolvedActionGroups: [],
   resolvedCommands: {
-    "0": {
+    "0.0": {
       args: [],
       id: "0",
       name: "now",
@@ -53,39 +42,23 @@ const pendingClientCommandState = {
 } satisfies Session["assist001State"];
 
 const pendingRequestContextState = {
-  loopCount: 1,
+  modelCallCount: 1,
   pending: {
-    actionGroup: {
-      action: 'editProse("convert to poem"); now()',
-      functionCalls: [
-        {
-          type: "call",
-          args: [{ type: "string", value: "convert to poem" }],
-          name: "editProse",
-        },
-        {
-          type: "call",
-          args: [],
-          name: "now",
-        },
-      ],
-      result: undefined,
-      thought: "I need to do something",
-    },
-    commands: [
+    action: 'editProse("convert to poem"); now()',
+    functionCalls: [
       {
+        type: "call",
         args: [{ type: "string", value: "convert to poem" }],
-        id: "1",
         name: "editProse",
-        type: "parsed",
       },
       {
+        type: "call",
         args: [],
-        id: "2",
         name: "now",
-        type: "parsed",
       },
     ],
+    result: undefined,
+    thought: "I need to do something",
   },
   request: "some request",
   requestContext: {},
@@ -104,7 +77,7 @@ const pendingRequestContextState = {
     },
   ],
   resolvedCommands: {
-    0: {
+    "0.0": {
       type: "executed",
       args: [],
       id: "0",
@@ -170,6 +143,15 @@ Action: now(); ask("what do you want?")`,
     initialState: pendingClientCommandState,
   },
   {
+    description: "nested calls",
+    input: { request: "some request" },
+    openAiResults: [
+      `I need to get the current time in New York and create a calendar event 5 days from now
+Action: time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
     description: "request needs more context",
     input: { request: "some request" },
     openAiResults: [
@@ -205,7 +187,10 @@ Action: now(); editProse("convert to poem"); now()`,
     input: { requestContext: { text: { type: "string", value: `some text` } } },
     openAiResults: [`the result of editProse()`],
     snapshotError: true,
-    initialState: { ...pendingRequestContextState, loopCount: MAX_LOOPS },
+    initialState: {
+      ...pendingRequestContextState,
+      modelCallCount: MAX_MODEL_CALLS,
+    },
   },
   {
     description: "wrong arg type",
@@ -225,9 +210,6 @@ Action: now(); math()`,
     ],
     snapshotError: true,
   },
-
-  //I need to get the current time in New York and create a calendar event 5 days from now
-  // Action: time("America/New_York"); createCalendarEvent(relativeTime("5 days from now"), "Dinner with Wife")
 
   // model uses wrong arg types
   // model uses wrong arg count
@@ -368,7 +350,7 @@ for (const test of [
     try {
       await assertSnapshot(
         t,
-        pendingCommandsForCallOrResult(
+        getPendingCommandsOrResult(
           test.commandId,
           test.call,
           test.resolvedCommands

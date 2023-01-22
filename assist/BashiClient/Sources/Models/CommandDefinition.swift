@@ -21,12 +21,9 @@ public class CommandDefinition: APIModel {
 
         public var type: ValueType
 
-        public var parse: [ArgumentParser]?
-
-        public init(name: String, type: ValueType, parse: [ArgumentParser]? = nil) {
+        public init(name: String, type: ValueType) {
             self.name = name
             self.type = type
-            self.parse = parse
         }
 
         public required init(from decoder: Decoder) throws {
@@ -34,7 +31,6 @@ public class CommandDefinition: APIModel {
 
             name = try container.decode("name")
             type = try container.decode("type")
-            parse = try container.decodeArrayIfPresent("parse")
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -42,14 +38,12 @@ public class CommandDefinition: APIModel {
 
             try container.encode(name, forKey: "name")
             try container.encode(type, forKey: "type")
-            try container.encodeIfPresent(parse, forKey: "parse")
         }
 
         public func isEqual(to object: Any?) -> Bool {
           guard let object = object as? Args else { return false }
           guard self.name == object.name else { return false }
           guard self.type == object.type else { return false }
-          guard self.parse == object.parse else { return false }
           return true
         }
 

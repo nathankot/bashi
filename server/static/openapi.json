@@ -473,7 +473,7 @@
           }
         }
       },
-      "NullValue": {
+      "VoidValue": {
         "type": "object",
         "required": [
           "type"
@@ -481,7 +481,7 @@
         "properties": {
           "type": {
             "enum": [
-              "null"
+              "void"
             ],
             "type": "string"
           }
@@ -499,7 +499,7 @@
             "$ref": "#/components/schemas/BooleanValue"
           },
           {
-            "$ref": "#/components/schemas/NullValue"
+            "$ref": "#/components/schemas/VoidValue"
           }
         ],
         "discriminator": {
@@ -508,7 +508,7 @@
             "string": "#/components/schemas/StringValue",
             "number": "#/components/schemas/NumberValue",
             "boolean": "#/components/schemas/BooleanValue",
-            "null": "#/components/schemas/NullValue"
+            "void": "#/components/schemas/VoidValue"
           }
         }
       },
@@ -518,7 +518,7 @@
           "string",
           "number",
           "boolean",
-          "null"
+          "void"
         ]
       },
       "ArgumentParser": {
@@ -629,7 +629,7 @@
         ],
         "properties": {
           "id": {
-            "type": "number"
+            "type": "string"
           },
           "type": {
             "enum": [
@@ -661,7 +661,7 @@
         ],
         "properties": {
           "id": {
-            "type": "number"
+            "type": "string"
           },
           "type": {
             "enum": [
@@ -768,7 +768,8 @@
         "type": "object",
         "required": [
           "type",
-          "pendingCommands"
+          "pendingCommands",
+          "resolvedCommands"
         ],
         "properties": {
           "type": {
@@ -782,6 +783,12 @@
             "items": {
               "$ref": "#/components/schemas/Command"
             }
+          },
+          "resolvedCommands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CommandExecuted"
+            }
           }
         }
       },
@@ -789,7 +796,8 @@
         "type": "object",
         "required": [
           "type",
-          "missingRequestContext"
+          "missingRequestContext",
+          "resolvedCommands"
         ],
         "properties": {
           "type": {
@@ -800,6 +808,12 @@
           },
           "missingRequestContext": {
             "$ref": "#/components/schemas/RequestContextRequirement"
+          },
+          "resolvedCommands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CommandExecuted"
+            }
           }
         }
       },

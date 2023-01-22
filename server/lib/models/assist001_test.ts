@@ -210,6 +210,50 @@ Action: now(); math()`,
     ],
     snapshotError: true,
   },
+  {
+    description: "top level commands are resolved sequentially",
+    input: { request: "some request" },
+    openAiResults: [
+      `some thought
+Action: ask("how are you?"); time("America/New_York")`,
+    ],
+  },
+  {
+    description: "top level commands are resolved sequentially 2",
+    input: {
+      resolvedCommands: {
+        "0.0": { type: "string", value: "good" },
+      },
+    },
+    openAiResults: [
+      `some thought
+Action: finish()`,
+    ],
+    initialState: {
+      modelCallCount: 1,
+      pending: {
+        action: 'ask("how are you?"); time("America/New_York")',
+        functionCalls: [
+          {
+            args: [{ type: "string", value: "how are you?" }],
+            name: "ask",
+            type: "call",
+          },
+          {
+            args: [{ type: "string", value: "America/New_York" }],
+            name: "time",
+            type: "call",
+          },
+        ],
+        result: undefined,
+        thought: "some thought",
+      },
+      request: "some request",
+      requestContext: {},
+      resolvedActionGroups: [],
+      resolvedCommands: {},
+    },
+  },
 
   // model uses wrong arg types
   // model uses wrong arg count

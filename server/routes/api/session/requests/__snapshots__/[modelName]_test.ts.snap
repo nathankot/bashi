@@ -13,7 +13,7 @@ snapshot[`POST /api/session/requests/assist-001: success 1`] = `
             value: "mock response",
           },
         ],
-        id: "0",
+        id: "0.0",
         name: "answer",
         type: "parsed",
       },

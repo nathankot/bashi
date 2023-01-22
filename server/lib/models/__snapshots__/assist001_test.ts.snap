@@ -909,6 +909,123 @@ snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
 snapshot[`wrong arg count 1`] = `"arguments are invalid"`;
 
+snapshot[`top level commands are resolved sequentially 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "how are you?",
+            },
+          ],
+          id: "0.0",
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'ask("how are you?"); time("America/New_York")',
+      functionCalls: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "how are you?",
+            },
+          ],
+          name: "ask",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "time",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "some thought",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: {},
+  },
+}
+`;
+
+snapshot[`top level commands are resolved sequentially 2 1`] = `
+{
+  n: 1,
+  output: {
+    model: "assist-001",
+    request: "some request",
+    result: {
+      resolvedCommands: {
+        "0.0": {
+          args: [
+            {
+              type: "string",
+              value: "how are you?",
+            },
+          ],
+          id: "0.0",
+          name: "ask",
+          returnValue: {
+            type: "string",
+            value: "good",
+          },
+          type: "executed",
+        },
+        "0.1": {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          id: "0.1",
+          name: "time",
+          returnValue: {
+            type: "string",
+            value: "12/19/2022, 3:41:10 AM",
+          },
+          type: "executed",
+        },
+        "1.0": {
+          args: [
+          ],
+          id: "1.0",
+          name: "finish",
+          returnValue: {
+            type: "null",
+          },
+          type: "executed",
+        },
+      },
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
 snapshot[`example A step 1 1`] = `
 {
   pendingCommands: [

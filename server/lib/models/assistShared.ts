@@ -25,6 +25,7 @@ export type ResultFinished = t.TypeOf<typeof ResultFinished>;
 export const ResultNeedsRequestContext = t.type({
   type: t.literal("needs_request_context"),
   missingRequestContext: RequestContextRequirement,
+  resolvedCommands: t.record(t.string, CommandExecuted),
 });
 export type ResultNeedsRequestContext = t.TypeOf<
   typeof ResultNeedsRequestContext
@@ -33,5 +34,6 @@ export type ResultNeedsRequestContext = t.TypeOf<
 export const ResultPendingCommands = t.type({
   type: t.literal("pending_commands"),
   pendingCommands: t.array(Command),
+  resolvedCommands: t.record(t.string, CommandExecuted),
 });
 export type ResultPendingCommands = t.TypeOf<typeof ResultPendingCommands>;

@@ -232,6 +232,7 @@ export async function run(
                 result: {
                   type: "needs_request_context",
                   missingRequestContext,
+                  resolvedCommands,
                 },
               };
             }
@@ -256,6 +257,7 @@ export async function run(
             result: {
               type: "pending_commands",
               pendingCommands: commandsToSendToClient,
+              resolvedCommands,
             },
           };
         }

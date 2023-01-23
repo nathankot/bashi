@@ -14,7 +14,6 @@
 		D80ADE6B296BC90F003BAE01 /* BashiClient in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D80ADE68296BC90F003BAE01 /* BashiClient */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D80ADE6D296BC912003BAE01 /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D80ADE6C296BC912003BAE01 /* BashiPlugin */; };
 		D80ADE6E296BC912003BAE01 /* BashiPlugin in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D80ADE6C296BC912003BAE01 /* BashiPlugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		D8132939296AFCD800DE7A4C /* builtinCommands.plugin in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = D88CC8402967B1B1009912AA /* builtinCommands.plugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D8167A34296E58B600ED5538 /* PluginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8167A33296E58B600ED5538 /* PluginAPI.swift */; };
 		D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */; };
 		D85597E4296AFD26003C8C13 /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D85597E3296AFD26003C8C13 /* BashiClient */; };
@@ -67,7 +66,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				D8564A172972E3AB008FB12B /* calendarCommands.plugin in Embed PlugIns */,
-				D8132939296AFCD800DE7A4C /* builtinCommands.plugin in Embed PlugIns */,
 			);
 			name = "Embed PlugIns";
 			runOnlyForDeploymentPostprocessing = 0;

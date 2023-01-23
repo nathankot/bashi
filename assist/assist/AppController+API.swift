@@ -77,7 +77,6 @@ extension AppController {
                     assist001: .init(
                         model: .assist001,
                         commands: commandDefinitions
-                            .filter { $0.value.pluginId != BUILTIN_COMMANDS_PLUGIN_ID }
                             .mapValues { $0.def.toAPIRepresentation() }
                     )),
                 configuration: .init(

@@ -11,75 +11,90 @@ import BashiPlugin
 import class BashiClient.CommandDefinition
 import enum BashiClient.ValueType
 
-let BUILTIN_COMMANDS_PLUGIN_ID = "builtinCommands"
+let BUILTIN_COMMANDS_PLUGIN_ID = "__builtin__"
 
 public actor PluginsController {
-    
-    enum PluginError : Error {
+
+    enum PluginError: Error {
         case couldNotLoadPlugin(reason: String, error: Error? = nil)
         case commandLoadedTwice(commandName: String)
     }
-    
+
     private let state: AppState
-    
+
     private var plugins: Dictionary<String, any BashiPluginProtocol> = [:]
     public private(set) var commandDefinitions: Dictionary<String, (pluginId: String, def: any Command)> = [:]
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public func lookup(command: String) -> Command? {
         return commandDefinitions[command]?.def
     }
-    
-    internal func loadBuiltinPlugins() async throws {
-        guard let url = Bundle.main.builtInPlugInsURL else {
-            throw PluginError.couldNotLoadPlugin(reason: "no plugins url found")
-        }
-        for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
-            if f.hasSuffix(".plugin") {
-                do {
-                    try await loadPlugin(fromBundle: url.appendingPathComponent(f))
-                } catch {
-                    if f.hasSuffix(BUILTIN_COMMANDS_PLUGIN_ID + ".plugin") {
-                        throw error
-                    }
-                    logger.error("could not load plugin at: \(url.path)")
-                }
-            }
-        }
-    }
-    
-    internal func loadPlugin(fromBundle bundlePath: URL) async throws {
-        guard let bundle = Bundle.init(url: bundlePath) else {
-            throw PluginError.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
-        }
-        guard let plugin = bundle.principalClass?.makeBashiPlugin() else {
-           throw PluginError.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
-        }
-        guard let pluginId = bundle.principalClass?.id else {
-           throw PluginError.couldNotLoadPlugin(reason: "no plugin id found: \(bundlePath.absoluteString)")
-        }
-        try await loadPlugin(plugin, withId: pluginId)
-    }
-    
-    public func loadPlugin(_ plugin: BashiPluginProtocol, withId pluginId: String) async throws {
+
+    internal func loadPlugin(_ plugin: BashiPluginProtocol, withId pluginId: String) async throws {
         do {
             try await plugin.prepare()
         } catch {
             throw PluginError.couldNotLoadPlugin(reason: "plugin preparation failed", error: error)
         }
         if plugins[pluginId] != nil {
-           throw PluginError.couldNotLoadPlugin(reason: "plugin loaded more than once: \(pluginId)")
+            throw PluginError.couldNotLoadPlugin(reason: "plugin loaded more than once: \(pluginId)")
         }
         plugins[pluginId] = plugin
-        
+
         for c in plugin.provideCommands() {
-            if commandDefinitions[c.name] != nil {
-                throw PluginError.commandLoadedTwice(commandName: c.name)
+            try loadCommand(pluginId: pluginId, command: c)
+        }
+    }
+
+    internal func loadCommand(pluginId: String, command: Command) throws {
+        if commandDefinitions[command.name] != nil {
+            throw PluginError.commandLoadedTwice(commandName: command.name)
+        }
+        commandDefinitions[command.name] = (pluginId: pluginId, def: command)
+    }
+
+    internal func loadPlugin(fromBundle bundlePath: URL) async throws {
+        guard let bundle = Bundle.init(url: bundlePath) else {
+            throw PluginError.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
+        }
+        guard let plugin = bundle.principalClass?.makeBashiPlugin() else {
+            throw PluginError.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
+        }
+        guard let pluginId = bundle.principalClass?.id else {
+            throw PluginError.couldNotLoadPlugin(reason: "no plugin id found: \(bundlePath.absoluteString)")
+        }
+        try await loadPlugin(plugin, withId: pluginId)
+    }
+
+    internal func loadCommandsInAppBundle() async throws {
+        guard let url = Bundle.main.builtInPlugInsURL else {
+            throw PluginError.couldNotLoadPlugin(reason: "no plugins url found")
+        }
+        for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
+            if f.hasSuffix(".plugin") {
+                try await loadPlugin(fromBundle: url.appendingPathComponent(f))
             }
-            commandDefinitions[c.name] = (pluginId: pluginId, def: c)
+        }
+    }
+
+    internal func loadBuiltinCommands() async throws {
+        for builtinCommand in [
+            AnonymousCommand(
+                name: "answer",
+                description: "answer the original question directly",
+                args: [.init(type: .string, name: "answer")],
+                prepareFn: { api, ctx, args, _ in
+                    AnonymousPreparedCommand(
+                        shouldSkipConfirmation: true,
+                        confirmationMessage: "") {
+                        return .init(.void)
+                    }
+                }),
+        ] {
+            try loadCommand(pluginId: BUILTIN_COMMANDS_PLUGIN_ID, command: builtinCommand)
         }
     }
 
@@ -101,7 +116,7 @@ extension Command {
         return .init(
             description: self.description,
             args: self.args.map {
-                .init(
+                    .init(
                     name: $0.name,
                     type: $0.type.toAPIRepresentation()
                 )
@@ -109,5 +124,20 @@ extension Command {
             returnType: self.returnType.toAPIRepresentation(),
             triggerTokens: self.triggerTokens
         )
+    }
+}
+
+internal class BuiltinCommands: BundledPlugin {
+
+    static public var id: String = "builtinCommands"
+    static public func makeBashiPlugin() -> BashiPluginProtocol {
+        return BuiltinCommands()
+    }
+
+    public func prepare() async throws { }
+
+    public func provideCommands() -> [Command] {
+        return [
+        ]
     }
 }

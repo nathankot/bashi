@@ -11,9 +11,6 @@
       location = "group:calendarCommands/calendarCommands.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:builtinCommands/builtinCommands.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "container:assist.xcodeproj">
    </FileRef>
 </Workspace>

@@ -44,7 +44,6 @@ actor AudioRecordingController {
         speechRecognizerAuthStatus = authStatus
     }
     
-    
     private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
         let audioEngine = AVAudioEngine()
         

@@ -15,7 +15,7 @@ import Foundation
     static func makeBashiPlugin(api: PluginAPI) -> any Plugin
 }
 
-@objc public enum CommandArgType: Int, Equatable {
+@objc public enum BashiValueType: Int, Equatable {
     case string
     case number
     case boolean
@@ -48,10 +48,10 @@ import Foundation
 }
 
 @objc public class CommandArgDef: NSObject {
-    public let type: CommandArgType
+    public let type: BashiValueType
     public let name: String
     public let parsers: [CommandArgParser]
-    public init(type: CommandArgType, name: String, parsers: [CommandArgParser] = []) {
+    public init(type: BashiValueType, name: String, parsers: [CommandArgParser] = []) {
         self.name = name
         self.type = type
         self.parsers = parsers
@@ -64,7 +64,7 @@ import Foundation
     public private(set) var boolean: NSNumber? = nil
     public private(set) var void: Bool? = nil
     
-    public private(set) var type: CommandArgType
+    public private(set) var type: BashiValueType
     
     override public var description: String {
         if let v = string {
@@ -119,7 +119,7 @@ import Foundation
     var description: String { get }
     var args: [CommandArgDef] { get }
     var triggerTokens: [String]? { get }
-    var returnType: CommandArgType { get }
+    var returnType: BashiValueType { get }
     func prepare(
         api: PluginAPI,
         context: CommandContext,
@@ -180,7 +180,7 @@ public class AnonymousCommand: Command {
     public let name: String
     public let description: String
     public let args: [CommandArgDef]
-    public var returnType: CommandArgType
+    public var returnType: BashiValueType
     public let triggerTokens: [String]?
     private let prepareFn: (
         PluginAPI,
@@ -193,7 +193,7 @@ public class AnonymousCommand: Command {
         name: String,
         description: String,
         args: [CommandArgDef] = [],
-        returnType: CommandArgType = .void,
+        returnType: BashiValueType = .void,
         triggerTokens: [String]? = nil,
         prepareFn: @escaping (
             PluginAPI,

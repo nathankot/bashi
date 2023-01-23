@@ -10,7 +10,6 @@ import Foundation
 import BashiPlugin
 import class BashiClient.CommandDefinition
 import enum BashiClient.ValueType
-import enum BashiClient.ArgumentParser
 
 let BUILTIN_COMMANDS_PLUGIN_ID = "builtinCommands"
 
@@ -87,21 +86,13 @@ public actor PluginsController {
 
 }
 
-extension CommandArgType {
+extension BashiValueType {
     func toAPIRepresentation() -> ValueType {
         switch self {
         case .string: return .string
         case .boolean: return .boolean
         case .number: return .number
         case .void: return .void
-        }
-    }
-}
-
-extension CommandArgParser {
-    func toAPIRepresentation() -> ArgumentParser {
-        switch self {
-        case .naturalLanguageDateTime: return .naturalLanguageDateTime
         }
     }
 }
@@ -113,8 +104,7 @@ extension Command {
             args: self.args.map {
                 .init(
                     name: $0.name,
-                    type: $0.type.toAPIRepresentation(),
-                    parse: $0.parsers.map { $0.toAPIRepresentation() }
+                    type: $0.type.toAPIRepresentation()
                 )
             },
             returnType: self.returnType.toAPIRepresentation(),

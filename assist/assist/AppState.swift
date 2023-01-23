@@ -13,36 +13,55 @@ import Speech
 import UserNotifications
 import Combine
 
-public indirect enum AppError : Error {
+public indirect enum AppError: Error {
     case AppLaunchError(Error)
     case Internal(String)
     case NoRequestFound
     case UnexpectedTransition(AppState.State, AppState.State)
+    case CommandNotFound(name: String)
+    case CommandMismatchArgs(name: String, error: String)
+    case CommandMismatchResult(name: String, expected: String, actual: String)
     case CouldNotAuthenticate(String? = nil)
     case CommandExecutionErrors([Error])
     case BadConfiguration(String? = nil)
     case InsufficientAppPermissions(String)
 }
 
+public struct Message: Identifiable {
+    public let id: Int
+    public let message: String
+    public let type: MessageType
+}
+
+public enum MessageType: Equatable {
+    case request
+    case answer
+    case response
+}
+
 @MainActor
-public final class AppState : ObservableObject {
+public final class AppState: ObservableObject {
 
     static let shared = AppState()
 
     #if DEBUG
-    @Published var accountNumber: String = "123"
+        @Published var accountNumber: String = "123"
     #else
-    @AppStorage("accountNumber") var accountNumber: String = ""
+        @AppStorage("accountNumber") var accountNumber: String = ""
     #endif
     @Published var session: BashiSession? = nil
 
     public enum State {
         case Idle
         case Recording(bestTranscription: String?)
-        case Processing(request: String)
-        case Confirm(confirmationMessage: String)
-        case Success(result: Value)
+        case Processing(messages: [Message])
+        case NeedsInput(messages: [Message], type: InputType)
+        case Success(messages: [Message])
         case Error(AppError)
+
+        public enum InputType {
+            case Confirm(confirmationMessage: String)
+        }
     }
 
     @Published public private(set) var state: State = .Idle
@@ -55,17 +74,15 @@ public final class AppState : ObservableObject {
     }
 
     private func canTransition(newState: State) -> Bool {
-        switch (state, newState)  {
+        switch (state, newState) {
         case (.Idle, .Recording),
              (.Idle, .Processing),
              (.Recording, .Recording),
              (.Recording, .Processing),
              (.Processing, .Processing),
-             (.Processing, .Confirm),
+             (.Processing, .NeedsInput),
              (.Processing, .Success),
-             (.Processing, .Idle),
-             (.Confirm, .Idle),
-             (.Confirm, .Success),
+             (.NeedsInput, .Processing),
              (.Success, .Idle),
              (.Success, .Recording),
              (.Success, .Processing),
@@ -108,7 +125,7 @@ public final class AppState : ObservableObject {
 
     public func handleError(_ e: Error) async {
         #if DEBUG
-        logger.debug("handling error: \(String(reflecting: e))")
+            logger.debug("handling error: \(String(reflecting: e))")
         #endif
         switch e {
         case AppError.UnexpectedTransition(let before, let after):

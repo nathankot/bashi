@@ -13,7 +13,6 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
     var popover: NSPopover!
     var statusBarItem: NSStatusItem!
-    var pluginAPI: PluginAPI!
     var appController: AppController!
     var pluginsController: PluginsController!
     var apiController: APIController!
@@ -23,13 +22,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        pluginAPI = PluginAPI(state: AppState.shared)
         pluginsController = PluginsController(state: AppState.shared)
-        apiController = APIController(pluginsController: pluginsController)
+        apiController = APIController(state: AppState.shared, pluginsController: pluginsController)
         commandsController = CommandsController(
-            pluginAPI: pluginAPI,
+            state: AppState.shared,
             pluginsController: pluginsController,
-            apiController: apiController)
+            runModel: apiController.assist(input:))
         appController = AppController(
             state: AppState.shared,
             popover: popover,

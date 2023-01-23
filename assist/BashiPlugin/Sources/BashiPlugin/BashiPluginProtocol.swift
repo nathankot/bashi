@@ -104,8 +104,7 @@ import Foundation
     func run(
         api: BashiPluginAPI,
         context: CommandContext,
-        args: [BashiValue],
-        argsParsed: [Dictionary<String, BashiValue>]?
+        args: [BashiValue]
     ) async throws -> BashiValue
 }
 
@@ -125,8 +124,7 @@ public class AnonymousCommand: Command {
     private let runFn: (
         BashiPluginAPI,
         CommandContext,
-        [BashiValue],
-        [Dictionary<String, BashiValue>]?
+        [BashiValue]
     ) async throws -> BashiValue
 
     public init(
@@ -138,8 +136,7 @@ public class AnonymousCommand: Command {
         runFn: @escaping (
             BashiPluginAPI,
             CommandContext,
-            [BashiValue],
-            [Dictionary<String, BashiValue>]?
+            [BashiValue]
         ) async throws -> BashiValue
     ) {
         self.name = name
@@ -153,10 +150,9 @@ public class AnonymousCommand: Command {
     public func run(
         api: BashiPluginAPI,
         context: CommandContext,
-        args: [BashiValue],
-        argsParsed: [Dictionary<String, BashiValue>]?
+        args: [BashiValue]
     ) async throws -> BashiValue {
-        return try await runFn(api, context, args, argsParsed)
+        return try await runFn(api, context, args)
     }
 }
 

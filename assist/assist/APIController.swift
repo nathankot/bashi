@@ -13,19 +13,28 @@ import Foundation
 #endif
 
 public actor APIController {
-    
-    let state: AppState = AppState.shared
+
+    let state: AppState
     let pluginsController: PluginsController
-    
-    public init(pluginsController: PluginsController) {
+
+    public init(state: AppState, pluginsController: PluginsController) {
+        self.state = state
         self.pluginsController = pluginsController
     }
 
-    func assist(request: String, requestContext: RequestContext) async throws -> ModelsAssist001Output {
-        let session = try await refreshSession()
+    public func assist(input: ModelsAssist001Input) async throws -> ModelsAssist001Output {
+        var session = await state.session
+        if input.request != nil {
+            // Only attempt to refresh the session if we are looking at a new request
+            // (evidenced by the existence of the request field)
+            session = try await refreshSession()
+        }
+        guard let session = session else {
+            throw AppError.Internal("did not expect session to be nil")
+        }
         let apiClient = await makeApiClient()
         let request = BashiClient.PostSessionAssist001.Request(
-            body: .init(request: request, requestContext: requestContext),
+            body: input,
             options: .init(sessionID: session.sessionId))
 
         let response = await withCheckedContinuation { continuation in

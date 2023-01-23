@@ -41,13 +41,13 @@ public class CalendarCommands: BundledPlugin {
                         .init(type: .number, name: "duration in hours or 1 if unknown")
                 ],
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
-                runFn: { (api, ctx, args, argsParsed) async throws -> BashiValue in
+                runFn: { (api, ctx, args) async throws -> BashiValue in
                     guard let name = args[0].string else {
                         logger.error("could not find calendar name")
                         throw ErrorType.internalError
                     }
-                    guard let date = argsParsed?[1]["naturalLanguageDateTime"]?.maybeAsDate else {
-                        logger.info("date time received was: \(argsParsed?[1]["naturalLanguageDateTime"]?.string ?? "")")
+                    guard let date = args[1].maybeAsDate else {
+                        logger.info("date time received was: \(args[1].string ?? "")")
                         logger.error("could not find calendar date parsed from natural language date time")
                         throw ErrorType.internalError
                     }

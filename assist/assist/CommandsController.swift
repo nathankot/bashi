@@ -11,159 +11,96 @@ import BashiPlugin
 
 public actor CommandsController {
 
-    public enum HandleResult {
-        case Success(renderResult: String?)
-        case HasErrors(
-            renderResult: String?,
-            successfulCommandsCount: Int,
-            errors: [Error]
-        )
-    }
+    public typealias RunModel = (ModelsAssist001Input) async throws -> ModelsAssist001Output
 
-    let pluginAPI: BashiPluginAPI
+    let state: AppState
     let pluginsController: PluginsController
-    let apiController: APIController
 
-    var currentCommandContext: CommandContext? = nil
+    let runModel: RunModel
 
     public init(
-        pluginAPI: BashiPluginAPI,
+        state: AppState,
         pluginsController: PluginsController,
-        apiController: APIController) {
-        self.pluginAPI = pluginAPI
+        runModel: @escaping RunModel) {
+        self.state = state
         self.pluginsController = pluginsController
-        self.apiController = apiController
+        self.runModel = runModel
     }
 
-    public func handle(
-        assistResponse: ModelsAssist001Output,
-        commandContext: CommandContext,
-        onUpdatedContext: Optional<(CommandContext) async throws -> Void> = nil,
-        confirmationHandler: (String) async -> Bool
-    ) async throws -> HandleResult {
+    public func process(initialRequest: String) async throws {
+        var messages: [Message] = [.init(id: 0, message: initialRequest, type: .request)]
+        var request: String? = initialRequest
+        let requestContext = RequestContext.init()
+        var resolvedCommands: [String: Value]? = nil
 
-        fatalError("not implemented")
-//        var okResult: AssistResultOK!
-//        switch assistResponse.result {
-//        case .assistResultNeedsRequestContext(let r):
-//            throw AppError.Internal("fulfillment of missing request context not yet implemented: \(r.missingRequestContext)")
-//        case .assistResultNeedsClarification(let r):
-//            throw AppError.Internal("fulfillment of missing clarifications not yet implemented: \(r.clarificationQuestions)")
-//        case .assistResultOK(let r):
-//            okResult = r
-//        }
-//
-//        var updateCommandContext = true
-//
-//        var successfulCommandsCount = 0
-//
-//        var renderToString: [String] = []
-//        var lastFlushToDisplayIndex = -1
-//
-//        for command in okResult.commands {
-//            if updateCommandContext {
-//                updateCommandContext = false
-//                try await onUpdatedContext?(commandContext)
-//            }
-//
-//            switch command {
-//            case .commandInvalid(let c):
-//                await commandContext.append(error: CommandError.commandInvalid(c.invalidReason))
-//            case .commandParseError(let c):
-//                await commandContext.append(error: CommandError.commandParseError(c.error))
-//            case .commandExecuted(let c):
-//                updateCommandContext = true
-//                for returnValue in c.returnValues {
-//                    switch returnValue {
-//                    case .stringValue(let v):
-//                        await commandContext.append(
-//                            returnValue: CommandValue(.string(v.value)))
-//                    case .numberValue(let v):
-//                        await commandContext.append(
-//                            returnValue: CommandValue(.number(v.value)))
-//                    case .booleanValue(let v):
-//                        await commandContext.append(
-//                            returnValue: CommandValue(.boolean(v.value)))
-//                    }
-//                }
-//                successfulCommandsCount += 1
-//            case .commandParsed(let c):
-//                updateCommandContext = true
-//                guard let commandDef = await pluginsController.lookup(command: c.name) else {
-//                    logger.debug("command not found: \(c.name)")
-//                    await commandContext.append(error: CommandError.commandNotFound(c.name))
-//                    continue
-//                }
-//                let args = c.args.map { CommandValue.init(from: $0) }
-//                if commandDef.args.count != args.count {
-//                    throw CommandError.mismatchArgs("command expects \(commandDef.args.count) args but got \(args.count)")
-//                }
-//                let invalidArgs = zip(commandDef.args, args).filter({ $0.type != $1.type })
-//                if invalidArgs.count > 0 {
-//                    let name = invalidArgs.first?.0.name ?? "<unknown>"
-//                    let type = invalidArgs.first?.0.type.asString() ?? "<unknown>"
-//                    throw CommandError.mismatchArgs("the argument '\(name)' expects a \(type)")
-//                }
-//
-//                let argsParsed = c.argsParsed?.map { $0.mapValues { CommandValue.init(from: $0) } }
-//                if let argsParsed = argsParsed, commandDef.args.count != argsParsed.count {
-//                    throw CommandError.mismatchArgs(
-//                        "command expects \(commandDef.args.count) args but got \(args.count) parsed args")
-//                }
-//
-//                guard let prepared = commandDef.prepare(
-//                    api: pluginAPI,
-//                    context: commandContext,
-//                    args: args,
-//                    argsParsed: argsParsed
-//                ) else {
-//                    throw CommandError.commandCouldNotBePrepared(name: commandDef.name)
-//                }
-//                if !prepared.shouldSkipConfirmation {
-//                    let confirmed = await confirmationHandler(prepared.confirmationMessage)
-//                    if !confirmed {
-//                        throw CommandError.commandNotConfirmed(latestCommandContext: commandContext)
-//                    }
-//                }
-//
-//                logger.debug("running command: \(c.name)")
-//                try await prepared.run()
-//                successfulCommandsCount += 1
-//            }
-//
-//            let returnValues = await commandContext._returnValues
-//            for (i, v) in returnValues[(lastFlushToDisplayIndex + 1)...].enumerated() {
-//                if case .action(.display) = v, i > lastFlushToDisplayIndex {
-//                    let stringsSinceLastCommand = returnValues[(lastFlushToDisplayIndex + 1)..<i].compactMap {
-//                        if case let .commandValue(v) = $0 {
-//                            return v.string
-//                        }
-//                        return nil
-//                    }
-//                    if stringsSinceLastCommand.count > 0 {
-//                        renderToString.append(contentsOf: stringsSinceLastCommand)
-//                    }
-//                    lastFlushToDisplayIndex = i
-//                }
-//            }
-//
-//            await commandContext.update(
-//                partialResult: renderToString.count == 0
-//                    ? nil : renderToString.joined(separator: "\n"))
-//        }
-//
-//        let renderResult = renderToString.count == 0
-//            ? nil : renderToString.joined(separator: "\n")
-//
-//        let errors = await commandContext.getErrors()
-//        if errors.count > 0 {
-//            return .HasErrors(
-//                renderResult: renderResult,
-//                successfulCommandsCount: successfulCommandsCount,
-//                errors: errors)
-//        }
-//
-//        return .Success(renderResult: renderResult)
+        interpreterLoop: while true {
+            let input = ModelsAssist001Input(
+                request: request,
+                requestContext: requestContext,
+                resolvedCommands: resolvedCommands)
+
+            let response = try await state.transition(newState: .Processing(messages: messages)) { transition in
+                await transition()
+                return try await runModel(input)
+            }
+
+            // After the first model run, request should always be nil to indicate that
+            // subsequent model runs are for the same request.
+            request = nil
+
+            switch response.result {
+            case .resultNeedsRequestContext(_):
+                fatalError("requesting request context is unimplemented so far")
+            case .resultPendingCommands(let resultPending):
+                let commandContext = CommandContext.from(
+                    request: initialRequest,
+                    requestContext: requestContext
+                )
+
+                for c in resultPending.pendingCommands {
+                    guard case let .commandParsed(pendingCommand) = c else {
+                        throw AppError.Internal("expected all pendingCommands to be unresolved")
+                    }
+                    let commandName = pendingCommand.name
+                    guard let commandDef = await pluginsController.lookup(command: commandName) else {
+                        throw AppError.CommandNotFound(name: commandName)
+                    }
+                    let args = pendingCommand.args.map { BashiValue(from: $0) }
+                    if args.count != commandDef.args.count ||
+                        zip(args, commandDef.args)
+                        .contains(where: { (serverArg, clientArg) in
+                            serverArg.type != clientArg.type
+                        }) {
+                        throw AppError.CommandMismatchArgs(
+                            name: commandName,
+                            error: """
+                            client expects \(commandDef.args.count) args, server gave \(args.count)
+                            client args: \(commandDef.args.map{$0.type.asString()})
+                            server gave: \(args.map{$0.type.asString()})
+                            """)
+                    }
+
+                    logger.debug("running command: \(commandName)")
+                    let result = try await commandDef.run(api: self, context: commandContext, args: args)
+                    if result.type != commandDef.returnType {
+                        throw AppError.CommandMismatchResult(
+                            name: commandName,
+                            expected: commandDef.returnType.asString(),
+                            actual: result.type.asString())
+                    }
+
+                    resolvedCommands?.updateValue(result.toAPIValue(), forKey: pendingCommand.id)
+                }
+
+                // After running the commands, start the loop again.
+                continue interpreterLoop
+            case .resultFinished(_):
+                // TODO implement implicit flush here - display the last result if
+                // no command before this ended up displaying anything.
+                try await state.transition(newState: .Success(messages: messages))
+                return
+            }
+        }
     }
 
 }
@@ -241,5 +178,21 @@ extension BashiValue {
         case .voidValue:
             self.init(.void)
         }
+    }
+
+    func toAPIValue() -> Value {
+        switch self.type {
+        case .string: return .stringValue(.init(type: .string, value: self.string ?? ""))
+        case .number: return .numberValue(.init(type: .number, value: Double(exactly: self.number ?? 0) ?? 0))
+        case .boolean: return .booleanValue(.init(type: .boolean, value: self.boolean == 1))
+        case .void: return .voidValue(.init(type: .void))
+        }
+    }
+}
+
+
+
+extension CommandsController: BashiPluginAPI {
+    public func flush(message: String) async {
     }
 }

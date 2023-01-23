@@ -33,26 +33,26 @@ import BashiPlugin
 
         public func provideCommands() -> [BashiPlugin.Command] {
             return [
-                AnonymousCommand(name: "mock_command", description: "do some thing") { api, ctx, _, _ in
+                AnonymousCommand(name: "mock_command", description: "do some thing") { api, ctx, _ in
                     return .init(.string("some result A"))
                 },
-                AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args, _ in
+                AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args in
                     return .init(.string("some result B"))
                 },
-                AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args, _ in
+                AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args in
                     throw ErrorType.mockError
                 },
                 AnonymousCommand(
                     name: "mock_command_return_argument",
                     description: "do some thing",
                     args: [.init(type: .string, name: "any string")]
-                ) { api, ctx, args, _ in
+                ) { api, ctx, args in
                     if let str = args.first?.string {
                         return .init(.string(str))
                     }
                     return .init(.string("some result C"))
                 },
-                AnonymousCommand(name: "display", description: "display a message to the user", args: [.init(type: .string, name: "message")]) { api, ctx, args, _ in
+                AnonymousCommand(name: "display", description: "display a message to the user", args: [.init(type: .string, name: "message")]) { api, ctx, args in
                     // TODO: why is this async block not compiling?
                     await api.flush(message: args.first?.string ?? "<could not get message>")
                     return .init(.void)

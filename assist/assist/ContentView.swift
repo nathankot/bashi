@@ -49,9 +49,11 @@ struct ContentView: View {
                 case .Recording(bestTranscription: let s):
                     Text("Listening...").font(.callout)
                     Text(s ?? "")
-                case .Processing(let request):
+                case .Processing(let messages):
                     Text("Request:").font(.callout)
-                    Text(request)
+                    List(messages) {
+                        Text($0.message)
+                    }
                     Text("Processing...").font(.callout)
                 case .Success(let r):
 //                    Text(r)

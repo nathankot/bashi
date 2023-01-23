@@ -86,12 +86,9 @@ public actor PluginsController {
                 name: "answer",
                 description: "answer the original question directly",
                 args: [.init(type: .string, name: "answer")],
-                prepareFn: { api, ctx, args, _ in
-                    AnonymousPreparedCommand(
-                        shouldSkipConfirmation: true,
-                        confirmationMessage: "") {
-                        return .init(.void)
-                    }
+                runFn: { api, ctx, args, _ in
+                    await api.flush(message: args.first?.string ?? "could not get message")
+                    return .init(.void)
                 }),
         ] {
             try loadCommand(pluginId: BUILTIN_COMMANDS_PLUGIN_ID, command: builtinCommand)

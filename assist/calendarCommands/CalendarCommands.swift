@@ -16,6 +16,8 @@ public class CalendarCommands: BundledPlugin {
 
     public enum ErrorType: Error {
         case noEventStorePermissions
+        case internalError
+        case noDefaultCalendar
     }
 
     static public var id: String = "calendarCommands"
@@ -26,65 +28,62 @@ public class CalendarCommands: BundledPlugin {
     let eventStore = EKEventStore()
 
     public func prepare() async throws {
-        let granted: Bool = try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.main.sync {
-                eventStore.requestAccess(to: .event) { granted, err in
-                    if let e = err {
-                        continuation.resume(with: .failure(e))
-                    } else {
-                        continuation.resume(with: .success(granted))
-                    }
-                }
-            }
-        }
-        if !granted {
-            throw ErrorType.noEventStorePermissions
-        }
     }
-
+    
     public func provideCommands() -> [Command] {
         return [
             AnonymousCommand(
                 name: "createCalendarEvent",
                 description: "create a calendar event for a certain date and time",
                 args: [
-                    .init(type: .string, name: "name"),
-                    .init(type: .string, name: "iso8601Date"),
-                    .init(type: .number, name: "duration in hours or 1 if unknown")
+                        .init(type: .string, name: "name"),
+                        .init(type: .string, name: "iso8601Date"),
+                        .init(type: .number, name: "duration in hours or 1 if unknown")
                 ],
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
-                prepareFn: { (api, ctx, args, argsParsed) -> PreparedCommand? in
+                runFn: { (api, ctx, args, argsParsed) async throws -> BashiValue in
                     guard let name = args[0].string else {
                         logger.error("could not find calendar name")
-                        return nil
+                        throw ErrorType.internalError
                     }
                     guard let date = argsParsed?[1]["naturalLanguageDateTime"]?.maybeAsDate else {
                         logger.info("date time received was: \(argsParsed?[1]["naturalLanguageDateTime"]?.string ?? "")")
                         logger.error("could not find calendar date parsed from natural language date time")
-                        return nil
+                        throw ErrorType.internalError
                     }
                     guard let hours = args[2].number else {
                         logger.error("could not find calendar duration in hours")
-                        return nil
+                        throw ErrorType.internalError
                     }
                     guard let defaultCalendar = self.eventStore.defaultCalendarForNewEvents else {
-                        return nil
+                        throw ErrorType.noDefaultCalendar
                     }
-                    
+
                     let event = EKEvent.init(eventStore: self.eventStore)
                     event.startDate = date
                     event.title = name
-                    event.endDate = date.addingTimeInterval(60*60*hours.doubleValue)
+                    event.endDate = date.addingTimeInterval(60 * 60 * hours.doubleValue)
                     event.calendar = defaultCalendar
-                    
-                    return AnonymousPreparedCommand(
-                        shouldSkipConfirmation: false,
-                        confirmationMessage: "Create this calendar event?") {
-                            try self.eventStore.save(event, span: .thisEvent, commit: true)
-                            return .init(.void)
+
+                    let granted: Bool = try await withCheckedThrowingContinuation { continuation in
+                        DispatchQueue.main.sync {
+                            self.eventStore.requestAccess(to: .event) { granted, err in
+                                if let e = err {
+                                    continuation.resume(with: .failure(e))
+                                } else {
+                                    continuation.resume(with: .success(granted))
+                                }
+                            }
+                        }
                     }
+                    if !granted {
+                        throw ErrorType.noEventStorePermissions
+                    }
+                    
+                    try self.eventStore.save(event, span: .thisEvent, commit: true)
+                    return .init(.void)
                 })
         ]
     }
-    
+
 }

@@ -101,20 +101,12 @@ import Foundation
     var args: [CommandArgDef] { get }
     var triggerTokens: [String]? { get }
     var returnType: BashiValueType { get }
-    func prepare(
+    func run(
         api: BashiPluginAPI,
         context: CommandContext,
         args: [BashiValue],
         argsParsed: [Dictionary<String, BashiValue>]?
-    ) -> PreparedCommand?
-}
-
-@objc public protocol PreparedCommand {
-    var shouldSkipConfirmation: Bool { get }
-    var confirmationMessage: String { get }
-    // Other fields to support confirmation can be added here, such
-    // as confirmation display layout, image etc.
-    func run() async throws -> BashiValue
+    ) async throws -> BashiValue
 }
 
 @objc public protocol CommandContext {
@@ -124,38 +116,18 @@ import Foundation
     var requestContextBooleans: Dictionary<String, Bool> { get }
 }
 
-public class AnonymousPreparedCommand: PreparedCommand {
-    public let shouldSkipConfirmation: Bool
-    public let confirmationMessage: String
-    private let runFn: () async throws -> BashiValue
-
-    public init(
-        shouldSkipConfirmation: Bool,
-        confirmationMessage: String,
-        runFn: @escaping () async throws -> BashiValue
-    ) {
-        self.shouldSkipConfirmation = shouldSkipConfirmation
-        self.confirmationMessage = confirmationMessage
-        self.runFn = runFn
-    }
-
-    public func run() async throws -> BashiValue {
-        return try await runFn()
-    }
-}
-
 public class AnonymousCommand: Command {
     public let name: String
     public let description: String
     public let args: [CommandArgDef]
     public var returnType: BashiValueType
     public let triggerTokens: [String]?
-    private let prepareFn: (
+    private let runFn: (
         BashiPluginAPI,
         CommandContext,
         [BashiValue],
         [Dictionary<String, BashiValue>]?
-    ) -> PreparedCommand?
+    ) async throws -> BashiValue
 
     public init(
         name: String,
@@ -163,28 +135,28 @@ public class AnonymousCommand: Command {
         args: [CommandArgDef] = [],
         returnType: BashiValueType = .void,
         triggerTokens: [String]? = nil,
-        prepareFn: @escaping (
+        runFn: @escaping (
             BashiPluginAPI,
             CommandContext,
             [BashiValue],
             [Dictionary<String, BashiValue>]?
-        ) -> PreparedCommand?
+        ) async throws -> BashiValue
     ) {
         self.name = name
         self.description = description
         self.args = args
         self.returnType = returnType
         self.triggerTokens = triggerTokens
-        self.prepareFn = prepareFn
+        self.runFn = runFn
     }
 
-    public func prepare(
+    public func run(
         api: BashiPluginAPI,
         context: CommandContext,
         args: [BashiValue],
         argsParsed: [Dictionary<String, BashiValue>]?
-    ) -> PreparedCommand? {
-        return prepareFn(api, context, args, argsParsed)
+    ) async throws -> BashiValue {
+        return try await runFn(api, context, args, argsParsed)
     }
 }
 

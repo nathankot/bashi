@@ -30,15 +30,15 @@ const pendingClientCommandState = {
   request: "some request",
   requestContext: {},
   resolvedActionGroups: [],
-  resolvedCommands: {
-    "0.0": {
+  resolvedCommands: [
+    {
       args: [],
       id: "0",
       name: "now",
       returnValue: { type: "string", value: "2022-12-19T08:41:10.000Z" },
       type: "executed",
     },
-  },
+  ],
 } satisfies Session["assist001State"];
 
 const pendingRequestContextState = {
@@ -76,15 +76,15 @@ const pendingRequestContextState = {
       ],
     },
   ],
-  resolvedCommands: {
-    "0.0": {
+  resolvedCommands: [
+    {
       type: "executed",
       args: [],
       id: "0",
       name: "someCommand",
       returnValue: { type: "string", value: "blah" },
     },
-  },
+  ],
 } satisfies Session["assist001State"];
 
 for (const test of [
@@ -251,7 +251,7 @@ Action: finish()`,
       request: "some request",
       requestContext: {},
       resolvedActionGroups: [],
-      resolvedCommands: {},
+      resolvedCommands: [],
     },
   },
 

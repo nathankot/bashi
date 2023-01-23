@@ -41,7 +41,7 @@ export const State = t.type({
       }),
     ])
   ),
-  resolvedCommands: t.record(t.string, CommandExecuted),
+  resolvedCommands: t.array(CommandExecuted),
   pending: t.union([t.null, ActionGroup]),
 });
 export type State = t.TypeOf<typeof State>;
@@ -141,12 +141,15 @@ export async function run(
   // Key pieces of state:
   let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending;
-  let resolvedCommands = state?.resolvedCommands ?? {};
+  let resolvedCommands = state?.resolvedCommands ?? [];
   let resolvedActionGroups = state?.resolvedActionGroups ?? [];
   const requestContext: RequestContext = {
     ...input.requestContext,
     ...state?.requestContext,
   };
+
+  const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
+    resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
   // Interpreter loop that does the following:
   //
@@ -179,7 +182,7 @@ export async function run(
           const pendingCommandsOrResult = getPendingCommandsOrResult(
             `${actionGroupsSofar}.${i}`,
             topLevelCall,
-            resolvedCommands
+            resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
             topLevelCommandResults.push(pendingCommandsOrResult.result);
@@ -210,11 +213,11 @@ export async function run(
                 400
               );
             }
-            resolvedCommands[pendingCommand.id.toString()] = {
+            resolvedCommands.push({
               ...pendingCommand,
               type: "executed",
               returnValue: maybeClientResolution,
-            };
+            });
             continue;
           }
 
@@ -242,7 +245,7 @@ export async function run(
               input.requestContext ?? {},
               pendingCommand
             );
-            resolvedCommands[pendingCommand.id.toString()] = resolved;
+            resolvedCommands.push(resolved);
             continue;
           }
 

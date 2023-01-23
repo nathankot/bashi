@@ -7,8 +7,8 @@ snapshot[`all commands resolved on the server 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: {
-        "0.0": {
+      resolvedCommands: [
+        {
           args: [
           ],
           id: "0.0",
@@ -19,7 +19,7 @@ snapshot[`all commands resolved on the server 1`] = `
           },
           type: "executed",
         },
-        "0.1": {
+        {
           args: [
             {
               type: "string",
@@ -34,7 +34,7 @@ snapshot[`all commands resolved on the server 1`] = `
           },
           type: "executed",
         },
-        "1.0": {
+        {
           args: [
           ],
           id: "1.0",
@@ -44,7 +44,7 @@ snapshot[`all commands resolved on the server 1`] = `
           },
           type: "executed",
         },
-      },
+      ],
       type: "finished",
     },
   },
@@ -58,21 +58,21 @@ snapshot[`all commands resolved on the server 2`] = `
 
 You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`answer(answer: string) => null\` - answer the original question directly
-\`say(message: string) => null\` - say something
-\`write(message: string) => null\` - write/insert a message
+\`answer(answer: string) => void\` - answer the original question directly
+\`say(message: string) => void\` - say something
+\`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
-\`finish() => null\` - mark that the request is finished
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`finish() => void\` - mark request/question as fulfilled
+\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call, delimited by ;
+Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -86,21 +86,21 @@ Thought: ',
 
 You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`answer(answer: string) => null\` - answer the original question directly
-\`say(message: string) => null\` - say something
-\`write(message: string) => null\` - write/insert a message
+\`answer(answer: string) => void\` - answer the original question directly
+\`say(message: string) => void\` - say something
+\`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
-\`finish() => null\` - mark that the request is finished
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`finish() => void\` - mark request/question as fulfilled
+\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call, delimited by ;
+Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -123,8 +123,8 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: {
-        "0.0": {
+      resolvedCommands: [
+        {
           args: [
           ],
           id: "0.0",
@@ -135,7 +135,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
           },
           type: "executed",
         },
-        "0.1": {
+        {
           args: [
             {
               type: "string",
@@ -150,7 +150,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
           },
           type: "executed",
         },
-      },
+      ],
       type: "finished",
     },
   },
@@ -178,6 +178,19 @@ snapshot[`client resolved command 1`] = `
           type: "parsed",
         },
       ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+      ],
       type: "pending_commands",
     },
   },
@@ -210,8 +223,8 @@ snapshot[`client resolved command 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0.0",
@@ -222,7 +235,7 @@ snapshot[`client resolved command 1`] = `
         },
         type: "executed",
       },
-    },
+    ],
   },
 }
 `;
@@ -247,6 +260,30 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           type: "parsed",
         },
       ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+      ],
       type: "pending_commands",
     },
   },
@@ -279,8 +316,8 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0",
@@ -291,7 +328,18 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
         },
         type: "executed",
       },
-    },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
   },
 }
 `;
@@ -316,6 +364,30 @@ snapshot[`client resolved command - wrong return type 1`] = `
           type: "parsed",
         },
       ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+      ],
       type: "pending_commands",
     },
   },
@@ -348,8 +420,8 @@ snapshot[`client resolved command - wrong return type 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0",
@@ -360,7 +432,18 @@ snapshot[`client resolved command - wrong return type 1`] = `
         },
         type: "executed",
       },
-    },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
   },
 }
 `;
@@ -385,6 +468,30 @@ snapshot[`client resolved command - fulfilled 1`] = `
           type: "parsed",
         },
       ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+      ],
       type: "pending_commands",
     },
   },
@@ -417,8 +524,8 @@ snapshot[`client resolved command - fulfilled 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0",
@@ -429,7 +536,18 @@ snapshot[`client resolved command - fulfilled 1`] = `
         },
         type: "executed",
       },
-    },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
   },
 }
 `;
@@ -461,6 +579,38 @@ snapshot[`nested calls 1`] = `
           id: "0.1",
           name: "createCalendarEvent",
           type: "parsed",
+        },
+      ],
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          id: "0.0",
+          name: "time",
+          returnValue: {
+            type: "string",
+            value: "12/19/2022, 3:41:10 AM",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "5 days from now",
+            },
+          ],
+          id: "0.1.0",
+          name: "parseRelativeTime",
+          returnValue: {
+            type: "string",
+            value: "2022-12-24T08:41:10.000Z",
+          },
+          type: "executed",
         },
       ],
       type: "pending_commands",
@@ -509,8 +659,8 @@ snapshot[`nested calls 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
           {
             type: "string",
@@ -525,7 +675,7 @@ snapshot[`nested calls 1`] = `
         },
         type: "executed",
       },
-      "0.1.0": {
+      {
         args: [
           {
             type: "string",
@@ -540,7 +690,7 @@ snapshot[`nested calls 1`] = `
         },
         type: "executed",
       },
-    },
+    ],
   },
 }
 `;
@@ -551,21 +701,21 @@ snapshot[`nested calls 2`] = `
 
 You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`answer(answer: string) => null\` - answer the original question directly
-\`say(message: string) => null\` - say something
-\`write(message: string) => null\` - write/insert a message
+\`answer(answer: string) => void\` - answer the original question directly
+\`say(message: string) => void\` - say something
+\`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
-\`finish() => null\` - mark that the request is finished
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`finish() => void\` - mark request/question as fulfilled
+\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call, delimited by ;
+Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -590,6 +740,19 @@ snapshot[`request needs more context 1`] = `
           type: "string",
         },
       },
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10.000Z",
+          },
+          type: "executed",
+        },
+      ],
       type: "needs_request_context",
     },
   },
@@ -628,8 +791,8 @@ snapshot[`request needs more context 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0.0",
@@ -640,7 +803,7 @@ snapshot[`request needs more context 1`] = `
         },
         type: "executed",
       },
-    },
+    ],
   },
 }
 `;
@@ -657,6 +820,19 @@ snapshot[`request needs more context - still missing 1`] = `
           type: "string",
         },
       },
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0",
+          name: "someCommand",
+          returnValue: {
+            type: "string",
+            value: "blah",
+          },
+          type: "executed",
+        },
+      ],
       type: "needs_request_context",
     },
   },
@@ -702,8 +878,8 @@ snapshot[`request needs more context - still missing 1`] = `
         thought: "I need to call some command",
       },
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0",
@@ -714,7 +890,7 @@ snapshot[`request needs more context - still missing 1`] = `
         },
         type: "executed",
       },
-    },
+    ],
   },
 }
 `;
@@ -731,6 +907,19 @@ snapshot[`request needs more context - wrong type 1`] = `
           type: "string",
         },
       },
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0",
+          name: "someCommand",
+          returnValue: {
+            type: "string",
+            value: "blah",
+          },
+          type: "executed",
+        },
+      ],
       type: "needs_request_context",
     },
   },
@@ -781,8 +970,8 @@ snapshot[`request needs more context - wrong type 1`] = `
         thought: "I need to call some command",
       },
     ],
-    resolvedCommands: {
-      "0.0": {
+    resolvedCommands: [
+      {
         args: [
         ],
         id: "0",
@@ -793,7 +982,7 @@ snapshot[`request needs more context - wrong type 1`] = `
         },
         type: "executed",
       },
-    },
+    ],
   },
 }
 `;
@@ -805,8 +994,8 @@ snapshot[`request needs more context - fulfilled 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: {
-        "0.0": {
+      resolvedCommands: [
+        {
           args: [
           ],
           id: "0",
@@ -817,7 +1006,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "1.0": {
+        {
           args: [
             {
               type: "string",
@@ -832,7 +1021,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "1.1": {
+        {
           args: [
           ],
           id: "1.1",
@@ -843,7 +1032,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-        "2.0": {
+        {
           args: [
           ],
           id: "2.0",
@@ -853,7 +1042,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
           type: "executed",
         },
-      },
+      ],
       type: "finished",
     },
   },
@@ -870,21 +1059,21 @@ some text",
 
 You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
 
-\`answer(answer: string) => null\` - answer the original question directly
-\`say(message: string) => null\` - say something
-\`write(message: string) => null\` - write/insert a message
+\`answer(answer: string) => void\` - answer the original question directly
+\`say(message: string) => void\` - say something
+\`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the current time in ISO8601 format
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime("natural language description of relative time": string) => string\` - get the time relative to now in ISO8601 format
-\`finish() => null\` - mark that the request is finished
-\`fail(reason: string) => null\` - indicate the request could not be interpreted
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`finish() => void\` - mark request/question as fulfilled
+\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call, delimited by ;
+Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
 Result: the result of the function call
 ... (this Thought/Action/Result can repeat N times)
 Thought: I have completed the request
@@ -929,6 +1118,8 @@ snapshot[`top level commands are resolved sequentially 1`] = `
           type: "parsed",
         },
       ],
+      resolvedCommands: [
+      ],
       type: "pending_commands",
     },
   },
@@ -965,7 +1156,8 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     requestContext: {},
     resolvedActionGroups: [
     ],
-    resolvedCommands: {},
+    resolvedCommands: [
+    ],
   },
 }
 `;
@@ -977,8 +1169,8 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: {
-        "0.0": {
+      resolvedCommands: [
+        {
           args: [
             {
               type: "string",
@@ -993,7 +1185,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           },
           type: "executed",
         },
-        "0.1": {
+        {
           args: [
             {
               type: "string",
@@ -1008,7 +1200,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           },
           type: "executed",
         },
-        "1.0": {
+        {
           args: [
           ],
           id: "1.0",
@@ -1018,7 +1210,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           },
           type: "executed",
         },
-      },
+      ],
       type: "finished",
     },
   },

@@ -18,6 +18,8 @@ snapshot[`POST /api/session/requests/assist-001: success 1`] = `
         type: "parsed",
       },
     ],
+    resolvedCommands: [
+    ],
     type: "pending_commands",
   },
 }

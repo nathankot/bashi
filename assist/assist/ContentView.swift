@@ -49,15 +49,12 @@ struct ContentView: View {
                 case .Recording(bestTranscription: let s):
                     Text("Listening...").font(.callout)
                     Text(s ?? "")
-                case .Processing(commandContext: let c, let partialResult):
+                case .Processing(let request):
                     Text("Request:").font(.callout)
-                    Text(c.request)
+                    Text(request)
                     Text("Processing...").font(.callout)
-                    if let r = partialResult {
-                        Text(r)
-                    }
                 case .Success(let r):
-                    Text(r)
+//                    Text(r)
                     Button("Done", action: dismissError)
                 case .Error(let e):
                     switch e {

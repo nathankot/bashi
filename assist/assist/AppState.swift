@@ -39,9 +39,9 @@ public final class AppState : ObservableObject {
     public enum State {
         case Idle
         case Recording(bestTranscription: String?)
-        case Processing(commandContext: CommandContext, partialRenderedResult: String? = nil)
-        case Confirm(commandContext: CommandContext, confirmationMessage: String)
-        case Success(renderedResult: String)
+        case Processing(request: String)
+        case Confirm(confirmationMessage: String)
+        case Success(result: Value)
         case Error(AppError)
     }
 

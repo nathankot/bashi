@@ -1,5 +1,5 @@
 //
-//  AppController+API.swift
+//  APIController.swift
 //  assist
 //
 //  Created by Nathan Kot on 4/01/23.
@@ -12,7 +12,14 @@ import Foundation
     import AlamofireNetworkActivityLogger
 #endif
 
-extension AppController {
+public actor APIController {
+    
+    let state: AppState = AppState.shared
+    let pluginsController: PluginsController
+    
+    public init(pluginsController: PluginsController) {
+        self.pluginsController = pluginsController
+    }
 
     func assist(request: String, requestContext: RequestContext) async throws -> ModelsAssist001Output {
         let session = try await refreshSession()

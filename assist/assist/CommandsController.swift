@@ -22,10 +22,17 @@ public actor CommandsController {
 
     let pluginAPI: BashiPluginAPI
     let pluginsController: PluginsController
+    let apiController: APIController
 
-    public init(pluginAPI: BashiPluginAPI, pluginsController: PluginsController) {
+    var currentCommandContext: CommandContext? = nil
+
+    public init(
+        pluginAPI: BashiPluginAPI,
+        pluginsController: PluginsController,
+        apiController: APIController) {
         self.pluginAPI = pluginAPI
         self.pluginsController = pluginsController
+        self.apiController = apiController
     }
 
     public func handle(

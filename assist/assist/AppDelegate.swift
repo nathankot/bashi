@@ -16,15 +16,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var pluginAPI: PluginAPI!
     var appController: AppController!
     var pluginsController: PluginsController!
+    var apiController: APIController!
     var commandsController: CommandsController!
-    
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        
+
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         pluginAPI = PluginAPI(state: AppState.shared)
         pluginsController = PluginsController(state: AppState.shared)
-        commandsController = CommandsController(pluginAPI: pluginAPI, pluginsController: pluginsController)
+        apiController = APIController(pluginsController: pluginsController)
+        commandsController = CommandsController(
+            pluginAPI: pluginAPI,
+            pluginsController: pluginsController,
+            apiController: apiController)
         appController = AppController(
             state: AppState.shared,
             popover: popover,

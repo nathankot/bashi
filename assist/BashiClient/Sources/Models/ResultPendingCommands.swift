@@ -15,9 +15,9 @@ public class ResultPendingCommands: APIModel {
 
     public var pendingCommands: [Command]
 
-    public var resolvedCommands: [String: CommandExecuted]
+    public var resolvedCommands: [CommandExecuted]
 
-    public init(type: `Type`, pendingCommands: [Command], resolvedCommands: [String: CommandExecuted]) {
+    public init(type: `Type`, pendingCommands: [Command], resolvedCommands: [CommandExecuted]) {
         self.type = type
         self.pendingCommands = pendingCommands
         self.resolvedCommands = resolvedCommands
@@ -28,7 +28,7 @@ public class ResultPendingCommands: APIModel {
 
         type = try container.decode("type")
         pendingCommands = try container.decodeArray("pendingCommands")
-        resolvedCommands = try container.decode("resolvedCommands")
+        resolvedCommands = try container.decodeArray("resolvedCommands")
     }
 
     public func encode(to encoder: Encoder) throws {

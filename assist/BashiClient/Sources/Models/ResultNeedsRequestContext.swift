@@ -15,9 +15,9 @@ public class ResultNeedsRequestContext: APIModel {
 
     public var missingRequestContext: RequestContextRequirement
 
-    public var resolvedCommands: [String: CommandExecuted]
+    public var resolvedCommands: [CommandExecuted]
 
-    public init(type: `Type`, missingRequestContext: RequestContextRequirement, resolvedCommands: [String: CommandExecuted]) {
+    public init(type: `Type`, missingRequestContext: RequestContextRequirement, resolvedCommands: [CommandExecuted]) {
         self.type = type
         self.missingRequestContext = missingRequestContext
         self.resolvedCommands = resolvedCommands
@@ -28,7 +28,7 @@ public class ResultNeedsRequestContext: APIModel {
 
         type = try container.decode("type")
         missingRequestContext = try container.decode("missingRequestContext")
-        resolvedCommands = try container.decode("resolvedCommands")
+        resolvedCommands = try container.decodeArray("resolvedCommands")
     }
 
     public func encode(to encoder: Encoder) throws {

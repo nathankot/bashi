@@ -21,12 +21,12 @@ public actor CommandsController {
     class PluginAPI: BashiPluginAPI {
         weak var controller: CommandsController!
         let insertMessage: (String, MessageType) -> Void
-        
+
         init(controller: CommandsController!, insertMessage: @escaping (String, MessageType) -> Void) {
             self.controller = controller
             self.insertMessage = insertMessage
         }
-        
+
         public func respond(message: String) async {
             insertMessage(message, .response)
         }
@@ -114,7 +114,17 @@ public actor CommandsController {
 
                 // After running the commands, start the loop again.
                 continue interpreterLoop
-            case .resultFinished(_):
+            case .resultFinished(let resultFinished):
+                if messages.count == 1 {
+                    let lastValue = resultFinished.resolvedCommands.reversed().compactMap {
+                        switch $0.returnValue {
+                        case .stringValue(let s): return s.value
+                        case .numberValue(let n): return "\(n)"
+                        default: return nil
+                        }
+                    }.first
+                    pluginAPI.insertMessage("Result: \(lastValue)", .answer)
+                }
                 // TODO implement implicit flush here - display the last result if
                 // no command before this ended up displaying anything.
                 try await state.transition(newState: .Success(messages: messages))

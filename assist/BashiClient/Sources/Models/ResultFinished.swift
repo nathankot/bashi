@@ -13,9 +13,9 @@ public class ResultFinished: APIModel {
 
     public var type: `Type`
 
-    public var resolvedCommands: [String: CommandExecuted]
+    public var resolvedCommands: [CommandExecuted]
 
-    public init(type: `Type`, resolvedCommands: [String: CommandExecuted]) {
+    public init(type: `Type`, resolvedCommands: [CommandExecuted]) {
         self.type = type
         self.resolvedCommands = resolvedCommands
     }
@@ -24,7 +24,7 @@ public class ResultFinished: APIModel {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
         type = try container.decode("type")
-        resolvedCommands = try container.decode("resolvedCommands")
+        resolvedCommands = try container.decodeArray("resolvedCommands")
     }
 
     public func encode(to encoder: Encoder) throws {

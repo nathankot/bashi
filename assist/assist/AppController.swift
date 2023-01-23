@@ -14,26 +14,26 @@ import Cocoa
 import Combine
 
 actor AppController {
-
+    
     let state: AppState
-    private let appAPI: AppAPI
+    let popover: NSPopover
+    let statusBarItem: NSStatusItem
 
-    let audioRecordingController: AudioRecordingController
+    let audioRecordingController: AudioRecordingController = AudioRecordingController()
     let commandsController: CommandsController
     let pluginsController: PluginsController
     var keyboardShortcutsTask: Task<Void, Error>? = nil
 
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
 
-    init(
-        state: AppState,
-        pluginAPI: AppAPI,
+    init(state: AppState,
+        popover: NSPopover,
+        statusBarItem: NSStatusItem,
         commandsController: CommandsController,
-        pluginsController: PluginsController
-    ) {
+        pluginsController: PluginsController) {
         self.state = state
-        self.appAPI = pluginAPI
-        self.audioRecordingController = AudioRecordingController()
+        self.popover = popover
+        self.statusBarItem = statusBarItem
         self.commandsController = commandsController
         self.pluginsController = pluginsController
     }
@@ -68,7 +68,7 @@ actor AppController {
             let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
                 let transcriptions = try await audioRecordingController.startRecording()
                 await doTransition()
-                await appAPI.togglePopover(shouldShow: true)
+                await togglePopover(shouldShow: true)
                 return transcriptions
             }
             transcriptionUpdatingTask = Task {
@@ -116,7 +116,7 @@ actor AppController {
             switch handleResult {
             case .Success(renderResult: nil):
                 try await state.transition(newState: .Idle) { doTransition in
-                    await appAPI.togglePopover(shouldShow: false)
+                    await togglePopover(shouldShow: false)
                     await doTransition()
                 }
             case .Success(renderResult: let s):
@@ -143,13 +143,34 @@ actor AppController {
         try? await state.transition(newState: .Idle)
     }
 
-    func showSettings() async {
-        await appAPI.showSettings()
-    }
-
     func quit() async {
-        await appAPI.quit()
+        await MainActor.run {
+            NSApplication.shared.terminate(nil)
+        }
     }
+    
+    func showSettings() async {
+        await NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        await togglePopover(shouldShow: false)
+        await NSApp.activate(ignoringOtherApps: true)
+    }
+    
+    func togglePopover(shouldShow: Bool? = nil) async {
+        await MainActor.run {
+            let isCurrentlyShown = self.popover.isShown
+            let shouldShow = shouldShow ?? !isCurrentlyShown
+            
+            if !shouldShow {
+                self.popover.performClose(nil)
+            } else {
+                if let button = self.statusBarItem.button {
+                    self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+                    self.popover.contentViewController?.view.window?.becomeKey()
+                }
+            }
+        }
+    }
+    
 }
 
 extension KeyboardShortcuts.Name {

@@ -13,7 +13,7 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
     var popover: NSPopover!
     var statusBarItem: NSStatusItem!
-    var appAPI: AppAPI!
+    var pluginAPI: PluginAPI!
     var appController: AppController!
     var pluginsController: PluginsController!
     var commandsController: CommandsController!
@@ -22,18 +22,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         popover = NSPopover()
         statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        appAPI = AppAPI(popover: popover, statusBarItem: statusBarItem)
-        pluginsController = PluginsController(pluginAPI: appAPI)
-        commandsController = CommandsController(pluginAPI: appAPI, pluginsController: pluginsController)
+        pluginAPI = PluginAPI(state: AppState.shared)
+        pluginsController = PluginsController(state: AppState.shared)
+        commandsController = CommandsController(pluginAPI: pluginAPI, pluginsController: pluginsController)
         appController = AppController(
             state: AppState.shared,
-            pluginAPI: appAPI,
+            popover: popover,
+            statusBarItem: statusBarItem,
             commandsController: commandsController,
             pluginsController: pluginsController
         )
 
         popover.animates = true
-//        popover.behavior = .applicationDefined
         popover.behavior = .transient
         if let button = self.statusBarItem.button {
             button.image = NSImage(systemSymbolName: "heart", accessibilityDescription: "assist")
@@ -68,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func togglePopover(_ sender: AnyObject?) {
         Task {
-            await appAPI.togglePopover()
+            await appController.togglePopover()
         }
     }
 

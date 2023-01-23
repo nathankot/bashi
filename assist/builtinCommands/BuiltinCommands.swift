@@ -12,7 +12,7 @@ import EventKit
 public class BuiltinCommands: BundledPlugin {
 
     static public var id: String = "builtinCommands"
-    static public func makeBashiPlugin(api: PluginAPI) -> Plugin {
+    static public func makeBashiPlugin() -> BashiPluginProtocol {
         return BuiltinCommands()
     }
 

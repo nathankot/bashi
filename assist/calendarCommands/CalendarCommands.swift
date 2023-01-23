@@ -19,7 +19,7 @@ public class CalendarCommands: BundledPlugin {
     }
 
     static public var id: String = "calendarCommands"
-    static public func makeBashiPlugin(api: PluginAPI) -> Plugin {
+    static public func makeBashiPlugin() -> BashiPluginProtocol {
         return CalendarCommands()
     }
 
@@ -49,7 +49,7 @@ public class CalendarCommands: BundledPlugin {
                 description: "create a calendar event for a certain date and time",
                 args: [
                     .init(type: .string, name: "name"),
-                    .init(type: .string, name: "natural language time relative to now", parsers: [.naturalLanguageDateTime]),
+                    .init(type: .string, name: "iso8601Date"),
                     .init(type: .number, name: "duration in hours or 1 if unknown")
                 ],
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
@@ -81,6 +81,7 @@ public class CalendarCommands: BundledPlugin {
                         shouldSkipConfirmation: false,
                         confirmationMessage: "Create this calendar event?") {
                             try self.eventStore.save(event, span: .thisEvent, commit: true)
+                            return .init(.void)
                     }
                 })
         ]

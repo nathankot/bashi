@@ -15,7 +15,7 @@
 		D80ADE6D296BC912003BAE01 /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D80ADE6C296BC912003BAE01 /* BashiPlugin */; };
 		D80ADE6E296BC912003BAE01 /* BashiPlugin in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D80ADE6C296BC912003BAE01 /* BashiPlugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D8132939296AFCD800DE7A4C /* builtinCommands.plugin in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = D88CC8402967B1B1009912AA /* builtinCommands.plugin */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D8167A34296E58B600ED5538 /* AppAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8167A33296E58B600ED5538 /* AppAPI.swift */; };
+		D8167A34296E58B600ED5538 /* PluginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8167A33296E58B600ED5538 /* PluginAPI.swift */; };
 		D821D98C2963AAE600C2ABF5 /* AudioRecordingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */; };
 		D85597E4296AFD26003C8C13 /* BashiClient in Frameworks */ = {isa = PBXBuildFile; productRef = D85597E3296AFD26003C8C13 /* BashiClient */; };
 		D85597E8296AFEA3003C8C13 /* BashiPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = D85597E7296AFEA3003C8C13 /* BashiPlugin */; };
@@ -88,7 +88,7 @@
 
 /* Begin PBXFileReference section */
 		D80ADE66296BC3AE003BAE01 /* CommandsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandsController.swift; sourceTree = "<group>"; };
-		D8167A33296E58B600ED5538 /* AppAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAPI.swift; sourceTree = "<group>"; };
+		D8167A33296E58B600ED5538 /* PluginAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginAPI.swift; sourceTree = "<group>"; };
 		D821D98B2963AAE600C2ABF5 /* AudioRecordingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingController.swift; sourceTree = "<group>"; };
 		D85597E6296AFE9B003C8C13 /* BashiPlugin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BashiPlugin; sourceTree = "<group>"; };
 		D85649FD29719F9B008FB12B /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Mocks.swift; path = /Users/nathan/Development/src/localhost/bashi/assist/assist/Mocks.swift; sourceTree = "<absolute>"; };
@@ -166,7 +166,7 @@
 				D87F1F9929631A9C00C5936E /* Info.plist */,
 				D8C1096D296023CF006E6A10 /* Preview Content */,
 				D8C10966296023CF006E6A10 /* AssistApp.swift */,
-				D8167A33296E58B600ED5538 /* AppAPI.swift */,
+				D8167A33296E58B600ED5538 /* PluginAPI.swift */,
 				D87F1F9A29631E3500C5936E /* AppDelegate.swift */,
 				D85A306C2962BEB200581B98 /* ContentView.swift */,
 				D8C1096A296023CF006E6A10 /* Assets.xcassets */,
@@ -333,7 +333,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */,
-				D8167A34296E58B600ED5538 /* AppAPI.swift in Sources */,
+				D8167A34296E58B600ED5538 /* PluginAPI.swift in Sources */,
 				D8C26D3429607EBB001F63DB /* AppState.swift in Sources */,
 				D8F24CFF296040AA00BD3CD3 /* SettingsView.swift in Sources */,
 				D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */,

@@ -20,14 +20,13 @@ public actor PluginsController {
         case commandLoadedTwice(commandName: String)
     }
     
-    private let state: AppState = AppState.shared
-    private let pluginAPI: PluginAPI
+    private let state: AppState
     
-    private var plugins: Dictionary<String, any Plugin> = [:]
+    private var plugins: Dictionary<String, any BashiPluginProtocol> = [:]
     public private(set) var commandDefinitions: Dictionary<String, (pluginId: String, def: any Command)> = [:]
     
-    public init(pluginAPI: PluginAPI) {
-        self.pluginAPI = pluginAPI
+    public init(state: AppState) {
+        self.state = state
     }
     
     public func lookup(command: String) -> Command? {
@@ -56,7 +55,7 @@ public actor PluginsController {
         guard let bundle = Bundle.init(url: bundlePath) else {
             throw PluginError.couldNotLoadPlugin(reason: "could not open url: \(bundlePath.absoluteString)")
         }
-        guard let plugin = bundle.principalClass?.makeBashiPlugin(api: pluginAPI) else {
+        guard let plugin = bundle.principalClass?.makeBashiPlugin() else {
            throw PluginError.couldNotLoadPlugin(reason: "bundle does not have principal class, or it is invalid: \(bundlePath.absoluteString)")
         }
         guard let pluginId = bundle.principalClass?.id else {
@@ -65,7 +64,7 @@ public actor PluginsController {
         try await loadPlugin(plugin, withId: pluginId)
     }
     
-    public func loadPlugin(_ plugin: Plugin, withId pluginId: String) async throws {
+    public func loadPlugin(_ plugin: BashiPluginProtocol, withId pluginId: String) async throws {
         do {
             try await plugin.prepare()
         } catch {

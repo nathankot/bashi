@@ -20,10 +20,10 @@ public actor CommandsController {
         )
     }
 
-    let pluginAPI: PluginAPI
+    let pluginAPI: BashiPluginAPI
     let pluginsController: PluginsController
 
-    public init(pluginAPI: PluginAPI, pluginsController: PluginsController) {
+    public init(pluginAPI: BashiPluginAPI, pluginsController: PluginsController) {
         self.pluginAPI = pluginAPI
         self.pluginsController = pluginsController
     }
@@ -163,20 +163,10 @@ public actor CommandsController {
 
 public actor CommandContext: BashiPlugin.CommandContext {
 
-    enum ReturnValue {
-        case commandValue(CommandValue)
-        case action(CommandBuiltinAction)
-    }
-
     nonisolated public let request: String
     nonisolated public let requestContextStrings: Dictionary<String, String>
     nonisolated public let requestContextNumbers: Dictionary<String, Double>
     nonisolated public let requestContextBooleans: Dictionary<String, Bool>
-
-    fileprivate var _returnValues: [ReturnValue] = []
-    private var errors: [Error] = []
-
-    public var partialRenderedResult: String? = nil
 
     public static func from(request: String, requestContext: RequestContext) -> CommandContext {
         var requestContextStrings: Dictionary<String, String> = [:]
@@ -230,38 +220,9 @@ public actor CommandContext: BashiPlugin.CommandContext {
         self.requestContextNumbers = requestContextNumbers
         self.requestContextBooleans = requestContextBooleans
     }
-
-    public func append(returnValue: BashiPlugin.CommandValue) async {
-        _returnValues.append(.commandValue(returnValue))
-    }
-
-    public func append(error: Error) async {
-        errors.append(error)
-    }
-
-    public func append(builtinAction: BashiPlugin.CommandBuiltinAction) async {
-        _returnValues.append(.action(builtinAction))
-    }
-
-    public func update(partialResult: String?) {
-        partialRenderedResult = partialResult
-    }
-
-    public func getReturnValues() async -> [BashiPlugin.CommandValue] {
-        return _returnValues.compactMap({
-            switch $0 {
-            case .commandValue(let v): return v
-            default: return nil
-            }
-        })
-    }
-
-    public func getErrors() async -> [Error] {
-        return errors
-    }
 }
 
-extension CommandValue {
+extension BashiValue {
     convenience init(from apiClientValue: Value) {
         switch apiClientValue {
         case .booleanValue(let v):

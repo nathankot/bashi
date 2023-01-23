@@ -1,18 +1,18 @@
 import os
 import Foundation
 
-@objc public protocol PluginAPI {
-    @objc optional func setResultForTesting(text: String)
+@objc public protocol BashiPluginAPI {
+    @objc func flush(message: String) async
 }
 
-@objc public protocol Plugin {
+@objc public protocol BashiPluginProtocol {
     static var id: String { get }
     func prepare() async throws
     func provideCommands() -> [Command]
 }
 
-@objc public protocol BundledPlugin: Plugin {
-    static func makeBashiPlugin(api: PluginAPI) -> any Plugin
+@objc public protocol BundledPlugin: BashiPluginProtocol {
+    static func makeBashiPlugin() -> any BashiPluginProtocol
 }
 
 @objc public enum BashiValueType: Int, Equatable {
@@ -32,37 +32,19 @@ import Foundation
 }
 
 
-@objc public enum CommandArgParser: Int, Equatable {
-    case naturalLanguageDateTime
-    
-    func asString() -> String {
-        switch self {
-        case .naturalLanguageDateTime:
-            return "naturalLanguageDateTime"
-        }
-    }
-}
-
-@objc public enum CommandBuiltinAction: Int, Equatable {
-    case display
-}
-
 @objc public class CommandArgDef: NSObject {
     public let type: BashiValueType
     public let name: String
-    public let parsers: [CommandArgParser]
-    public init(type: BashiValueType, name: String, parsers: [CommandArgParser] = []) {
+    public init(type: BashiValueType, name: String) {
         self.name = name
         self.type = type
-        self.parsers = parsers
     }
 }
 
-@objc public class CommandValue: NSObject {
+@objc public class BashiValue: NSObject {
     public private(set) var string: String? = nil
     public private(set) var number: NSNumber? = nil
     public private(set) var boolean: NSNumber? = nil
-    public private(set) var void: Bool? = nil
     
     public private(set) var type: BashiValueType
     
@@ -76,7 +58,7 @@ import Foundation
         if let v = boolean {
             return "\(v == 0 ? false : true)"
         }
-        if let v = void, v {
+        if type == .void {
             return "void"
         }
         return "<unknown value>"
@@ -101,7 +83,6 @@ import Foundation
             self.number = v as NSNumber
             self.type = .number
         case .void:
-            self.void = true
             self.type = .void
         }
     }
@@ -121,10 +102,10 @@ import Foundation
     var triggerTokens: [String]? { get }
     var returnType: BashiValueType { get }
     func prepare(
-        api: PluginAPI,
+        api: BashiPluginAPI,
         context: CommandContext,
-        args: [CommandValue],
-        argsParsed: [Dictionary<String, CommandValue>]?
+        args: [BashiValue],
+        argsParsed: [Dictionary<String, BashiValue>]?
     ) -> PreparedCommand?
 }
 
@@ -133,7 +114,7 @@ import Foundation
     var confirmationMessage: String { get }
     // Other fields to support confirmation can be added here, such
     // as confirmation display layout, image etc.
-    func run() async throws
+    func run() async throws -> BashiValue
 }
 
 @objc public protocol CommandContext {
@@ -141,37 +122,24 @@ import Foundation
     var requestContextStrings: Dictionary<String, String> { get }
     var requestContextNumbers: Dictionary<String, Double> { get }
     var requestContextBooleans: Dictionary<String, Bool> { get }
-
-    func getReturnValues() async -> [CommandValue]
-    func getErrors() async -> [Error]
-    
-    func append(returnValue: CommandValue) async
-    func append(error: Error) async
-    func append(builtinAction: CommandBuiltinAction) async
-}
-
-extension CommandContext {
-    public func stringReturnValues() async -> [String] {
-        return await getReturnValues().compactMap({ v in v.string })
-    }
 }
 
 public class AnonymousPreparedCommand: PreparedCommand {
     public let shouldSkipConfirmation: Bool
     public let confirmationMessage: String
-    private let runFn: () async throws -> Void
+    private let runFn: () async throws -> BashiValue
 
     public init(
         shouldSkipConfirmation: Bool,
         confirmationMessage: String,
-        runFn: @escaping () async throws -> Void
+        runFn: @escaping () async throws -> BashiValue
     ) {
         self.shouldSkipConfirmation = shouldSkipConfirmation
         self.confirmationMessage = confirmationMessage
         self.runFn = runFn
     }
 
-    public func run() async throws {
+    public func run() async throws -> BashiValue {
         return try await runFn()
     }
 }
@@ -183,10 +151,10 @@ public class AnonymousCommand: Command {
     public var returnType: BashiValueType
     public let triggerTokens: [String]?
     private let prepareFn: (
-        PluginAPI,
+        BashiPluginAPI,
         CommandContext,
-        [CommandValue],
-        [Dictionary<String, CommandValue>]?
+        [BashiValue],
+        [Dictionary<String, BashiValue>]?
     ) -> PreparedCommand?
 
     public init(
@@ -196,10 +164,10 @@ public class AnonymousCommand: Command {
         returnType: BashiValueType = .void,
         triggerTokens: [String]? = nil,
         prepareFn: @escaping (
-            PluginAPI,
+            BashiPluginAPI,
             CommandContext,
-            [CommandValue],
-            [Dictionary<String, CommandValue>]?
+            [BashiValue],
+            [Dictionary<String, BashiValue>]?
         ) -> PreparedCommand?
     ) {
         self.name = name
@@ -211,10 +179,10 @@ public class AnonymousCommand: Command {
     }
 
     public func prepare(
-        api: PluginAPI,
+        api: BashiPluginAPI,
         context: CommandContext,
-        args: [CommandValue],
-        argsParsed: [Dictionary<String, CommandValue>]?
+        args: [BashiValue],
+        argsParsed: [Dictionary<String, BashiValue>]?
     ) -> PreparedCommand? {
         return prepareFn(api, context, args, argsParsed)
     }

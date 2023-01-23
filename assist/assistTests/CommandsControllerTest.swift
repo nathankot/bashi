@@ -58,7 +58,7 @@ final class CommandsControllerTest: XCTestCase {
         default:
             XCTFail("expected a success result")
         }
-        XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
+        XCTAssertEqual(pluginAPI.seenFlushed, ["some result A"])
     }
     
     func testCommandsHandleNoImplicitFlush() async throws {
@@ -78,7 +78,7 @@ final class CommandsControllerTest: XCTestCase {
         default:
             XCTFail("expected a nil success result")
         }
-        XCTAssertEqual(pluginAPI.seenResults, ["some result A"])
+        XCTAssertEqual(pluginAPI.seenFlushed, ["some result A"])
     }
 
     func testCommandNotConfirmed() async throws {
@@ -110,7 +110,7 @@ final class CommandsControllerTest: XCTestCase {
             case .commandNotConfirmed(let resultContext):
                 let returnValues = await resultContext.getReturnValues().map({ $0.string ?? "" })
                 XCTAssertEqual(returnValues, ["some result D"])
-                XCTAssertEqual(pluginAPI.seenResults, ["some result C"])
+                XCTAssertEqual(pluginAPI.seenFlushed, ["some result C"])
                 expectation.fulfill()
             default:
                 throw e

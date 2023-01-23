@@ -10,15 +10,16 @@ import BashiPlugin
 
 #if DEBUG
 
-public class MockPluginAPI: PluginAPI {
-    public var seenResults: [String] = []
-    public func setResultForTesting(text: String) {
-        seenResults.append(text)
-    }
+public class MockPluginAPI: BashiPluginAPI {
+    public var seenFlushed: [String] = []
     public init() {}
+    
+    public func flush(message: String) async {
+        seenFlushed.append(message)
+    }
 }
 
-public class MockPlugin: Plugin {
+public class MockPlugin: BashiPluginProtocol {
     
     public enum ErrorType: Error {
         case mockError
@@ -37,8 +38,7 @@ public class MockPlugin: Plugin {
                     shouldSkipConfirmation: false,
                     confirmationMessage: "some confirmation message",
                     runFn: {
-                        api.setResultForTesting?(text: "some result A")
-                        await ctx.append(returnValue: CommandValue(.string("some result B")))
+                        return .init(.string("some result A"))
                     })
             },
             AnonymousCommand(name: "mock_command_no_confirm", description: "do some thing") { api, ctx, args, _ in
@@ -46,8 +46,7 @@ public class MockPlugin: Plugin {
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
                     runFn: {
-                        api.setResultForTesting?(text: "some result C")
-                        await ctx.append(returnValue: CommandValue(.string("some result D")))
+                        return .init(.string("some result B"))
                     })
             },
             AnonymousCommand(name: "mock_command_throws", description: "do some thing") { api, ctx, args, _ in
@@ -66,17 +65,19 @@ public class MockPlugin: Plugin {
                     confirmationMessage: "confirm?",
                     runFn: {
                         if let str = args.first?.string {
-                            await ctx.append(returnValue: CommandValue(.string(str)))
+                            return .init(.string(str))
                         }
-                        api.setResultForTesting?(text: "some result E")
+                        return .init(.string("some result C"))
                     })
             },
-            AnonymousCommand(name: "display", description: "flush to display") { api, ctx, _, _ in
+            AnonymousCommand(name: "display", description: "display a message to the user", args: [.init(type: .string, name: "message")]) { api, ctx, args, _ in
                 return AnonymousPreparedCommand(
                     shouldSkipConfirmation: true,
                     confirmationMessage: "",
                     runFn: {
-                        await ctx.append(builtinAction: .display)
+                        // TODO: why is this async block not compiling?
+                        await api.flush(message: args.first?.string ?? "<could not get message>")
+                        return .init(.void)
                     })
             },
         ]

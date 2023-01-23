@@ -280,6 +280,9 @@ export async function run(
         // Mark as finished if any of the top level commands were sinks:
         for (const topLevelCall of topLevelCalls) {
           switch (topLevelCall.name) {
+            case "fail":
+              isFinished = true;
+              break;
             case "finish":
               isFinished = true;
               break;

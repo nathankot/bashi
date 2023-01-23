@@ -14,7 +14,7 @@ import BashiPlugin
         public var seenFlushed: [String] = []
         public init() { }
 
-        public func flush(message: String) async {
+        public func respond(message: String) async {
             seenFlushed.append(message)
         }
     }
@@ -54,7 +54,7 @@ import BashiPlugin
                 },
                 AnonymousCommand(name: "display", description: "display a message to the user", args: [.init(type: .string, name: "message")]) { api, ctx, args in
                     // TODO: why is this async block not compiling?
-                    await api.flush(message: args.first?.string ?? "<could not get message>")
+                    await api.respond(message: args.first?.string ?? "<could not get message>")
                     return .init(.void)
                 },
             ]

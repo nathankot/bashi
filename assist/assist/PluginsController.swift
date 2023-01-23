@@ -87,7 +87,7 @@ public actor PluginsController {
                 description: "answer the original question directly",
                 args: [.init(type: .string, name: "answer")],
                 runFn: { api, ctx, args in
-                    await api.flush(message: args.first?.string ?? "could not get message")
+                    await api.respond(message: args.first?.string ?? "could not get message")
                     return .init(.void)
                 }),
         ] {

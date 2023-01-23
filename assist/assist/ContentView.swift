@@ -55,8 +55,10 @@ struct ContentView: View {
                         Text($0.message)
                     }
                     Text("Processing...").font(.callout)
-                case .Success(let r):
-//                    Text(r)
+                case .Success(let messages):
+                    List(messages) {
+                        Text($0.message)
+                    }
                     Button("Done", action: dismissError)
                 case .Error(let e):
                     switch e {

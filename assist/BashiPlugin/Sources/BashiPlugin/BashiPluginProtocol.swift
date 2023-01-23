@@ -2,7 +2,7 @@ import os
 import Foundation
 
 @objc public protocol BashiPluginAPI {
-    @objc func flush(message: String) async
+    @objc func respond(message: String) async
 }
 
 @objc public protocol BashiPluginProtocol {

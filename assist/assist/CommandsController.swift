@@ -18,6 +18,20 @@ public actor CommandsController {
 
     let runModel: RunModel
 
+    class PluginAPI: BashiPluginAPI {
+        weak var controller: CommandsController!
+        let insertMessage: (String, MessageType) -> Void
+        
+        init(controller: CommandsController!, insertMessage: @escaping (String, MessageType) -> Void) {
+            self.controller = controller
+            self.insertMessage = insertMessage
+        }
+        
+        public func respond(message: String) async {
+            insertMessage(message, .response)
+        }
+    }
+
     public init(
         state: AppState,
         pluginsController: PluginsController,
@@ -31,7 +45,10 @@ public actor CommandsController {
         var messages: [Message] = [.init(id: 0, message: initialRequest, type: .request)]
         var request: String? = initialRequest
         let requestContext = RequestContext.init()
-        var resolvedCommands: [String: Value]? = nil
+        var resolvedCommands: [String: Value] = [:]
+        let pluginAPI = PluginAPI(controller: self) {
+            messages.append(.init(id: messages.count, message: $0, type: $1))
+        }
 
         interpreterLoop: while true {
             let input = ModelsAssist001Input(
@@ -81,7 +98,10 @@ public actor CommandsController {
                     }
 
                     logger.debug("running command: \(commandName)")
-                    let result = try await commandDef.run(api: self, context: commandContext, args: args)
+                    let result = try await commandDef.run(
+                        api: pluginAPI,
+                        context: commandContext,
+                        args: args)
                     if result.type != commandDef.returnType {
                         throw AppError.CommandMismatchResult(
                             name: commandName,
@@ -89,7 +109,7 @@ public actor CommandsController {
                             actual: result.type.asString())
                     }
 
-                    resolvedCommands?.updateValue(result.toAPIValue(), forKey: pendingCommand.id)
+                    resolvedCommands.updateValue(result.toAPIValue(), forKey: pendingCommand.id)
                 }
 
                 // After running the commands, start the loop again.
@@ -192,7 +212,3 @@ extension BashiValue {
 
 
 
-extension CommandsController: BashiPluginAPI {
-    public func flush(message: String) async {
-    }
-}

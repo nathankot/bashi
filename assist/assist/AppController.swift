@@ -92,50 +92,7 @@ actor AppController {
                 throw AppError.NoRequestFound
             }
 
-            let requestContext: RequestContext = .init()
-            let commandContext = CommandContext.from(request: bestTranscription, requestContext: requestContext)
-
-//            let modelOutput = try await state.transition(
-//                newState: .Processing(request: commandContext.request)
-//            ) { doTransition in
-//                await doTransition()
-//                return try await assist(request: bestTranscription, requestContext: requestContext)
-//            }
-
-//            let handleResult = try await commandsController.handle(
-//                assistResponse: modelOutput,
-//                commandContext: commandContext,
-//                onUpdatedContext: { [weak self] commandContext in
-//                    try? await self?.state.transition(newState: .Processing(commandContext: commandContext))
-//                }
-//            ) { confirmationMessage in
-//                // TODO support confirmation
-//                true
-//            }
-//
-//            switch handleResult {
-//            case .Success(result: nil):
-//                try await state.transition(newState: .Idle) { doTransition in
-//                    await togglePopover(shouldShow: false)
-//                    await doTransition()
-//                }
-//            case .Success(result: let r):
-//                try await state.transition(newState: .Success(renderedResult: s!))
-//            case .HasErrors(
-//                renderResult: let s,
-//                successfulCommandsCount: _,
-//                errors: let errors):
-//                if let s = s {
-//                    try await state.transition(
-//                        newState: .Success(renderedResult: s))
-//                } else {
-//                    try await state.transition(
-//                        newState: .Error(.CommandExecutionErrors(errors)))
-//                }
-//            }
-            
-            fatalError("unimplemented")
-
+            try await commandsController.process(initialRequest: bestTranscription)
         } catch {
             await state.handleError(error)
         }

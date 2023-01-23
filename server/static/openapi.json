@@ -745,8 +745,8 @@
             "type": "string"
           },
           "resolvedCommands": {
-            "type": "object",
-            "additionalProperties": {
+            "type": "array",
+            "items": {
               "$ref": "#/components/schemas/CommandExecuted"
             }
           }
@@ -773,8 +773,8 @@
             }
           },
           "resolvedCommands": {
-            "type": "object",
-            "additionalProperties": {
+            "type": "array",
+            "items": {
               "$ref": "#/components/schemas/CommandExecuted"
             }
           }
@@ -798,8 +798,8 @@
             "$ref": "#/components/schemas/RequestContextRequirement"
           },
           "resolvedCommands": {
-            "type": "object",
-            "additionalProperties": {
+            "type": "array",
+            "items": {
               "$ref": "#/components/schemas/CommandExecuted"
             }
           }

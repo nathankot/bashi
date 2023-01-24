@@ -62,8 +62,8 @@
                       "locale": {
                         "type": "string"
                       },
-                      "timezoneUtcOffset": {
-                        "type": "number"
+                      "timezoneName": {
+                        "type": "string"
                       },
                       "maxResponseTokens": {
                         "type": "number"
@@ -1153,7 +1153,7 @@
             "type": "object",
             "required": [
               "locale",
-              "timezoneUtcOffset",
+              "timezoneName",
               "maxResponseTokens",
               "bestOf"
             ],
@@ -1161,8 +1161,8 @@
               "locale": {
                 "type": "string"
               },
-              "timezoneUtcOffset": {
-                "type": "number"
+              "timezoneName": {
+                "type": "string"
               },
               "maxResponseTokens": {
                 "type": "number"

@@ -147,7 +147,7 @@ Action: now(); ask("what do you want?")`,
     input: { request: "some request" },
     openAiResults: [
       `I need to get the current time in New York and create a calendar event 5 days from now
-Action: time("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")`,
+Action: timeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")`,
     ],
     snapshotPrompts: true,
   },
@@ -215,7 +215,7 @@ Action: now(); math()`,
     input: { request: "some request" },
     openAiResults: [
       `some thought
-Action: ask("how are you?"); time("America/New_York")`,
+Action: ask("how are you?"); timeForTimezone("America/New_York")`,
     ],
   },
   {
@@ -232,7 +232,7 @@ Action: finish()`,
     initialState: {
       modelCallCount: 1,
       pending: {
-        action: 'ask("how are you?"); time("America/New_York")',
+        action: 'ask("how are you?"); timeForTimezone("America/New_York")',
         functionCalls: [
           {
             args: [{ type: "string", value: "how are you?" }],
@@ -241,7 +241,7 @@ Action: finish()`,
           },
           {
             args: [{ type: "string", value: "America/New_York" }],
-            name: "time",
+            name: "timeForTimezone",
             type: "call",
           },
         ],

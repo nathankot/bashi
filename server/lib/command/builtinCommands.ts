@@ -1,5 +1,6 @@
 import * as mathjs from "mathjs";
 import { parseDate } from "chrono";
+import { formatInTimeZone, getTimezoneOffset } from "date-fns-tz";
 
 import { PROGRAMMING_LANGUAGES } from "@lib/constants.ts";
 import { BuiltinCommandDefinition } from "./types.ts";
@@ -8,19 +9,25 @@ import { run as runPassthrough } from "@lib/models/passthroughOpenai000.ts";
 import { run as runCode } from "@lib/models/code000.ts";
 import { run as runTranslate } from "@lib/models/translate000.ts";
 
+const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
+
 const now: BuiltinCommandDefinition<[], "string"> = {
-  description: "get the current time in ISO8601 format",
+  description: "get the users current ISO8601 datetime",
   args: [],
   run: async (deps, __, []) => ({
     type: "string",
-    value: deps.now().toISOString(),
+    value: formatInTimeZone(
+      deps.now(),
+      deps.session.configuration.timezoneName,
+      LOCAL_DATETIME_FORMAT
+    ),
   }),
   returnType: "string",
 };
 
 const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
-  description: "get time relative to now in ISO8601 format",
+  description: "get ISO8601 datetime relative to now",
   args: [
     {
       name: "naturalLanguageRelativeTime",
@@ -30,29 +37,37 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   run: async (deps, __, [description]) => {
     const d = parseDate(description.value, {
       instant: deps.now(),
-      timezone: deps.session.configuration.timezoneUtcOffset,
+      // chronojs expects the offset in minutes:
+      timezone:
+        getTimezoneOffset(deps.session.configuration.timezoneName) / 1000 / 60,
     });
     if (d == null) {
       throw new HTTPError("could not parse relative time", 500);
     }
     return {
       type: "string",
-      value: d.toISOString(),
+      value: formatInTimeZone(
+        d,
+        deps.session.configuration.timezoneName,
+        LOCAL_DATETIME_FORMAT
+      ),
     };
   },
 };
 
-const time: BuiltinCommandDefinition<["string"], "string"> = {
+const timeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
-  description: `check the time for the given timezone`,
+  description: `get the ISO8601 datetime for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
   run: async ({ log, session, now }, reqCtx, [timeZone]) => {
     return {
       type: "string",
-      value: now().toLocaleString(session.configuration.locale, {
-        timeZone: timeZone.value.replaceAll(" ", "_"),
-      }),
+      value: formatInTimeZone(
+        now(),
+        timeZone.value.replaceAll(" ", "_"),
+        LOCAL_DATETIME_FORMAT
+      ),
     };
   },
 };
@@ -260,7 +275,7 @@ const generateCode: BuiltinCommandDefinition<
 export const builtinCommands = {
   now,
   math,
-  time,
+  timeForTimezone,
   editProse,
   editCode,
   generateCode,

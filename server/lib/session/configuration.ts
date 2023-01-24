@@ -4,7 +4,7 @@ import { DEFAULT_MAX_RESPONSE_TOKENS } from "@lib/constants.ts";
 
 export const Configuration = t.type({
   locale: t.string,
-  timezoneUtcOffset: t.number,
+  timezoneName: t.string,
   maxResponseTokens: t.number,
   bestOf: t.number,
 });
@@ -14,5 +14,5 @@ export const defaultConfiguration: Configuration = {
   locale: "en-US",
   maxResponseTokens: DEFAULT_MAX_RESPONSE_TOKENS,
   bestOf: 2,
-  timezoneUtcOffset: 0,
+  timezoneName: "UTC",
 };

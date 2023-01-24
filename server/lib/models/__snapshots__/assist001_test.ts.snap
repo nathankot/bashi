@@ -15,7 +15,7 @@ snapshot[`all commands resolved on the server 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -62,9 +62,9 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
-\`now() => string\` - get the current time in ISO8601 format
+\`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -90,9 +90,9 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
-\`now() => string\` - get the current time in ISO8601 format
+\`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -111,7 +111,7 @@ Begin!
 Request: some request
 Thought: I need to do something
 Action: now(); math("pi^2 + 123")
-Result: "2022-12-19T08:41:10.000Z"; "132.86960440108936"
+Result: "2022-12-19T08:41:10Z"; "132.86960440108936"
 Thought: ',
 ]
 `;
@@ -131,7 +131,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -186,7 +186,7 @@ snapshot[`client resolved command 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -231,7 +231,7 @@ snapshot[`client resolved command 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          value: "2022-12-19T08:41:10Z",
         },
         type: "executed",
       },
@@ -279,7 +279,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -335,7 +335,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          value: "2022-12-19T08:41:10Z",
         },
         type: "executed",
       },
@@ -383,7 +383,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -439,7 +439,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          value: "2022-12-19T08:41:10Z",
         },
         type: "executed",
       },
@@ -487,7 +487,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -543,7 +543,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          value: "2022-12-19T08:41:10Z",
         },
         type: "executed",
       },
@@ -569,7 +569,7 @@ snapshot[`nested calls 1`] = `
           args: [
             {
               type: "string",
-              value: "2022-12-24T08:41:10.000Z",
+              value: "2022-12-24T08:41:10Z",
             },
             {
               type: "string",
@@ -590,10 +590,10 @@ snapshot[`nested calls 1`] = `
             },
           ],
           id: "0.0",
-          name: "time",
+          name: "timeForTimezone",
           returnValue: {
             type: "string",
-            value: "12/19/2022, 3:41:10 AM",
+            value: "2022-12-19T03:41:10-05:00",
           },
           type: "executed",
         },
@@ -608,7 +608,7 @@ snapshot[`nested calls 1`] = `
           name: "parseRelativeTime",
           returnValue: {
             type: "string",
-            value: "2022-12-24T08:41:10.000Z",
+            value: "2022-12-24T08:41:10Z",
           },
           type: "executed",
         },
@@ -619,7 +619,7 @@ snapshot[`nested calls 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'time("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
+      action: 'timeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
       functionCalls: [
         {
           args: [
@@ -628,7 +628,7 @@ snapshot[`nested calls 1`] = `
               value: "America/New_York",
             },
           ],
-          name: "time",
+          name: "timeForTimezone",
           type: "call",
         },
         {
@@ -668,10 +668,10 @@ snapshot[`nested calls 1`] = `
           },
         ],
         id: "0.0",
-        name: "time",
+        name: "timeForTimezone",
         returnValue: {
           type: "string",
-          value: "12/19/2022, 3:41:10 AM",
+          value: "2022-12-19T03:41:10-05:00",
         },
         type: "executed",
       },
@@ -686,7 +686,7 @@ snapshot[`nested calls 1`] = `
         name: "parseRelativeTime",
         returnValue: {
           type: "string",
-          value: "2022-12-24T08:41:10.000Z",
+          value: "2022-12-24T08:41:10Z",
         },
         type: "executed",
       },
@@ -705,9 +705,9 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
-\`now() => string\` - get the current time in ISO8601 format
+\`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -748,7 +748,7 @@ snapshot[`request needs more context 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -799,7 +799,7 @@ snapshot[`request needs more context 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          value: "2022-12-19T08:41:10Z",
         },
         type: "executed",
       },
@@ -1028,7 +1028,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10.000Z",
+            value: "2022-12-19T08:41:10Z",
           },
           type: "executed",
         },
@@ -1063,9 +1063,9 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
 \`ask(question: string) => string\` - ask for additional information
-\`now() => string\` - get the current time in ISO8601 format
+\`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get time relative to now in ISO8601 format
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -1087,7 +1087,7 @@ Action: someCommand()
 Result: "blah"
 Thought: I need to do something
 Action: editProse("convert to poem"); now()
-Result: "the result of editProse()"; "2022-12-19T08:41:10.000Z"
+Result: "the result of editProse()"; "2022-12-19T08:41:10Z"
 Thought: ',
 ]
 `;
@@ -1126,7 +1126,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'ask("how are you?"); time("America/New_York")',
+      action: 'ask("how are you?"); timeForTimezone("America/New_York")',
       functionCalls: [
         {
           args: [
@@ -1145,7 +1145,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
               value: "America/New_York",
             },
           ],
-          name: "time",
+          name: "timeForTimezone",
           type: "call",
         },
       ],
@@ -1193,10 +1193,10 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
             },
           ],
           id: "0.1",
-          name: "time",
+          name: "timeForTimezone",
           returnValue: {
             type: "string",
-            value: "12/19/2022, 3:41:10 AM",
+            value: "2022-12-19T03:41:10-05:00",
           },
           type: "executed",
         },

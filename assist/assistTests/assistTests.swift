@@ -7,6 +7,7 @@
 
 import XCTest
 import assist
+import BashiPlugin
 
 final class assistTests: XCTestCase {
 
@@ -47,6 +48,14 @@ final class assistTests: XCTestCase {
         default:
             XCTFail("expected the state to be .Confirm")
         }
+    }
+    
+    func testCompatWithServerDateFormat() throws {
+        XCTAssertNotNil(BashiValue(.string("2022-12-20T12:00:00+09:00")).maybeAsDate)
+        XCTAssertNotNil(BashiValue(.string("2022-12-20T12:00:00.000+09:00")).maybeAsDate)
+        XCTAssertNotNil(BashiValue(.string("2022-12-20T12:00:00.000")).maybeAsDate)
+        XCTAssertNotNil(BashiValue(.string("2022-12-20T12:00:00")).maybeAsDate)
+        XCTAssertNotNil(BashiValue(.string("2022-12-20T12:00:00Z")).maybeAsDate)
     }
 
     func testPerformanceExample() throws {

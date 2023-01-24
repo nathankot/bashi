@@ -45,9 +45,9 @@ import Foundation
     public private(set) var string: String? = nil
     public private(set) var number: NSNumber? = nil
     public private(set) var boolean: NSNumber? = nil
-    
+
     public private(set) var type: BashiValueType
-    
+
     override public var description: String {
         if let v = string {
             return v
@@ -86,12 +86,35 @@ import Foundation
             self.type = .void
         }
     }
-    
+
     public var maybeAsDate: Date? {
         guard let s = string else { return nil }
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions.insert(.withFractionalSeconds)
-        return formatter.date(from: s)
+        let fracFormatter = ISO8601DateFormatter()
+        fracFormatter.formatOptions.insert(.withFractionalSeconds)
+
+        let localFormatter = DateFormatter()
+        localFormatter.calendar = Calendar(identifier: .iso8601)
+        localFormatter.locale = Locale.current
+        localFormatter.timeZone = TimeZone.current
+        localFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+
+        let fraclocalFormatter = DateFormatter()
+        fraclocalFormatter.calendar = Calendar(identifier: .iso8601)
+        fraclocalFormatter.locale = Locale.current
+        fraclocalFormatter.timeZone = TimeZone.current
+        fraclocalFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        
+        for parse in [
+            formatter.date,
+            fracFormatter.date,
+            localFormatter.date,
+            fraclocalFormatter.date] {
+            if let d = parse(s) {
+                return d
+            }
+        }
+        return nil
     }
 }
 

@@ -27,7 +27,7 @@ const now: BuiltinCommandDefinition<[], "string"> = {
 
 const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
-  description: "get ISO8601 datetime relative to now",
+  description: "parse ISO8601 datetime relative to now from natural language",
   args: [
     {
       name: "naturalLanguageRelativeTime",

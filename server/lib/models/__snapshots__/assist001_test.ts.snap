@@ -64,7 +64,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -92,7 +92,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -707,7 +707,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 
@@ -1065,7 +1065,7 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`ask(question: string) => string\` - ask for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - get ISO8601 datetime relative to now
+\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
 

@@ -24,6 +24,7 @@
 		D85A30702962F4AD00581B98 /* AlamofireNetworkActivityLogger in Frameworks */ = {isa = PBXBuildFile; productRef = D85A306F2962F4AD00581B98 /* AlamofireNetworkActivityLogger */; };
 		D87F1F9B29631E3500C5936E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87F1F9A29631E3500C5936E /* AppDelegate.swift */; };
 		D88CC84A2967BB93009912AA /* PluginsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88CC8492967BB93009912AA /* PluginsController.swift */; };
+		D895CD8D297FFAB0000ED362 /* PluginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D895CD8C297FFAB0000ED362 /* PluginAPI.swift */; };
 		D8B1A920296C2EF1002E47B3 /* CommandsControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1A91F296C2EF1002E47B3 /* CommandsControllerTest.swift */; };
 		D8C10967296023CF006E6A10 /* AssistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C10966296023CF006E6A10 /* AssistApp.swift */; };
 		D8C1096B296023CF006E6A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8C1096A296023CF006E6A10 /* Assets.xcassets */; };
@@ -100,6 +101,7 @@
 		D88CC8452967B20D009912AA /* builtinCommands.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = builtinCommands.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88CC8472967B2EF009912AA /* builtinCommands.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = builtinCommands.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88CC8492967BB93009912AA /* PluginsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginsController.swift; sourceTree = "<group>"; };
+		D895CD8C297FFAB0000ED362 /* PluginAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginAPI.swift; sourceTree = "<group>"; };
 		D8B1A91F296C2EF1002E47B3 /* CommandsControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommandsControllerTest.swift; path = /Users/nathan/Development/src/localhost/bashi/assist/assistTests/CommandsControllerTest.swift; sourceTree = "<absolute>"; };
 		D8C10963296023CF006E6A10 /* assist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = assist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C10966296023CF006E6A10 /* AssistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistApp.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				D8C1096D296023CF006E6A10 /* Preview Content */,
 				D8C10966296023CF006E6A10 /* AssistApp.swift */,
 				D87F1F9A29631E3500C5936E /* AppDelegate.swift */,
+				D895CD8C297FFAB0000ED362 /* PluginAPI.swift */,
 				D85A306C2962BEB200581B98 /* ContentView.swift */,
 				D8C1096A296023CF006E6A10 /* Assets.xcassets */,
 				D8C1096C296023CF006E6A10 /* assist.entitlements */,
@@ -338,6 +341,7 @@
 				D80ADE67296BC3AE003BAE01 /* CommandsController.swift in Sources */,
 				D85A306529626DFC00581B98 /* AppController.swift in Sources */,
 				D85A306D2962BEB200581B98 /* ContentView.swift in Sources */,
+				D895CD8D297FFAB0000ED362 /* PluginAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

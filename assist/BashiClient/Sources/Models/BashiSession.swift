@@ -21,15 +21,15 @@ public class BashiSession: APIModel {
 
         public var locale: String
 
-        public var timezoneUtcOffset: Double
+        public var timezoneName: String
 
         public var maxResponseTokens: Double
 
         public var bestOf: Double
 
-        public init(locale: String, timezoneUtcOffset: Double, maxResponseTokens: Double, bestOf: Double) {
+        public init(locale: String, timezoneName: String, maxResponseTokens: Double, bestOf: Double) {
             self.locale = locale
-            self.timezoneUtcOffset = timezoneUtcOffset
+            self.timezoneName = timezoneName
             self.maxResponseTokens = maxResponseTokens
             self.bestOf = bestOf
         }
@@ -38,7 +38,7 @@ public class BashiSession: APIModel {
             let container = try decoder.container(keyedBy: StringCodingKey.self)
 
             locale = try container.decode("locale")
-            timezoneUtcOffset = try container.decode("timezoneUtcOffset")
+            timezoneName = try container.decode("timezoneName")
             maxResponseTokens = try container.decode("maxResponseTokens")
             bestOf = try container.decode("bestOf")
         }
@@ -47,7 +47,7 @@ public class BashiSession: APIModel {
             var container = encoder.container(keyedBy: StringCodingKey.self)
 
             try container.encode(locale, forKey: "locale")
-            try container.encode(timezoneUtcOffset, forKey: "timezoneUtcOffset")
+            try container.encode(timezoneName, forKey: "timezoneName")
             try container.encode(maxResponseTokens, forKey: "maxResponseTokens")
             try container.encode(bestOf, forKey: "bestOf")
         }
@@ -55,7 +55,7 @@ public class BashiSession: APIModel {
         public func isEqual(to object: Any?) -> Bool {
           guard let object = object as? Configuration else { return false }
           guard self.locale == object.locale else { return false }
-          guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
+          guard self.timezoneName == object.timezoneName else { return false }
           guard self.maxResponseTokens == object.maxResponseTokens else { return false }
           guard self.bestOf == object.bestOf else { return false }
           return true

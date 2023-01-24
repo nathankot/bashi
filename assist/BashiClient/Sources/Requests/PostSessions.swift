@@ -92,13 +92,13 @@ extension BashiClient {
 
                     public var maxResponseTokens: Double?
 
-                    public var timezoneUtcOffset: Double?
+                    public var timezoneName: String?
 
-                    public init(bestOf: Double? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneUtcOffset: Double? = nil) {
+                    public init(bestOf: Double? = nil, locale: String? = nil, maxResponseTokens: Double? = nil, timezoneName: String? = nil) {
                         self.bestOf = bestOf
                         self.locale = locale
                         self.maxResponseTokens = maxResponseTokens
-                        self.timezoneUtcOffset = timezoneUtcOffset
+                        self.timezoneName = timezoneName
                     }
 
                     public required init(from decoder: Decoder) throws {
@@ -107,7 +107,7 @@ extension BashiClient {
                         bestOf = try container.decodeIfPresent("bestOf")
                         locale = try container.decodeIfPresent("locale")
                         maxResponseTokens = try container.decodeIfPresent("maxResponseTokens")
-                        timezoneUtcOffset = try container.decodeIfPresent("timezoneUtcOffset")
+                        timezoneName = try container.decodeIfPresent("timezoneName")
                     }
 
                     public func encode(to encoder: Encoder) throws {
@@ -116,7 +116,7 @@ extension BashiClient {
                         try container.encodeIfPresent(bestOf, forKey: "bestOf")
                         try container.encodeIfPresent(locale, forKey: "locale")
                         try container.encodeIfPresent(maxResponseTokens, forKey: "maxResponseTokens")
-                        try container.encodeIfPresent(timezoneUtcOffset, forKey: "timezoneUtcOffset")
+                        try container.encodeIfPresent(timezoneName, forKey: "timezoneName")
                     }
 
                     public func isEqual(to object: Any?) -> Bool {
@@ -124,7 +124,7 @@ extension BashiClient {
                       guard self.bestOf == object.bestOf else { return false }
                       guard self.locale == object.locale else { return false }
                       guard self.maxResponseTokens == object.maxResponseTokens else { return false }
-                      guard self.timezoneUtcOffset == object.timezoneUtcOffset else { return false }
+                      guard self.timezoneName == object.timezoneName else { return false }
                       return true
                     }
 

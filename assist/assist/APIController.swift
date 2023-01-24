@@ -62,7 +62,7 @@ public actor APIController {
     }
 
     func refreshSession(force: Bool = false) async throws -> BashiSession {
-        let timezoneOffset = Double(TimeZone.current.secondsFromGMT() / 60)
+        let timezone = TimeZone.current.identifier
         let locale = Locale.current.identifier(.bcp47)
 
         let commandDefinitions = await pluginsController.commandDefinitions
@@ -72,11 +72,11 @@ public actor APIController {
                 if session.expiresAt.compare(Date().addingTimeInterval(-60 * 10)) == .orderedDescending &&
                     (
                         session.accountNumber,
-                        session.configuration.timezoneUtcOffset,
+                        session.configuration.timezoneName,
                         session.configuration.locale
                     ) == (
                         accountNumber,
-                        timezoneOffset,
+                        timezone,
                         locale
                     ) {
                     // Nothing to do as the current session is still valid
@@ -97,7 +97,7 @@ public actor APIController {
                     )),
                 configuration: .init(
                     locale: locale,
-                    timezoneUtcOffset: timezoneOffset
+                    timezoneName: timezone
                 )
             )
         )

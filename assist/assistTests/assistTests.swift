@@ -20,13 +20,13 @@ final class assistTests: XCTestCase {
 
     func testAppStateTransition() async throws {
         let state = await AppState()
-        let expected = AppState.State.Confirm(
-            commandContext: .init(request: ""),
-            confirmationMessage: "some confirmation")
+        let expected = AppState.State.NeedsInput(
+            messages: [],
+            type: .Confirm(confirmationMessage: "some confirmation"))
         
         // t1 should happen first, despite it having a longer wait:
         let t1 = Task {
-            try await state.transition(newState: .Processing(commandContext: .init(request: "some request"))) { doTransition in
+            try await state.transition(newState: .Processing(messages: [])) { doTransition in
                 try await Task.sleep(nanoseconds: 1_000_000_000)
                 await doTransition()
             }
@@ -42,7 +42,7 @@ final class assistTests: XCTestCase {
         
         let s = await state.state
         switch s {
-        case .Confirm:
+        case .NeedsInput:
             break
         default:
             XCTFail("expected the state to be .Confirm")

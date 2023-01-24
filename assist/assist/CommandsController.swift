@@ -116,18 +116,20 @@ public actor CommandsController {
                 continue interpreterLoop
             case .resultFinished(let resultFinished):
                 if messages.count == 1 {
-                    let lastValue = resultFinished.resolvedCommands.reversed().compactMap {
-                        switch $0.returnValue {
+                    if let lastValue = resultFinished.resolvedCommands.reversed().compactMap({ (v) -> String? in
+                        switch v.returnValue {
                         case .stringValue(let s): return s.value
                         case .numberValue(let n): return "\(n)"
+                        case .booleanValue(let b): return b.value ? "True" : "False"
                         default: return nil
                         }
-                    }.first
-                    pluginAPI.insertMessage("Result: \(lastValue)", .answer)
+                    }).first {
+                        pluginAPI.insertMessage(lastValue, .answer)
+                    }
                 }
                 // TODO implement implicit flush here - display the last result if
                 // no command before this ended up displaying anything.
-                try await state.transition(newState: .Success(messages: messages))
+                try await state.transition(newState: .Finished(messages: messages))
                 return
             }
         }

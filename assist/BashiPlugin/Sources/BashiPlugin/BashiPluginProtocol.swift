@@ -131,7 +131,7 @@ public class AnonymousCommand: Command {
         name: String,
         description: String,
         args: [CommandArgDef] = [],
-        returnType: BashiValueType = .void,
+        returnType: BashiValueType,
         triggerTokens: [String]? = nil,
         runFn: @escaping (
             BashiPluginAPI,

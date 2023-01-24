@@ -33,7 +33,7 @@ public actor PluginsController {
         return commandDefinitions[command]?.def
     }
 
-    internal func loadPlugin(_ plugin: BashiPluginProtocol, withId pluginId: String) async throws {
+    public func loadPlugin(_ plugin: BashiPluginProtocol, withId pluginId: String) async throws {
         do {
             try await plugin.prepare()
         } catch {
@@ -86,6 +86,7 @@ public actor PluginsController {
                 name: "answer",
                 description: "answer the original question directly",
                 args: [.init(type: .string, name: "answer")],
+                returnType: .void,
                 runFn: { api, ctx, args in
                     await api.respond(message: args.first?.string ?? "could not get message")
                     return .init(.void)

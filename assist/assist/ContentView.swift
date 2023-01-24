@@ -55,7 +55,7 @@ struct ContentView: View {
                         Text($0.message)
                     }
                     Text("Processing...").font(.callout)
-                case .Success(let messages):
+                case .Finished(let messages):
                     List(messages) {
                         Text($0.message)
                     }

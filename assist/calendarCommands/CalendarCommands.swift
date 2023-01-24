@@ -40,6 +40,7 @@ public class CalendarCommands: BundledPlugin {
                         .init(type: .string, name: "iso8601Date"),
                         .init(type: .number, name: "duration in hours or 1 if unknown")
                 ],
+                returnType: .void,
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
                 runFn: { (api, ctx, args) async throws -> BashiValue in
                     guard let name = args[0].string else {

@@ -7,25 +7,40 @@
 
 import Foundation
 import XCTest
-import BashiPlugin
-import builtinCommands
+import BashiClient
 import assist
 
 final class CommandsControllerTest: XCTestCase {
 
-    var pluginAPI: MockPluginAPI!
+    var state: AppState!
     var pluginsController: PluginsController!
     var commandsController: CommandsController!
+    var mockResults: [ModelsAssist001Output.Result] = []
+    var mockError: Error? = nil
 
     override func setUpWithError() throws {
-        pluginAPI = MockPluginAPI()
-        pluginsController = PluginsController(pluginAPI: pluginAPI)
-        commandsController = CommandsController(
-            pluginAPI: pluginAPI,
-            pluginsController: pluginsController)
-
         let e = expectation(description: "load plugin")
         Task {
+            mockResults = []
+            mockError = nil
+            state = await AppState(accountNumber: "123")
+            pluginsController = PluginsController(state: state)
+            commandsController = CommandsController(
+                state: state,
+                pluginsController: pluginsController,
+                runModel: { input in
+                    if let e = self.mockError {
+                        throw e
+                    }
+                    return .init(
+                        model: .assist001,
+                        request: "some request",
+                        result: self.mockResults.count == 0
+                            ? .resultFinished(.init(type: .finished, resolvedCommands: []))
+                            : self.mockResults.removeFirst()
+                    )
+
+                })
             try await pluginsController.loadPlugin(
                 MockPlugin(), withId: "mockPlugin")
             e.fulfill()
@@ -37,149 +52,139 @@ final class CommandsControllerTest: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
-    // test mixed success
 
     func testCommandsHandle() async throws {
-        let result = try await commandsController.handle(
-            assistResponse: .init(
-                model: .assist000,
-                request: "some request",
-                commands: [
-                        .commandParsed(.init(line: "", type: .parsed, name: "mock_command", args: [])),
-                        .commandParsed(.init(line: "", type: .parsed, name: "display", args: []))
-                ]),
-            commandContext: .init(request: "blah")
-        ) { confirmationMessage in true }
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "1", type: .parsed, name: "mock_display", args: [
+                        .stringValue(.init(type: .string, value: "something"))
+                    ]))
+                ], resolvedCommands: [])),
+                .resultFinished(.init(type: .finished, resolvedCommands: []))
+        ]
 
-        switch result {
-        case .Success(renderResult: let r):
-            XCTAssertEqual(r, "some result B")
-        default:
-            XCTFail("expected a success result")
+        try await commandsController.process(initialRequest: "some request")
+
+        guard case let .Finished(messages: messages) = await state.state else {
+            XCTFail("expected a finished result")
+            return
         }
-        XCTAssertEqual(pluginAPI.seenFlushed, ["some result A"])
+
+        XCTAssertEqual(messages.map { $0.message }, [
+            "some request",
+            "something",
+        ])
     }
     
-    func testCommandsHandleNoImplicitFlush() async throws {
-        let result = try await commandsController.handle(
-            assistResponse: .init(
-                model: .assist000,
-                request: "some request",
-                commands: [
-                        .commandParsed(.init(line: "", type: .parsed, name: "mock_command", args: [])),
-                ]),
-            commandContext: .init(request: "blah")
-        ) { confirmationMessage in true }
+    func testCommandsHandleImplicitFlush() async throws {
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_command", args: [])),
+                ], resolvedCommands: [])),
+                .resultFinished(.init(type: .finished, resolvedCommands: [
+                    // Note here that commands controller ultimately uses what the server
+                    // returns as 'resolved commands' as the source of truth:
+                    .init(
+                        id: "0",
+                        type: .executed,
+                        name: "mock_command",
+                        args: [],
+                        returnValue: .stringValue(
+                        .init(type: .string, value: "some result hello")))
+                ]))
+        ]
 
-        switch result {
-        case .Success(renderResult: let r):
-            XCTAssertEqual(r, nil)
-        default:
-            XCTFail("expected a nil success result")
-        }
-        XCTAssertEqual(pluginAPI.seenFlushed, ["some result A"])
-    }
+        try await commandsController.process(initialRequest: "some request")
 
-    func testCommandNotConfirmed() async throws {
-        let expectation = expectation(description: "should throw error")
-        do {
-            _ = try await commandsController.handle(
-                assistResponse: .init(
-                    model: .assist000,
-                    request: "some request",
-                    commands: [
-                            .commandParsed(.init(
-                            line: "",
-                            type: .parsed,
-                            name: "mock_command_no_confirm",
-                            args: []
-                            )),
-                            .commandParsed(.init(
-                            line: "",
-                            type: .parsed,
-                            name: "mock_command",
-                            args: []
-                            ))
-                    ]
-                ),
-                commandContext: .init(request: "blah")
-            ) { confirmationMessage in false }
-        } catch let e as CommandsController.CommandError {
-            switch e {
-            case .commandNotConfirmed(let resultContext):
-                let returnValues = await resultContext.getReturnValues().map({ $0.string ?? "" })
-                XCTAssertEqual(returnValues, ["some result D"])
-                XCTAssertEqual(pluginAPI.seenFlushed, ["some result C"])
-                expectation.fulfill()
-            default:
-                throw e
-            }
+        guard case let .Finished(messages: messages) = await state.state else {
+            XCTFail("expected a finished result")
+            return
         }
 
-        await waitForExpectations(timeout: 2)
+        XCTAssertEqual(messages.map { $0.message }, [
+            "some request",
+            "some result hello",
+        ])
     }
 
     func testWrongArgumentType() async throws {
         let expectation = expectation(description: "should throw err")
         do {
-            _ = try await commandsController.handle(
-                assistResponse: .init(
-                    model: .assist000,
-                    request: "some request",
-                    commands: [
-                            .commandParsed(.init(
-                            line: "",
-                            type: .parsed,
-                            name: "mock_command_return_argument",
-                            args: [.numberValue(.init(type: .number, value: 123))]
-                            ))
-                    ]
-                ),
-                commandContext: .init(request: "blah")
-            ) { confirmationMessage in true }
-        } catch let e as CommandsController.CommandError {
+            mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: [
+                        // number is the wrong arg type:
+                        .numberValue(.init(type: .number, value: 123))
+                    ]))
+                ], resolvedCommands: []))
+            ]
+            try await commandsController.process(initialRequest: "some request")
+        } catch let e as AppError {
             switch e {
-            case .mismatchArgs(let reason):
-                XCTAssertEqual(reason, "the argument 'any string' expects a string")
+            case .CommandMismatchArgs:
                 expectation.fulfill()
-            default:
-                throw e
+            default: throw e
             }
         }
-
         await waitForExpectations(timeout: 2)
     }
-
-    func testWrongArgumentNumberOfArguments() async throws {
+    
+    func testWrongArgumentCount() async throws {
         let expectation = expectation(description: "should throw err")
         do {
-            _ = try await commandsController.handle(
-                assistResponse: .init(
-                    model: .assist000,
-                    request: "some request",
-                    commands: [
-                            .commandParsed(.init(
-                            line: "",
-                            type: .parsed,
-                            name: "mock_command_return_argument",
-                            args: []
-                            ))
-                    ]
-                ),
-                commandContext: .init(request: "blah")
-            ) { confirmationMessage in true }
-        } catch let e as CommandsController.CommandError {
+            mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: []))
+                ], resolvedCommands: []))
+            ]
+            try await commandsController.process(initialRequest: "some request")
+        } catch let e as AppError {
             switch e {
-            case .mismatchArgs(let reason):
-                XCTAssertEqual(reason, "command expects 1 args but got 0")
+            case .CommandMismatchArgs:
                 expectation.fulfill()
-            default:
-                throw e
+            default: throw e
             }
         }
-
         await waitForExpectations(timeout: 2)
     }
+    
+    func testWrongReturnType() async throws {
+        let expectation = expectation(description: "should throw err")
+        do {
+            mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_wrong_return_type", args: []))
+                ], resolvedCommands: []))
+            ]
+            try await commandsController.process(initialRequest: "some request")
+        } catch let e as AppError {
+            switch e {
+            case .CommandMismatchResult:
+                expectation.fulfill()
+            default: throw e
+            }
+        }
+        await waitForExpectations(timeout: 2)
+    }
+    
+    func testCommandNotFound() async throws {
+        let expectation = expectation(description: "should throw err")
+        do {
+            mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "non_existent", args: []))
+                ], resolvedCommands: []))
+            ]
+            try await commandsController.process(initialRequest: "some request")
+        } catch let e as AppError {
+            switch e {
+            case .CommandNotFound:
+                expectation.fulfill()
+            default: throw e
+            }
+        }
+        await waitForExpectations(timeout: 2)
+    }
+//    func testCommandNotConfirmed() async throws {}
 
 }

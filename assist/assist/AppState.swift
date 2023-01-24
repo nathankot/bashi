@@ -13,7 +13,7 @@ import Speech
 import UserNotifications
 import Combine
 
-public indirect enum AppError: Error {
+public indirect enum AppError: Error, LocalizedError {
     case AppLaunchError(Error)
     case Internal(String)
     case NoRequestFound
@@ -25,9 +25,25 @@ public indirect enum AppError: Error {
     case CommandExecutionErrors([Error])
     case BadConfiguration(String? = nil)
     case InsufficientAppPermissions(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .AppLaunchError(let e): return "could not launch app: \(e.localizedDescription)"
+        case .Internal(let m): return "internal error: \(m)"
+        case .UnexpectedTransition(let s1, let s2): return "cannot transition from \(s1) to \(s2)"
+        case let .CommandNotFound(name: name): return "command not found: \(name)"
+        case let .CommandMismatchArgs(name: name, error: m): return "command args mismatch: \(name), \(m)"
+        case let .CommandMismatchResult(name: name, expected: expected, actual: actual):
+            return "command \(name) return value type mismatch. expected \(expected) got \(actual)"
+        case .CouldNotAuthenticate: return "authentication failure"
+        case let .InsufficientAppPermissions(m): return "required permissions missing: \(m)"
+        case .BadConfiguration: return "configuration error"
+        default: return "unknown error: \(String.init(describing: self))"
+        }
+    }
 }
 
-public struct Message: Identifiable {
+public struct Message: Identifiable, Equatable {
     public let id: Int
     public let message: String
     public let type: MessageType
@@ -56,7 +72,7 @@ public final class AppState: ObservableObject {
         case Recording(bestTranscription: String?)
         case Processing(messages: [Message])
         case NeedsInput(messages: [Message], type: InputType)
-        case Success(messages: [Message])
+        case Finished(messages: [Message])
         case Error(AppError)
 
         public enum InputType {
@@ -81,11 +97,11 @@ public final class AppState: ObservableObject {
              (.Recording, .Processing),
              (.Processing, .Processing),
              (.Processing, .NeedsInput),
-             (.Processing, .Success),
+             (.Processing, .Finished),
              (.NeedsInput, .Processing),
-             (.Success, .Idle),
-             (.Success, .Recording),
-             (.Success, .Processing),
+             (.Finished, .Idle),
+             (.Finished, .Recording),
+             (.Finished, .Processing),
              (.Error, .Idle),
              (.Error, .Recording),
              (_, .Error):

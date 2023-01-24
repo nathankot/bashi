@@ -113,8 +113,6 @@ public actor CommandsController {
                         pluginAPI.insertMessage(lastValue, .answer)
                     }
                 }
-                // TODO implement implicit flush here - display the last result if
-                // no command before this ended up displaying anything.
                 try await state.transition(newState: .Finished(messages: messages))
                 return
             }

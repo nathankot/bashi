@@ -18,20 +18,6 @@ public actor CommandsController {
 
     let runModel: RunModel
 
-    class PluginAPI: BashiPluginAPI {
-        weak var controller: CommandsController!
-        let insertMessage: (String, MessageType) -> Void
-
-        init(controller: CommandsController!, insertMessage: @escaping (String, MessageType) -> Void) {
-            self.controller = controller
-            self.insertMessage = insertMessage
-        }
-
-        public func respond(message: String) async {
-            insertMessage(message, .response)
-        }
-    }
-
     public init(
         state: AppState,
         pluginsController: PluginsController,
@@ -69,7 +55,7 @@ public actor CommandsController {
             case .resultNeedsRequestContext(_):
                 fatalError("requesting request context is unimplemented so far")
             case .resultPendingCommands(let resultPending):
-                let commandContext = CommandContext.from(
+                let commandContext = Context.from(
                     request: initialRequest,
                     requestContext: requestContext
                 )
@@ -117,13 +103,13 @@ public actor CommandsController {
             case .resultFinished(let resultFinished):
                 if messages.count == 1 {
                     if let lastValue = resultFinished.resolvedCommands.reversed().compactMap({ (v) -> String? in
-                        switch v.returnValue {
-                        case .stringValue(let s): return s.value
-                        case .numberValue(let n): return "\(n)"
-                        case .booleanValue(let b): return b.value ? "True" : "False"
-                        default: return nil
-                        }
-                    }).first {
+                            switch v.returnValue {
+                            case .stringValue(let s): return s.value
+                            case .numberValue(let n): return "\(n)"
+                            case .booleanValue(let b): return b.value ? "True" : "False"
+                            default: return nil
+                            }
+                        }).first {
                         pluginAPI.insertMessage(lastValue, .answer)
                     }
                 }
@@ -135,68 +121,82 @@ public actor CommandsController {
         }
     }
 
-}
+    class PluginAPI: BashiPluginAPI {
+        weak var controller: CommandsController!
+        let insertMessage: (String, MessageType) -> Void
 
-public actor CommandContext: BashiPlugin.CommandContext {
-
-    nonisolated public let request: String
-    nonisolated public let requestContextStrings: Dictionary<String, String>
-    nonisolated public let requestContextNumbers: Dictionary<String, Double>
-    nonisolated public let requestContextBooleans: Dictionary<String, Bool>
-
-    public static func from(request: String, requestContext: RequestContext) -> CommandContext {
-        var requestContextStrings: Dictionary<String, String> = [:]
-        var requestContextNumbers: Dictionary<String, Double> = [:]
-        var requestContextBooleans: Dictionary<String, Bool> = [:]
-
-        for (name, value) in requestContext.additionalProperties {
-            switch value {
-            case .stringValue(let v):
-                requestContextStrings.updateValue(v.value, forKey: name)
-            case .numberValue(let v):
-                requestContextNumbers.updateValue(v.value, forKey: name)
-            case .booleanValue(let v):
-                requestContextBooleans.updateValue(v.value, forKey: name)
-            case .voidValue:
-                break
-            }
+        init(controller: CommandsController!, insertMessage: @escaping (String, MessageType) -> Void) {
+            self.controller = controller
+            self.insertMessage = insertMessage
         }
 
-        // Use reflection, this ensures that the following does not need
-        // to be updated when new well-known request context values are added.
-        let mirror = Mirror(reflecting: requestContext)
-        for attr in mirror.children {
-            guard let label = attr.label else { continue }
-            switch attr.value {
-            case let v as StringValue:
-                requestContextStrings.updateValue(v.value, forKey: label)
-            case let v as NumberValue:
-                requestContextNumbers.updateValue(v.value, forKey: label)
-            case let v as BooleanValue:
-                requestContextBooleans.updateValue(v.value, forKey: label)
-            default:
-                continue
+        public func respond(message: String) async {
+            insertMessage(message, .response)
+        }
+    }
+
+    public actor Context: BashiPlugin.CommandContext {
+
+        nonisolated public let request: String
+        nonisolated public let requestContextStrings: Dictionary<String, String>
+        nonisolated public let requestContextNumbers: Dictionary<String, Double>
+        nonisolated public let requestContextBooleans: Dictionary<String, Bool>
+
+        public static func from(request: String, requestContext: RequestContext) -> Context {
+            var requestContextStrings: Dictionary<String, String> = [:]
+            var requestContextNumbers: Dictionary<String, Double> = [:]
+            var requestContextBooleans: Dictionary<String, Bool> = [:]
+
+            for (name, value) in requestContext.additionalProperties {
+                switch value {
+                case .stringValue(let v):
+                    requestContextStrings.updateValue(v.value, forKey: name)
+                case .numberValue(let v):
+                    requestContextNumbers.updateValue(v.value, forKey: name)
+                case .booleanValue(let v):
+                    requestContextBooleans.updateValue(v.value, forKey: name)
+                case .voidValue:
+                    break
+                }
             }
+
+            // Use reflection, this ensures that the following does not need
+            // to be updated when new well-known request context values are added.
+            let mirror = Mirror(reflecting: requestContext)
+            for attr in mirror.children {
+                guard let label = attr.label else { continue }
+                switch attr.value {
+                case let v as StringValue:
+                    requestContextStrings.updateValue(v.value, forKey: label)
+                case let v as NumberValue:
+                    requestContextNumbers.updateValue(v.value, forKey: label)
+                case let v as BooleanValue:
+                    requestContextBooleans.updateValue(v.value, forKey: label)
+                default:
+                    continue
+                }
+            }
+
+
+            return Context(
+                request: request,
+                requestContextStrings: requestContextStrings,
+                requestContextNumbers: requestContextNumbers,
+                requestContextBooleans: requestContextBooleans)
         }
 
-
-        return CommandContext(
-            request: request,
-            requestContextStrings: requestContextStrings,
-            requestContextNumbers: requestContextNumbers,
-            requestContextBooleans: requestContextBooleans)
-    }
-
-    public init(request: String,
-        requestContextStrings: Dictionary<String, String> = [:],
-        requestContextNumbers: Dictionary<String, Double> = [:],
-        requestContextBooleans: Dictionary<String, Bool> = [:]) {
-        self.request = request
-        self.requestContextStrings = requestContextStrings
-        self.requestContextNumbers = requestContextNumbers
-        self.requestContextBooleans = requestContextBooleans
+        public init(request: String,
+            requestContextStrings: Dictionary<String, String> = [:],
+            requestContextNumbers: Dictionary<String, Double> = [:],
+            requestContextBooleans: Dictionary<String, Bool> = [:]) {
+            self.request = request
+            self.requestContextStrings = requestContextStrings
+            self.requestContextNumbers = requestContextNumbers
+            self.requestContextBooleans = requestContextBooleans
+        }
     }
 }
+
 
 extension BashiValue {
     convenience init(from apiClientValue: Value) {

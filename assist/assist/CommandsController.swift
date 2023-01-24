@@ -119,20 +119,6 @@ public actor CommandsController {
         }
     }
 
-    class PluginAPI: BashiPluginAPI {
-        weak var controller: CommandsController!
-        let insertMessage: (String, MessageType) -> Void
-
-        init(controller: CommandsController!, insertMessage: @escaping (String, MessageType) -> Void) {
-            self.controller = controller
-            self.insertMessage = insertMessage
-        }
-
-        public func respond(message: String) async {
-            insertMessage(message, .response)
-        }
-    }
-
     public actor Context: BashiPlugin.CommandContext {
 
         nonisolated public let request: String

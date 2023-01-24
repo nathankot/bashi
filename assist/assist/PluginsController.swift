@@ -81,17 +81,7 @@ public actor PluginsController {
     }
 
     internal func loadBuiltinCommands() async throws {
-        for builtinCommand in [
-            AnonymousCommand(
-                name: "answer",
-                description: "answer the original question directly",
-                args: [.init(type: .string, name: "answer")],
-                returnType: .void,
-                runFn: { api, ctx, args in
-                    await api.respond(message: args.first?.string ?? "could not get message")
-                    return .init(.void)
-                }),
-        ] {
+        for builtinCommand in PluginAPI.builtinCommands {
             try loadCommand(pluginId: BUILTIN_COMMANDS_PLUGIN_ID, command: builtinCommand)
         }
     }

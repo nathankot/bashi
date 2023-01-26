@@ -16,7 +16,7 @@ import Combine
 public indirect enum AppError: Error, LocalizedError {
     case AppLaunchError(Error)
     case Internal(String)
-    case NoRequestFound
+    case NoTranscriptionFound
     case UnexpectedTransition(AppState.State, AppState.State)
     case CommandNotFound(name: String)
     case CommandMismatchArgs(name: String, error: String)
@@ -51,37 +51,34 @@ public struct Message: Identifiable, Equatable {
 
 public enum MessageType: Equatable {
     case request
-    case answer
-    case response
+    case userResponse
+    case modelResponse
 }
 
 @MainActor
 public final class AppState: ObservableObject {
 
-    static let shared = AppState()
-
-    #if DEBUG
-        @Published var accountNumber: String = "123"
-    #else
-        @AppStorage("accountNumber") var accountNumber: String = ""
-    #endif
-    @Published var session: BashiSession? = nil
-
     public enum State {
         case Idle
-        case Recording(bestTranscription: String?)
+        case AwaitingRequest
         case Processing(messages: [Message])
         case NeedsInput(messages: [Message], type: InputType)
         case Finished(messages: [Message])
         case Error(AppError)
 
         public enum InputType {
-            case Confirm(confirmationMessage: String)
+            case Confirm(message: String)
+            case Question(message: String, onAnswer: (String) -> Void)
         }
     }
 
-    @Published public private(set) var state: State = .Idle
+    static let shared = AppState()
 
+    @AppStorage("accountNumber") var accountNumber: String = ""
+    @Published var session: BashiSession? = nil
+    @Published public private(set) var state: State = .Idle
+    @Published public private(set) var currentTranscription: String? = nil
+    
     public init(accountNumber: String? = nil) {
         logger.info("initializing app state")
         if let an = accountNumber {
@@ -89,21 +86,21 @@ public final class AppState: ObservableObject {
         }
     }
 
-    private func canTransition(newState: State) -> Bool {
+    public func canTransition(newState: State) -> Bool {
         switch (state, newState) {
-        case (.Idle, .Recording),
+        case (.Idle, .AwaitingRequest),
              (.Idle, .Processing),
-             (.Recording, .Recording),
-             (.Recording, .Processing),
+             (.AwaitingRequest, .AwaitingRequest),
+             (.AwaitingRequest, .Processing),
              (.Processing, .Processing),
              (.Processing, .NeedsInput),
              (.Processing, .Finished),
              (.NeedsInput, .Processing),
              (.Finished, .Idle),
-             (.Finished, .Recording),
+             (.Finished, .AwaitingRequest),
              (.Finished, .Processing),
              (.Error, .Idle),
-             (.Error, .Recording),
+             (.Error, .AwaitingRequest),
              (_, .Error):
             return true
         default:
@@ -114,29 +111,53 @@ public final class AppState: ObservableObject {
     private var semaphoreWaits: [CheckedContinuation<Void, Never>] = []
     private var semaphoreCount = 1
 
-    public func transition<R>(
-        newState: State,
-        closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }
-    ) async throws -> R {
+    public func withLock<R>(_ closure: () async throws -> R) async rethrows -> R {
         // wait
+        #if DEBUG
+            logger.debug("locking app state")
+        #endif
         semaphoreCount -= 1
         if semaphoreCount < 0 {
             await withCheckedContinuation { semaphoreWaits.append($0) }
         }
         defer {
             // signal
+            #if DEBUG
+                logger.debug("un-locking app state")
+            #endif
             semaphoreCount += 1
             if !semaphoreWaits.isEmpty {
                 semaphoreWaits.removeFirst().resume()
             }
         }
 
-        if !canTransition(newState: newState) {
-            logger.error("unexpected transition from \(String(reflecting: self.state)) to \(String(reflecting: newState))")
-            throw AppError.UnexpectedTransition(state, newState)
-        }
+        return try await closure()
+    }
+    
+    public func update(currentTranscription s: String?) {
+        currentTranscription = s
+    }
 
-        return try await closure({ state = newState })
+    public func transition<R>(
+        newState: State,
+        closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }
+    ) async throws -> R {
+        #if DEBUG
+            logger.debug("attempting to transition to state: \(String(describing: newState))")
+        #endif
+        return try await withLock {
+            if !canTransition(newState: newState) {
+                logger.error("unexpected transition from \(String(reflecting: self.state)) to \(String(reflecting: newState))")
+                throw AppError.UnexpectedTransition(state, newState)
+            }
+
+            return try await closure({
+                state = newState
+                #if DEBUG
+                    logger.debug("transitioned to state: \(String(describing: self.state))")
+                #endif
+            })
+        }
     }
 
     public func handleError(_ e: Error) async {

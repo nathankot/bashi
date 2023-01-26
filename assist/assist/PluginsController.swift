@@ -49,6 +49,23 @@ public actor PluginsController {
         }
     }
 
+    public func loadBuiltinCommands() async throws {
+        for builtinCommand in CommandsController.builtinCommands {
+            try loadCommand(pluginId: BUILTIN_COMMANDS_PLUGIN_ID, command: builtinCommand)
+        }
+    }
+
+    internal func loadCommandsInAppBundle() async throws {
+        guard let url = Bundle.main.builtInPlugInsURL else {
+            throw PluginError.couldNotLoadPlugin(reason: "no plugins url found")
+        }
+        for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
+            if f.hasSuffix(".plugin") {
+                try await loadPlugin(fromBundle: url.appendingPathComponent(f))
+            }
+        }
+    }
+
     internal func loadCommand(pluginId: String, command: Command) throws {
         if commandDefinitions[command.name] != nil {
             throw PluginError.commandLoadedTwice(commandName: command.name)
@@ -67,23 +84,6 @@ public actor PluginsController {
             throw PluginError.couldNotLoadPlugin(reason: "no plugin id found: \(bundlePath.absoluteString)")
         }
         try await loadPlugin(plugin, withId: pluginId)
-    }
-
-    internal func loadCommandsInAppBundle() async throws {
-        guard let url = Bundle.main.builtInPlugInsURL else {
-            throw PluginError.couldNotLoadPlugin(reason: "no plugins url found")
-        }
-        for f in try FileManager.default.contentsOfDirectory(atPath: url.path) {
-            if f.hasSuffix(".plugin") {
-                try await loadPlugin(fromBundle: url.appendingPathComponent(f))
-            }
-        }
-    }
-
-    internal func loadBuiltinCommands() async throws {
-        for builtinCommand in PluginAPI.builtinCommands {
-            try loadCommand(pluginId: BUILTIN_COMMANDS_PLUGIN_ID, command: builtinCommand)
-        }
     }
 
 }

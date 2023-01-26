@@ -43,6 +43,21 @@ public class CalendarCommands: BundledPlugin {
                 returnType: .void,
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
                 runFn: { (api, ctx, args) async throws -> BashiValue in
+                    let granted: Bool = try await withCheckedThrowingContinuation { continuation in
+                        DispatchQueue.main.sync {
+                            self.eventStore.requestAccess(to: .event) { granted, err in
+                                if let e = err {
+                                    continuation.resume(with: .failure(e))
+                                } else {
+                                    continuation.resume(with: .success(granted))
+                                }
+                            }
+                        }
+                    }
+                    if !granted {
+                        throw ErrorType.noEventStorePermissions
+                    }
+                    
                     guard let name = args[0].string else {
                         logger.error("could not find calendar name")
                         throw ErrorType.internalError
@@ -65,21 +80,6 @@ public class CalendarCommands: BundledPlugin {
                     event.title = name
                     event.endDate = date.addingTimeInterval(60 * 60 * hours.doubleValue)
                     event.calendar = defaultCalendar
-
-                    let granted: Bool = try await withCheckedThrowingContinuation { continuation in
-                        DispatchQueue.main.sync {
-                            self.eventStore.requestAccess(to: .event) { granted, err in
-                                if let e = err {
-                                    continuation.resume(with: .failure(e))
-                                } else {
-                                    continuation.resume(with: .success(granted))
-                                }
-                            }
-                        }
-                    }
-                    if !granted {
-                        throw ErrorType.noEventStorePermissions
-                    }
                     
                     try self.eventStore.save(event, span: .thisEvent, commit: true)
                     return .init(.void)

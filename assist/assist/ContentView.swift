@@ -46,15 +46,29 @@ struct ContentView: View {
                         Text("Set up a shortcut key for push-to-talk").font(.callout)
                         Button("Open settings", action: showSettings)
                     }
-                case .Recording(bestTranscription: let s):
+                case .AwaitingRequest:
                     Text("Listening...").font(.callout)
-                    Text(s ?? "")
-                case .Processing(let messages):
+                    if let s = state.currentTranscription {
+                        Text(s)
+                    }
+                case let .Processing(messages):
                     Text("Request:").font(.callout)
                     List(messages) {
                         Text($0.message)
                     }
                     Text("Processing...").font(.callout)
+                case let .NeedsInput(messages: messages, type: .Question(question, _)):
+                    List(messages) {
+                        Text($0.message)
+                    }
+                    Text(question)
+                    if let s = state.currentTranscription {
+                        Text(s)
+                    } else {
+                        if let k = pushToTalkShortcut {
+                            Text("Hold \(k.description) to respond").font(.callout)
+                        }
+                    }
                 case .Finished(let messages):
                     List(messages) {
                         Text($0.message)
@@ -79,7 +93,7 @@ struct ContentView: View {
     func dismissError() {
         Task { await controller?.dismissError() }
     }
-    
+
     func showSettings() {
         Task { await controller?.showSettings() }
     }

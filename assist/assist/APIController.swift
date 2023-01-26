@@ -23,6 +23,11 @@ public actor APIController {
     }
 
     public func assist(input: ModelsAssist001Input) async throws -> ModelsAssist001Output {
+        #if DEBUG
+        // App can be live mocked like so:
+        // return ModelsAssist001Output.init()
+        #endif
+
         var session = await state.session
         if input.request != nil {
             // Only attempt to refresh the session if we are looking at a new request

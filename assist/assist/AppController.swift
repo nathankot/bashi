@@ -13,17 +13,20 @@ import KeyboardShortcuts
 import Cocoa
 import Combine
 
-actor AppController {
-    
-    let state: AppState
-    let popover: NSPopover
-    let statusBarItem: NSStatusItem
+extension KeyboardShortcuts.Name {
+    static let pushToTalk = Self("pushToTalk")
+}
 
+actor AppController {
+
+    let state: AppState
     let audioRecordingController: AudioRecordingController = AudioRecordingController()
     let commandsController: CommandsController
     let pluginsController: PluginsController
+    let popover: NSPopover
+    let statusBarItem: NSStatusItem
+    
     var keyboardShortcutsTask: Task<Void, Error>? = nil
-
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
 
     init(state: AppState,
@@ -49,23 +52,71 @@ actor AppController {
             logger.info("listening to keyboard shortcuts")
             keyboardShortcutsTask = Task {
                 for await e in KeyboardShortcuts.events(for: .pushToTalk) {
+                    let state = await state.state
                     switch e {
                     case .keyDown:
-                        await startRecording()
+                        switch state {
+                        case .Idle, .Finished, .Error:
+                            await startRecordingRequest()
+                        case .NeedsInput(_, type: .Question):
+                            await startRecordingAnswer()
+                        default:
+                            break
+                        }
                     case .keyUp:
-                        await stopRecording()
+                        switch state {
+                        case .AwaitingRequest:
+                            await stopRecordingRequest()
+                        case .NeedsInput(_, type: .Question):
+                            await stopRecordingAnswer()
+                        default:
+                            break
+                        }
                     }
                 }
             }
         }
     }
 
-    func startRecording() async {
+    func startRecordingAnswer() async {
+        do {
+            let transcriptions = try await audioRecordingController.startRecording()
+            transcriptionUpdatingTask = Task {
+                try Task.checkCancellation()
+                for try await transcription in transcriptions {
+                    await state.update(currentTranscription: transcription)
+                }
+                await state.update(currentTranscription: nil)
+            }
+        } catch {
+            await state.handleError(error)
+        }
+    }
+
+    func stopRecordingAnswer() async {
+        do {
+            let bestTranscription = try await audioRecordingController.stopRecording()
+            let state = await state.state
+            switch state {
+            case let .NeedsInput(messages: _, type: .Question(_, onAnswer: onAnswer)):
+                guard let bestTranscription = bestTranscription else {
+                    throw AppError.NoTranscriptionFound
+                }
+                onAnswer(bestTranscription)
+            default:
+                throw AppError.Internal("expected state to be NeedsInput, Question")
+            }
+        } catch {
+            await state.handleError(error)
+        }
+    }
+
+    func startRecordingRequest() async {
         if await state.accountNumber.isEmpty {
             return
         }
         do {
-            let transcriptions = try await state.transition(newState: .Recording(bestTranscription: nil)) { doTransition in
+            let transcriptions = try await state.transition(newState: .AwaitingRequest) { doTransition in
                 let transcriptions = try await audioRecordingController.startRecording()
                 await doTransition()
                 await togglePopover(shouldShow: true)
@@ -74,25 +125,27 @@ actor AppController {
             transcriptionUpdatingTask = Task {
                 try Task.checkCancellation()
                 for try await transcription in transcriptions {
-                    try await state.transition(newState: .Recording(bestTranscription: transcription))
+                    await state.update(currentTranscription: transcription)
                 }
+                await state.update(currentTranscription: nil)
             }
         } catch {
             await state.handleError(error)
         }
     }
 
-    func stopRecording() async {
+    func stopRecordingRequest() async {
         do {
             transcriptionUpdatingTask?.cancel()
             transcriptionUpdatingTask = nil
-
             let bestTranscription = try await audioRecordingController.stopRecording()
             guard let bestTranscription = bestTranscription else {
-                throw AppError.NoRequestFound
+                throw AppError.NoTranscriptionFound
             }
-
-            try await commandsController.process(initialRequest: bestTranscription)
+            Task {
+                // Spin up a new task so that we do not block the app controller:
+                await commandsController.process(initialRequest: bestTranscription)
+            }
         } catch {
             await state.handleError(error)
         }
@@ -107,18 +160,18 @@ actor AppController {
             NSApplication.shared.terminate(nil)
         }
     }
-    
+
     func showSettings() async {
         await NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         await togglePopover(shouldShow: false)
         await NSApp.activate(ignoringOtherApps: true)
     }
-    
+
     func togglePopover(shouldShow: Bool? = nil) async {
         await MainActor.run {
             let isCurrentlyShown = self.popover.isShown
             let shouldShow = shouldShow ?? !isCurrentlyShown
-            
+
             if !shouldShow {
                 self.popover.performClose(nil)
             } else {
@@ -129,10 +182,5 @@ actor AppController {
             }
         }
     }
-    
-}
 
-extension KeyboardShortcuts.Name {
-    static let pushToTalk = Self("pushToTalk")
 }
-

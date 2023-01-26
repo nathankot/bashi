@@ -23,7 +23,7 @@ final class assistTests: XCTestCase {
         let state = await AppState()
         let expected = AppState.State.NeedsInput(
             messages: [],
-            type: .Confirm(confirmationMessage: "some confirmation"))
+            type: .Confirm(message: "some confirmation"))
         
         // t1 should happen first, despite it having a longer wait:
         let t1 = Task {

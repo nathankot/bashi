@@ -160,6 +160,23 @@ public final class AppState: ObservableObject {
             })
         }
     }
+    
+    public func transitionAndWaitforStateCallback<R>(
+        makeNewState: @escaping (@escaping (R) -> Void) -> AppState.State
+    ) async throws -> R {
+        return try await withCheckedThrowingContinuation { continuation in
+            Task {
+                do {
+                    try await transition(
+                        newState: makeNewState({ r in
+                            continuation.resume(with: .success(r)) })
+                    )
+                } catch {
+                    continuation.resume(with: .failure(error))
+                }
+            }
+        }
+    }
 
     public func handleError(_ e: Error) async {
         #if DEBUG

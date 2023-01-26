@@ -37,22 +37,11 @@ public actor CommandsController {
                 messages.append(.init(id: messages.count, message: response, type: .modelResponse))
             },
             askFn: { question in
-                return try await withCheckedThrowingContinuation { continuation in
-                    Task {
-                        do {
-                            try await self.state.transition(
-                                newState: .NeedsInput(
-                                    messages: messages,
-                                    type: .Question(message: question, onAnswer: { answer in
-                                        print("GOT ANSWER")
-                                        continuation.resume(with: .success(answer))
-                                    })
-                                )
-                            )
-                        } catch {
-                            continuation.resume(with: .failure(error))
-                        }
-                    }
+                return try await self.state.transitionAndWaitforStateCallback { callback in
+                    .NeedsInput(
+                        messages: messages,
+                        type: .Question(message: question, onAnswer: callback)
+                    )
                 }
             })
 
@@ -75,21 +64,16 @@ public actor CommandsController {
                 switch response.result {
                 case .resultNeedsRequestContext(let resultNeedsContext):
                     if resultNeedsContext.missingRequestContext.text != nil {
-                        let text = try await withCheckedThrowingContinuation { continuation in
-                            Task {
-                                do {
-                                    try await state.transition(newState: .NeedsInput(messages: messages, type: .RequestContextText(onReceive: { text in
-                                        continuation.resume(returning: text)
-                                    })))
-                                } catch {
-                                    continuation.resume(with: .failure(error))
-                                }
-                            }
+                        let text = try await state.transitionAndWaitforStateCallback { callback in
+                            .NeedsInput(
+                                messages: messages,
+                                type: .RequestContextText(
+                                    onReceive: callback))
                         }
                         requestContext.text = .init(type: .string, value: text)
                     }
 
-                    case .resultPendingCommands(let resultPending):
+                case .resultPendingCommands(let resultPending):
                     let commandContext = Context.from(
                         request: initialRequest,
                         requestContext: requestContext

@@ -73,9 +73,23 @@ public actor CommandsController {
                 request = nil
 
                 switch response.result {
-                case .resultNeedsRequestContext(_):
-                    fatalError("requesting request context is unimplemented so far")
-                case .resultPendingCommands(let resultPending):
+                case .resultNeedsRequestContext(let resultNeedsContext):
+                    if resultNeedsContext.missingRequestContext.text != nil {
+                        let text = try await withCheckedThrowingContinuation { continuation in
+                            Task {
+                                do {
+                                    try await state.transition(newState: .NeedsInput(messages: messages, type: .RequestContextText(onReceive: { text in
+                                        continuation.resume(returning: text)
+                                    })))
+                                } catch {
+                                    continuation.resume(with: .failure(error))
+                                }
+                            }
+                        }
+                        requestContext.text = .init(type: .string, value: text)
+                    }
+
+                    case .resultPendingCommands(let resultPending):
                     let commandContext = Context.from(
                         request: initialRequest,
                         requestContext: requestContext

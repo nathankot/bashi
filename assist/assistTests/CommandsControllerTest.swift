@@ -16,6 +16,7 @@ final class CommandsControllerTest: XCTestCase {
     var state: AppState!
     var pluginsController: PluginsController!
     var commandsController: CommandsController!
+    var modelInputs: [ModelsAssist001Input] = []
     var mockResults: [ModelsAssist001Output.Result] = []
     var mockError: Error? = nil
     var subs: Set<AnyCancellable> = .init()
@@ -24,6 +25,7 @@ final class CommandsControllerTest: XCTestCase {
         let e = expectation(description: "load plugin")
         Task {
             subs = .init()
+            modelInputs = []
             mockResults = []
             mockError = nil
             state = await AppState(accountNumber: "123")
@@ -32,6 +34,7 @@ final class CommandsControllerTest: XCTestCase {
                 state: state,
                 pluginsController: pluginsController,
                 runModel: { input in
+                    self.modelInputs.append(input)
                     if let e = self.mockError {
                         throw e
                     }
@@ -124,7 +127,6 @@ final class CommandsControllerTest: XCTestCase {
             group.addTask {
                 await self.commandsController.process(initialRequest: "some request")
             }
-            // TODO need to return the response here somehow
             group.addTask {
                 let needsInputStatePub = await self.state.$state.first {
                     if case .NeedsInput = $0 { return true }
@@ -150,6 +152,47 @@ final class CommandsControllerTest: XCTestCase {
             XCTFail("expected a finished result")
             return
         }
+    }
+
+    func testRequestContextText() async throws {
+        mockResults = [
+                .resultNeedsRequestContext(
+                    .init(type: .needsRequestContext,
+                          missingRequestContext: .init(text: .init(type: .string)),
+                          resolvedCommands: [])),
+                .resultFinished(.init(type: .finished, resolvedCommands: []))
+        ]
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.commandsController.process(initialRequest: "some request")
+            }
+            group.addTask {
+                let needsInputStatePub = await self.state.$state.first {
+                    if case .NeedsInput = $0 { return true }
+                    else { return false }
+                }
+                await withCheckedContinuation { continuation in
+                    self.subs.insert(needsInputStatePub.sink(receiveValue: { state in
+                        if case let .NeedsInput(_, inputType) = state {
+                            if case let .RequestContextText(callback) = inputType {
+                                callback("some text context")
+                                continuation.resume()
+                            }
+                        }
+                    }))
+                }
+
+            }
+            for try await _ in group { }
+        }
+
+        guard case .Finished = await state.state else {
+            XCTFail("expected a finished result")
+            return
+        }
+        
+        XCTAssertEqual(modelInputs[0].requestContext?.text?.value, "some text context")
     }
 
     func testWrongArgumentType() async throws {

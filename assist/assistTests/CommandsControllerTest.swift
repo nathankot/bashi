@@ -66,7 +66,7 @@ final class CommandsControllerTest: XCTestCase {
                 .resultFinished(.init(type: .finished, resolvedCommands: []))
         ]
 
-        try await commandsController.process(initialRequest: "some request")
+        await commandsController.process(initialRequest: "some request")
 
         guard case let .Finished(messages: messages) = await state.state else {
             XCTFail("expected a finished result")
@@ -97,7 +97,7 @@ final class CommandsControllerTest: XCTestCase {
                 ]))
         ]
 
-        try await commandsController.process(initialRequest: "some request")
+        await commandsController.process(initialRequest: "some request")
 
         guard case let .Finished(messages: messages) = await state.state else {
             XCTFail("expected a finished result")
@@ -122,7 +122,7 @@ final class CommandsControllerTest: XCTestCase {
 
         try await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
-                try await self.commandsController.process(initialRequest: "some request")
+                await self.commandsController.process(initialRequest: "some request")
             }
             // TODO need to return the response here somehow
             group.addTask {
@@ -153,82 +153,62 @@ final class CommandsControllerTest: XCTestCase {
     }
 
     func testWrongArgumentType() async throws {
-        let expectation = expectation(description: "should throw err")
-        do {
-            mockResults = [
-                    .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
-                        .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: [
-                        // number is the wrong arg type:
-                        .numberValue(.init(type: .number, value: 123))
-                        ]))
-                    ], resolvedCommands: []))
-            ]
-            try await commandsController.process(initialRequest: "some request")
-        } catch let e as AppError {
-            switch e {
-            case .CommandMismatchArgs:
-                expectation.fulfill()
-            default: throw e
-            }
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: [
+                    // number is the wrong arg type:
+                    .numberValue(.init(type: .number, value: 123))
+                    ]))
+                ], resolvedCommands: []))
+        ]
+        await commandsController.process(initialRequest: "some request")
+        if case let .Error(e) = await state.state {
+            XCTAssertEqual(e.errorDescription, "command args mismatch: mock_display, client expects 1 args, server gave 1\nclient args: [\"string\"]\nserver gave: [\"number\"]")
+        } else {
+            XCTFail("expected state to be in error")
         }
-        await waitForExpectations(timeout: 2)
     }
 
     func testWrongArgumentCount() async throws {
-        let expectation = expectation(description: "should throw err")
-        do {
-            mockResults = [
-                    .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
-                        .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: []))
-                    ], resolvedCommands: []))
-            ]
-            try await commandsController.process(initialRequest: "some request")
-        } catch let e as AppError {
-            switch e {
-            case .CommandMismatchArgs:
-                expectation.fulfill()
-            default: throw e
-            }
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: []))
+                ], resolvedCommands: []))
+        ]
+        await commandsController.process(initialRequest: "some request")
+        if case let .Error(e) = await state.state {
+            XCTAssertEqual(e.errorDescription, "command args mismatch: mock_display, client expects 1 args, server gave 0\nclient args: [\"string\"]\nserver gave: []")
+        } else {
+            XCTFail("expected state to be in error")
         }
-        await waitForExpectations(timeout: 2)
     }
 
     func testWrongReturnType() async throws {
-        let expectation = expectation(description: "should throw err")
-        do {
-            mockResults = [
-                    .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
-                        .commandParsed(.init(id: "0", type: .parsed, name: "mock_wrong_return_type", args: []))
-                    ], resolvedCommands: []))
-            ]
-            try await commandsController.process(initialRequest: "some request")
-        } catch let e as AppError {
-            switch e {
-            case .CommandMismatchResult:
-                expectation.fulfill()
-            default: throw e
-            }
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "mock_wrong_return_type", args: []))
+                ], resolvedCommands: []))
+        ]
+        await commandsController.process(initialRequest: "some request")
+        if case let .Error(e) = await state.state {
+            XCTAssertEqual(e.errorDescription, "command mock_wrong_return_type return value type mismatch. expected string got void")
+        } else {
+            XCTFail("expected state to be in error")
         }
-        await waitForExpectations(timeout: 2)
     }
 
     func testCommandNotFound() async throws {
-        let expectation = expectation(description: "should throw err")
-        do {
-            mockResults = [
-                    .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
-                        .commandParsed(.init(id: "0", type: .parsed, name: "non_existent", args: []))
-                    ], resolvedCommands: []))
-            ]
-            try await commandsController.process(initialRequest: "some request")
-        } catch let e as AppError {
-            switch e {
-            case .CommandNotFound:
-                expectation.fulfill()
-            default: throw e
-            }
+        mockResults = [
+                .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
+                    .commandParsed(.init(id: "0", type: .parsed, name: "non_existent", args: []))
+                ], resolvedCommands: []))
+        ]
+        await commandsController.process(initialRequest: "some request")
+        if case let .Error(e) = await state.state {
+            XCTAssertEqual(e.errorDescription, "command not found: non_existent")
+        } else {
+            XCTFail("expected state to be in error")
         }
-        await waitForExpectations(timeout: 2)
     }
 //    func testCommandNotConfirmed() async throws {}
 

@@ -15,7 +15,7 @@ import Combine
 
 public indirect enum AppError: Error, LocalizedError {
     case AppLaunchError(Error)
-    case Internal(String)
+    case Internal(String, error: Error? = nil)
     case NoTranscriptionFound
     case UnexpectedTransition(AppState.State, AppState.State)
     case CommandNotFound(name: String)
@@ -29,7 +29,7 @@ public indirect enum AppError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .AppLaunchError(let e): return "could not launch app: \(e.localizedDescription)"
-        case .Internal(let m): return "internal error: \(m)"
+        case .Internal(let m, _): return "internal error: \(m)"
         case .UnexpectedTransition(let s1, let s2): return "cannot transition from \(s1) to \(s2)"
         case let .CommandNotFound(name: name): return "command not found: \(name)"
         case let .CommandMismatchArgs(name: name, error: m): return "command args mismatch: \(name), \(m)"
@@ -171,7 +171,7 @@ public final class AppState: ObservableObject {
             state = .Error(e)
         default:
             logger.error("internal error: \(String(reflecting: e))")
-            state = .Error(.Internal(e.localizedDescription))
+            state = .Error(.Internal(e.localizedDescription, error: e))
         }
     }
 }

@@ -9,9 +9,9 @@ import {
 
 import { RetryableError } from "@lib/errors.ts";
 
-const handleInternalError = handleWhen((e) => e instanceof RetryableError);
+const handleRetryableError = handleWhen((e) => e instanceof RetryableError);
 
-export const retryPolicy = retry(handleInternalError, {
+export const retryPolicy = retry(handleRetryableError, {
   maxAttempts: 3,
   backoff: new ExponentialBackoff(),
 });
@@ -21,7 +21,7 @@ export const circuitBreakerPolicy =
   // if more than 20% of at least 20
   // requests fail in a 10s time window,
   // wait 10 seconds before attempting again:
-  circuitBreaker(handleInternalError, {
+  circuitBreaker(handleRetryableError, {
     halfOpenAfter: 10 * 1000,
     breaker: new SamplingBreaker({
       minimumRps: 2,

@@ -25,9 +25,10 @@ actor AppController {
     let pluginsController: PluginsController
     let popover: NSPopover
     let statusBarItem: NSStatusItem
-    
+
     var keyboardShortcutsTask: Task<Void, Error>? = nil
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
+    var pasteboardContextTask: Task<Void, Error>? = nil
 
     init(state: AppState,
         popover: NSPopover,
@@ -73,6 +74,26 @@ actor AppController {
                             break
                         }
                     }
+                }
+            }
+        }
+
+        if self.pasteboardContextTask == nil {
+            logger.info("periodically checking if text context needs to be extracted from pasteboard")
+            pasteboardContextTask = Task {
+                let pasteboard = NSPasteboard.general
+                var lastChangeCount = 0
+                while true {
+                    let strings = pasteboard.readObjects(forClasses: [NSString.self]) ?? []
+                    let newChangeCount = pasteboard.changeCount
+                    if newChangeCount > lastChangeCount,
+                        case let .NeedsInput(messages: _, type: .RequestContextText(onReceive: callback)) = await state.state,
+                        let text = strings.first as? String {
+                        logger.info("found new string value in the Pasteboard, using as text context")
+                        callback(text)
+                    }
+                    lastChangeCount = newChangeCount
+                    try await Task.sleep(for: .milliseconds(500))
                 }
             }
         }

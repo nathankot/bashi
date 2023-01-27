@@ -590,7 +590,7 @@ snapshot[`nested calls 1`] = `
             },
           ],
           id: "0.0",
-          name: "timeForTimezone",
+          name: "currentTimeForTimezone",
           returnValue: {
             type: "string",
             value: "2022-12-19T03:41:10-05:00",
@@ -619,7 +619,7 @@ snapshot[`nested calls 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'timeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
+      action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
       functionCalls: [
         {
           args: [
@@ -628,7 +628,7 @@ snapshot[`nested calls 1`] = `
               value: "America/New_York",
             },
           ],
-          name: "timeForTimezone",
+          name: "currentTimeForTimezone",
           type: "call",
         },
         {
@@ -668,7 +668,7 @@ snapshot[`nested calls 1`] = `
           },
         ],
         id: "0.0",
-        name: "timeForTimezone",
+        name: "currentTimeForTimezone",
         returnValue: {
           type: "string",
           value: "2022-12-19T03:41:10-05:00",
@@ -1126,7 +1126,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'ask("how are you?"); timeForTimezone("America/New_York")',
+      action: 'ask("how are you?"); currentTimeForTimezone("America/New_York")',
       functionCalls: [
         {
           args: [
@@ -1145,7 +1145,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
               value: "America/New_York",
             },
           ],
-          name: "timeForTimezone",
+          name: "currentTimeForTimezone",
           type: "call",
         },
       ],
@@ -1193,7 +1193,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
             },
           ],
           id: "0.1",
-          name: "timeForTimezone",
+          name: "currentTimeForTimezone",
           returnValue: {
             type: "string",
             value: "2022-12-19T03:41:10-05:00",

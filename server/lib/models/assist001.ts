@@ -84,7 +84,7 @@ const privateBuiltinCommands = {
   } as BuiltinCommandDefinition<[], "void">,
   fail: {
     returnType: "void",
-    description: `explain why request/question is unable to be fulfilled`,
+    description: `indicate the request cannot be fulfilled with the available tools`,
     args: [{ name: "reason", type: "string" }],
     run: async (_, __, ___) => ({ type: "void" }),
   } as BuiltinCommandDefinition<["string"], "void">,

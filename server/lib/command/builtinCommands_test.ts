@@ -25,7 +25,7 @@ Deno.test("timezones", async (t) => {
   assertEquals(result.value, "2022-12-20T12:00:00+09:00");
   new Date(result.value);
 
-  result = await builtinCommands.timeForTimezone.run(deps, {}, [
+  result = await builtinCommands.currentTimeForTimezone.run(deps, {}, [
     {
       type: "string",
       value: "Pacific/Auckland",

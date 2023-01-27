@@ -55,7 +55,7 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   },
 };
 
-const timeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
+const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
   description: `get the ISO8601 datetime for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
@@ -275,7 +275,7 @@ const generateCode: BuiltinCommandDefinition<
 export const builtinCommands = {
   now,
   math,
-  timeForTimezone,
+  currentTimeForTimezone,
   editProse,
   editCode,
   generateCode,

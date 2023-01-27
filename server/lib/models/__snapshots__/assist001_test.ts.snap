@@ -54,9 +54,14 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Answer the following questions as directly and as best you can.
+  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
 
-You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
+Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+
+* String arguments MUST be quoted and any quotes inside them MUST be escaped
+* Functions that are not listed below MUST NOT be used
+* Function arguments MUST be literal types
+* Function calls MAY be nested
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
@@ -66,25 +71,28 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
+\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
-Result: the result of the function call
+Action: function(s) to call delimited by ;
+Result: the result of the function call, use it in thoughts that follow
 ... (this Thought/Action/Result can repeat N times)
-Thought: I have completed the request
-Action: finish()
 
 Begin!
 
 Request: some request
 Thought: ',
-  'Answer the following questions as directly and as best you can.
+  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
 
-You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
+Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+
+* String arguments MUST be quoted and any quotes inside them MUST be escaped
+* Functions that are not listed below MUST NOT be used
+* Function arguments MUST be literal types
+* Function calls MAY be nested
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
@@ -94,17 +102,15 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
+\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
-Result: the result of the function call
+Action: function(s) to call delimited by ;
+Result: the result of the function call, use it in thoughts that follow
 ... (this Thought/Action/Result can repeat N times)
-Thought: I have completed the request
-Action: finish()
 
 Begin!
 
@@ -697,9 +703,14 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Answer the following questions as directly and as best you can.
+  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
 
-You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
+Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+
+* String arguments MUST be quoted and any quotes inside them MUST be escaped
+* Functions that are not listed below MUST NOT be used
+* Function arguments MUST be literal types
+* Function calls MAY be nested
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
@@ -709,17 +720,15 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
+\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
-Result: the result of the function call
+Action: function(s) to call delimited by ;
+Result: the result of the function call, use it in thoughts that follow
 ... (this Thought/Action/Result can repeat N times)
-Thought: I have completed the request
-Action: finish()
 
 Begin!
 
@@ -1055,9 +1064,14 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Answer the following questions as directly and as best you can.
+  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
 
-You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:
+Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+
+* String arguments MUST be quoted and any quotes inside them MUST be escaped
+* Functions that are not listed below MUST NOT be used
+* Function arguments MUST be literal types
+* Function calls MAY be nested
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
@@ -1067,17 +1081,15 @@ You have access to tools denoted below in Typescript-like function declarations.
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - explain why request/question is unable to be fulfilled
+\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
-Result: the result of the function call
+Action: function(s) to call delimited by ;
+Result: the result of the function call, use it in thoughts that follow
 ... (this Thought/Action/Result can repeat N times)
-Thought: I have completed the request
-Action: finish()
 
 Begin!
 

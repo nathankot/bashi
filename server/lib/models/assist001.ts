@@ -309,6 +309,8 @@ export async function run(
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
       const prompt = makePrompt(allCommands, request, resolvedActionGroups);
+      console.log("NKDEBUG PROMPT", prompt);
+
       const completion = await modelDeps.openai.createCompletion(
         {
           model: "text-davinci-003",
@@ -327,6 +329,11 @@ export async function run(
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
+      log(
+        "info",
+        "model result is: " +
+          text.slice(0, text.length > 300 ? 300 : text.length)
+      );
 
       if (text === "") {
         isFinished = true;
@@ -377,19 +384,22 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Answer the following questions as directly and as best you can.
+  const header = `Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
 
-You have access to tools denoted below in Typescript-like function declarations. String arguments MUST be quoted and any quotes inside them MUST be escaped. Functions that are not listed below MUST NOT be used. Function arguments MUST be literal types. Function calls MAY be nested:`;
+Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+
+* String arguments MUST be quoted and any quotes inside them MUST be escaped
+* Functions that are not listed below MUST NOT be used
+* Function arguments MUST be literal types
+* Function calls MAY be nested`;
 
   const format = `Use the following format:
 
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ; (end with finish() if request fulfilled after the action)
-Result: the result of the function call
-... (this Thought/Action/Result can repeat N times)
-Thought: I have completed the request
-Action: finish()`;
+Action: function(s) to call delimited by ;
+Result: the result of the function call, use it in thoughts that follow
+... (this Thought/Action/Result can repeat N times)`;
 
   const existingActionGroups = resolvedActionGroups
     .map(

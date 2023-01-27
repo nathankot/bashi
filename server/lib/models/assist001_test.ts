@@ -215,7 +215,7 @@ Action: now(); math()`,
     input: { request: "some request" },
     openAiResults: [
       `some thought
-Action: ask("how are you?"); timeForTimezone("America/New_York")`,
+Action: ask("how are you?"); currentTimeForTimezone("America/New_York")`,
     ],
   },
   {

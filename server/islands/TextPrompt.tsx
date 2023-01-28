@@ -5,7 +5,9 @@ export default function TextPrompt(props: {
   sessionId: string;
   model: "assist-001";
 }) {
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(
+    localStorage.getItem("last_prompt") ?? ""
+  );
   const [result, setResult] = useState("");
 
   const model = props.model;
@@ -38,7 +40,6 @@ export default function TextPrompt(props: {
         }}
       >
         <textarea
-          defaultValue={localStorage.getItem("last_prompt") ?? undefined}
           class="block w-full h-12 font-mono text-xs"
           onInput={(e) => setPrompt(e.currentTarget.value)}
           placeholder="enter your request"

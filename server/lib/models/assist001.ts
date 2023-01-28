@@ -357,10 +357,15 @@ export async function run(
       // 5. Update state with the current results, exit if we have reached a sink,
       //    otherwise goto (1)
       pending = parseActionGroup(text);
-      log("info", `thought: ${pending.thought}; action: ${pending.action}`);
+      if (IS_DEV()) {
+        log("info", `thought: ${pending.thought}; action: ${pending.action}`);
+      }
     }
   } catch (e) {
     isFinished = true;
+    if (IS_DEV()) {
+      log("error", `dev information during error: ${JSON.stringify(dev)}`);
+    }
     throw e;
   } finally {
     modelDeps.setUpdatedSession({
@@ -394,9 +399,9 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
+  const header = `Use the format and functions below to fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+Functions are declared below. When calling them ensure that:
 
 * String arguments MUST be quoted and any quotes inside them MUST be escaped
 * Functions that are not listed below MUST NOT be used
@@ -404,11 +409,10 @@ Functions are denoted in Typescript-like declarations. When calling functions en
 * Function calls MAY be nested`;
 
   const format = `Use the following format:
-
 Request: the input question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ;
-Result: the result of the function call, use it in thoughts that follow
+Action: single expression composing available functions. language only supports calling the functions available. statements are prohibited. function nesting is okay
+Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)`;
 
   const existingActionGroups = resolvedActionGroups

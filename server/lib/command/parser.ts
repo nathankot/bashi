@@ -41,7 +41,7 @@ export const ActionGroup = t.intersection([
 ]);
 export type ActionGroup = t.TypeOf<typeof ActionGroup>;
 
-enum ExprTokenKind {
+enum T {
   Identifier,
 
   TrueLiteral,
@@ -60,63 +60,67 @@ enum ExprTokenKind {
 }
 
 const exprLexer = buildLexer([
-  [true, /^'([^'\\]|\\.)*'/g, ExprTokenKind.SingleQuoteStringLiteral],
-  [true, /^"([^"\\]|\\.)*"/g, ExprTokenKind.DoubleQuoteStringLiteral],
-  [true, /^`([^`\\]|\\.)*`/g, ExprTokenKind.BackQuoteStringLiteral],
-  [true, /^[\+\-]?\d+(\.\d+)?/g, ExprTokenKind.NumberLiteral],
-  [true, /^true/g, ExprTokenKind.TrueLiteral],
-  [true, /^false/g, ExprTokenKind.FalseLiteral],
+  [true, /^'([^'\\]|\\.)*'/g, T.SingleQuoteStringLiteral],
+  [true, /^"([^"\\]|\\.)*"/g, T.DoubleQuoteStringLiteral],
+  [true, /^`([^`\\]|\\.)*`/g, T.BackQuoteStringLiteral],
+  [true, /^[\+\-]?\d+(\.\d+)?/g, T.NumberLiteral],
+  [true, /^true/g, T.TrueLiteral],
+  [true, /^false/g, T.FalseLiteral],
 
-  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, ExprTokenKind.Identifier],
+  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, T.Identifier],
 
-  [true, /^\+/g, ExprTokenKind.Plus],
-  [true, /^\(/g, ExprTokenKind.LParen],
-  [true, /^\)/g, ExprTokenKind.RParen],
-  [true, /^\,/g, ExprTokenKind.Comma],
-  [true, /^;/g, ExprTokenKind.SemiColon],
-  [false, /^\s+/g, ExprTokenKind.Space],
+  [true, /^\+/g, T.Plus],
+  [true, /^\(/g, T.LParen],
+  [true, /^\)/g, T.RParen],
+  [true, /^\,/g, T.Comma],
+  [true, /^;/g, T.SemiColon],
+  [false, /^\s+/g, T.Space],
 ]);
 
-const EXPR = rule<ExprTokenKind, Expr>();
-const VALUE = rule<ExprTokenKind, Value>();
-const CALL = rule<ExprTokenKind, Call>();
-const CALLS = rule<ExprTokenKind, Call[]>();
+const PAREN_GROUP = rule<T, Expr>();
+const VALUE = rule<T, Value>();
+const INFIX_CALL = rule<T, Expr>();
+const FUNC_CALL = rule<T, Call>();
+const FUNC_CALLS = rule<T, Call[]>();
 
-EXPR.setPattern(p.alt(VALUE, CALL));
+const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP);
+const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP);
+
+PAREN_GROUP.setPattern(p.kmid(p.tok(T.LParen), EXPR, p.tok(T.RParen)));
 
 VALUE.setPattern(
   p.apply(
     p.alt(
-      p.tok(ExprTokenKind.TrueLiteral),
-      p.tok(ExprTokenKind.FalseLiteral),
-      p.tok(ExprTokenKind.NumberLiteral),
-      p.tok(ExprTokenKind.SingleQuoteStringLiteral),
-      p.tok(ExprTokenKind.DoubleQuoteStringLiteral),
-      p.tok(ExprTokenKind.BackQuoteStringLiteral)
+      p.tok(T.TrueLiteral),
+      p.tok(T.FalseLiteral),
+      p.tok(T.NumberLiteral),
+      p.tok(T.SingleQuoteStringLiteral),
+      p.tok(T.DoubleQuoteStringLiteral),
+      p.tok(T.BackQuoteStringLiteral)
     ),
     (tok) => {
       switch (tok.kind) {
-        case ExprTokenKind.TrueLiteral:
+        case T.TrueLiteral:
           return { type: "boolean", value: true };
-        case ExprTokenKind.FalseLiteral:
+        case T.FalseLiteral:
           return { type: "boolean", value: false };
-        case ExprTokenKind.NumberLiteral:
+        case T.NumberLiteral:
           return { type: "number", value: +tok.text };
-        case ExprTokenKind.SingleQuoteStringLiteral:
+        case T.SingleQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
               .substring(1, tok.text.length - 1)
               .replaceAll(`\\'`, `'`),
           };
-        case ExprTokenKind.DoubleQuoteStringLiteral:
+        case T.DoubleQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
               .substring(1, tok.text.length - 1)
               .replaceAll(`\\"`, `"`),
           };
-        case ExprTokenKind.BackQuoteStringLiteral:
+        case T.BackQuoteStringLiteral:
           return {
             type: "string",
             value: tok.text
@@ -133,18 +137,16 @@ VALUE.setPattern(
   )
 );
 
-CALL.setPattern(
+FUNC_CALL.setPattern(
+  // standard form: f(a1, a2)
   p.apply(
     p.seq(
-      p.tok(ExprTokenKind.Identifier),
-      p.tok(ExprTokenKind.LParen),
+      p.tok(T.Identifier),
+      p.tok(T.LParen),
       p.opt_sc(
-        p.kleft(
-          p.list(EXPR, p.tok(ExprTokenKind.Comma)),
-          p.opt_sc(p.tok(ExprTokenKind.Comma))
-        )
+        p.kleft(p.list_sc(EXPR, p.tok(T.Comma)), p.opt_sc(p.tok(T.Comma)))
       ),
-      p.tok(ExprTokenKind.RParen)
+      p.tok(T.RParen)
     ),
     ([{ text: name }, , maybeArgs]) => ({
       type: "call",
@@ -154,28 +156,45 @@ CALL.setPattern(
   )
 );
 
-CALLS.setPattern(
+INFIX_CALL.setPattern(
+  // operand form: a1 `f` a2
+  p.lrec_sc(
+    p.apply(
+      p.seq(EXPR_WITHOUT_INFIX_CALL, p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
+      ([lhs, operand, rhs]): Call => ({
+        type: "call",
+        name: operand.text,
+        args: [lhs, rhs],
+      })
+    ),
+    p.seq(p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
+    (lhs, [operand, rhs]): Call => ({
+      type: "call",
+      name: operand.text,
+      args: [lhs, rhs],
+    })
+  )
+);
+
+FUNC_CALLS.setPattern(
   p.apply(
     p.kleft(
-      p.list(
-        CALL,
-        p.seq(
-          p.tok(ExprTokenKind.SemiColon),
-          p.rep_sc(p.tok(ExprTokenKind.SemiColon))
-        )
+      p.list_sc(
+        FUNC_CALL,
+        p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))
       ),
-      p.rep_sc(p.tok(ExprTokenKind.SemiColon))
+      p.rep_sc(p.tok(T.SemiColon))
     ),
     (calls) => calls
   )
 );
 
 export function parseFunctionCall(expr: string): Call {
-  return expectSingleResult(expectEOF(CALL.parse(exprLexer.parse(expr))));
+  return expectSingleResult(expectEOF(FUNC_CALL.parse(exprLexer.parse(expr))));
 }
 
 export function parseFunctionCalls(expr: string): Call[] {
-  return expectSingleResult(expectEOF(CALLS.parse(exprLexer.parse(expr))));
+  return expectSingleResult(expectEOF(FUNC_CALLS.parse(exprLexer.parse(expr))));
 }
 
 enum ActionTokenKind {

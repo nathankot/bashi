@@ -399,19 +399,20 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Use the format and functions below to fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are declared below. When calling them ensure that:
+The language for Action is a tiny subset of javascript, ONLY these features are available:
 
-* String arguments MUST be quoted and any quotes inside them MUST be escaped
-* Functions that are not listed below MUST NOT be used
-* Function arguments MUST be literal types
-* Function calls MAY be nested`;
+* function calls
+* function call nesting
+* string concatenation using +
+
+Available functions are declared below, these are the only functions available:`;
 
   const format = `Use the following format:
-Request: the input question or request you must answer
+Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions. language only supports calling the functions available. statements are prohibited. function nesting is okay
+Action: single expression composing available functions
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)`;
 

@@ -4,6 +4,7 @@ snapshot[`all commands resolved on the server 1`] = `
 {
   n: 2,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -54,19 +55,20 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+The language for Action is a tiny subset of javascript, ONLY these features are available:
 
-* String arguments MUST be quoted and any quotes inside them MUST be escaped
-* Functions that are not listed below MUST NOT be used
-* Function arguments MUST be literal types
-* Function calls MAY be nested
+* function calls
+* function call nesting
+* string concatenation using +
+
+Available functions are declared below, these are the only functions available:
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - ask for additional information
+\`ask(question: string) => string\` - get answer to a request for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
@@ -74,30 +76,30 @@ Functions are denoted in Typescript-like declarations. When calling functions en
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
-
-Request: the input question or request you must answer
+Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ;
-Result: the result of the function call, use it in thoughts that follow
+Action: single expression composing available functions
+Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
 Request: some request
 Thought: ',
-  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+The language for Action is a tiny subset of javascript, ONLY these features are available:
 
-* String arguments MUST be quoted and any quotes inside them MUST be escaped
-* Functions that are not listed below MUST NOT be used
-* Function arguments MUST be literal types
-* Function calls MAY be nested
+* function calls
+* function call nesting
+* string concatenation using +
+
+Available functions are declared below, these are the only functions available:
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - ask for additional information
+\`ask(question: string) => string\` - get answer to a request for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
@@ -105,11 +107,10 @@ Functions are denoted in Typescript-like declarations. When calling functions en
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
-
-Request: the input question or request you must answer
+Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ;
-Result: the result of the function call, use it in thoughts that follow
+Action: single expression composing available functions
+Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
 Begin!
@@ -126,6 +127,7 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
 {
   n: 2,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -168,6 +170,7 @@ snapshot[`client resolved command 1`] = `
 {
   n: 1,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -250,6 +253,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
 {
   n: 0,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -354,6 +358,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
 {
   n: 0,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -458,6 +463,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
 {
   n: 0,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -567,6 +573,7 @@ snapshot[`nested calls 1`] = `
 {
   n: 1,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -703,19 +710,20 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+The language for Action is a tiny subset of javascript, ONLY these features are available:
 
-* String arguments MUST be quoted and any quotes inside them MUST be escaped
-* Functions that are not listed below MUST NOT be used
-* Function arguments MUST be literal types
-* Function calls MAY be nested
+* function calls
+* function call nesting
+* string concatenation using +
+
+Available functions are declared below, these are the only functions available:
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - ask for additional information
+\`ask(question: string) => string\` - get answer to a request for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
@@ -723,11 +731,10 @@ Functions are denoted in Typescript-like declarations. When calling functions en
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
-
-Request: the input question or request you must answer
+Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ;
-Result: the result of the function call, use it in thoughts that follow
+Action: single expression composing available functions
+Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
 Begin!
@@ -741,6 +748,7 @@ snapshot[`request needs more context 1`] = `
 {
   n: 1,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -821,6 +829,7 @@ snapshot[`request needs more context - still missing 1`] = `
 {
   n: 0,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -908,6 +917,7 @@ snapshot[`request needs more context - wrong type 1`] = `
 {
   n: 0,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -1000,6 +1010,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
 {
   n: 2,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -1064,19 +1075,20 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Use the functions below to fulfill the question/request as best you can. Aim to minimize the number of repeated Thought/Action/Result blocks.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
 
-Functions are denoted in Typescript-like declarations. When calling functions ensure that:
+The language for Action is a tiny subset of javascript, ONLY these features are available:
 
-* String arguments MUST be quoted and any quotes inside them MUST be escaped
-* Functions that are not listed below MUST NOT be used
-* Function arguments MUST be literal types
-* Function calls MAY be nested
+* function calls
+* function call nesting
+* string concatenation using +
+
+Available functions are declared below, these are the only functions available:
 
 \`answer(answer: string) => void\` - answer the original question directly
 \`say(message: string) => void\` - say something
 \`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - ask for additional information
+\`ask(question: string) => string\` - get answer to a request for additional information
 \`now() => string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string) => string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
@@ -1084,11 +1096,10 @@ Functions are denoted in Typescript-like declarations. When calling functions en
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
-
-Request: the input question or request you must answer
+Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: function(s) to call delimited by ;
-Result: the result of the function call, use it in thoughts that follow
+Action: single expression composing available functions
+Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
 Begin!
@@ -1114,6 +1125,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
 {
   n: 1,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {
@@ -1178,6 +1190,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
 {
   n: 1,
   output: {
+    dev: undefined,
     model: "assist-001",
     request: "some request",
     result: {

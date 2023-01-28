@@ -1,5 +1,6 @@
 import * as t from "io-ts";
 
+import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
@@ -69,7 +70,9 @@ export const Output = t.type({
     ResultPendingCommands,
   ]),
 });
-export type Output = t.TypeOf<typeof Output>;
+export type Output = t.TypeOf<typeof Output> & {
+  dev?: { prompt: string; completion: string }[];
+};
 
 export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-001",
@@ -125,6 +128,13 @@ export async function run(
     ...configuration.commands,
     ...serverCommands,
   };
+
+  let dev:
+    | {
+        prompt: string;
+        completion: string;
+      }[]
+    | undefined = IS_DEV() ? [] : undefined;
 
   const session = modelDeps.session;
   const isContinue = input.request == null;
@@ -237,6 +247,7 @@ export async function run(
                   missingRequestContext,
                   resolvedCommands,
                 },
+                dev,
               };
             }
             const resolved = await runBuiltinCommand(
@@ -262,6 +273,7 @@ export async function run(
               pendingCommands: commandsToSendToClient,
               resolvedCommands,
             },
+            dev,
           };
         }
 
@@ -309,7 +321,6 @@ export async function run(
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
       const prompt = makePrompt(allCommands, request, resolvedActionGroups);
-      console.log("NKDEBUG PROMPT", prompt);
 
       const completion = await modelDeps.openai.createCompletion(
         {
@@ -329,11 +340,11 @@ export async function run(
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
-      log(
-        "info",
-        "model result is: " +
-          text.slice(0, text.length > 300 ? 300 : text.length)
-      );
+
+      dev?.push({
+        prompt,
+        completion: text,
+      });
 
       if (text === "") {
         isFinished = true;
@@ -376,6 +387,7 @@ export async function run(
       type: "finished",
       resolvedCommands,
     },
+    dev,
   };
 }
 

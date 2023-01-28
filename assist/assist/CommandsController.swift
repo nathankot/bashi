@@ -172,7 +172,7 @@ public actor CommandsController {
             }),
         AnonymousCommand(
             name: "ask",
-            description: "ask for more information",
+            description: "get answer to a request for additional information",
             args: [.init(type: .string, name: "question")],
             returnType: .string) { api, ctx, args in
             guard let question = args.first?.string else {
@@ -180,7 +180,7 @@ public actor CommandsController {
             }
             let response = try await api.ask(question: question)
             return .init(.string(response))
-        }
+        },
     ]
 
     public actor Context: BashiPlugin.CommandContext {

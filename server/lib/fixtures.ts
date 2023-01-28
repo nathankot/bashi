@@ -53,7 +53,7 @@ export const commandSet: CommandSet = {
     ],
   },
   ask: {
-    description: "ask for additional information",
+    description: "get answer to a request for additional information",
     returnType: "string",
     args: [
       {

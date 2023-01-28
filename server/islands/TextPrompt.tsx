@@ -10,6 +10,8 @@ export default function TextPrompt(props: {
 
   const model = props.model;
   const submit = async () => {
+    localStorage.setItem("last_prompt", prompt);
+
     const request: Input = {
       request: prompt,
     };
@@ -36,6 +38,7 @@ export default function TextPrompt(props: {
         }}
       >
         <textarea
+          defaultValue={localStorage.getItem("last_prompt") ?? undefined}
           class="block w-full h-12 font-mono text-xs"
           onInput={(e) => setPrompt(e.currentTarget.value)}
           placeholder="enter your request"

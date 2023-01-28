@@ -18,3 +18,9 @@ export const PROGRAMMING_LANGUAGES = [
   "c",
   "go",
 ];
+
+declare global {
+  var IS_DEV: boolean | undefined;
+}
+
+export const IS_DEV = () => window.IS_DEV === true;

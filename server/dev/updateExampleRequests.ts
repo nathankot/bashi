@@ -11,6 +11,7 @@ import * as fixtures from "@lib/fixtures.ts";
 export const Example = t.intersection([
   t.type({
     updated: t.string,
+    dev: t.any,
     result: models["assist-001"].Output.props.result,
     prompt: t.string,
   }),
@@ -32,7 +33,7 @@ const INPUTS: {
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
-  { prompt: "What is the time in New York?" },
+  // { prompt: "What is the time in New York?" },
   { prompt: "Say you are my best friend in Japanese." },
   { prompt: "Write you are my best friend in Japanese." },
   { prompt: "Who is george lucas the director?" },
@@ -177,6 +178,7 @@ export default async function updateExamples(examplesFile: string) {
     newExamples.push({
       updated: new Date().toISOString(),
       prompt: promptWithVariant,
+      dev: (output as any).dev,
       result: output.result,
       requestContext: input.requestContext ?? {},
       resolvedCommands: input.resolvedCommands ?? {},

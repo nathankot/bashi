@@ -11,18 +11,22 @@ import {
 
 import { Value } from "@lib/valueTypes.ts";
 
-export interface Call {
+export type Call = {
   type: "call";
   name: string;
-  args: (Value | Call)[];
-}
-
-const Call: t.Type<Call> = t.recursion("Call", () =>
+  args: Expr[];
+};
+export const Call: t.Type<Call> = t.recursion("Call", () =>
   t.type({
     type: t.literal("call"),
     name: t.string,
-    args: t.array(t.union([Value, Call])),
+    args: t.array(Expr),
   })
+);
+
+export type Expr = Call | Value;
+export const Expr: t.Type<Expr> = t.recursion("Expr", () =>
+  t.union([Call, Value])
 );
 
 export const ActionGroup = t.intersection([
@@ -36,6 +40,143 @@ export const ActionGroup = t.intersection([
   }),
 ]);
 export type ActionGroup = t.TypeOf<typeof ActionGroup>;
+
+enum ExprTokenKind {
+  Identifier,
+
+  TrueLiteral,
+  FalseLiteral,
+  NumberLiteral,
+  SingleQuoteStringLiteral,
+  DoubleQuoteStringLiteral,
+  BackQuoteStringLiteral,
+
+  Plus,
+  LParen,
+  RParen,
+  Space,
+  Comma,
+  SemiColon,
+}
+
+const exprLexer = buildLexer([
+  [true, /^'([^'\\]|\\.)*'/g, ExprTokenKind.SingleQuoteStringLiteral],
+  [true, /^"([^"\\]|\\.)*"/g, ExprTokenKind.DoubleQuoteStringLiteral],
+  [true, /^`([^`\\]|\\.)*`/g, ExprTokenKind.BackQuoteStringLiteral],
+  [true, /^[\+\-]?\d+(\.\d+)?/g, ExprTokenKind.NumberLiteral],
+  [true, /^true/g, ExprTokenKind.TrueLiteral],
+  [true, /^false/g, ExprTokenKind.FalseLiteral],
+
+  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, ExprTokenKind.Identifier],
+
+  [true, /^\+/g, ExprTokenKind.Plus],
+  [true, /^\(/g, ExprTokenKind.LParen],
+  [true, /^\)/g, ExprTokenKind.RParen],
+  [true, /^\,/g, ExprTokenKind.Comma],
+  [true, /^;/g, ExprTokenKind.SemiColon],
+  [false, /^\s+/g, ExprTokenKind.Space],
+]);
+
+const EXPR = rule<ExprTokenKind, Expr>();
+const VALUE = rule<ExprTokenKind, Value>();
+const CALL = rule<ExprTokenKind, Call>();
+const CALLS = rule<ExprTokenKind, Call[]>();
+
+EXPR.setPattern(p.alt(VALUE, CALL));
+
+VALUE.setPattern(
+  p.apply(
+    p.alt(
+      p.tok(ExprTokenKind.TrueLiteral),
+      p.tok(ExprTokenKind.FalseLiteral),
+      p.tok(ExprTokenKind.NumberLiteral),
+      p.tok(ExprTokenKind.SingleQuoteStringLiteral),
+      p.tok(ExprTokenKind.DoubleQuoteStringLiteral),
+      p.tok(ExprTokenKind.BackQuoteStringLiteral)
+    ),
+    (tok) => {
+      switch (tok.kind) {
+        case ExprTokenKind.TrueLiteral:
+          return { type: "boolean", value: true };
+        case ExprTokenKind.FalseLiteral:
+          return { type: "boolean", value: false };
+        case ExprTokenKind.NumberLiteral:
+          return { type: "number", value: +tok.text };
+        case ExprTokenKind.SingleQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll(`\\'`, `'`),
+          };
+        case ExprTokenKind.DoubleQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll(`\\"`, `"`),
+          };
+        case ExprTokenKind.BackQuoteStringLiteral:
+          return {
+            type: "string",
+            value: tok.text
+              .substring(1, tok.text.length - 1)
+              .replaceAll("\\`", "`"),
+          };
+        default:
+          const exhaustiveCheck: never = tok;
+          throw new Error(
+            `Unsupported value kind: ${(exhaustiveCheck as any).text}`
+          );
+      }
+    }
+  )
+);
+
+CALL.setPattern(
+  p.apply(
+    p.seq(
+      p.tok(ExprTokenKind.Identifier),
+      p.tok(ExprTokenKind.LParen),
+      p.opt_sc(
+        p.kleft(
+          p.list(EXPR, p.tok(ExprTokenKind.Comma)),
+          p.opt_sc(p.tok(ExprTokenKind.Comma))
+        )
+      ),
+      p.tok(ExprTokenKind.RParen)
+    ),
+    ([{ text: name }, , maybeArgs]) => ({
+      type: "call",
+      name,
+      args: maybeArgs ?? [],
+    })
+  )
+);
+
+CALLS.setPattern(
+  p.apply(
+    p.kleft(
+      p.list(
+        CALL,
+        p.seq(
+          p.tok(ExprTokenKind.SemiColon),
+          p.rep_sc(p.tok(ExprTokenKind.SemiColon))
+        )
+      ),
+      p.rep_sc(p.tok(ExprTokenKind.SemiColon))
+    ),
+    (calls) => calls
+  )
+);
+
+export function parseFunctionCall(expr: string): Call {
+  return expectSingleResult(expectEOF(CALL.parse(exprLexer.parse(expr))));
+}
+
+export function parseFunctionCalls(expr: string): Call[] {
+  return expectSingleResult(expectEOF(CALLS.parse(exprLexer.parse(expr))));
+}
 
 enum ActionTokenKind {
   KeywordThought,
@@ -113,135 +254,4 @@ export function parseActionGroup(expr: string): ActionGroup {
   return expectSingleResult(
     expectEOF(ACTION_GROUP.parse(actionLexer.parse(expr)))
   );
-}
-
-enum FunctionTokenKind {
-  Identifier,
-
-  TrueLiteral,
-  FalseLiteral,
-  NumberLiteral,
-  SingleQuoteStringLiteral,
-  DoubleQuoteStringLiteral,
-  BackQuoteStringLiteral,
-
-  LParen,
-  RParen,
-  Space,
-  Comma,
-  SemiColon,
-}
-
-const functionLexer = buildLexer([
-  [true, /^'([^'\\]|\\.)*'/g, FunctionTokenKind.SingleQuoteStringLiteral],
-  [true, /^"([^"\\]|\\.)*"/g, FunctionTokenKind.DoubleQuoteStringLiteral],
-  [true, /^`([^`\\]|\\.)*`/g, FunctionTokenKind.BackQuoteStringLiteral],
-  [true, /^[\+\-]?\d+(\.\d+)?/g, FunctionTokenKind.NumberLiteral],
-  [true, /^true/g, FunctionTokenKind.TrueLiteral],
-  [true, /^false/g, FunctionTokenKind.FalseLiteral],
-
-  [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, FunctionTokenKind.Identifier],
-
-  [true, /^\(/g, FunctionTokenKind.LParen],
-  [true, /^\)/g, FunctionTokenKind.RParen],
-  [true, /^\,/g, FunctionTokenKind.Comma],
-  [true, /^;/g, FunctionTokenKind.SemiColon],
-  [false, /^\s+/g, FunctionTokenKind.Space],
-]);
-
-const VALUE = rule<FunctionTokenKind, Value>();
-VALUE.setPattern(
-  p.apply(
-    p.alt(
-      p.tok(FunctionTokenKind.TrueLiteral),
-      p.tok(FunctionTokenKind.FalseLiteral),
-      p.tok(FunctionTokenKind.NumberLiteral),
-      p.tok(FunctionTokenKind.SingleQuoteStringLiteral),
-      p.tok(FunctionTokenKind.DoubleQuoteStringLiteral),
-      p.tok(FunctionTokenKind.BackQuoteStringLiteral)
-    ),
-    (tok) => {
-      switch (tok.kind) {
-        case FunctionTokenKind.TrueLiteral:
-          return { type: "boolean", value: true };
-        case FunctionTokenKind.FalseLiteral:
-          return { type: "boolean", value: false };
-        case FunctionTokenKind.NumberLiteral:
-          return { type: "number", value: +tok.text };
-        case FunctionTokenKind.SingleQuoteStringLiteral:
-          return {
-            type: "string",
-            value: tok.text
-              .substring(1, tok.text.length - 1)
-              .replaceAll(`\\'`, `'`),
-          };
-        case FunctionTokenKind.DoubleQuoteStringLiteral:
-          return {
-            type: "string",
-            value: tok.text
-              .substring(1, tok.text.length - 1)
-              .replaceAll(`\\"`, `"`),
-          };
-        case FunctionTokenKind.BackQuoteStringLiteral:
-          return {
-            type: "string",
-            value: tok.text
-              .substring(1, tok.text.length - 1)
-              .replaceAll("\\`", "`"),
-          };
-        default:
-          const exhaustiveCheck: never = tok;
-          throw new Error(
-            `Unsupported value kind: ${(exhaustiveCheck as any).text}`
-          );
-      }
-    }
-  )
-);
-
-const CALL = rule<FunctionTokenKind, Call>();
-CALL.setPattern(
-  p.apply(
-    p.seq(
-      p.tok(FunctionTokenKind.Identifier),
-      p.tok(FunctionTokenKind.LParen),
-      p.opt_sc(
-        p.kleft(
-          p.list(p.alt(VALUE, CALL), p.tok(FunctionTokenKind.Comma)),
-          p.opt_sc(p.tok(FunctionTokenKind.Comma))
-        )
-      ),
-      p.tok(FunctionTokenKind.RParen)
-    ),
-    ([{ text: name }, , maybeArgs]) => ({
-      type: "call",
-      name,
-      args: maybeArgs ?? [],
-    })
-  )
-);
-
-const CALLS = rule<FunctionTokenKind, Call[]>();
-CALLS.setPattern(
-  p.apply(
-    p.kleft(
-      p.list(
-        CALL,
-        p.seq(
-          p.tok(FunctionTokenKind.SemiColon),
-          p.rep_sc(p.tok(FunctionTokenKind.SemiColon))
-        )
-      ),
-      p.rep_sc(p.tok(FunctionTokenKind.SemiColon))
-    ),
-    (calls) => calls
-  )
-);
-
-export function parseFunctionCall(expr: string): Call {
-  return expectSingleResult(expectEOF(CALL.parse(functionLexer.parse(expr))));
-}
-
-export function parseFunctionCalls(expr: string): Call[] {
-  return expectSingleResult(expectEOF(CALLS.parse(functionLexer.parse(expr))));
 }

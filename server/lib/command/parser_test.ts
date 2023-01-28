@@ -21,6 +21,7 @@ for (const expr of [
   `some_call()`,
   `some-call()`,
   `SOMECALL()`,
+  `someCall("a string " + concated("STRING + blah" + b() + c() + "$"))`,
   `malformed("a"`,
   `someCall(-123.500)`,
   `someCall(true, a(b(), 123), "hello")`,

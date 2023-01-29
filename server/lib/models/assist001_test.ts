@@ -118,6 +118,13 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     ],
   },
   {
+    description: "supports model outputs with lots of newlines",
+    input: { request: "some request" },
+    openAiResults: [
+      `\nI need to get the current time in New York, create a calendar event 5 days from now, and answer the question.\nAction: \nanswer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");\nfinish();`,
+    ],
+  },
+  {
     description: "client resolved command",
     input: { request: "some request" },
     openAiResults: [

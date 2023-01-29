@@ -79,7 +79,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions
+Action: one ore more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -111,7 +111,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions
+Action: one ore more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -181,7 +181,7 @@ snapshot[`infix + operand support 1`] = `
           args: [
             {
               type: "string",
-              value: "infix2022-12-19T03:41:10-05:00hello",
+              value: "infix 2022-12-19T03:41:10-05:00 hello",
             },
           ],
           id: "0.0",
@@ -213,14 +213,14 @@ snapshot[`infix + operand support 1`] = `
             },
             {
               type: "string",
-              value: "hello",
+              value: " hello",
             },
           ],
           id: "0.0.0.1",
           name: "__+__",
           returnValue: {
             type: "string",
-            value: "2022-12-19T03:41:10-05:00hello",
+            value: "2022-12-19T03:41:10-05:00 hello",
           },
           type: "executed",
         },
@@ -228,18 +228,18 @@ snapshot[`infix + operand support 1`] = `
           args: [
             {
               type: "string",
-              value: "infix",
+              value: "infix ",
             },
             {
               type: "string",
-              value: "2022-12-19T03:41:10-05:00hello",
+              value: "2022-12-19T03:41:10-05:00 hello",
             },
           ],
           id: "0.0.0",
           name: "__+__",
           returnValue: {
             type: "string",
-            value: "infix2022-12-19T03:41:10-05:00hello",
+            value: "infix 2022-12-19T03:41:10-05:00 hello",
           },
           type: "executed",
         },
@@ -250,7 +250,7 @@ snapshot[`infix + operand support 1`] = `
   state: {
     modelCallCount: 1,
     pending: {
-      action: 'answer("infix" + (currentTimeForTimezone("America/New_York") + "hello"))',
+      action: 'answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
       functionCalls: [
         {
           args: [
@@ -258,7 +258,7 @@ snapshot[`infix + operand support 1`] = `
               args: [
                 {
                   type: "string",
-                  value: "infix",
+                  value: "infix ",
                 },
                 {
                   args: [
@@ -274,7 +274,7 @@ snapshot[`infix + operand support 1`] = `
                     },
                     {
                       type: "string",
-                      value: "hello",
+                      value: " hello",
                     },
                   ],
                   name: "__+__",
@@ -320,14 +320,14 @@ snapshot[`infix + operand support 1`] = `
           },
           {
             type: "string",
-            value: "hello",
+            value: " hello",
           },
         ],
         id: "0.0.0.1",
         name: "__+__",
         returnValue: {
           type: "string",
-          value: "2022-12-19T03:41:10-05:00hello",
+          value: "2022-12-19T03:41:10-05:00 hello",
         },
         type: "executed",
       },
@@ -335,18 +335,233 @@ snapshot[`infix + operand support 1`] = `
         args: [
           {
             type: "string",
-            value: "infix",
+            value: "infix ",
           },
           {
             type: "string",
-            value: "2022-12-19T03:41:10-05:00hello",
+            value: "2022-12-19T03:41:10-05:00 hello",
           },
         ],
         id: "0.0.0",
         name: "__+__",
         returnValue: {
           type: "string",
-          value: "infix2022-12-19T03:41:10-05:00hello",
+          value: "infix 2022-12-19T03:41:10-05:00 hello",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs with lots of newlines 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+            },
+          ],
+          id: "0.0",
+          name: "answer",
+          type: "parsed",
+        },
+      ],
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          id: "0.0.0.0.1",
+          name: "currentTimeForTimezone",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "The time in New York is ",
+            },
+            {
+              type: "string",
+              value: "2022-12-19T03:41:10-05:00",
+            },
+          ],
+          id: "0.0.0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "The time in New York is 2022-12-19T03:41:10-05:00",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "The time in New York is 2022-12-19T03:41:10-05:00",
+            },
+            {
+              type: "string",
+              value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+            },
+          ],
+          id: "0.0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+          },
+          type: "executed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'answer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");
+finish();',
+      functionCalls: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      type: "string",
+                      value: "The time in New York is ",
+                    },
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "America/New_York",
+                        },
+                      ],
+                      name: "currentTimeForTimezone",
+                      type: "call",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+          ],
+          name: "answer",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "5 days from now",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+        {
+          args: [
+          ],
+          name: "finish",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York, create a calendar event 5 days from now, and answer the question.",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.0.0.1",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "The time in New York is ",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+        ],
+        id: "0.0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "The time in New York is 2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "The time in New York is 2022-12-19T03:41:10-05:00",
+          },
+          {
+            type: "string",
+            value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
         },
         type: "executed",
       },
@@ -923,7 +1138,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions
+Action: one ore more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1289,7 +1504,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions
+Action: one ore more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 

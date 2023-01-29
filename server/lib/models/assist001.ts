@@ -438,7 +438,7 @@ Available functions are declared below, these are the only functions available:`
   const format = `Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: single expression composing available functions
+Action: one ore more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)`;
 

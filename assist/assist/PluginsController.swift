@@ -115,17 +115,3 @@ extension Command {
     }
 }
 
-internal class BuiltinCommands: BundledPlugin {
-
-    static public var id: String = "builtinCommands"
-    static public func makeBashiPlugin() -> BashiPluginProtocol {
-        return BuiltinCommands()
-    }
-
-    public func prepare() async throws { }
-
-    public func provideCommands() -> [Command] {
-        return [
-        ]
-    }
-}

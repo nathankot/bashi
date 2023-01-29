@@ -147,8 +147,9 @@ export async function run(
     );
   }
 
+  const clientCommands = configuration.commands;
   const allCommands: Record<string, CommandDefinition> = {
-    ...configuration.commands,
+    ...clientCommands,
     ...serverCommands,
   };
 
@@ -343,8 +344,8 @@ export async function run(
       // 3. Plugs the prompt into the model to ask for thought/actions to take
       const prompt = makePrompt(
         {
-          ...configuration.commands,
-          ...serverCommands,
+          ...clientCommands,
+          ...builtinCommands,
           ...privateBuiltinCommands,
         },
         request,
@@ -435,10 +436,9 @@ function makePrompt(
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
-* function call nesting
 * string concatenation using +
 
-Available functions are declared below, these are the only functions available:`;
+Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer
@@ -476,7 +476,7 @@ function makeCommandSet(commands: CommandSet): string[] {
     const args = c.args.map(
       (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
     );
-    return `\`${name}(${args.join(", ")}) => ${c.returnType}\` - ${
+    return `\`${name}(${args.join(", ")}): ${c.returnType}\` - ${
       c.description
     }`;
   });

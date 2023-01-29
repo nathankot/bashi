@@ -60,21 +60,19 @@ snapshot[`all commands resolved on the server 2`] = `
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
-* function call nesting
 * string concatenation using +
 
-Available functions are declared below, these are the only functions available:
+Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
-\`answer(answer: string) => void\` - answer the original question directly
-\`say(message: string) => void\` - say something
-\`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - get answer to a request for additional information
-\`now() => string\` - get the users current ISO8601 datetime
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
-\`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
-\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
+\`answer(answer: string): void\` - answer the original question directly
+\`say(message: string): void\` - say something
+\`write(message: string): void\` - write/insert a message
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 Request: the question or request you must answer
@@ -92,21 +90,19 @@ Thought: ',
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
-* function call nesting
 * string concatenation using +
 
-Available functions are declared below, these are the only functions available:
+Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
-\`answer(answer: string) => void\` - answer the original question directly
-\`say(message: string) => void\` - say something
-\`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - get answer to a request for additional information
-\`now() => string\` - get the users current ISO8601 datetime
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
-\`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
-\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
+\`answer(answer: string): void\` - answer the original question directly
+\`say(message: string): void\` - say something
+\`write(message: string): void\` - write/insert a message
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 Request: the question or request you must answer
@@ -1410,21 +1406,19 @@ snapshot[`nested calls 2`] = `
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
-* function call nesting
 * string concatenation using +
 
-Available functions are declared below, these are the only functions available:
+Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
-\`answer(answer: string) => void\` - answer the original question directly
-\`say(message: string) => void\` - say something
-\`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - get answer to a request for additional information
-\`now() => string\` - get the users current ISO8601 datetime
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
-\`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
-\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
+\`answer(answer: string): void\` - answer the original question directly
+\`say(message: string): void\` - say something
+\`write(message: string): void\` - write/insert a message
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 Request: the question or request you must answer
@@ -1776,21 +1770,19 @@ some text",
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
-* function call nesting
 * string concatenation using +
 
-Available functions are declared below, these are the only functions available:
+Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
-\`answer(answer: string) => void\` - answer the original question directly
-\`say(message: string) => void\` - say something
-\`write(message: string) => void\` - write/insert a message
-\`ask(question: string) => string\` - get answer to a request for additional information
-\`now() => string\` - get the users current ISO8601 datetime
-\`math("a mathjs expression ": string) => string\` - compute a math formula
-\`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
-\`finish() => void\` - mark request/question as fulfilled
-\`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
-\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
+\`answer(answer: string): void\` - answer the original question directly
+\`say(message: string): void\` - say something
+\`write(message: string): void\` - write/insert a message
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
 Use the following format:
 Request: the question or request you must answer

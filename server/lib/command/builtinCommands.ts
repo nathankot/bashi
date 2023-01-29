@@ -139,7 +139,7 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
 const editProse: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
   description: `edit prose using the given requirements`,
-  args: [{ name: "sentence describing desired changes", type: "string" }],
+  args: [{ name: "sentence describing all desired changes", type: "string" }],
   run: async (modelDeps, reqCtx, [editingRequirement]) => {
     const text = reqCtx.text?.value;
     if (text == null) {
@@ -178,8 +178,8 @@ const editCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `edit code using the given requirements`,
   args: [
-    { name: "full name of the programming language", type: "string" },
-    { name: "sentence describing desired changes", type: "string" },
+    { name: "language full name", type: "string" },
+    { name: "sentence describing all desired changes", type: "string" },
   ],
   run: async (modelDeps, reqCtx, [language, editingRequirement]) => {
     const text = reqCtx.text?.value;

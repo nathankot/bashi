@@ -431,14 +431,14 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  const header = `Fulfill the question/request as directly, best you can. Aim to minimize the number of Actions used.
 
 The language for Action is a tiny subset of javascript, ONLY these features are available:
 
 * function calls
 * string concatenation using +
 
-Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.`;
+Functions declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer

@@ -33,7 +33,7 @@ const INPUTS: {
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
-  // { prompt: "What is the time in New York?" },
+  { prompt: "What is the time in New York?" },
   { prompt: "Say you are my best friend in Japanese." },
   { prompt: "Write you are my best friend in Japanese." },
   { prompt: "Who is george lucas the director?" },
@@ -42,63 +42,63 @@ const INPUTS: {
   { prompt: "Who is Fred Rickerson? (not a real person)" },
   {
     prompt:
-      "Translate what rooms do you have available in French, Spanish and Japanese",
+      "Translate what rooms do you have available to French, Spanish and Japanese",
   },
   {
     prompt:
       "whats the time in new york? and make a calendar event for dinner with wife 5 days from now",
   },
-  //   { prompt: "how do you say behind the Comichi building in Japanese?" },
-  //   { prompt: "what does the mode parameter do in the javascript fetch api?" },
-  //   {
-  //     prompt:
-  //       "write an example http POST request in the browser using Javscript using the fetch api",
-  //   },
-  //   {
-  //     prompt: "help me fix spelling and grammar mistakes",
-  //     requestContext: {
-  //       text: {
-  //         type: "string",
-  //         value: `stp by step, heart to hard, left right left. is we all fall down..`,
-  //       },
-  //     },
-  //   },
-  //   {
-  //     prompt: "edit this function in go lang in order to make it compile",
-  //     requestContext: {
-  //       text: {
-  //         type: "string",
-  //         value: `
+  { prompt: "how do you say behind the Comichi building in Japanese?" },
+  { prompt: "what does the mode parameter do in the javascript fetch api?" },
+  {
+    prompt:
+      "write an example http POST request in the browser using Javscript using the fetch api",
+  },
+  {
+    prompt: "help me fix spelling and grammar mistakes",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `stp by step, heart to hard, left right left. is we all fall down..`,
+      },
+    },
+  },
+  // {
+  //   prompt: "edit this function in go lang in order to make it compile",
+  //   requestContext: {
+  //     text: {
+  //       type: "string",
+  //       value: `
   // function doSomething() int {
   //   return "55"
   // }
   // `,
-  //       },
   //     },
   //   },
-  //   {
-  //     prompt: "edit this go lang function in order to make it compile",
-  //     requestContext: {
-  //       text: {
-  //         type: "string",
-  //         value: `
+  // },
+  // {
+  //   prompt: "edit this go lang function in order to make it compile",
+  //   requestContext: {
+  //     text: {
+  //       type: "string",
+  //       value: `
   // function doSomething() int {
   //   return "55"
   // }
   // `,
-  //       },
   //     },
   //   },
-  //   {
-  //     prompt: "edit this function in order to make it compile",
-  //     requestContext: {
-  //       language: { type: "string", value: "Go" },
-  //       text: {
-  //         type: "string",
-  //         value: `function doSomething() int { return "55" }`,
-  //       },
+  // },
+  // {
+  //   prompt: "edit this function in order to make it compile",
+  //   requestContext: {
+  //     language: { type: "string", value: "Go" },
+  //     text: {
+  //       type: "string",
+  //       value: `function doSomething() int { return "55" }`,
   //     },
   //   },
+  // },
   //   {
   //     prompt: "make a calendar event",
   //   },

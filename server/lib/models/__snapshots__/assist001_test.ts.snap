@@ -65,8 +65,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
-\`say(message: string): void\` - say something
-\`write(message: string): void\` - write/insert a message
+\`insertText(text: string): void\` - insert text into current cursor location
 \`ask(question: string): string\` - get answer to a request for additional information
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
@@ -95,8 +94,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
-\`say(message: string): void\` - say something
-\`write(message: string): void\` - write/insert a message
+\`insertText(text: string): void\` - insert text into current cursor location
 \`ask(question: string): string\` - get answer to a request for additional information
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
@@ -1411,8 +1409,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
-\`say(message: string): void\` - say something
-\`write(message: string): void\` - write/insert a message
+\`insertText(text: string): void\` - insert text into current cursor location
 \`ask(question: string): string\` - get answer to a request for additional information
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
@@ -1775,8 +1772,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
-\`say(message: string): void\` - say something
-\`write(message: string): void\` - write/insert a message
+\`insertText(text: string): void\` - insert text into current cursor location
 \`ask(question: string): string\` - get answer to a request for additional information
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula

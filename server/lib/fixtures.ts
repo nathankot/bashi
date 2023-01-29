@@ -32,22 +32,12 @@ export const commandSet: CommandSet = {
       },
     ],
   },
-  say: {
-    description: "say something",
+  insertText: {
+    description: "insert text into current cursor location",
     returnType: "void",
     args: [
       {
-        name: "message",
-        type: "string",
-      },
-    ],
-  },
-  write: {
-    description: "write/insert a message",
-    returnType: "void",
-    args: [
-      {
-        name: "message",
+        name: "text",
         type: "string",
       },
     ],

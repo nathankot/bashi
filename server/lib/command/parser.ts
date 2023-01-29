@@ -163,14 +163,14 @@ INFIX_CALL.setPattern(
       p.seq(EXPR_WITHOUT_INFIX_CALL, p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
       ([lhs, operand, rhs]): Call => ({
         type: "call",
-        name: operand.text,
+        name: "__" + operand.text + "__",
         args: [lhs, rhs],
       })
     ),
     p.seq(p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
     (lhs, [operand, rhs]): Call => ({
       type: "call",
-      name: operand.text,
+      name: "__" + operand.text + "__",
       args: [lhs, rhs],
     })
   )

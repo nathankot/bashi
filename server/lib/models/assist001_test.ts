@@ -109,6 +109,15 @@ Action: now(); math("pi^2 + 123")`,
     ],
   },
   {
+    description: "infix + operand support",
+    input: { request: "some request" },
+    openAiResults: [
+      `I need to do something
+Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
+      ``,
+    ],
+  },
+  {
     description: "client resolved command",
     input: { request: "some request" },
     openAiResults: [

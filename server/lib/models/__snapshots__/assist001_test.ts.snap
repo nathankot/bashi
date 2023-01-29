@@ -74,6 +74,7 @@ Available functions are declared below, these are the only functions available:
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
+\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
 
 Use the following format:
 Request: the question or request you must answer
@@ -105,6 +106,7 @@ Available functions are declared below, these are the only functions available:
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
+\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
 
 Use the following format:
 Request: the question or request you must answer
@@ -163,6 +165,193 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     },
   },
   state: undefined,
+}
+`;
+
+snapshot[`infix + operand support 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "infix2022-12-19T03:41:10-05:00hello",
+            },
+          ],
+          id: "0.0",
+          name: "answer",
+          type: "parsed",
+        },
+      ],
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          id: "0.0.0.1.0",
+          name: "currentTimeForTimezone",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-19T03:41:10-05:00",
+            },
+            {
+              type: "string",
+              value: "hello",
+            },
+          ],
+          id: "0.0.0.1",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00hello",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "infix",
+            },
+            {
+              type: "string",
+              value: "2022-12-19T03:41:10-05:00hello",
+            },
+          ],
+          id: "0.0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "infix2022-12-19T03:41:10-05:00hello",
+          },
+          type: "executed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: 'answer("infix" + (currentTimeForTimezone("America/New_York") + "hello"))',
+      functionCalls: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "infix",
+                },
+                {
+                  args: [
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "America/New_York",
+                        },
+                      ],
+                      name: "currentTimeForTimezone",
+                      type: "call",
+                    },
+                    {
+                      type: "string",
+                      value: "hello",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+          ],
+          name: "answer",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.0.1.0",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+          {
+            type: "string",
+            value: "hello",
+          },
+        ],
+        id: "0.0.0.1",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00hello",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "infix",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00hello",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "infix2022-12-19T03:41:10-05:00hello",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
@@ -729,6 +918,7 @@ Available functions are declared below, these are the only functions available:
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
+\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
 
 Use the following format:
 Request: the question or request you must answer
@@ -1094,6 +1284,7 @@ Available functions are declared below, these are the only functions available:
 \`parseRelativeTime(naturalLanguageRelativeTime: string) => string\` - parse ISO8601 datetime relative to now from natural language
 \`finish() => void\` - mark request/question as fulfilled
 \`fail(reason: string) => void\` - indicate the request cannot be fulfilled with the available tools
+\`__+__(lhs: string, rhs: string) => string\` - string concatenation using the + infix operand
 
 Use the following format:
 Request: the question or request you must answer

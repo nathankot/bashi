@@ -93,14 +93,32 @@ const privateBuiltinCommands = {
   } as BuiltinCommandDefinition<["string"], "void">,
 };
 
-const sinks: Record<string, true> = {
-  fail: true,
-  finish: true,
+// Commands that the model implicitly knows, does not need to be
+// sent to the model explicitly.
+const languageBuiltinCommands = {
+  "__+__": {
+    args: [
+      { name: "lhs", type: "string" },
+      { name: "rhs", type: "string" },
+    ],
+    description: "string concatenation using the + infix operand",
+    returnType: "string",
+    run: async (_, __, [lhs, rhs]) => ({
+      type: "string",
+      value: lhs.value + rhs.value,
+    }),
+  } as BuiltinCommandDefinition<["string", "string"], "string">,
 };
 
 const serverCommands = {
   ...builtinCommands,
   ...privateBuiltinCommands,
+  ...languageBuiltinCommands,
+};
+
+const sinks: Record<string, true> = {
+  fail: true,
+  finish: true,
 };
 
 function isServerCommand(
@@ -318,7 +336,15 @@ export async function run(
       modelCallCount++;
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
-      const prompt = makePrompt(allCommands, request, resolvedActionGroups);
+      const prompt = makePrompt(
+        {
+          ...configuration.commands,
+          ...serverCommands,
+          ...privateBuiltinCommands,
+        },
+        request,
+        resolvedActionGroups
+      );
 
       const completion = await modelDeps.openai.createCompletion(
         {

@@ -13,10 +13,10 @@ import {
 } from "./assistShared.ts";
 
 import {
-  Call,
+  Expr,
   ActionGroup,
   parseActionGroup,
-  parseFunctionCalls,
+  parseExpressions,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -203,25 +203,27 @@ export async function run(
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
-      // 1. For each pending thought/action, find commands and try to resolve them
+      // 1. For each pending thought/action, find expressions and try to resolve them
       if (pending != null) {
         const actionGroupsSofar = Object.values(resolvedActionGroups).length;
-        const topLevelCalls = parseFunctionCalls(pending.action);
+        const topLevelExpressions = parseExpressions(pending.action);
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let pendingCommands: CommandParsed[] = [];
-        let topLevelCommandResults: Value[] = [];
-        for (const [i, topLevelCall] of topLevelCalls.entries()) {
+        let topLevelExpressionResults: Value[] = [];
+        for (const [i, topLevelExpression] of topLevelExpressions.entries()) {
           const pendingCommandsOrResult = getPendingCommandsOrResult(
             `${actionGroupsSofar}.${i}`,
-            topLevelCall,
+            topLevelExpression,
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
-            topLevelCommandResults.push(pendingCommandsOrResult.result);
+            topLevelExpressionResults.push(pendingCommandsOrResult.result);
           }
           if ("pendingCommands" in pendingCommandsOrResult) {
             pendingCommands = pendingCommandsOrResult.pendingCommands;
+            // Break here so that the client is able to handle this top level
+            // call, before handling the next one.
             break;
           }
         }
@@ -301,14 +303,14 @@ export async function run(
         }
 
         // Go through the loop again if we have not resolved all top-level commands:
-        if (topLevelCommandResults.length !== topLevelCalls.length) {
+        if (topLevelExpressionResults.length !== topLevelExpressions.length) {
           continue commandResolutionLoop;
         }
 
         // 2. Any resolutions from the above go into the new prompt
         resolvedActionGroups.push({
           ...pending,
-          result: topLevelCommandResults.map(valueToString).join("; "),
+          result: topLevelExpressionResults.map(valueToString).join("; "),
         });
 
         // Reaching here implies that anything pending has been
@@ -316,8 +318,11 @@ export async function run(
         pending = null;
 
         // Mark as finished if any of the top level commands were sinks:
-        for (const topLevelCall of topLevelCalls) {
-          if (sinks[topLevelCall.name] === true) {
+        for (const topLevelExpr of topLevelExpressions) {
+          if (topLevelExpr.type !== "call") {
+            continue;
+          }
+          if (sinks[topLevelExpr.name] === true) {
             isFinished = true;
           }
         }
@@ -479,15 +484,20 @@ function makeCommandSet(commands: CommandSet): string[] {
 
 export function getPendingCommandsOrResult(
   commandId: string,
-  call: Call,
+  expr: Expr,
   resolvedCommmands: Record<string, CommandExecuted>
 ): { pendingCommands: CommandParsed[] } | { result: Value } {
+  // If we have an terminal value:
+  if (expr.type !== "call") {
+    return { result: expr };
+  }
+
   // See if its already resolved
   const maybeAlreadyResolved = resolvedCommmands[commandId];
   if (maybeAlreadyResolved != null) {
-    if (maybeAlreadyResolved.name != call.name) {
+    if (maybeAlreadyResolved.name != expr.name) {
       throw new Error(
-        `corruption! expected resolved call to be ${call.name} ` +
+        `corruption! expected resolved call to be ${expr.name} ` +
           `but got ${maybeAlreadyResolved.name}`
       );
     }
@@ -501,7 +511,7 @@ export function getPendingCommandsOrResult(
   // or if they are all resolved build up a list of resolved arguments.
   let pendingCommands: CommandParsed[] = [];
   let resolvedArguments: Value[] | null = [];
-  for (const [i, arg] of Object.entries(call.args)) {
+  for (const [i, arg] of Object.entries(expr.args)) {
     if (arg.type !== "call") {
       resolvedArguments?.push(arg);
       continue;
@@ -523,9 +533,9 @@ export function getPendingCommandsOrResult(
   // If all of the arguments are resolved then this call
   // becomes pending:
   if (resolvedArguments != null) {
-    if (resolvedArguments.length !== call.args.length) {
+    if (resolvedArguments.length !== expr.args.length) {
       throw new Error(
-        `corruption! for ${call.name} expected ${call.args.length} ` +
+        `corruption! for ${expr.name} expected ${expr.args.length} ` +
           `arguments but got ${resolvedArguments.length}`
       );
     }
@@ -535,7 +545,7 @@ export function getPendingCommandsOrResult(
           type: "parsed",
           args: resolvedArguments,
           id: commandId,
-          name: call.name,
+          name: expr.name,
         },
       ],
     };

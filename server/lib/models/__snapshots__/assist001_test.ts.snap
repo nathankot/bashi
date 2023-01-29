@@ -79,7 +79,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: one ore more expressions composing available functions delimited by ;
+Action: one or more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -111,7 +111,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: one ore more expressions composing available functions delimited by ;
+Action: one or more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -251,7 +251,7 @@ snapshot[`infix + operand support 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {
@@ -440,7 +440,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
       action: 'answer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");
 finish();',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {
@@ -570,6 +570,297 @@ finish();',
 }
 `;
 
+snapshot[`supports model outputs with top level infix call 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "0.0.0.0",
+          name: "now",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10Z",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          id: "0.0.1",
+          name: "currentTimeForTimezone",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-19T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: " ",
+            },
+          ],
+          id: "0.0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10Z ",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-19T08:41:10Z ",
+            },
+            {
+              type: "string",
+              value: "2022-12-19T03:41:10-05:00",
+            },
+          ],
+          id: "0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "in 5 days",
+            },
+          ],
+          id: "0.1.0",
+          name: "parseRelativeTime",
+          returnValue: {
+            type: "string",
+            value: "2022-12-24T08:41:10Z",
+          },
+          type: "executed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    modelCallCount: 1,
+    pending: {
+      action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+      expressions: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                  ],
+                  name: "now",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: " ",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "America/New_York",
+                },
+              ],
+              name: "currentTimeForTimezone",
+              type: "call",
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "in 5 days",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+    },
+    request: "some request",
+    requestContext: {},
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0.0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.1",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T08:41:10Z",
+          },
+          {
+            type: "string",
+            value: " ",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z ",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T08:41:10Z ",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+        ],
+        id: "0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5 days",
+          },
+        ],
+        id: "0.1.0",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs with top level expression 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Pacific/Auckland",
+            },
+          ],
+          id: "0.2",
+          name: "currentTimeForTimezone",
+          returnValue: {
+            type: "string",
+            value: "2022-12-19T21:41:10+13:00",
+          },
+          type: "executed",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
 snapshot[`client resolved command 1`] = `
 {
   n: 1,
@@ -611,7 +902,7 @@ snapshot[`client resolved command 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
-      functionCalls: [
+      expressions: [
         {
           args: [
           ],
@@ -705,7 +996,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
-      functionCalls: [
+      expressions: [
         {
           args: [
           ],
@@ -810,7 +1101,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
-      functionCalls: [
+      expressions: [
         {
           args: [
           ],
@@ -915,7 +1206,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
-      functionCalls: [
+      expressions: [
         {
           args: [
           ],
@@ -1037,7 +1328,7 @@ snapshot[`nested calls 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {
@@ -1138,7 +1429,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: one ore more expressions composing available functions delimited by ;
+Action: one or more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1182,7 +1473,7 @@ snapshot[`request needs more context 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'now(); editProse("convert to poem"); now()',
-      functionCalls: [
+      expressions: [
         {
           args: [
           ],
@@ -1263,7 +1554,7 @@ snapshot[`request needs more context - still missing 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'editProse("convert to poem"); now()',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {
@@ -1289,7 +1580,7 @@ snapshot[`request needs more context - still missing 1`] = `
     resolvedActionGroups: [
       {
         action: "someCommand()",
-        functionCalls: [
+        expressions: [
           {
             args: [
             ],
@@ -1351,7 +1642,7 @@ snapshot[`request needs more context - wrong type 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'editProse("convert to poem"); now()',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {
@@ -1382,7 +1673,7 @@ snapshot[`request needs more context - wrong type 1`] = `
     resolvedActionGroups: [
       {
         action: "someCommand()",
-        functionCalls: [
+        expressions: [
           {
             args: [
             ],
@@ -1504,7 +1795,7 @@ Available functions are declared below, these are the only functions available:
 Use the following format:
 Request: the question or request you must answer
 Thought: you should always think about what to do
-Action: one ore more expressions composing available functions delimited by ;
+Action: one or more expressions composing available functions delimited by ;
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1557,7 +1848,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'ask("how are you?"); currentTimeForTimezone("America/New_York")',
-      functionCalls: [
+      expressions: [
         {
           args: [
             {

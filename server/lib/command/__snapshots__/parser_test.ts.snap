@@ -1,8 +1,8 @@
 export const snapshot = {};
 
-snapshot[`parseFunctionCall: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: The parser cannot reach the end of file, stops at ";" at position {"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}.'`;
+snapshot[`parseExpression: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: Unable to consume token: ;'`;
 
-snapshot[`parseFunctionCalls: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `
+snapshot[`parseExpressions: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `
 [
   {
     args: [
@@ -23,10 +23,10 @@ snapshot[`parseFunctionCalls: someFunction(); someOtherFunction(" aa() ; bbb()")
 ]
 `;
 
-snapshot[`parseFunctionCall: someFunction();
-someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: The parser cannot reach the end of file, stops at ";" at position {"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}.'`;
+snapshot[`parseExpression: someFunction();
+someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: Unable to consume token: ;'`;
 
-snapshot[`parseFunctionCalls: someFunction();
+snapshot[`parseExpressions: someFunction();
 someOtherFunction(" aa() ; bbb()") 1`] = `
 [
   {
@@ -48,7 +48,7 @@ someOtherFunction(" aa() ; bbb()") 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall() 1`] = `
+snapshot[`parseExpression: someCall() 1`] = `
 {
   args: [
   ],
@@ -57,7 +57,7 @@ snapshot[`parseFunctionCall: someCall() 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall() 1`] = `
+snapshot[`parseExpressions: someCall() 1`] = `
 [
   {
     args: [
@@ -68,7 +68,7 @@ snapshot[`parseFunctionCalls: someCall() 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall('a', 111) 1`] = `
+snapshot[`parseExpression: someCall('a', 111) 1`] = `
 {
   args: [
     {
@@ -85,7 +85,7 @@ snapshot[`parseFunctionCall: someCall('a', 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall('a', 111) 1`] = `
+snapshot[`parseExpressions: someCall('a', 111) 1`] = `
 [
   {
     args: [
@@ -104,7 +104,7 @@ snapshot[`parseFunctionCalls: someCall('a', 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall('a \\'ha\\'', 111) 1`] = `
+snapshot[`parseExpression: someCall('a \\'ha\\'', 111) 1`] = `
 {
   args: [
     {
@@ -121,7 +121,7 @@ snapshot[`parseFunctionCall: someCall('a \\'ha\\'', 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall('a \\'ha\\'', 111) 1`] = `
+snapshot[`parseExpressions: someCall('a \\'ha\\'', 111) 1`] = `
 [
   {
     args: [
@@ -140,7 +140,7 @@ snapshot[`parseFunctionCalls: someCall('a \\'ha\\'', 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(\`a\`, 111) 1`] = `
+snapshot[`parseExpression: someCall(\`a\`, 111) 1`] = `
 {
   args: [
     {
@@ -157,7 +157,7 @@ snapshot[`parseFunctionCall: someCall(\`a\`, 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(\`a\`, 111) 1`] = `
+snapshot[`parseExpressions: someCall(\`a\`, 111) 1`] = `
 [
   {
     args: [
@@ -176,7 +176,7 @@ snapshot[`parseFunctionCalls: someCall(\`a\`, 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
+snapshot[`parseExpression: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 {
   args: [
     {
@@ -193,7 +193,7 @@ snapshot[`parseFunctionCall: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
+snapshot[`parseExpressions: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 [
   {
     args: [
@@ -212,7 +212,7 @@ snapshot[`parseFunctionCalls: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a", 111) 1`] = `
+snapshot[`parseExpression: someCall("a", 111) 1`] = `
 {
   args: [
     {
@@ -229,7 +229,7 @@ snapshot[`parseFunctionCall: someCall("a", 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a", 111) 1`] = `
+snapshot[`parseExpressions: someCall("a", 111) 1`] = `
 [
   {
     args: [
@@ -248,7 +248,7 @@ snapshot[`parseFunctionCalls: someCall("a", 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a \\"ha\\"", 111) 1`] = `
+snapshot[`parseExpression: someCall("a \\"ha\\"", 111) 1`] = `
 {
   args: [
     {
@@ -265,7 +265,7 @@ snapshot[`parseFunctionCall: someCall("a \\"ha\\"", 111) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a \\"ha\\"", 111) 1`] = `
+snapshot[`parseExpressions: someCall("a \\"ha\\"", 111) 1`] = `
 [
   {
     args: [
@@ -284,7 +284,7 @@ snapshot[`parseFunctionCalls: someCall("a \\"ha\\"", 111) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a", 111,true) 1`] = `
+snapshot[`parseExpression: someCall("a", 111,true) 1`] = `
 {
   args: [
     {
@@ -305,7 +305,7 @@ snapshot[`parseFunctionCall: someCall("a", 111,true) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a", 111,true) 1`] = `
+snapshot[`parseExpressions: someCall("a", 111,true) 1`] = `
 [
   {
     args: [
@@ -328,7 +328,7 @@ snapshot[`parseFunctionCalls: someCall("a", 111,true) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a", 111, false) 1`] = `
+snapshot[`parseExpression: someCall("a", 111, false) 1`] = `
 {
   args: [
     {
@@ -349,7 +349,7 @@ snapshot[`parseFunctionCall: someCall("a", 111, false) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a", 111, false) 1`] = `
+snapshot[`parseExpressions: someCall("a", 111, false) 1`] = `
 [
   {
     args: [
@@ -372,7 +372,7 @@ snapshot[`parseFunctionCalls: someCall("a", 111, false) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a false true 123 b", 111, false) 1`] = `
+snapshot[`parseExpression: someCall("a false true 123 b", 111, false) 1`] = `
 {
   args: [
     {
@@ -393,7 +393,7 @@ snapshot[`parseFunctionCall: someCall("a false true 123 b", 111, false) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a false true 123 b", 111, false) 1`] = `
+snapshot[`parseExpressions: someCall("a false true 123 b", 111, false) 1`] = `
 [
   {
     args: [
@@ -416,7 +416,7 @@ snapshot[`parseFunctionCalls: someCall("a false true 123 b", 111, false) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(-123) 1`] = `
+snapshot[`parseExpression: someCall(-123) 1`] = `
 {
   args: [
     {
@@ -429,7 +429,7 @@ snapshot[`parseFunctionCall: someCall(-123) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(-123) 1`] = `
+snapshot[`parseExpressions: someCall(-123) 1`] = `
 [
   {
     args: [
@@ -444,7 +444,7 @@ snapshot[`parseFunctionCalls: someCall(-123) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: some_call() 1`] = `
+snapshot[`parseExpression: some_call() 1`] = `
 {
   args: [
   ],
@@ -453,7 +453,7 @@ snapshot[`parseFunctionCall: some_call() 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: some_call() 1`] = `
+snapshot[`parseExpressions: some_call() 1`] = `
 [
   {
     args: [
@@ -464,7 +464,7 @@ snapshot[`parseFunctionCalls: some_call() 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: some-call() 1`] = `
+snapshot[`parseExpression: some-call() 1`] = `
 {
   args: [
   ],
@@ -473,7 +473,7 @@ snapshot[`parseFunctionCall: some-call() 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: some-call() 1`] = `
+snapshot[`parseExpressions: some-call() 1`] = `
 [
   {
     args: [
@@ -484,7 +484,7 @@ snapshot[`parseFunctionCalls: some-call() 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: SOMECALL() 1`] = `
+snapshot[`parseExpression: SOMECALL() 1`] = `
 {
   args: [
   ],
@@ -493,7 +493,7 @@ snapshot[`parseFunctionCall: SOMECALL() 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: SOMECALL() 1`] = `
+snapshot[`parseExpressions: SOMECALL() 1`] = `
 [
   {
     args: [
@@ -504,7 +504,7 @@ snapshot[`parseFunctionCalls: SOMECALL() 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
+snapshot[`parseExpression: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
 {
   args: [
     {
@@ -547,7 +547,7 @@ snapshot[`parseFunctionCall: someCall("hi" + ("there" + ("is" + "nesting"))) 1`]
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
+snapshot[`parseExpressions: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
 [
   {
     args: [
@@ -592,7 +592,7 @@ snapshot[`parseFunctionCalls: someCall("hi" + ("there" + ("is" + "nesting"))) 1`
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
+snapshot[`parseExpression: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
 {
   args: [
     {
@@ -655,7 +655,7 @@ snapshot[`parseFunctionCall: someCall("a string " + concated("STRING + blah" + (
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
+snapshot[`parseExpressions: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
 [
   {
     args: [
@@ -720,11 +720,62 @@ snapshot[`parseFunctionCalls: someCall("a string " + concated("STRING + blah" + 
 ]
 `;
 
-snapshot[`parseFunctionCall: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseExpression: 123123 1`] = `
+{
+  type: "number",
+  value: 123123,
+}
+`;
 
-snapshot[`parseFunctionCalls: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseExpressions: 123123 1`] = `
+[
+  {
+    type: "number",
+    value: 123123,
+  },
+]
+`;
 
-snapshot[`parseFunctionCall: someCall(-123.500) 1`] = `
+snapshot[`parseExpression: "hi there" 1`] = `
+{
+  type: "string",
+  value: "hi there",
+}
+`;
+
+snapshot[`parseExpressions: "hi there" 1`] = `
+[
+  {
+    type: "string",
+    value: "hi there",
+  },
+]
+`;
+
+snapshot[`parseExpression: true; 123123; 'hi there' 1`] = `'{"index":4,"rowBegin":1,"columnBegin":5,"rowEnd":1,"columnEnd":6}: Unable to consume token: ;'`;
+
+snapshot[`parseExpressions: true; 123123; 'hi there' 1`] = `
+[
+  {
+    type: "boolean",
+    value: true,
+  },
+  {
+    type: "number",
+    value: 123123,
+  },
+  {
+    type: "string",
+    value: "hi there",
+  },
+]
+`;
+
+snapshot[`parseExpression: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+
+snapshot[`parseExpressions: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+
+snapshot[`parseExpression: someCall(-123.500) 1`] = `
 {
   args: [
     {
@@ -737,7 +788,7 @@ snapshot[`parseFunctionCall: someCall(-123.500) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(-123.500) 1`] = `
+snapshot[`parseExpressions: someCall(-123.500) 1`] = `
 [
   {
     args: [
@@ -752,11 +803,11 @@ snapshot[`parseFunctionCalls: someCall(-123.500) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
+snapshot[`parseExpression: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
 
-snapshot[`parseFunctionCalls: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
+snapshot[`parseExpressions: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
 
-snapshot[`parseFunctionCall: someCall(true, a(b(), 123), "hello") 1`] = `
+snapshot[`parseExpression: someCall(true, a(b(), 123), "hello") 1`] = `
 {
   args: [
     {
@@ -789,7 +840,7 @@ snapshot[`parseFunctionCall: someCall(true, a(b(), 123), "hello") 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(true, a(b(), 123), "hello") 1`] = `
+snapshot[`parseExpressions: someCall(true, a(b(), 123), "hello") 1`] = `
 [
   {
     args: [
@@ -824,7 +875,7 @@ snapshot[`parseFunctionCalls: someCall(true, a(b(), 123), "hello") 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(true, a(b(), 123), "hello",) 1`] = `
+snapshot[`parseExpression: someCall(true, a(b(), 123), "hello",) 1`] = `
 {
   args: [
     {
@@ -857,7 +908,7 @@ snapshot[`parseFunctionCall: someCall(true, a(b(), 123), "hello",) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(true, a(b(), 123), "hello",) 1`] = `
+snapshot[`parseExpressions: someCall(true, a(b(), 123), "hello",) 1`] = `
 [
   {
     args: [
@@ -892,11 +943,11 @@ snapshot[`parseFunctionCalls: someCall(true, a(b(), 123), "hello",) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
+snapshot[`parseExpression: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
 
-snapshot[`parseFunctionCalls: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
+snapshot[`parseExpressions: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
 
-snapshot[`parseFunctionCall: someCall(true, a(true, 123), "hello",) 1`] = `
+snapshot[`parseExpression: someCall(true, a(true, 123), "hello",) 1`] = `
 {
   args: [
     {
@@ -927,7 +978,7 @@ snapshot[`parseFunctionCall: someCall(true, a(true, 123), "hello",) 1`] = `
 }
 `;
 
-snapshot[`parseFunctionCalls: someCall(true, a(true, 123), "hello",) 1`] = `
+snapshot[`parseExpressions: someCall(true, a(true, 123), "hello",) 1`] = `
 [
   {
     args: [
@@ -960,32 +1011,32 @@ snapshot[`parseFunctionCalls: someCall(true, a(true, 123), "hello",) 1`] = `
 ]
 `;
 
-snapshot[`parseFunctionCall: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpression: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCalls: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpressions: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCall: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpression: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCalls: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpressions: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCall: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpression: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCalls: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
+snapshot[`parseExpressions: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseFunctionCall: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
+snapshot[`parseExpression: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
 
-snapshot[`parseFunctionCalls: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
+snapshot[`parseExpressions: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
 
-snapshot[`parseFunctionCall: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseExpression: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
-snapshot[`parseFunctionCalls: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseExpressions: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
   Action: someFunction(123, "str", true)
   Result: blah blah blah blah 1`] = `
 {
   action: 'someFunction(123, "str", true)',
-  functionCalls: [
+  expressions: [
     {
       args: [
         {
@@ -1015,7 +1066,7 @@ snapshot[`parseActionGroup: Thought: I need to do something
   Result: 1`] = `
 {
   action: 'someFunction(123, "str", true)',
-  functionCalls: [
+  expressions: [
     {
       args: [
         {
@@ -1045,7 +1096,7 @@ snapshot[`parseActionGroup: Thought: I need to do something
   Result:  1`] = `
 {
   action: 'someFunction(123, "str", true)',
-  functionCalls: [
+  expressions: [
     {
       args: [
         {
@@ -1075,7 +1126,7 @@ snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmm
   Result: blah blah blah blah 1`] = `
 {
   action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
-  functionCalls: [
+  expressions: [
     {
       args: [
       ],
@@ -1102,7 +1153,7 @@ snapshot[`parseActionGroup: Thought: I need to do something
   Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
 {
   action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
-  functionCalls: [
+  expressions: [
     {
       args: [
         {
@@ -1145,7 +1196,7 @@ snapshot[`parseActionGroup: tHOUght: I need to do something
   aCTion  :    someFunction();; someOtherFunction() 1`] = `
 {
   action: "someFunction();; someOtherFunction()",
-  functionCalls: [
+  expressions: [
     {
       args: [
       ],
@@ -1169,7 +1220,7 @@ snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
   Result: blah blah blah blah 1`] = `
 {
   action: "someFunction(); someOtherFunction()",
-  functionCalls: [
+  expressions: [
     {
       args: [
       ],
@@ -1196,7 +1247,7 @@ Result: blah blah blah blah
 {
   action: 'someFunction();
    someOtherFunction("Result:")',
-  functionCalls: [
+  expressions: [
     {
       args: [
       ],
@@ -1217,6 +1268,98 @@ Result: blah blah blah blah
   result: "blah blah blah blah
 123123",
   thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); 1`] = `
+{
+  action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+  expressions: [
+    {
+      args: [
+        {
+          args: [
+            {
+              args: [
+              ],
+              name: "now",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: " ",
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+      ],
+      name: "__+__",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "in 5 days",
+            },
+          ],
+          name: "parseRelativeTime",
+          type: "call",
+        },
+        {
+          type: "string",
+          value: "Dinner with Wife",
+        },
+      ],
+      name: "createCalendarEvent",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: "some string"; 123; currentTimeForTimezone('Pacific/Auckland') 1`] = `
+{
+  action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+  expressions: [
+    {
+      type: "string",
+      value: "some string",
+    },
+    {
+      type: "number",
+      value: 123,
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Pacific/Auckland",
+        },
+      ],
+      name: "currentTimeForTimezone",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
 }
 `;
 

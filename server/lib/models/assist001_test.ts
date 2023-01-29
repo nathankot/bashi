@@ -3,7 +3,7 @@ import { noop } from "cockatiel";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
-import { CommandExecuted, parseFunctionCall } from "@lib/command.ts";
+import { CommandExecuted, parseExpression } from "@lib/command.ts";
 
 import {
   MAX_MODEL_CALLS,
@@ -16,7 +16,7 @@ const pendingClientCommandState = {
   modelCallCount: 1,
   pending: {
     action: 'now(); ask("what do you want?")',
-    functionCalls: [
+    expressions: [
       { type: "call", args: [], name: "now" },
       {
         type: "call",
@@ -45,7 +45,7 @@ const pendingRequestContextState = {
   modelCallCount: 1,
   pending: {
     action: 'editProse("convert to poem"); now()',
-    functionCalls: [
+    expressions: [
       {
         type: "call",
         args: [{ type: "string", value: "convert to poem" }],
@@ -67,7 +67,7 @@ const pendingRequestContextState = {
       action: "someCommand()",
       result: `"blah"`,
       thought: "I need to call some command",
-      functionCalls: [
+      expressions: [
         {
           type: "call",
           args: [],
@@ -122,6 +122,23 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     input: { request: "some request" },
     openAiResults: [
       `\nI need to get the current time in New York, create a calendar event 5 days from now, and answer the question.\nAction: \nanswer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");\nfinish();`,
+    ],
+  },
+  {
+    description: "supports model outputs with top level infix call",
+    input: { request: "some request" },
+    openAiResults: [
+      ` I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
+      ``,
+    ],
+  },
+
+  {
+    description: "supports model outputs with top level expression",
+    input: { request: "some request" },
+    openAiResults: [
+      ` I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+      ``,
     ],
   },
   {
@@ -250,7 +267,7 @@ Action: finish()`,
       pending: {
         action:
           'ask("how are you?"); currentTimeForTimezone("America/New_York")',
-        functionCalls: [
+        expressions: [
           {
             args: [{ type: "string", value: "how are you?" }],
             name: "ask",
@@ -347,13 +364,13 @@ for (const test of [
   {
     description: "example A step 1",
     commandId: "0",
-    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    call: parseExpression(`test(a(), b(123, c()))`),
     resolvedCommands: {},
   },
   {
     description: "example A step 2",
     commandId: "0",
-    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    call: parseExpression(`test(a(), b(123, c()))`),
     resolvedCommands: {
       "0.0": {
         type: "executed",
@@ -374,7 +391,7 @@ for (const test of [
   {
     description: "example A step 3",
     commandId: "0",
-    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    call: parseExpression(`test(a(), b(123, c()))`),
     resolvedCommands: {
       "0.0": {
         type: "executed",
@@ -395,7 +412,7 @@ for (const test of [
   {
     description: "example A step 4",
     commandId: "0",
-    call: parseFunctionCall(`test(a(), b(123, c()))`),
+    call: parseExpression(`test(a(), b(123, c()))`),
     resolvedCommands: {
       "0": {
         type: "executed",

@@ -33,7 +33,7 @@ export const ActionGroup = t.intersection([
   t.type({
     thought: t.string,
     action: t.string,
-    functionCalls: t.array(Call),
+    expressions: t.array(Expr),
   }),
   t.partial({
     result: t.string,
@@ -81,10 +81,10 @@ const PAREN_GROUP = rule<T, Expr>();
 const VALUE = rule<T, Value>();
 const INFIX_CALL = rule<T, Expr>();
 const FUNC_CALL = rule<T, Call>();
-const FUNC_CALLS = rule<T, Call[]>();
 
 const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP);
 const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP);
+const EXPRS = rule<T, Expr[]>();
 
 PAREN_GROUP.setPattern(p.kmid(p.tok(T.LParen), EXPR, p.tok(T.RParen)));
 
@@ -176,25 +176,19 @@ INFIX_CALL.setPattern(
   )
 );
 
-FUNC_CALLS.setPattern(
-  p.apply(
-    p.kleft(
-      p.list_sc(
-        FUNC_CALL,
-        p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))
-      ),
-      p.rep_sc(p.tok(T.SemiColon))
-    ),
-    (calls) => calls
+EXPRS.setPattern(
+  p.kleft(
+    p.list_sc(EXPR, p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))),
+    p.rep_sc(p.tok(T.SemiColon))
   )
 );
 
-export function parseFunctionCall(expr: string): Call {
-  return expectSingleResult(expectEOF(FUNC_CALL.parse(exprLexer.parse(expr))));
+export function parseExpression(expr: string): Expr {
+  return expectSingleResult(expectEOF(EXPR.parse(exprLexer.parse(expr))));
 }
 
-export function parseFunctionCalls(expr: string): Call[] {
-  return expectSingleResult(expectEOF(FUNC_CALLS.parse(exprLexer.parse(expr))));
+export function parseExpressions(expr: string): Expr[] {
+  return expectSingleResult(expectEOF(EXPRS.parse(exprLexer.parse(expr))));
 }
 
 enum T2 {
@@ -240,12 +234,12 @@ ACTION_GROUP.setPattern(
       )
     ),
     ([thought, action, result]) => {
-      const functionCalls = parseFunctionCalls(action);
+      const expressions = parseExpressions(action);
       return {
         thought,
         action,
         result,
-        functionCalls,
+        expressions,
       };
     }
   )

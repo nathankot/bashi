@@ -1,7 +1,7 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import {
-  parseFunctionCall,
-  parseFunctionCalls,
+  parseExpression,
+  parseExpressions,
   parseActionGroup,
 } from "./parser.ts";
 
@@ -24,6 +24,11 @@ for (const expr of [
   `SOMECALL()`,
   `someCall("hi" + ("there" + ("is" + "nesting")))`,
   `someCall("a string " + concated("STRING + blah" + (b() + c()) + "$"))`,
+  `123123`,
+  `"hi there"`,
+  `true; 123123; 'hi there'`,
+
+  // malformed:
   `malformed("a"`,
   `someCall(-123.500)`,
   `someCall("hi" + ("there" + (("is + "bad" + "nesting")))`,
@@ -38,10 +43,10 @@ for (const expr of [
   "",
 ]) {
   Deno.test(
-    "parseFunctionCall: " + (expr === "" ? "empty string" : expr),
+    "parseExpression: " + (expr === "" ? "empty string" : expr),
     (t) => {
       try {
-        const result = parseFunctionCall(expr);
+        const result = parseExpression(expr);
         assertSnapshot(t, result);
       } catch (e) {
         assertSnapshot(t, (e as Error).message);
@@ -50,10 +55,10 @@ for (const expr of [
   );
 
   Deno.test(
-    "parseFunctionCalls: " + (expr === "" ? "empty string" : expr),
+    "parseExpressions: " + (expr === "" ? "empty string" : expr),
     (t) => {
       try {
-        const result = parseFunctionCalls(expr);
+        const result = parseExpressions(expr);
         assertSnapshot(t, result);
       } catch (e) {
         assertSnapshot(t, (e as Error).message);
@@ -87,6 +92,9 @@ for (const expr of [
    someOtherFunction("Result:")
 Result: blah blah blah blah
 123123`,
+  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
+  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+
   // Invalid examples:
   `Thought no colon doesnt work\nAction hahaha`,
   `Action: action should not come first\nThought: ha`,

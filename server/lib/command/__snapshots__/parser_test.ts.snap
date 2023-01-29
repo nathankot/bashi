@@ -23,6 +23,31 @@ snapshot[`parseFunctionCalls: someFunction(); someOtherFunction(" aa() ; bbb()")
 ]
 `;
 
+snapshot[`parseFunctionCall: someFunction();
+someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: The parser cannot reach the end of file, stops at ";" at position {"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}.'`;
+
+snapshot[`parseFunctionCalls: someFunction();
+someOtherFunction(" aa() ; bbb()") 1`] = `
+[
+  {
+    args: [
+    ],
+    name: "someFunction",
+    type: "call",
+  },
+  {
+    args: [
+      {
+        type: "string",
+        value: " aa() ; bbb()",
+      },
+    ],
+    name: "someOtherFunction",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseFunctionCall: someCall() 1`] = `
 {
   args: [
@@ -957,39 +982,262 @@ snapshot[`parseFunctionCalls: empty string 1`] = `"<END-OF-FILE>: Unable to cons
 
 snapshot[`parseActionGroup: Thought: I need to do something
   Action: someFunction(123, "str", true)
-  Result: blah blah blah blah 1`] = `'{"index":34,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Result: blah blah blah blah 1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something",
+}
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
   Action: someFunction(123, "str", true)
-  Result: 1`] = `'{"index":34,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Result: 1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
   Action: someFunction(123, "str", true)
-  Result:  1`] = `'{"index":34,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Result:  1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
   Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
-  Result: blah blah blah blah 1`] = `'{"index":56,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Result: blah blah blah blah 1`] = `
+{
+  action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
+  functionCalls: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: " aa() ; bbb()",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something action: thought: hmmm",
+}
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-  Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `'{"index":34,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
+{
+  action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
+  functionCalls: [
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "string",
+          value: "str2",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
 
 snapshot[`parseActionGroup: tHOUght: I need to do something
-  aCTion  :    someFunction();; someOtherFunction() 1`] = `'{"index":34,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: aCTion'`;
+  aCTion  :    someFunction();; someOtherFunction() 1`] = `
+{
+  action: "someFunction();; someOtherFunction()",
+  functionCalls: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
   Action: someFunction(); someOtherFunction()
-  Result: blah blah blah blah 1`] = `'{"index":52,"rowBegin":2,"columnBegin":3,"rowEnd":2,"columnEnd":9}: Unable to consume token: Action'`;
+  Result: blah blah blah blah 1`] = `
+{
+  action: "someFunction(); someOtherFunction()",
+  functionCalls: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
+  Action: someFunction();
+   someOtherFunction("Result:")
+Result: blah blah blah blah
+123123 1`] = `
+{
+  action: 'someFunction();
+   someOtherFunction("Result:")',
+  functionCalls: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Result:",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah
+123123",
+  thought: "I need to do something Action: head fake",
+}
+`;
 
 snapshot[`parseActionGroup: Thought no colon doesnt work
 Action hahaha 1`] = `
-'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":9}: Unable to tokenize the rest of the input: no colon doesnt work
-Action hahaha'
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
 `;
 
 snapshot[`parseActionGroup: Action: action should not come first
-Thought: ha 1`] = `'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":1,"columnEnd":7}: Unable to consume token: Action'`;
+Thought: ha 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":8}: Unable to consume token: 
+Action:'
+`;
 
-snapshot[`parseActionGroup: completely invalid 1`] = `'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":1,"columnEnd":1}: Unable to tokenize the rest of the input: completely invalid'`;
+snapshot[`parseActionGroup: completely invalid 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;
 
-snapshot[`parseActionGroup: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseActionGroup: empty string 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;

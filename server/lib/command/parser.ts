@@ -197,67 +197,49 @@ export function parseFunctionCalls(expr: string): Call[] {
   return expectSingleResult(expectEOF(FUNC_CALLS.parse(exprLexer.parse(expr))));
 }
 
-enum ActionTokenKind {
+enum T2 {
   KeywordThought,
   KeywordAction,
   KeywordResult,
 
-  String,
-
+  Char,
   Newline,
-  Space,
 }
 
 const actionLexer = buildLexer([
-  [true, /^Action/gi, ActionTokenKind.KeywordAction],
-  [true, /^Thought/gi, ActionTokenKind.KeywordThought],
-  [true, /^Result/gi, ActionTokenKind.KeywordResult],
-
-  [true, /^:.*/g, ActionTokenKind.String],
-
-  [true, /^(\n|\r\n|\r)+/g, ActionTokenKind.Newline],
-  [false, /^\s+/g, ActionTokenKind.Space],
+  [true, /^\n( *?)Thought( *?):/gi, T2.KeywordThought],
+  [true, /^\n( *?)Action( *?):/gi, T2.KeywordAction],
+  [true, /^\n( *?)Result( *?):/gi, T2.KeywordResult],
+  [true, /^\n/g, T2.Newline],
+  [true, /^./g, T2.Char],
 ]);
 
-const ACTION_GROUP = rule<ActionTokenKind, ActionGroup>();
+const STRING = rule<T2, string>();
+STRING.setPattern(
+  p.lrec_sc(
+    p.apply(p.alt(p.tok(T2.Char), p.tok(T2.Newline)), (c) => c.text),
+    p.alt(p.tok(T2.Char), p.tok(T2.Newline)),
+    (c1, c2) => c1 + c2.text
+  )
+);
+
+const ACTION_GROUP = rule<T2, ActionGroup>();
 ACTION_GROUP.setPattern(
   p.apply(
     p.seq(
-      p.apply(
-        p.kright(
-          p.tok(ActionTokenKind.KeywordThought),
-          p.tok(ActionTokenKind.String)
-        ),
-        (str) => str.text.slice(1).trim()
-      ),
-      p.tok(ActionTokenKind.Newline),
-      p.apply(
-        p.kright(
-          p.tok(ActionTokenKind.KeywordAction),
-          p.tok(ActionTokenKind.String)
-        ),
-        (str) => str.text.slice(1).trim()
-      ),
+      p.apply(p.kright(p.tok(T2.KeywordThought), STRING), (str) => str.trim()),
+      p.apply(p.kright(p.tok(T2.KeywordAction), STRING), (str) => str.trim()),
       p.opt_sc(
-        p.apply(
-          p.kright(
-            p.tok(ActionTokenKind.Newline),
-            p.kright(
-              p.tok(ActionTokenKind.KeywordResult),
-              p.tok(ActionTokenKind.String)
-            )
-          ),
-          (str) => {
-            const result = str.text.slice(1).trim();
-            if (result.length === 0) {
-              return undefined;
-            }
-            return result;
+        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt(STRING)), (str) => {
+          const result = str != null ? str.trim() : "";
+          if (result.length === 0) {
+            return undefined;
           }
-        )
+          return result;
+        })
       )
     ),
-    ([thought, , action, result]) => {
+    ([thought, action, result]) => {
       const functionCalls = parseFunctionCalls(action);
       return {
         thought,
@@ -271,6 +253,12 @@ ACTION_GROUP.setPattern(
 
 export function parseActionGroup(expr: string): ActionGroup {
   return expectSingleResult(
-    expectEOF(ACTION_GROUP.parse(actionLexer.parse(expr)))
+    expectEOF(
+      ACTION_GROUP.parse(
+        // Inject a newline so that the lexer can disambiguate between
+        // a leading Thought: vs a Thought: inside some contents.
+        actionLexer.parse(expr[0] !== "\n" ? "\n" + expr : expr)
+      )
+    )
   );
 }

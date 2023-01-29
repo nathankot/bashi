@@ -7,6 +7,7 @@ import {
 
 for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
+  `someFunction();\nsomeOtherFunction(" aa() ; bbb()")`,
   "someCall()",
   "someCall('a', 111)",
   "someCall('a \\'ha\\'', 111)",
@@ -81,6 +82,11 @@ for (const expr of [
   `Thought: I need to do something Action: head fake
   Action: someFunction(); someOtherFunction()
   Result: blah blah blah blah`,
+  `Thought: I need to do something Action: head fake
+  Action: someFunction();
+   someOtherFunction("Result:")
+Result: blah blah blah blah
+123123`,
   // Invalid examples:
   `Thought no colon doesnt work\nAction hahaha`,
   `Action: action should not come first\nThought: ha`,

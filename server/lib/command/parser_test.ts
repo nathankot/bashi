@@ -27,6 +27,7 @@ for (const expr of [
   `var a = someCall(123 + 44, "abc")`,
   `let a_aaa = someCall(123 + 44, "abc")`,
   `const a_aaa = someCall(123 + 44, "abc")`,
+  `const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123`,
 
   // malformed:
   `assign = `,

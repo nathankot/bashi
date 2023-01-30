@@ -39,6 +39,7 @@ const pendingClientCommandState = {
       type: "executed",
     },
   ],
+  memory: { variables: {} },
 } satisfies Session["assist001State"];
 
 const pendingRequestContextState = {
@@ -85,6 +86,7 @@ const pendingRequestContextState = {
       returnValue: { type: "string", value: "blah" },
     },
   ],
+  memory: { variables: {} },
 } satisfies Session["assist001State"];
 
 for (const test of [
@@ -143,12 +145,19 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
       ``,
     ],
   },
-
   {
     description: "supports model outputs with top level expression",
     input: { request: "some request" },
     openAiResults: [
       ` I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+      ``,
+    ],
+  },
+  {
+    description: "supports assignment",
+    input: { request: "some request" },
+    openAiResults: [
+      ` I need to do something\nAction: a = 123; b = 111; a + b`,
       ``,
     ],
   },

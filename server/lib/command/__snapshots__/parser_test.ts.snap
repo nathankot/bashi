@@ -566,6 +566,65 @@ snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc") 1`] = `
 ]
 `;
 
+snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a_aaa",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 44,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "abc",
+          },
+        ],
+        name: "someCall",
+        type: "call",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a_aaa",
+          },
+        ],
+        name: "\$ref",
+        type: "call",
+      },
+      {
+        type: "number",
+        value: 123,
+      },
+    ],
+    name: "__+__",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseStatements: assign =  1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseStatements: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;

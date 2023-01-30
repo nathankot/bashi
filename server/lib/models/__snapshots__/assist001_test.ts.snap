@@ -373,6 +373,9 @@ snapshot[`infix + operand support 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
@@ -560,6 +563,9 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'answer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
@@ -805,6 +811,9 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
@@ -986,6 +995,108 @@ snapshot[`supports model outputs with top level expression 1`] = `
 }
 `;
 
+snapshot[`supports assignment 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "a",
+            },
+            {
+              type: "number",
+              value: 123,
+            },
+          ],
+          id: "0.0",
+          name: "__=__",
+          returnValue: {
+            type: "void",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "b",
+            },
+            {
+              type: "number",
+              value: 111,
+            },
+          ],
+          id: "0.1",
+          name: "__=__",
+          returnValue: {
+            type: "void",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "a",
+            },
+          ],
+          id: "0.2.0",
+          name: "\$ref",
+          returnValue: {
+            type: "number",
+            value: 123,
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "b",
+            },
+          ],
+          id: "0.2.1",
+          name: "\$ref",
+          returnValue: {
+            type: "number",
+            value: 111,
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "number",
+              value: 123,
+            },
+            {
+              type: "number",
+              value: 111,
+            },
+          ],
+          id: "0.2",
+          name: "__+__",
+          returnValue: {
+            type: "number",
+            value: 234,
+          },
+          type: "executed",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
 snapshot[`client resolved command 1`] = `
 {
   n: 1,
@@ -1024,6 +1135,9 @@ snapshot[`client resolved command 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
@@ -1118,6 +1232,9 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
@@ -1223,6 +1340,9 @@ snapshot[`client resolved command - wrong return type 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
@@ -1328,6 +1448,9 @@ snapshot[`client resolved command - fulfilled 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'now(); ask("what do you want?")',
@@ -1450,6 +1573,9 @@ snapshot[`nested calls 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
@@ -1592,6 +1718,9 @@ snapshot[`request needs more context 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'now(); editProse("convert to poem"); now()',
@@ -1673,6 +1802,9 @@ snapshot[`request needs more context - still missing 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'editProse("convert to poem"); now()',
@@ -1761,6 +1893,9 @@ snapshot[`request needs more context - wrong type 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'editProse("convert to poem"); now()',
@@ -1964,6 +2099,9 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     },
   },
   state: {
+    memory: {
+      variables: {},
+    },
     modelCallCount: 1,
     pending: {
       action: 'ask("how are you?"); currentTimeForTimezone("America/New_York")',

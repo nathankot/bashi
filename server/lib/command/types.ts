@@ -7,6 +7,11 @@ import {
   RequestContext,
 } from "@lib/requestContext.ts";
 
+export const Memory = t.type({
+  variables: t.record(t.string, Value),
+});
+export type Memory = t.TypeOf<typeof Memory>;
+
 export const CommandDefinition = t.intersection([
   t.type({
     description: t.string,
@@ -26,7 +31,7 @@ export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
 
 export type BuiltinCommandDefinition<
   A extends ValueType[],
-  R extends ValueType
+  R extends ValueType | "mixed"
 > = Omit<CommandDefinition, "args" | "returnType"> & {
   returnType: R;
   args: {
@@ -39,16 +44,22 @@ export type BuiltinCommandDefinition<
   run: (
     deps: ModelDeps,
     requestContext: RequestContext,
-    args: { [K in keyof A]: ValueForType<A[K]> }
-  ) => Promise<ValueForType<R>>;
+    args: { [K in keyof A]: ValueForType<A[K]> },
+    memory: Memory
+  ) => Promise<R extends "mixed" ? Value : ValueForType<Exclude<R, "mixed">>>;
 };
 
-export type AnyBuiltinCommandDefinition = CommandDefinition & {
+export type AnyBuiltinCommandDefinition = Omit<
+  CommandDefinition,
+  "returnType"
+> & {
   requestContextRequirement?: RequestContextRequirement;
+  returnType: ValueType | "mixed";
   run: (
     deps: ModelDeps,
     requestContext: RequestContext,
-    args: any
+    args: any,
+    memory: Memory
   ) => Promise<Value>;
 };
 

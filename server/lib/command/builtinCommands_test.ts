@@ -12,25 +12,35 @@ Deno.test("timezones", async (t) => {
     },
   } as any;
 
-  let result = await builtinCommands.now.run(deps, {}, []);
+  let result = await builtinCommands.now.run(deps, {}, [], { variables: {} });
   assertEquals(result.value, "2022-12-19T17:41:10+09:00");
   assertEquals(new Date(result.value).getTime(), fixtures.now.getTime());
 
-  result = await builtinCommands.parseRelativeTime.run(deps, {}, [
-    {
-      type: "string",
-      value: "tomorrow noon",
-    },
-  ]);
+  result = await builtinCommands.parseRelativeTime.run(
+    deps,
+    {},
+    [
+      {
+        type: "string",
+        value: "tomorrow noon",
+      },
+    ],
+    { variables: {} }
+  );
   assertEquals(result.value, "2022-12-20T12:00:00+09:00");
   new Date(result.value);
 
-  result = await builtinCommands.currentTimeForTimezone.run(deps, {}, [
-    {
-      type: "string",
-      value: "Pacific/Auckland",
-    },
-  ]);
+  result = await builtinCommands.currentTimeForTimezone.run(
+    deps,
+    {},
+    [
+      {
+        type: "string",
+        value: "Pacific/Auckland",
+      },
+    ],
+    { variables: {} }
+  );
   assertEquals(result.value, "2022-12-19T21:41:10+13:00");
   new Date(result.value);
 });

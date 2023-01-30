@@ -90,9 +90,10 @@ const PAREN_GROUP = rule<T, Expr>();
 const VALUE = rule<T, Value>();
 const INFIX_CALL = rule<T, Expr>();
 const FUNC_CALL = rule<T, Call>();
+const VAR_REF = rule<T, Call>();
 
-const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP);
-const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP);
+const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP, VAR_REF);
+const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP, VAR_REF);
 const STATEMENT = rule<T, Expr>();
 const STATEMENTS = rule<T, Expr[]>();
 
@@ -145,6 +146,14 @@ VALUE.setPattern(
       }
     }
   )
+);
+
+VAR_REF.setPattern(
+  p.apply(p.tok(T.Identifier), (id) => ({
+    type: "call",
+    name: "$ref",
+    args: [{ type: "string", value: id.text }],
+  }))
 );
 
 FUNC_CALL.setPattern(

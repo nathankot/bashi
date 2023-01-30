@@ -10,6 +10,7 @@ import {
   AnyBuiltinCommandDefinition,
   CommandParsed,
   CommandExecuted,
+  Memory,
 } from "./types.ts";
 
 export function checkArgumentsValid<A extends Value[]>(
@@ -59,7 +60,8 @@ export async function runBuiltinCommand(
     | { overloads: AnyBuiltinCommandDefinition[] },
   deps: ModelDeps,
   requestContext: RequestContext,
-  command: CommandParsed
+  command: CommandParsed,
+  memory: Memory
 ): Promise<CommandExecuted> {
   const isOverloaded = "overloads" in definition;
   const defsToTry =
@@ -75,7 +77,12 @@ export async function runBuiltinCommand(
     ) {
       throw new Error("request context requirements are missing");
     }
-    const returnValue = await definition.run(deps, requestContext, args);
+    const returnValue = await definition.run(
+      deps,
+      requestContext,
+      args,
+      memory
+    );
     return {
       type: "executed",
       returnValue,

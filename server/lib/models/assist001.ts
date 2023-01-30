@@ -4,7 +4,7 @@ import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
-import { Value, valueToString } from "@lib/valueTypes.ts";
+import { ValueType, Value, valueToString } from "@lib/valueTypes.ts";
 import {
   Input,
   ResultFinished,
@@ -13,15 +13,16 @@ import {
 } from "./assistShared.ts";
 
 import {
+  Memory,
   Expr,
+  AnyBuiltinCommandDefinition,
+  BuiltinCommandDefinition,
   ActionGroup,
   parseActionGroup,
   parseStatements,
   CommandSet,
   CommandParsed,
   CommandExecuted,
-  CommandDefinition,
-  BuiltinCommandDefinition,
   builtinCommands,
   filterUnnecessary,
   checkRequestContext,
@@ -44,6 +45,7 @@ export const State = t.type({
   ),
   resolvedCommands: t.array(CommandExecuted),
   pending: t.union([t.null, ActionGroup]),
+  memory: Memory,
 });
 export type State = t.TypeOf<typeof State>;
 
@@ -96,14 +98,44 @@ const privateBuiltinCommands = {
 // Commands that the model implicitly knows, does not need to be
 // sent to the model explicitly.
 const languageBuiltinCommands = {
+  $ref: {
+    description: "retrieve a variable",
+    args: [{ name: "identifier", type: "string" }],
+    returnType: "mixed",
+    run: async (_, __, [iden], memory) => {
+      const maybeValue = memory.variables[iden.value];
+      if (maybeValue == null) {
+        throw new Error(`the variable '${iden.value}' does not exist`);
+      }
+      return maybeValue;
+    },
+  } as BuiltinCommandDefinition<["string"], "mixed">,
+  "__=__": {
+    overloads: ValueType.types
+      .map((t) => t.value)
+      .map(
+        (t): AnyBuiltinCommandDefinition => ({
+          description: "assign a variable",
+          args: [
+            { name: "identifier", type: "string" },
+            { name: "value", type: t },
+          ],
+          returnType: "void",
+          run: async (_, __, [lhs, rhs], memory) => {
+            memory.variables[lhs.value] = rhs;
+            return { type: "void" };
+          },
+        })
+      ),
+  },
   "__+__": {
     overloads: [
       {
+        description: "number addition the + infix operand",
         args: [
           { name: "lhs", type: "number" },
           { name: "rhs", type: "number" },
         ],
-        description: "number addition the + infix operand",
         returnType: "number",
         run: async (_, __, [lhs, rhs]) => ({
           type: "number",
@@ -122,7 +154,7 @@ const languageBuiltinCommands = {
           value: lhs.value + rhs.value,
         }),
       } as BuiltinCommandDefinition<["string", "string"], "string">,
-    ],
+    ] as AnyBuiltinCommandDefinition[],
   },
 };
 
@@ -130,18 +162,18 @@ const serverCommands = {
   ...builtinCommands,
   ...privateBuiltinCommands,
   ...languageBuiltinCommands,
-};
+} as Record<
+  string,
+  | AnyBuiltinCommandDefinition
+  | {
+      overloads: AnyBuiltinCommandDefinition[];
+    }
+>;
 
 const sinks: Record<string, true> = {
   fail: true,
   finish: true,
 };
-
-function isServerCommand(
-  commandName: string
-): commandName is keyof typeof serverCommands {
-  return commandName in serverCommands;
-}
 
 export async function run(
   modelDeps: ModelDeps,
@@ -164,13 +196,6 @@ export async function run(
   }
 
   const clientCommands = configuration.commands;
-  const allCommands: Record<
-    string,
-    CommandDefinition | { overloads: CommandDefinition[] }
-  > = {
-    ...clientCommands,
-    ...serverCommands,
-  };
 
   let dev:
     | {
@@ -192,6 +217,7 @@ export async function run(
   }
 
   // Key pieces of state:
+  let memory = state?.memory ?? { variables: {} };
   let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending;
   let resolvedCommands = state?.resolvedCommands ?? [];
@@ -251,45 +277,13 @@ export async function run(
         let commandsToSendToClient: CommandParsed[] = [];
         for (const pendingCommand of pendingCommands) {
           const commandName = pendingCommand.name;
-          const commandDef = allCommands[commandName];
-          if (commandDef == null) {
+          const clientCommandDef = clientCommands[commandName];
+          const serverCommandDef = serverCommands[commandName];
+          if (clientCommandDef == null && serverCommandDef == null) {
             throw new Error(`the command ${commandName} is unknown`);
           }
-          //   1a. If the client provided any resolutions, use them
-          const maybeClientResolution =
-            input.resolvedCommands == null
-              ? null
-              : input.resolvedCommands[pendingCommand.id.toString()];
-          if (maybeClientResolution) {
-            const allowedReturnTypes =
-              "overloads" in commandDef
-                ? commandDef.overloads.map((o) => o.returnType)
-                : [commandDef.returnType];
-
-            if (
-              !allowedReturnTypes.some((r) => r === maybeClientResolution.type)
-            ) {
-              throw new HTTPError(
-                `command ${commandName} expects return type to be ` +
-                  `${
-                    allowedReturnTypes.length === 1
-                      ? allowedReturnTypes[0]
-                      : `one of ${allowedReturnTypes.join(", ")}`
-                  } but got ${maybeClientResolution.type}`,
-                400
-              );
-            }
-            resolvedCommands.push({
-              ...pendingCommand,
-              type: "executed",
-              returnValue: maybeClientResolution,
-            });
-            continue;
-          }
-
-          // 1b. Any commands that can be resolved server side should be
-          if (isServerCommand(commandName)) {
-            const serverCommandDef = serverCommands[commandName];
+          if (serverCommandDef != null) {
+            // 1b. Any commands that can be resolved server side should be
             const requirement =
               "overloads" in serverCommandDef
                 ? serverCommandDef.overloads.reduce(
@@ -317,15 +311,35 @@ export async function run(
               serverCommandDef,
               modelDeps,
               input.requestContext ?? {},
-              pendingCommand
+              pendingCommand,
+              memory
             );
             resolvedCommands.push(resolved);
             continue;
+          } else if (clientCommandDef != null) {
+            //   1a. If the client provided any resolutions, use them
+            const maybeClientResolution =
+              input.resolvedCommands == null
+                ? null
+                : input.resolvedCommands[pendingCommand.id.toString()];
+            if (maybeClientResolution) {
+              if (clientCommandDef.returnType !== maybeClientResolution.type) {
+                throw new HTTPError(
+                  `command ${commandName} expects return type to be ` +
+                    `${clientCommandDef.returnType} but got ${maybeClientResolution.type}`,
+                  400
+                );
+              }
+              resolvedCommands.push({
+                ...pendingCommand,
+                type: "executed",
+                returnValue: maybeClientResolution,
+              });
+              continue;
+            }
+            commandsToSendToClient.push(pendingCommand);
           }
-
-          commandsToSendToClient.push(pendingCommand);
         }
-
         //   1c. Some commands may need a redirection to the client
         if (commandsToSendToClient.length > 0) {
           return {
@@ -442,6 +456,7 @@ export async function run(
       assist001State: isFinished
         ? undefined
         : {
+            memory,
             modelCallCount,
             request,
             requestContext,

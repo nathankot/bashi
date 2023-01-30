@@ -109,6 +109,17 @@ Action: now(); math("pi^2 + 123")`,
     ],
   },
   {
+    description: "command overloads work",
+    input: { request: "some request" },
+    openAiResults: [
+      `I need to do something
+Action: "string" + "concat"; 123 + 1`,
+      `I have finished
+Action: finish()`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
     description: "infix + operand support",
     input: { request: "some request" },
     openAiResults: [

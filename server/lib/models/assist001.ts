@@ -97,17 +97,33 @@ const privateBuiltinCommands = {
 // sent to the model explicitly.
 const languageBuiltinCommands = {
   "__+__": {
-    args: [
-      { name: "lhs", type: "string" },
-      { name: "rhs", type: "string" },
+    overloads: [
+      {
+        args: [
+          { name: "lhs", type: "number" },
+          { name: "rhs", type: "number" },
+        ],
+        description: "number addition the + infix operand",
+        returnType: "number",
+        run: async (_, __, [lhs, rhs]) => ({
+          type: "number",
+          value: lhs.value + rhs.value,
+        }),
+      } as BuiltinCommandDefinition<["number", "number"], "number">,
+      {
+        args: [
+          { name: "lhs", type: "string" },
+          { name: "rhs", type: "string" },
+        ],
+        description: "string concatenation using the + infix operand",
+        returnType: "string",
+        run: async (_, __, [lhs, rhs]) => ({
+          type: "string",
+          value: lhs.value + rhs.value,
+        }),
+      } as BuiltinCommandDefinition<["string", "string"], "string">,
     ],
-    description: "string concatenation using the + infix operand",
-    returnType: "string",
-    run: async (_, __, [lhs, rhs]) => ({
-      type: "string",
-      value: lhs.value + rhs.value,
-    }),
-  } as BuiltinCommandDefinition<["string", "string"], "string">,
+  },
 };
 
 const serverCommands = {
@@ -148,7 +164,10 @@ export async function run(
   }
 
   const clientCommands = configuration.commands;
-  const allCommands: Record<string, CommandDefinition> = {
+  const allCommands: Record<
+    string,
+    CommandDefinition | { overloads: CommandDefinition[] }
+  > = {
     ...clientCommands,
     ...serverCommands,
   };
@@ -242,10 +261,21 @@ export async function run(
               ? null
               : input.resolvedCommands[pendingCommand.id.toString()];
           if (maybeClientResolution) {
-            if (maybeClientResolution.type !== commandDef.returnType) {
+            const allowedReturnTypes =
+              "overloads" in commandDef
+                ? commandDef.overloads.map((o) => o.returnType)
+                : [commandDef.returnType];
+
+            if (
+              !allowedReturnTypes.some((r) => r === maybeClientResolution.type)
+            ) {
               throw new HTTPError(
-                `command ${commandName} expects return type ` +
-                  `${commandDef.returnType} but got ${maybeClientResolution.type}`,
+                `command ${commandName} expects return type to be ` +
+                  `${
+                    allowedReturnTypes.length === 1
+                      ? allowedReturnTypes[0]
+                      : `one of ${allowedReturnTypes.join(", ")}`
+                  } but got ${maybeClientResolution.type}`,
                 400
               );
             }
@@ -260,8 +290,15 @@ export async function run(
           // 1b. Any commands that can be resolved server side should be
           if (isServerCommand(commandName)) {
             const serverCommandDef = serverCommands[commandName];
+            const requirement =
+              "overloads" in serverCommandDef
+                ? serverCommandDef.overloads.reduce(
+                    (a, d) => ({ ...a, ...d.requestContextRequirement }),
+                    {}
+                  )
+                : serverCommandDef.requestContextRequirement;
             const missingRequestContext = checkRequestContext(
-              serverCommandDef,
+              requirement,
               requestContext
             );
             if (missingRequestContext !== true) {
@@ -277,7 +314,7 @@ export async function run(
               };
             }
             const resolved = await runBuiltinCommand(
-              serverCommandDef as any,
+              serverCommandDef,
               modelDeps,
               input.requestContext ?? {},
               pendingCommand

@@ -43,6 +43,15 @@ export type BuiltinCommandDefinition<
   ) => Promise<ValueForType<R>>;
 };
 
+export type AnyBuiltinCommandDefinition = CommandDefinition & {
+  requestContextRequirement?: RequestContextRequirement;
+  run: (
+    deps: ModelDeps,
+    requestContext: RequestContext,
+    args: any
+  ) => Promise<Value>;
+};
+
 export const CommandSet = t.record(t.string, CommandDefinition);
 export type CommandSet = t.TypeOf<typeof CommandSet>;
 

@@ -62,7 +62,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 * function calls
 * string concatenation using +
 
-Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
 \`insertText(text: string): void\` - insert text into current cursor location
@@ -91,7 +91,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 * function calls
 * string concatenation using +
 
-Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
 \`insertText(text: string): void\` - insert text into current cursor location
@@ -160,6 +160,137 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
   },
   state: undefined,
 }
+`;
+
+snapshot[`command overloads work 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      resolvedCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "string",
+            },
+            {
+              type: "string",
+              value: "concat",
+            },
+          ],
+          id: "0.0",
+          name: "__+__",
+          returnValue: {
+            type: "string",
+            value: "stringconcat",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "number",
+              value: 123,
+            },
+            {
+              type: "number",
+              value: 1,
+            },
+          ],
+          id: "0.1",
+          name: "__+__",
+          returnValue: {
+            type: "number",
+            value: 124,
+          },
+          type: "executed",
+        },
+        {
+          args: [
+          ],
+          id: "1.0",
+          name: "finish",
+          returnValue: {
+            type: "void",
+          },
+          type: "executed",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`command overloads work 2`] = `
+[
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+
+The language for Action is a tiny subset of javascript, ONLY these features are available:
+
+* function calls
+* string concatenation using +
+
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+
+\`answer(answer: string): void\` - answer the original question directly
+\`insertText(text: string): void\` - insert text into current cursor location
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+
+Use the following format:
+Request: the question or request you must answer
+Thought: you should always think about what to do
+Action: one or more expressions composing available functions delimited by ;
+Result: the result of the Action expression
+... (this Thought/Action/Result can repeat N times)
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+
+The language for Action is a tiny subset of javascript, ONLY these features are available:
+
+* function calls
+* string concatenation using +
+
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+
+\`answer(answer: string): void\` - answer the original question directly
+\`insertText(text: string): void\` - insert text into current cursor location
+\`ask(question: string): string\` - get answer to a request for additional information
+\`now(): string\` - get the users current ISO8601 datetime
+\`math("a mathjs expression ": string): string\` - compute a math formula
+\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`finish(): void\` - mark request/question as fulfilled
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+
+Use the following format:
+Request: the question or request you must answer
+Thought: you should always think about what to do
+Action: one or more expressions composing available functions delimited by ;
+Result: the result of the Action expression
+... (this Thought/Action/Result can repeat N times)
+
+Begin!
+
+Request: some request
+Thought: I need to do something
+Action: "string" + "concat"; 123 + 1
+Result: "stringconcat"; 124
+Thought: ',
+]
 `;
 
 snapshot[`infix + operand support 1`] = `
@@ -1406,7 +1537,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 * function calls
 * string concatenation using +
 
-Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
 \`insertText(text: string): void\` - insert text into current cursor location
@@ -1769,7 +1900,7 @@ The language for Action is a tiny subset of javascript, ONLY these features are 
 * function calls
 * string concatenation using +
 
-Functions are declared below, these are the only functions available. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
+Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
 \`answer(answer: string): void\` - answer the original question directly
 \`insertText(text: string): void\` - insert text into current cursor location

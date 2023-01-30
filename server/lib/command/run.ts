@@ -4,9 +4,13 @@ import {
 } from "@lib/requestContext.ts";
 
 import { ModelDeps } from "@lib/models.ts";
-import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
+import { Value } from "@lib/valueTypes.ts";
 
-import { CommandParsed, CommandExecuted } from "./types.ts";
+import {
+  AnyBuiltinCommandDefinition,
+  CommandParsed,
+  CommandExecuted,
+} from "./types.ts";
 
 export function checkArgumentsValid<A extends Value[]>(
   definition: {
@@ -27,14 +31,12 @@ export function checkArgumentsValid<A extends Value[]>(
   return true;
 }
 
-export function checkRequestContext<
-  D extends { requestContextRequirement?: RequestContextRequirement }
->(
-  definition: D,
+export function checkRequestContext(
+  requirement: RequestContextRequirement | null | undefined,
   requestContext: RequestContext
 ): true | RequestContextRequirement {
   let missingRequirements = {
-    ...definition.requestContextRequirement,
+    ...requirement,
   };
   for (const [key, value] of Object.entries(requestContext)) {
     const maybeRequirement = missingRequirements[key];
@@ -51,33 +53,45 @@ export function checkRequestContext<
   return missingRequirements;
 }
 
-export async function runBuiltinCommand<A extends ValueType[]>(
-  definition: {
-    args: { [K in keyof A]: { name: string; type: A[K] } };
-    run: (
-      deps: ModelDeps,
-      input: RequestContext,
-      args: { [K in keyof A]: ValueForType<A[K]> }
-    ) => Promise<Value>;
-    requestContextRequirement?: RequestContextRequirement;
-  },
+export async function runBuiltinCommand(
+  definition:
+    | AnyBuiltinCommandDefinition
+    | { overloads: AnyBuiltinCommandDefinition[] },
   deps: ModelDeps,
   requestContext: RequestContext,
   command: CommandParsed
 ): Promise<CommandExecuted> {
+  const isOverloaded = "overloads" in definition;
+  const defsToTry =
+    "overloads" in definition ? definition.overloads : [definition];
+
   const args = command.args;
-  if (!checkArgumentsValid(definition, args)) {
-    throw new Error("arguments are invalid");
+  for (const definition of defsToTry) {
+    if (!checkArgumentsValid(definition, args)) {
+      continue;
+    }
+    if (
+      !checkRequestContext(definition.requestContextRequirement, requestContext)
+    ) {
+      throw new Error("request context requirements are missing");
+    }
+    const returnValue = await definition.run(deps, requestContext, args);
+    return {
+      type: "executed",
+      returnValue,
+      id: command.id,
+      args: command.args,
+      name: command.name,
+    };
   }
-  if (!checkRequestContext(definition, requestContext)) {
-    throw new Error("request context requirements are missing");
+
+  if (!isOverloaded) {
+    throw new Error(`arguments are invalid`);
   }
-  const returnValue = await definition.run(deps, requestContext, args as any);
-  return {
-    type: "executed",
-    returnValue,
-    id: command.id,
-    args: command.args,
-    name: command.name,
-  };
+
+  throw new Error(
+    `no overload found for: ${command.name}(${command.args
+      .map((a) => a.type)
+      .join(", ")})`
+  );
 }

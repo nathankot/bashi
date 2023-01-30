@@ -59,7 +59,7 @@ enum T {
   SemiColon,
 }
 
-const exprLexer = buildLexer([
+const lexer = buildLexer([
   [true, /^'([^'\\]|\\.)*'/g, T.SingleQuoteStringLiteral],
   [true, /^"([^"\\]|\\.)*"/g, T.DoubleQuoteStringLiteral],
   [true, /^`([^`\\]|\\.)*`/g, T.BackQuoteStringLiteral],
@@ -84,7 +84,7 @@ const FUNC_CALL = rule<T, Call>();
 
 const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP);
 const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP);
-const EXPRS = rule<T, Expr[]>();
+const STATEMENTS = rule<T, Expr[]>();
 
 PAREN_GROUP.setPattern(p.kmid(p.tok(T.LParen), EXPR, p.tok(T.RParen)));
 
@@ -176,19 +176,19 @@ INFIX_CALL.setPattern(
   )
 );
 
-EXPRS.setPattern(
+STATEMENTS.setPattern(
   p.kleft(
     p.list_sc(EXPR, p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))),
     p.rep_sc(p.tok(T.SemiColon))
   )
 );
 
-export function parseExpression(expr: string): Expr {
-  return expectSingleResult(expectEOF(EXPR.parse(exprLexer.parse(expr))));
+export function parseExpression(str: string): Expr {
+  return expectSingleResult(expectEOF(EXPR.parse(lexer.parse(str))));
 }
 
-export function parseExpressions(expr: string): Expr[] {
-  return expectSingleResult(expectEOF(EXPRS.parse(exprLexer.parse(expr))));
+export function parseStatements(str: string): Expr[] {
+  return expectSingleResult(expectEOF(STATEMENTS.parse(lexer.parse(str))));
 }
 
 enum T2 {
@@ -234,7 +234,7 @@ ACTION_GROUP.setPattern(
       )
     ),
     ([thought, action, result]) => {
-      const expressions = parseExpressions(action);
+      const expressions = parseStatements(action);
       return {
         thought,
         action,

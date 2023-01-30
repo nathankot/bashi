@@ -16,7 +16,7 @@ import {
   Expr,
   ActionGroup,
   parseActionGroup,
-  parseExpressions,
+  parseStatements,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -226,7 +226,7 @@ export async function run(
       // 1. For each pending thought/action, find expressions and try to resolve them
       if (pending != null) {
         const actionGroupsSofar = Object.values(resolvedActionGroups).length;
-        const topLevelExpressions = parseExpressions(pending.action);
+        const topLevelExpressions = parseStatements(pending.action);
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let pendingCommands: CommandParsed[] = [];

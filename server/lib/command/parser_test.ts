@@ -1,9 +1,5 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import {
-  parseExpression,
-  parseStatements,
-  parseActionGroup,
-} from "./parser.ts";
+import { parseStatements, parseActionGroup } from "./parser.ts";
 
 for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
@@ -27,8 +23,13 @@ for (const expr of [
   `123123`,
   `"hi there"`,
   `true; 123123; 'hi there'`,
+  `assign = "123"`,
+  `var a = someCall(123 + 44, "abc")`,
+  `let a_aaa = someCall(123 + 44, "abc")`,
+  `const a_aaa = someCall(123 + 44, "abc")`,
 
   // malformed:
+  `assign = `,
   `malformed("a"`,
   `someCall(-123.500)`,
   `someCall("hi" + ("there" + (("is + "bad" + "nesting")))`,
@@ -42,18 +43,6 @@ for (const expr of [
   "testing blah",
   "",
 ]) {
-  Deno.test(
-    "parseExpression: " + (expr === "" ? "empty string" : expr),
-    (t) => {
-      try {
-        const result = parseExpression(expr);
-        assertSnapshot(t, result);
-      } catch (e) {
-        assertSnapshot(t, (e as Error).message);
-      }
-    }
-  );
-
   Deno.test(
     "parseStatements: " + (expr === "" ? "empty string" : expr),
     (t) => {

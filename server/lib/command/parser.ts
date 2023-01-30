@@ -51,6 +51,11 @@ enum T {
   DoubleQuoteStringLiteral,
   BackQuoteStringLiteral,
 
+  KeywordConst,
+  KeywordLet,
+  KeywordVar,
+
+  Equals,
   Plus,
   LParen,
   RParen,
@@ -66,10 +71,14 @@ const lexer = buildLexer([
   [true, /^[\+\-]?\d+(\.\d+)?/g, T.NumberLiteral],
   [true, /^true/g, T.TrueLiteral],
   [true, /^false/g, T.FalseLiteral],
+  [true, /^const/g, T.KeywordConst],
+  [true, /^let/g, T.KeywordLet],
+  [true, /^var/g, T.KeywordVar],
 
   [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, T.Identifier],
 
   [true, /^\+/g, T.Plus],
+  [true, /^=/g, T.Equals],
   [true, /^\(/g, T.LParen],
   [true, /^\)/g, T.RParen],
   [true, /^\,/g, T.Comma],
@@ -84,6 +93,7 @@ const FUNC_CALL = rule<T, Call>();
 
 const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP);
 const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP);
+const STATEMENT = rule<T, Expr>();
 const STATEMENTS = rule<T, Expr[]>();
 
 PAREN_GROUP.setPattern(p.kmid(p.tok(T.LParen), EXPR, p.tok(T.RParen)));
@@ -176,9 +186,31 @@ INFIX_CALL.setPattern(
   )
 );
 
+STATEMENT.setPattern(
+  p.alt(
+    EXPR,
+    p.kright(
+      p.opt(
+        p.alt(p.tok(T.KeywordConst), p.tok(T.KeywordLet), p.tok(T.KeywordVar))
+      ),
+      p.apply(
+        p.seq(p.tok(T.Identifier), p.tok(T.Equals), EXPR),
+        ([id, , expr]): Call => ({
+          type: "call",
+          name: "__=__",
+          args: [{ type: "string", value: id.text }, expr],
+        })
+      )
+    )
+  )
+);
+
 STATEMENTS.setPattern(
   p.kleft(
-    p.list_sc(EXPR, p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))),
+    p.list_sc(
+      STATEMENT,
+      p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))
+    ),
     p.rep_sc(p.tok(T.SemiColon))
   )
 );

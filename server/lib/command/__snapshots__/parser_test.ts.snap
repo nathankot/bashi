@@ -1,7 +1,5 @@
 export const snapshot = {};
 
-snapshot[`parseExpression: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: Unable to consume token: ;'`;
-
 snapshot[`parseStatements: someFunction(); someOtherFunction(" aa() ; bbb()") 1`] = `
 [
   {
@@ -22,9 +20,6 @@ snapshot[`parseStatements: someFunction(); someOtherFunction(" aa() ; bbb()") 1`
   },
 ]
 `;
-
-snapshot[`parseExpression: someFunction();
-someOtherFunction(" aa() ; bbb()") 1`] = `'{"index":14,"rowBegin":1,"columnBegin":15,"rowEnd":1,"columnEnd":16}: Unable to consume token: ;'`;
 
 snapshot[`parseStatements: someFunction();
 someOtherFunction(" aa() ; bbb()") 1`] = `
@@ -48,15 +43,6 @@ someOtherFunction(" aa() ; bbb()") 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall() 1`] = `
-{
-  args: [
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall() 1`] = `
 [
   {
@@ -66,23 +52,6 @@ snapshot[`parseStatements: someCall() 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall('a', 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall('a', 111) 1`] = `
@@ -104,23 +73,6 @@ snapshot[`parseStatements: someCall('a', 111) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall('a \\'ha\\'', 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a 'ha'",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall('a \\'ha\\'', 111) 1`] = `
 [
   {
@@ -138,23 +90,6 @@ snapshot[`parseStatements: someCall('a \\'ha\\'', 111) 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall(\`a\`, 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall(\`a\`, 111) 1`] = `
@@ -176,23 +111,6 @@ snapshot[`parseStatements: someCall(\`a\`, 111) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a \`ha\`",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
 [
   {
@@ -210,23 +128,6 @@ snapshot[`parseStatements: someCall(\`a \\\`ha\\\`\`, 111) 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall("a", 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall("a", 111) 1`] = `
@@ -248,23 +149,6 @@ snapshot[`parseStatements: someCall("a", 111) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall("a \\"ha\\"", 111) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: 'a "ha"',
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall("a \\"ha\\"", 111) 1`] = `
 [
   {
@@ -282,27 +166,6 @@ snapshot[`parseStatements: someCall("a \\"ha\\"", 111) 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall("a", 111,true) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-    {
-      type: "boolean",
-      value: true,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall("a", 111,true) 1`] = `
@@ -328,27 +191,6 @@ snapshot[`parseStatements: someCall("a", 111,true) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall("a", 111, false) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-    {
-      type: "boolean",
-      value: false,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall("a", 111, false) 1`] = `
 [
   {
@@ -370,27 +212,6 @@ snapshot[`parseStatements: someCall("a", 111, false) 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall("a false true 123 b", 111, false) 1`] = `
-{
-  args: [
-    {
-      type: "string",
-      value: "a false true 123 b",
-    },
-    {
-      type: "number",
-      value: 111,
-    },
-    {
-      type: "boolean",
-      value: false,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall("a false true 123 b", 111, false) 1`] = `
@@ -416,19 +237,6 @@ snapshot[`parseStatements: someCall("a false true 123 b", 111, false) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall(-123) 1`] = `
-{
-  args: [
-    {
-      type: "number",
-      value: -123,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: someCall(-123) 1`] = `
 [
   {
@@ -444,15 +252,6 @@ snapshot[`parseStatements: someCall(-123) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: some_call() 1`] = `
-{
-  args: [
-  ],
-  name: "some_call",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: some_call() 1`] = `
 [
   {
@@ -462,15 +261,6 @@ snapshot[`parseStatements: some_call() 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: some-call() 1`] = `
-{
-  args: [
-  ],
-  name: "some-call",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: some-call() 1`] = `
@@ -484,15 +274,6 @@ snapshot[`parseStatements: some-call() 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: SOMECALL() 1`] = `
-{
-  args: [
-  ],
-  name: "SOMECALL",
-  type: "call",
-}
-`;
-
 snapshot[`parseStatements: SOMECALL() 1`] = `
 [
   {
@@ -502,49 +283,6 @@ snapshot[`parseStatements: SOMECALL() 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
-{
-  args: [
-    {
-      args: [
-        {
-          type: "string",
-          value: "hi",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "there",
-            },
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "is",
-                },
-                {
-                  type: "string",
-                  value: "nesting",
-                },
-              ],
-              name: "__+__",
-              type: "call",
-            },
-          ],
-          name: "__+__",
-          type: "call",
-        },
-      ],
-      name: "__+__",
-      type: "call",
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] = `
@@ -590,69 +328,6 @@ snapshot[`parseStatements: someCall("hi" + ("there" + ("is" + "nesting"))) 1`] =
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
-{
-  args: [
-    {
-      args: [
-        {
-          type: "string",
-          value: "a string ",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  args: [
-                    {
-                      type: "string",
-                      value: "STRING + blah",
-                    },
-                    {
-                      args: [
-                        {
-                          args: [
-                          ],
-                          name: "b",
-                          type: "call",
-                        },
-                        {
-                          args: [
-                          ],
-                          name: "c",
-                          type: "call",
-                        },
-                      ],
-                      name: "__+__",
-                      type: "call",
-                    },
-                  ],
-                  name: "__+__",
-                  type: "call",
-                },
-                {
-                  type: "string",
-                  value: "\$",
-                },
-              ],
-              name: "__+__",
-              type: "call",
-            },
-          ],
-          name: "concated",
-          type: "call",
-        },
-      ],
-      name: "__+__",
-      type: "call",
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall("a string " + concated("STRING + blah" + (b() + c()) + "\$")) 1`] = `
@@ -720,13 +395,6 @@ snapshot[`parseStatements: someCall("a string " + concated("STRING + blah" + (b(
 ]
 `;
 
-snapshot[`parseExpression: 123123 1`] = `
-{
-  type: "number",
-  value: 123123,
-}
-`;
-
 snapshot[`parseStatements: 123123 1`] = `
 [
   {
@@ -734,13 +402,6 @@ snapshot[`parseStatements: 123123 1`] = `
     value: 123123,
   },
 ]
-`;
-
-snapshot[`parseExpression: "hi there" 1`] = `
-{
-  type: "string",
-  value: "hi there",
-}
 `;
 
 snapshot[`parseStatements: "hi there" 1`] = `
@@ -751,8 +412,6 @@ snapshot[`parseStatements: "hi there" 1`] = `
   },
 ]
 `;
-
-snapshot[`parseExpression: true; 123123; 'hi there' 1`] = `'{"index":4,"rowBegin":1,"columnBegin":5,"rowEnd":1,"columnEnd":6}: Unable to consume token: ;'`;
 
 snapshot[`parseStatements: true; 123123; 'hi there' 1`] = `
 [
@@ -771,22 +430,145 @@ snapshot[`parseStatements: true; 123123; 'hi there' 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseStatements: assign = "123" 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "assign",
+      },
+      {
+        type: "string",
+        value: "123",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: var a = someCall(123 + 44, "abc") 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 44,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "abc",
+          },
+        ],
+        name: "someCall",
+        type: "call",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: let a_aaa = someCall(123 + 44, "abc") 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a_aaa",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 44,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "abc",
+          },
+        ],
+        name: "someCall",
+        type: "call",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc") 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a_aaa",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 44,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "abc",
+          },
+        ],
+        name: "someCall",
+        type: "call",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: assign =  1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseStatements: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
-
-snapshot[`parseExpression: someCall(-123.500) 1`] = `
-{
-  args: [
-    {
-      type: "number",
-      value: -123.5,
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
 
 snapshot[`parseStatements: someCall(-123.500) 1`] = `
 [
@@ -803,42 +585,7 @@ snapshot[`parseStatements: someCall(-123.500) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
-
 snapshot[`parseStatements: someCall("hi" + ("there" + (("is + "bad" + "nesting"))) 1`] = `'{"index":36,"rowBegin":1,"columnBegin":37,"rowEnd":1,"columnEnd":40}: Unable to consume token: bad'`;
-
-snapshot[`parseExpression: someCall(true, a(b(), 123), "hello") 1`] = `
-{
-  args: [
-    {
-      type: "boolean",
-      value: true,
-    },
-    {
-      args: [
-        {
-          args: [
-          ],
-          name: "b",
-          type: "call",
-        },
-        {
-          type: "number",
-          value: 123,
-        },
-      ],
-      name: "a",
-      type: "call",
-    },
-    {
-      type: "string",
-      value: "hello",
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
 
 snapshot[`parseStatements: someCall(true, a(b(), 123), "hello") 1`] = `
 [
@@ -873,39 +620,6 @@ snapshot[`parseStatements: someCall(true, a(b(), 123), "hello") 1`] = `
     type: "call",
   },
 ]
-`;
-
-snapshot[`parseExpression: someCall(true, a(b(), 123), "hello",) 1`] = `
-{
-  args: [
-    {
-      type: "boolean",
-      value: true,
-    },
-    {
-      args: [
-        {
-          args: [
-          ],
-          name: "b",
-          type: "call",
-        },
-        {
-          type: "number",
-          value: 123,
-        },
-      ],
-      name: "a",
-      type: "call",
-    },
-    {
-      type: "string",
-      value: "hello",
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
 `;
 
 snapshot[`parseStatements: someCall(true, a(b(), 123), "hello",) 1`] = `
@@ -943,40 +657,7 @@ snapshot[`parseStatements: someCall(true, a(b(), 123), "hello",) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
-
 snapshot[`parseStatements: someCall(true, a((), 123), "hello",) 1`] = `'{"index":18,"rowBegin":1,"columnBegin":19,"rowEnd":1,"columnEnd":20}: Unable to consume token: )'`;
-
-snapshot[`parseExpression: someCall(true, a(true, 123), "hello",) 1`] = `
-{
-  args: [
-    {
-      type: "boolean",
-      value: true,
-    },
-    {
-      args: [
-        {
-          type: "boolean",
-          value: true,
-        },
-        {
-          type: "number",
-          value: 123,
-        },
-      ],
-      name: "a",
-      type: "call",
-    },
-    {
-      type: "string",
-      value: "hello",
-    },
-  ],
-  name: "someCall",
-  type: "call",
-}
-`;
 
 snapshot[`parseStatements: someCall(true, a(true, 123), "hello",) 1`] = `
 [
@@ -1011,23 +692,13 @@ snapshot[`parseStatements: someCall(true, a(true, 123), "hello",) 1`] = `
 ]
 `;
 
-snapshot[`parseExpression: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
-
 snapshot[`parseStatements: someCall(true, a(true(), 123), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
-
-snapshot[`parseExpression: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
 snapshot[`parseStatements: someCall(true, a(true(), 123()), "hello",) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseExpression: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
-
 snapshot[`parseStatements: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'{"index":21,"rowBegin":1,"columnBegin":22,"rowEnd":1,"columnEnd":23}: Unable to consume token: ('`;
 
-snapshot[`parseExpression: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
-
 snapshot[`parseStatements: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
-
-snapshot[`parseExpression: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseStatements: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 

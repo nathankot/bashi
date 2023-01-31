@@ -76,40 +76,18 @@ const INPUTS: {
       },
     },
   },
-  // {
-  //   prompt: "edit this go lang function in order to make it compile",
-  //   requestContext: {
-  //     text: {
-  //       type: "string",
-  //       value: `
-  // function doSomething() int {
-  //   return "55"
-  // }
-  // `,
-  //     },
-  //   },
-  // },
-  // {
-  //   prompt: "edit this function in order to make it compile",
-  //   requestContext: {
-  //     language: { type: "string", value: "Go" },
-  //     text: {
-  //       type: "string",
-  //       value: `function doSomething() int { return "55" }`,
-  //     },
-  //   },
-  // },
-  //   {
-  //     prompt: "make a calendar event",
-  //   },
-  // {
-  //   prompt: "make a calendar event",
-  //   variant: "clarifications provided",
-  //   clarification: {
-  //     question: "What time should the event start and what is the event name?",
-  //     answer: "Next Tuesday noon, lunch with Bill",
-  //   },
-  // },
+  {
+    prompt: "edit this function in order to make it compile",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `function doSomething() int { return "55" }`,
+      },
+    },
+  },
+  {
+    prompt: "make a calendar event for next tuesday noon, lunch with Bill",
+  },
 
   // TODO: something like 'highlight the selected string', will it be able to differentiate from
   // having the request string be in the request?

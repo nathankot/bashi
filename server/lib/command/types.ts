@@ -3,12 +3,13 @@ import * as t from "io-ts";
 import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
 import { ModelDeps } from "@lib/models.ts";
 import {
-  RequestContextRequirement,
   RequestContext,
+  RequestContextRequirement,
 } from "@lib/requestContext.ts";
 
 export const Memory = t.type({
   variables: t.record(t.string, Value),
+  requestContext: RequestContext,
 });
 export type Memory = t.TypeOf<typeof Memory>;
 
@@ -40,10 +41,8 @@ export type BuiltinCommandDefinition<
       name: string;
     };
   };
-  requestContextRequirement?: RequestContextRequirement;
   run: (
     deps: ModelDeps,
-    requestContext: RequestContext,
     args: { [K in keyof A]: ValueForType<A[K]> },
     memory: Memory
   ) => Promise<R extends "mixed" ? Value : ValueForType<Exclude<R, "mixed">>>;
@@ -53,14 +52,9 @@ export type AnyBuiltinCommandDefinition = Omit<
   CommandDefinition,
   "returnType"
 > & {
-  requestContextRequirement?: RequestContextRequirement;
   returnType: ValueType | "mixed";
-  run: (
-    deps: ModelDeps,
-    requestContext: RequestContext,
-    args: any,
-    memory: Memory
-  ) => Promise<Value>;
+  run: (deps: ModelDeps, args: any, memory: Memory) => Promise<Value>;
+  requestContextRequirement?: RequestContextRequirement;
 };
 
 export const CommandSet = t.record(t.string, CommandDefinition);

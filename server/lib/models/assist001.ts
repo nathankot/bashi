@@ -25,15 +25,13 @@ import {
   CommandExecuted,
   builtinCommands,
   filterUnnecessary,
-  checkRequestContext,
   runBuiltinCommand,
 } from "@lib/command.ts";
 
-import { RequestContext } from "@lib/requestContext.ts";
+import { RequestContextRequired } from "@lib/requestContext.ts";
 
 export const State = t.type({
   request: t.string,
-  requestContext: RequestContext,
   modelCallCount: t.number,
   resolvedActionGroups: t.array(
     t.intersection([
@@ -81,17 +79,31 @@ export const defaultConfiguration: Partial<Configuration> = {
 };
 
 const privateBuiltinCommands = {
+  askForText: {
+    returnType: "string",
+    description: "get the input text for editing",
+    args: [],
+    run: async (_, __, memory) => {
+      if (
+        memory.requestContext.text == null ||
+        memory.requestContext.text.type !== "string"
+      ) {
+        throw new RequestContextRequired({ text: { type: "string" } });
+      }
+      return memory.requestContext.text;
+    },
+  } as BuiltinCommandDefinition<[], "string">,
   finish: {
     description: "mark request/question as fulfilled",
     args: [],
-    run: async (_, __, []) => ({ type: "void" }),
+    run: async (_, []) => ({ type: "void" }),
     returnType: "void",
   } as BuiltinCommandDefinition<[], "void">,
   fail: {
     returnType: "void",
     description: `indicate the request cannot be fulfilled with the available tools`,
     args: [{ name: "reason", type: "string" }],
-    run: async (_, __, ___) => ({ type: "void" }),
+    run: async (_, ___) => ({ type: "void" }),
   } as BuiltinCommandDefinition<["string"], "void">,
 };
 
@@ -102,7 +114,7 @@ const languageBuiltinCommands = {
     description: "retrieve a variable",
     args: [{ name: "identifier", type: "string" }],
     returnType: "mixed",
-    run: async (_, __, [iden], memory) => {
+    run: async (_, [iden], memory) => {
       const maybeValue = memory.variables[iden.value];
       if (maybeValue == null) {
         throw new Error(`the variable '${iden.value}' does not exist`);
@@ -121,7 +133,7 @@ const languageBuiltinCommands = {
             { name: "value", type: t },
           ],
           returnType: "void",
-          run: async (_, __, [lhs, rhs], memory) => {
+          run: async (_, [lhs, rhs], memory) => {
             memory.variables[lhs.value] = rhs;
             return { type: "void" };
           },
@@ -137,7 +149,7 @@ const languageBuiltinCommands = {
           { name: "rhs", type: "number" },
         ],
         returnType: "number",
-        run: async (_, __, [lhs, rhs]) => ({
+        run: async (_, [lhs, rhs]) => ({
           type: "number",
           value: lhs.value + rhs.value,
         }),
@@ -149,7 +161,7 @@ const languageBuiltinCommands = {
         ],
         description: "string concatenation using the + infix operand",
         returnType: "string",
-        run: async (_, __, [lhs, rhs]) => ({
+        run: async (_, [lhs, rhs]) => ({
           type: "string",
           value: lhs.value + rhs.value,
         }),
@@ -217,15 +229,19 @@ export async function run(
   }
 
   // Key pieces of state:
-  let memory = state?.memory ?? { variables: {} };
+  let memory = {
+    variables: {
+      ...state?.memory?.variables,
+    },
+    requestContext: {
+      ...input.requestContext,
+      ...state?.memory?.requestContext,
+    },
+  };
   let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending;
   let resolvedCommands = state?.resolvedCommands ?? [];
   let resolvedActionGroups = state?.resolvedActionGroups ?? [];
-  const requestContext: RequestContext = {
-    ...input.requestContext,
-    ...state?.requestContext,
-  };
 
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
@@ -275,7 +291,7 @@ export async function run(
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
-        for (const pendingCommand of pendingCommands) {
+        pendingCommandLoop: for (const pendingCommand of pendingCommands) {
           const commandName = pendingCommand.name;
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
@@ -284,38 +300,30 @@ export async function run(
           }
           if (serverCommandDef != null) {
             // 1b. Any commands that can be resolved server side should be
-            const requirement =
-              "overloads" in serverCommandDef
-                ? serverCommandDef.overloads.reduce(
-                    (a, d) => ({ ...a, ...d.requestContextRequirement }),
-                    {}
-                  )
-                : serverCommandDef.requestContextRequirement;
-            const missingRequestContext = checkRequestContext(
-              requirement,
-              requestContext
-            );
-            if (missingRequestContext !== true) {
-              return {
-                model: "assist-001",
-                request,
-                result: {
-                  type: "needs_request_context",
-                  missingRequestContext,
-                  resolvedCommands,
-                },
-                dev,
-              };
+            try {
+              const resolved = await runBuiltinCommand(
+                serverCommandDef,
+                modelDeps,
+                pendingCommand,
+                memory
+              );
+              resolvedCommands.push(resolved);
+              continue pendingCommandLoop;
+            } catch (e) {
+              if (e instanceof RequestContextRequired) {
+                return {
+                  model: "assist-001",
+                  request,
+                  result: {
+                    type: "needs_request_context",
+                    missingRequestContext: e.requirement,
+                    resolvedCommands,
+                  },
+                  dev,
+                };
+              }
+              throw e;
             }
-            const resolved = await runBuiltinCommand(
-              serverCommandDef,
-              modelDeps,
-              input.requestContext ?? {},
-              pendingCommand,
-              memory
-            );
-            resolvedCommands.push(resolved);
-            continue;
           } else if (clientCommandDef != null) {
             //   1a. If the client provided any resolutions, use them
             const maybeClientResolution =
@@ -335,7 +343,7 @@ export async function run(
                 type: "executed",
                 returnValue: maybeClientResolution,
               });
-              continue;
+              continue pendingCommandLoop;
             }
             commandsToSendToClient.push(pendingCommand);
           }
@@ -459,7 +467,6 @@ export async function run(
             memory,
             modelCallCount,
             request,
-            requestContext,
             pending: pending ?? null,
             resolvedActionGroups,
             resolvedCommands,

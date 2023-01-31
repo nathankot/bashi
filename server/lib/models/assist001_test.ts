@@ -12,82 +12,85 @@ import {
   getPendingCommandsOrResult,
 } from "./assist001.ts";
 
-const pendingClientCommandState = {
-  modelCallCount: 1,
-  pending: {
-    action: 'now(); ask("what do you want?")',
-    expressions: [
-      { type: "call", args: [], name: "now" },
-      {
-        type: "call",
-        args: [{ type: "string", value: "what do you want?" }],
-        name: "ask",
-      },
-    ],
-    result: undefined,
-    thought: "I need to do something",
-  },
-  request: "some request",
-  requestContext: {},
-  resolvedActionGroups: [],
-  resolvedCommands: [
-    {
-      args: [],
-      id: "0",
-      name: "now",
-      returnValue: { type: "string", value: "2022-12-19T08:41:10.000Z" },
-      type: "executed",
+const pendingClientCommandState = () =>
+  ({
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); ask("what do you want?")',
+      expressions: [
+        { type: "call", args: [], name: "now" },
+        {
+          type: "call",
+          args: [{ type: "string", value: "what do you want?" }],
+          name: "ask",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
     },
-  ],
-  memory: { variables: {} },
-} satisfies Session["assist001State"];
-
-const pendingRequestContextState = {
-  modelCallCount: 1,
-  pending: {
-    action: 'editProse("convert to poem"); now()',
-    expressions: [
+    request: "some request",
+    resolvedActionGroups: [],
+    resolvedCommands: [
       {
-        type: "call",
-        args: [{ type: "string", value: "convert to poem" }],
-        name: "editProse",
-      },
-      {
-        type: "call",
         args: [],
+        id: "0",
         name: "now",
+        returnValue: { type: "string", value: "2022-12-19T08:41:10.000Z" },
+        type: "executed",
       },
     ],
-    result: undefined,
-    thought: "I need to do something",
-  },
-  request: "some request",
-  requestContext: {},
-  resolvedActionGroups: [
-    {
-      action: "someCommand()",
-      result: `"blah"`,
-      thought: "I need to call some command",
+    memory: { variables: {}, requestContext: {} },
+  } satisfies Session["assist001State"]);
+
+const pendingRequestContextState = () =>
+  ({
+    modelCallCount: 1,
+    pending: {
+      action: 'editProse(askForText(), "convert to poem"); now()',
       expressions: [
         {
           type: "call",
+          args: [
+            { type: "call", name: "askForText", args: [] },
+            { type: "string", value: "convert to poem" },
+          ],
+          name: "editProse",
+        },
+        {
+          type: "call",
           args: [],
-          name: "someCommand",
+          name: "now",
         },
       ],
+      result: undefined,
+      thought: "I need to do something",
     },
-  ],
-  resolvedCommands: [
-    {
-      type: "executed",
-      args: [],
-      id: "0",
-      name: "someCommand",
-      returnValue: { type: "string", value: "blah" },
-    },
-  ],
-  memory: { variables: {} },
-} satisfies Session["assist001State"];
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        result: `"blah"`,
+        thought: "I need to call some command",
+        expressions: [
+          {
+            type: "call",
+            args: [],
+            name: "someCommand",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        type: "executed",
+        args: [],
+        id: "0",
+        name: "someCommand",
+        returnValue: { type: "string", value: "blah" },
+      },
+    ],
+    memory: { variables: {}, requestContext: {} },
+  } satisfies Session["assist001State"]);
 
 for (const test of [
   {
@@ -175,7 +178,7 @@ Action: now(); ask("what do you want?")`,
       resolvedCommands: {},
     },
     openAiResults: [],
-    initialState: pendingClientCommandState,
+    initialState: pendingClientCommandState(),
   },
   {
     description: "client resolved command - wrong return type",
@@ -184,7 +187,7 @@ Action: now(); ask("what do you want?")`,
     },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingClientCommandState,
+    initialState: pendingClientCommandState(),
   },
   {
     description: "client resolved command - fulfilled",
@@ -193,7 +196,7 @@ Action: now(); ask("what do you want?")`,
     },
     openAiResults: [`Finished\nAction: finish()`],
     snapshotPrompts: true,
-    initialState: pendingClientCommandState,
+    initialState: pendingClientCommandState(),
   },
   {
     description: "nested calls",
@@ -209,21 +212,21 @@ Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRel
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); editProse("convert to poem"); now()`,
+Action: now(); editProse(askForText(), "convert to poem"); now()`,
     ],
   },
   {
     description: "request needs more context - still missing",
     input: { requestContext: {} },
     openAiResults: [],
-    initialState: pendingRequestContextState,
+    initialState: pendingRequestContextState(),
   },
   {
     description: "request needs more context - wrong type",
     input: { requestContext: { text: { type: "number", value: 123 } } },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingRequestContextState,
+    initialState: pendingRequestContextState(),
   },
   {
     description: "request needs more context - fulfilled",
@@ -233,7 +236,7 @@ Action: now(); editProse("convert to poem"); now()`,
       `I am finished\nAction: finish()`,
     ],
     snapshotPrompts: true,
-    initialState: pendingRequestContextState,
+    initialState: pendingRequestContextState(),
   },
   {
     description: "fulfilled but max loops",
@@ -241,7 +244,7 @@ Action: now(); editProse("convert to poem"); now()`,
     openAiResults: [`the result of editProse()`],
     snapshotError: true,
     initialState: {
-      ...pendingRequestContextState,
+      ...pendingRequestContextState(),
       modelCallCount: MAX_MODEL_CALLS,
     },
   },
@@ -311,7 +314,6 @@ Action: finish()`,
 
   // model uses wrong arg types
   // model uses wrong arg count
-  // TODO: test arg parsers (natural language)
 ] as {
   description: string;
   openAiResults?: string[];

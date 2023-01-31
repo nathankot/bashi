@@ -58,3 +58,11 @@ export const RequestContextRequirement = t.intersection([
 export type RequestContextRequirement = t.TypeOf<
   typeof RequestContextRequirement
 >;
+
+export class RequestContextRequired extends Error {
+  requirement: RequestContextRequirement;
+  constructor(requirement: RequestContextRequirement) {
+    super("request context required");
+    this.requirement = requirement;
+  }
+}

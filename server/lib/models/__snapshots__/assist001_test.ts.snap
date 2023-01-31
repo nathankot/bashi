@@ -55,12 +55,13 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -70,6 +71,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -84,12 +86,13 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -99,6 +102,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -229,12 +233,13 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -244,6 +249,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -258,12 +264,13 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -273,6 +280,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -374,6 +382,7 @@ snapshot[`infix + operand support 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -421,7 +430,6 @@ snapshot[`infix + operand support 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -564,6 +572,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -639,7 +648,6 @@ finish();',
       thought: "I need to get the current time in New York, create a calendar event 5 days from now, and answer the question.",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -812,6 +820,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -875,7 +884,6 @@ snapshot[`supports model outputs with top level infix call 1`] = `
       thought: "I need to get the current time in New York and create a calendar event 5 days from now",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1136,6 +1144,7 @@ snapshot[`client resolved command 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1163,7 +1172,6 @@ snapshot[`client resolved command 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1233,6 +1241,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1260,7 +1269,6 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1341,6 +1349,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1368,7 +1377,6 @@ snapshot[`client resolved command - wrong return type 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1449,6 +1457,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1476,7 +1485,6 @@ snapshot[`client resolved command - fulfilled 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1574,6 +1582,7 @@ snapshot[`nested calls 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1615,7 +1624,6 @@ snapshot[`nested calls 1`] = `
       thought: "I need to get the current time in New York and create a calendar event 5 days from now",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1656,12 +1664,13 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -1671,6 +1680,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -1719,11 +1729,12 @@ snapshot[`request needs more context 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); editProse("convert to poem"); now()',
+      action: 'now(); editProse(askForText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -1733,6 +1744,12 @@ snapshot[`request needs more context 1`] = `
         },
         {
           args: [
+            {
+              args: [
+              ],
+              name: "askForText",
+              type: "call",
+            },
             {
               type: "string",
               value: "convert to poem",
@@ -1752,7 +1769,6 @@ snapshot[`request needs more context 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [
@@ -1803,14 +1819,21 @@ snapshot[`request needs more context - still missing 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
     pending: {
-      action: 'editProse("convert to poem"); now()',
+      action: 'editProse(askForText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
+            {
+              args: [
+              ],
+              name: "askForText",
+              type: "call",
+            },
             {
               type: "string",
               value: "convert to poem",
@@ -1830,7 +1853,6 @@ snapshot[`request needs more context - still missing 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
       {
         action: "someCommand()",
@@ -1894,14 +1916,26 @@ snapshot[`request needs more context - wrong type 1`] = `
   },
   state: {
     memory: {
+      requestContext: {
+        text: {
+          type: "number",
+          value: 123,
+        },
+      },
       variables: {},
     },
     modelCallCount: 1,
     pending: {
-      action: 'editProse("convert to poem"); now()',
+      action: 'editProse(askForText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
+            {
+              args: [
+              ],
+              name: "askForText",
+              type: "call",
+            },
             {
               type: "string",
               value: "convert to poem",
@@ -1921,12 +1955,6 @@ snapshot[`request needs more context - wrong type 1`] = `
       thought: "I need to do something",
     },
     request: "some request",
-    requestContext: {
-      text: {
-        type: "number",
-        value: 123,
-      },
-    },
     resolvedActionGroups: [
       {
         action: "someCommand()",
@@ -1981,6 +2009,21 @@ snapshot[`request needs more context - fulfilled 1`] = `
         },
         {
           args: [
+          ],
+          id: "1.0.0",
+          name: "askForText",
+          returnValue: {
+            type: "string",
+            value: "some text",
+          },
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "some text",
+            },
             {
               type: "string",
               value: "convert to poem",
@@ -2028,12 +2071,13 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  'Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.
 
@@ -2043,6 +2087,7 @@ Functions are declared below, you must not use any functions other then those be
 \`now(): string\` - get the users current ISO8601 datetime
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
+\`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 
@@ -2060,7 +2105,7 @@ Thought: I need to call some command
 Action: someCommand()
 Result: "blah"
 Thought: I need to do something
-Action: editProse("convert to poem"); now()
+Action: editProse(askForText(), "convert to poem"); now()
 Result: "the result of editProse()"; "2022-12-19T08:41:10Z"
 Thought: ',
 ]
@@ -2100,6 +2145,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
   },
   state: {
     memory: {
+      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -2131,7 +2177,6 @@ snapshot[`top level commands are resolved sequentially 1`] = `
       thought: "some thought",
     },
     request: "some request",
-    requestContext: {},
     resolvedActionGroups: [
     ],
     resolvedCommands: [

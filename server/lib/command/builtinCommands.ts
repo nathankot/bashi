@@ -14,7 +14,7 @@ const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 const now: BuiltinCommandDefinition<[], "string"> = {
   description: "get the users current ISO8601 datetime",
   args: [],
-  run: async (deps, __, []) => ({
+  run: async (deps, []) => ({
     type: "string",
     value: formatInTimeZone(
       deps.now(),
@@ -34,7 +34,7 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
       type: "string",
     },
   ],
-  run: async (deps, __, [description]) => {
+  run: async (deps, [description]) => {
     const d = parseDate(description.value, {
       instant: deps.now(),
       // chronojs expects the offset in minutes:
@@ -60,7 +60,7 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   description: `get the ISO8601 datetime for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
-  run: async ({ log, session, now }, reqCtx, [timeZone]) => {
+  run: async ({ log, session, now }, [timeZone]) => {
     return {
       type: "string",
       value: formatInTimeZone(
@@ -76,7 +76,7 @@ const math: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
   description: `compute a math formula`,
   args: [{ name: "a mathjs expression ", type: "string" }],
-  run: async ({ log, session }, reqCtx, [expr]) => {
+  run: async ({ log, session }, [expr]) => {
     try {
       const result = mathjs.evaluate(expr.value);
       return { type: "string", value: `${result satisfies string}` };
@@ -94,7 +94,7 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
     { name: "full name of the target language", type: "string" },
     { name: "string to translate", type: "string" },
   ],
-  run: async (modelDeps, reqCtx, [targetLanguage, request]) => {
+  run: async (modelDeps, [targetLanguage, request]) => {
     const output = await runTranslate(
       modelDeps,
       { model: "translate-000" },
@@ -136,15 +136,14 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
   ],
 };
 
-const editProse: BuiltinCommandDefinition<["string"], "string"> = {
+const editProse: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `edit prose using the given requirements`,
-  args: [{ name: "full description of all desired changes", type: "string" }],
-  run: async (modelDeps, reqCtx, [editingRequirement]) => {
-    const text = reqCtx.text?.value;
-    if (text == null) {
-      throw new Error("context text unexpectedly null");
-    }
+  args: [
+    { name: "prose to edit", type: "string" },
+    { name: "full description of all desired changes", type: "string" },
+  ],
+  run: async (modelDeps, [text, editingRequirement]) => {
     const output = await runPassthrough(
       modelDeps,
       { model: "passthrough-openai-000" },
@@ -154,13 +153,10 @@ const editProse: BuiltinCommandDefinition<["string"], "string"> = {
           editingRequirement.value satisfies string
         }':
 
-${text}`,
+${text.value}`,
       }
     );
     return { type: "string", value: output.result.trim() };
-  },
-  requestContextRequirement: {
-    text: { type: "string" },
   },
   triggerTokens: [
     "edit",
@@ -174,36 +170,31 @@ ${text}`,
 };
 
 // TODO: maybe a code edit model will do better with this?
-const editCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
+const editCode: BuiltinCommandDefinition<
+  ["string", "string", "string"],
+  "string"
+> = {
   returnType: "string",
   description: `edit code using the given requirements`,
   args: [
-    { name: "language full name", type: "string" },
+    { name: "code to edit", type: "string" },
+    { name: "programming language name", type: "string" },
     { name: "full description of all desired changes", type: "string" },
   ],
-  run: async (modelDeps, reqCtx, [language, editingRequirement]) => {
-    const text = reqCtx.text?.value;
-    if (text == null) {
-      throw new Error("context text unexpectedly null");
-    }
+  run: async (modelDeps, [text, language, editingRequirement]) => {
     const output = await runPassthrough(
       modelDeps,
       { model: "passthrough-openai-000" },
       {
         openAiModel: "text-davinci-003",
         request: `Edit or refactor the code below based on the given requirement.
-Programming language is '${
-          (reqCtx.language?.value ?? language.value) satisfies string
-        }'.
+Programming language is '${language.value satisfies string}'.
 The requirement is '${editingRequirement.value satisfies string}':
 
-${text satisfies string}`,
+${text.value satisfies string}`,
       }
     );
     return { type: "string", value: output.result.trim() };
-  },
-  requestContextRequirement: {
-    text: { type: "string" },
   },
   triggerTokens: [
     ...PROGRAMMING_LANGUAGES,
@@ -235,7 +226,7 @@ const generateCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
       type: "string",
     },
   ],
-  run: async (modelDeps, reqCtx, [targetLanguage, request]) => {
+  run: async (modelDeps, [targetLanguage, request]) => {
     const output = await runCode(
       modelDeps,
       { model: "code-000" },

@@ -1,8 +1,3 @@
-import {
-  RequestContext,
-  RequestContextRequirement,
-} from "@lib/requestContext.ts";
-
 import { ModelDeps } from "@lib/models.ts";
 import { Value } from "@lib/valueTypes.ts";
 
@@ -32,34 +27,11 @@ export function checkArgumentsValid<A extends Value[]>(
   return true;
 }
 
-export function checkRequestContext(
-  requirement: RequestContextRequirement | null | undefined,
-  requestContext: RequestContext
-): true | RequestContextRequirement {
-  let missingRequirements = {
-    ...requirement,
-  };
-  for (const [key, value] of Object.entries(requestContext)) {
-    const maybeRequirement = missingRequirements[key];
-    if (maybeRequirement == null) {
-      continue;
-    }
-    if (maybeRequirement.type === value.type) {
-      delete missingRequirements[key];
-    }
-  }
-  if (Object.entries(missingRequirements).length === 0) {
-    return true;
-  }
-  return missingRequirements;
-}
-
 export async function runBuiltinCommand(
   definition:
     | AnyBuiltinCommandDefinition
     | { overloads: AnyBuiltinCommandDefinition[] },
   deps: ModelDeps,
-  requestContext: RequestContext,
   command: CommandParsed,
   memory: Memory
 ): Promise<CommandExecuted> {
@@ -72,17 +44,7 @@ export async function runBuiltinCommand(
     if (!checkArgumentsValid(definition, args)) {
       continue;
     }
-    if (
-      !checkRequestContext(definition.requestContextRequirement, requestContext)
-    ) {
-      throw new Error("request context requirements are missing");
-    }
-    const returnValue = await definition.run(
-      deps,
-      requestContext,
-      args,
-      memory
-    );
+    const returnValue = await definition.run(deps, args, memory);
     return {
       type: "executed",
       returnValue,

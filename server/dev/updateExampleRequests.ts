@@ -63,19 +63,19 @@ const INPUTS: {
       },
     },
   },
-  // {
-  //   prompt: "edit this function in go lang in order to make it compile",
-  //   requestContext: {
-  //     text: {
-  //       type: "string",
-  //       value: `
-  // function doSomething() int {
-  //   return "55"
-  // }
-  // `,
-  //     },
-  //   },
-  // },
+  {
+    prompt: "edit this function in go lang in order to make it compile",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `
+  function doSomething() int {
+    return "55"
+  }
+  `,
+      },
+    },
+  },
   // {
   //   prompt: "edit this go lang function in order to make it compile",
   //   requestContext: {

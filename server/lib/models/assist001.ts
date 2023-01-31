@@ -483,12 +483,16 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used.
+  // TODO add:
+  // * assignment support
+  // * do not make things up, use fail()
+  const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, ONLY these features are available:
+The language for Action is a tiny subset of javascript, only use these features which available:
 
 * function calls
 * string concatenation using +
+* simple variable assignment using var
 
 Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.`;
 

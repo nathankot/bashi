@@ -11,15 +11,14 @@ export const Configuration = t.type({
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export const Input = t.type({
-  targetLanguage: t.string,
-  whatIsBeingGenerated: t.string,
+  programmingLanguage: t.string,
   request: t.string,
 });
 export type Input = t.TypeOf<typeof Input>;
 
 export const Output = t.type({
   model: Name,
-  targetLanguage: t.string,
+  programmingLanguage: t.string,
   request: t.string,
   result: t.string,
 });
@@ -35,8 +34,7 @@ export async function run(
   input: Input
 ): Promise<Output> {
   const prompt = makePrompt(
-    input.targetLanguage.trim(),
-    input.whatIsBeingGenerated.trim(),
+    input.programmingLanguage.trim(),
     input.request.trim()
   );
   const completion = await deps.openai.createCompletion(
@@ -61,17 +59,12 @@ export async function run(
 
   return {
     model: "code-000",
-    targetLanguage: input.targetLanguage,
+    programmingLanguage: input.programmingLanguage,
     request: input.request,
     result,
   };
 }
 
-function makePrompt(
-  targetLanguage: string,
-  whatIsBeingGenerated: string,
-  request: string
-): string {
-  return `Generate a ${targetLanguage} ${whatIsBeingGenerated} to ${request}:
-`;
+function makePrompt(targetLanguage: string, request: string): string {
+  return `Generate code in the language ${targetLanguage}, which satisfies the following description/requirement:\n${request}\n\nBegin!\n`;
 }

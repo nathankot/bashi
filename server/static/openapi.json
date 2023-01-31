@@ -937,15 +937,11 @@
       "models_code-000_Input": {
         "type": "object",
         "required": [
-          "targetLanguage",
-          "whatIsBeingGenerated",
+          "programmingLanguage",
           "request"
         ],
         "properties": {
-          "targetLanguage": {
-            "type": "string"
-          },
-          "whatIsBeingGenerated": {
+          "programmingLanguage": {
             "type": "string"
           },
           "request": {
@@ -957,7 +953,7 @@
         "type": "object",
         "required": [
           "model",
-          "targetLanguage",
+          "programmingLanguage",
           "request",
           "result"
         ],
@@ -968,7 +964,7 @@
             ],
             "type": "string"
           },
-          "targetLanguage": {
+          "programmingLanguage": {
             "type": "string"
           },
           "request": {

@@ -7,38 +7,32 @@ import Foundation
 
 public class ModelsCode000Input: APIModel {
 
-    public var targetLanguage: String
-
-    public var whatIsBeingGenerated: String
+    public var programmingLanguage: String
 
     public var request: String
 
-    public init(targetLanguage: String, whatIsBeingGenerated: String, request: String) {
-        self.targetLanguage = targetLanguage
-        self.whatIsBeingGenerated = whatIsBeingGenerated
+    public init(programmingLanguage: String, request: String) {
+        self.programmingLanguage = programmingLanguage
         self.request = request
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
-        targetLanguage = try container.decode("targetLanguage")
-        whatIsBeingGenerated = try container.decode("whatIsBeingGenerated")
+        programmingLanguage = try container.decode("programmingLanguage")
         request = try container.decode("request")
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
-        try container.encode(targetLanguage, forKey: "targetLanguage")
-        try container.encode(whatIsBeingGenerated, forKey: "whatIsBeingGenerated")
+        try container.encode(programmingLanguage, forKey: "programmingLanguage")
         try container.encode(request, forKey: "request")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ModelsCode000Input else { return false }
-      guard self.targetLanguage == object.targetLanguage else { return false }
-      guard self.whatIsBeingGenerated == object.whatIsBeingGenerated else { return false }
+      guard self.programmingLanguage == object.programmingLanguage else { return false }
       guard self.request == object.request else { return false }
       return true
     }

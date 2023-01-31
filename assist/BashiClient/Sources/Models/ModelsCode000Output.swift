@@ -13,15 +13,15 @@ public class ModelsCode000Output: APIModel {
 
     public var model: Model
 
-    public var targetLanguage: String
+    public var programmingLanguage: String
 
     public var request: String
 
     public var result: String
 
-    public init(model: Model, targetLanguage: String, request: String, result: String) {
+    public init(model: Model, programmingLanguage: String, request: String, result: String) {
         self.model = model
-        self.targetLanguage = targetLanguage
+        self.programmingLanguage = programmingLanguage
         self.request = request
         self.result = result
     }
@@ -30,7 +30,7 @@ public class ModelsCode000Output: APIModel {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
         model = try container.decode("model")
-        targetLanguage = try container.decode("targetLanguage")
+        programmingLanguage = try container.decode("programmingLanguage")
         request = try container.decode("request")
         result = try container.decode("result")
     }
@@ -39,7 +39,7 @@ public class ModelsCode000Output: APIModel {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
         try container.encode(model, forKey: "model")
-        try container.encode(targetLanguage, forKey: "targetLanguage")
+        try container.encode(programmingLanguage, forKey: "programmingLanguage")
         try container.encode(request, forKey: "request")
         try container.encode(result, forKey: "result")
     }
@@ -47,7 +47,7 @@ public class ModelsCode000Output: APIModel {
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ModelsCode000Output else { return false }
       guard self.model == object.model else { return false }
-      guard self.targetLanguage == object.targetLanguage else { return false }
+      guard self.programmingLanguage == object.programmingLanguage else { return false }
       guard self.request == object.request else { return false }
       guard self.result == object.result else { return false }
       return true

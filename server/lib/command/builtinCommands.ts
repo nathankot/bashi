@@ -225,32 +225,23 @@ ${text satisfies string}`,
   ],
 };
 
-const generateCode: BuiltinCommandDefinition<
-  ["string", "string", "string"],
-  "string"
-> = {
+const generateCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `generate code for the given request`,
   args: [
     { name: "full name of target programming language", type: "string" },
     {
-      name: "what is being generated (function, class etc)",
+      name: "verbose description of what code is being generated",
       type: "string",
     },
-    { name: "verbose description of what the code does", type: "string" },
   ],
-  run: async (
-    modelDeps,
-    reqCtx,
-    [targetLanguage, whatIsBeingGenerated, request]
-  ) => {
+  run: async (modelDeps, reqCtx, [targetLanguage, request]) => {
     const output = await runCode(
       modelDeps,
       { model: "code-000" },
       {
         request: request.value,
-        whatIsBeingGenerated: whatIsBeingGenerated.value,
-        targetLanguage: targetLanguage.value,
+        programmingLanguage: targetLanguage.value,
       }
     );
     return { type: "string", value: output.result.trim() };

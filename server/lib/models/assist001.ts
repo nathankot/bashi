@@ -512,7 +512,10 @@ Result: the result of the Action expression
 
   const existingActionGroups = resolvedActionGroups
     .map(
-      (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
+      (g) =>
+        `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${
+          g.result.length > 150 ? "<result too long, redacted>" : g.result
+        }`
     )
     .join("\n");
 

@@ -45,11 +45,10 @@ export type ValueRequirement = t.TypeOf<typeof ValueRequirement>;
 export const RequestContextRequirement = t.intersection([
   t.partial<KnownRequestContextDefProps>(
     Object.entries(KnownRequestContext.props).reduce(
-      (a, [key, propDef]) =>
-        ({
-          ...a,
-          [key]: t.type({ type: propDef.props.type }),
-        } satisfies Partial<KnownRequestContextDefProps>),
+      (a, [key, propDef]) => ({
+        ...a,
+        [key]: t.type({ type: propDef.props.type }),
+      }),
       {} as Partial<KnownRequestContextDefProps>
     ) as KnownRequestContextDefProps
   ),

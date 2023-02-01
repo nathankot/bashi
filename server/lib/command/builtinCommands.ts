@@ -115,7 +115,7 @@ const extractInformation: BuiltinCommandDefinition<
       { model: "passthrough-openai-000" },
       {
         openAiModel: "text-davinci-003",
-        request: `Condense and extract information from the text that follows. The requirement is "${desc}, the text is:\n\n${input}\n\nExtracted information:\n"`,
+        request: `Condense/summarize/extract information from text that follows. The output should satisfy the requirement:\n${desc.value}\n\nThe text is:\n${input.value}\n\nResult:\n"`,
       }
     );
     return {

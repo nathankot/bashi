@@ -463,7 +463,7 @@ export async function run(
           max_tokens: session.configuration.maxResponseTokens,
           best_of: session.configuration.bestOf,
           echo: false,
-          temperature: 0.5,
+          temperature: 0.1,
           prompt: [prompt],
           stop: "\nResult:",
         },

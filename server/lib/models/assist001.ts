@@ -80,6 +80,8 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 const privateBuiltinCommands = {
   askForText: {
+    isBuiltin: true,
+    cost: -1000,
     returnType: "string",
     description: "get the input text for editing",
     args: [],
@@ -94,12 +96,16 @@ const privateBuiltinCommands = {
     },
   } as BuiltinCommandDefinition<[], "string">,
   finish: {
+    isBuiltin: true,
+    cost: -1000,
     description: "mark request/question as fulfilled",
     args: [],
     run: async (_, []) => ({ type: "void" }),
     returnType: "void",
   } as BuiltinCommandDefinition<[], "void">,
   fail: {
+    isBuiltin: true,
+    cost: -1000,
     returnType: "void",
     description: `indicate the request cannot be fulfilled with the available tools`,
     args: [{ name: "reason", type: "string" }],
@@ -111,6 +117,7 @@ const privateBuiltinCommands = {
 // sent to the model explicitly.
 const languageBuiltinCommands = {
   $ref: {
+    isBuiltin: true,
     description: "retrieve a variable",
     args: [{ name: "identifier", type: "string" }],
     returnType: "mixed",
@@ -127,6 +134,7 @@ const languageBuiltinCommands = {
       .map((t) => t.value)
       .map(
         (t): AnyBuiltinCommandDefinition => ({
+          isBuiltin: true,
           description: "assign a variable",
           args: [
             { name: "identifier", type: "string" },
@@ -143,6 +151,7 @@ const languageBuiltinCommands = {
   "__+__": {
     overloads: [
       {
+        isBuiltin: true,
         description: "number addition the + infix operand",
         args: [
           { name: "lhs", type: "number" },
@@ -155,6 +164,7 @@ const languageBuiltinCommands = {
         }),
       } as BuiltinCommandDefinition<["number", "number"], "number">,
       {
+        isBuiltin: true,
         args: [
           { name: "lhs", type: "string" },
           { name: "rhs", type: "string" },
@@ -522,15 +532,15 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
-The language for Action is a tiny subset of javascript, only use these features which available:
+The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
-Functions are declared below, you must not use any functions other then those below. When calling pay attention to syntax and ensure any quotes inside strings are escaped correctly.`;
+Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer
@@ -565,14 +575,28 @@ Thought: `;
 }
 
 function makeCommandSet(commands: CommandSet): string[] {
-  return Object.entries(commands).map(([name, c]) => {
-    const args = c.args.map(
-      (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
-    );
-    return `\`${name}(${args.join(", ")}): ${c.returnType}\` - ${
-      c.description
-    }`;
-  });
+  return Object.entries(commands)
+    .sort(([aName, a], [bName, b]) => {
+      if (aName === bName) return 0;
+      if ((a.cost ?? 0) !== (b.cost ?? 0)) {
+        return (a.cost ?? 0) < (b.cost ?? 0) ? -1 : 0;
+      }
+      if ("isBuiltin" in a && a.isBuiltin) {
+        return -1;
+      }
+      if ("isBuiltin" in b && b.isBuiltin) {
+        return 1;
+      }
+      return aName < bName ? -1 : 1;
+    })
+    .map(([name, c]) => {
+      const args = c.args.map(
+        (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
+      );
+      return `\`${name}(${args.join(", ")}): ${c.returnType}\` - ${
+        c.description
+      }`;
+    });
 }
 
 export function getPendingCommandsOrResult(

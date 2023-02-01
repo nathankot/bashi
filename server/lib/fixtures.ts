@@ -23,6 +23,7 @@ export const handlerCtx: HandlerContext<{}> = {
 
 export const commandSet: CommandSet = {
   answer: {
+    cost: -10000,
     description: "answer the original question directly",
     returnType: "void",
     args: [
@@ -33,6 +34,7 @@ export const commandSet: CommandSet = {
     ],
   },
   insertText: {
+    cost: -10000,
     description: "insert text into current cursor location",
     returnType: "void",
     args: [
@@ -43,6 +45,7 @@ export const commandSet: CommandSet = {
     ],
   },
   ask: {
+    cost: 10,
     description: "get answer to a request for additional information",
     returnType: "string",
     args: [
@@ -53,6 +56,7 @@ export const commandSet: CommandSet = {
     ],
   },
   createCalendarEvent: {
+    cost: -1000,
     description: "create a calendar event on a certain date and time",
     returnType: "void",
     args: [
@@ -68,6 +72,7 @@ export const commandSet: CommandSet = {
     triggerTokens: ["calendar", "event"],
   },
   createReminder: {
+    cost: -1000,
     description: "create a reminder on a certain date and time",
     returnType: "void",
     args: [
@@ -80,6 +85,7 @@ export const commandSet: CommandSet = {
     triggerTokens: ["remind", "reminder"],
   },
   sendEmail: {
+    cost: 0,
     returnType: "void",
     description: `send an email`,
     args: [

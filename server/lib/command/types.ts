@@ -26,6 +26,7 @@ export const CommandDefinition = t.intersection([
   }),
   t.partial({
     triggerTokens: t.array(t.string),
+    cost: t.number,
   }),
 ]);
 export type CommandDefinition = t.TypeOf<typeof CommandDefinition>;
@@ -34,6 +35,7 @@ export type BuiltinCommandDefinition<
   A extends ValueType[],
   R extends ValueType | "mixed"
 > = Omit<CommandDefinition, "args" | "returnType"> & {
+  isBuiltin: true;
   returnType: R;
   args: {
     [K in keyof A]: {
@@ -52,6 +54,7 @@ export type AnyBuiltinCommandDefinition = Omit<
   CommandDefinition,
   "returnType"
 > & {
+  isBuiltin: true;
   returnType: ValueType | "mixed";
   run: (deps: ModelDeps, args: any, memory: Memory) => Promise<Value>;
   requestContextRequirement?: RequestContextRequirement;

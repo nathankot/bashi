@@ -12,6 +12,8 @@ import { run as runTranslate } from "@lib/models/translate000.ts";
 const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 
 const now: BuiltinCommandDefinition<[], "string"> = {
+  isBuiltin: true,
+  cost: -1000,
   description: "get the users current ISO8601 datetime",
   args: [],
   run: async (deps, []) => ({
@@ -26,6 +28,8 @@ const now: BuiltinCommandDefinition<[], "string"> = {
 };
 
 const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
+  isBuiltin: true,
+  cost: 10,
   returnType: "string",
   description: "parse ISO8601 datetime relative to now from natural language",
   args: [
@@ -56,6 +60,8 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
 };
 
 const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
+  isBuiltin: true,
+  cost: -1000,
   returnType: "string",
   description: `get the ISO8601 datetime for the given timezone`,
   args: [{ name: "tz database timezone name", type: "string" }],
@@ -73,6 +79,8 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
 };
 
 const search: BuiltinCommandDefinition<["string"], "string"> = {
+  isBuiltin: true,
+  cost: 1000,
   description:
     "get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known",
   returnType: "string",
@@ -92,6 +100,8 @@ const extractInformation: BuiltinCommandDefinition<
   ["string", "string"],
   "string"
 > = {
+  isBuiltin: true,
+  cost: 100,
   returnType: "string",
   description:
     "summarize or extract arbitrary information from input text/code",
@@ -116,6 +126,8 @@ const extractInformation: BuiltinCommandDefinition<
 };
 
 const math: BuiltinCommandDefinition<["string"], "string"> = {
+  isBuiltin: true,
+  cost: -1000,
   returnType: "string",
   description: `compute a math formula`,
   args: [{ name: "a mathjs expression ", type: "string" }],
@@ -131,6 +143,8 @@ const math: BuiltinCommandDefinition<["string"], "string"> = {
 };
 
 const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
+  isBuiltin: true,
+  cost: 100,
   returnType: "string",
   description: `translate something into a target language`,
   args: [
@@ -180,6 +194,8 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
 };
 
 const editProse: BuiltinCommandDefinition<["string", "string"], "string"> = {
+  isBuiltin: true,
+  cost: 100,
   returnType: "string",
   description: `edit prose using the given requirements`,
   args: [
@@ -224,6 +240,8 @@ const editCode: BuiltinCommandDefinition<
   ["string", "string", "string"],
   "string"
 > = {
+  isBuiltin: true,
+  cost: 100,
   returnType: "string",
   description: `edit code using the given requirements`,
   args: [
@@ -274,6 +292,8 @@ ${text.value satisfies string}`,
 };
 
 const generateCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
+  isBuiltin: true,
+  cost: 10,
   returnType: "string",
   description: `generate code for the given request`,
   args: [

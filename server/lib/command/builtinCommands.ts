@@ -103,11 +103,10 @@ const extractInformation: BuiltinCommandDefinition<
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description:
-    "summarize or extract arbitrary information from input text/code",
+  description: "summarize/extract the information from text/code",
   args: [
-    { name: "full description of what to extract", type: "string" },
-    { name: "input", type: "string" },
+    { name: "full description of what the output should be", type: "string" },
+    { name: "inputTextOrCode", type: "string" },
   ],
   run: async (modelDeps, [desc, input]) => {
     const output = await runPassthrough(

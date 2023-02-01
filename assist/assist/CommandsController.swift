@@ -164,7 +164,7 @@ public actor CommandsController {
         AnonymousCommand(
             name: "answer",
             cost: .Low,
-            description: "answer the original question directly",
+            description: "respond to the original question/request",
             args: [.init(type: .string, name: "answer")],
             returnType: .void,
             runFn: { api, ctx, args in
@@ -174,7 +174,7 @@ public actor CommandsController {
         AnonymousCommand(
             name: "ask",
             cost: .Low,
-            description: "get answer to a request for additional information",
+            description: "get a clarification on the original question/request",
             args: [.init(type: .string, name: "question")],
             returnType: .string) { api, ctx, args in
             guard let question = args.first?.string else {

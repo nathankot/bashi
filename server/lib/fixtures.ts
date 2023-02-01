@@ -24,7 +24,7 @@ export const handlerCtx: HandlerContext<{}> = {
 export const commandSet: CommandSet = {
   answer: {
     cost: -10000,
-    description: "answer the original question directly",
+    description: "respond to the original question/request",
     returnType: "void",
     args: [
       {
@@ -46,7 +46,7 @@ export const commandSet: CommandSet = {
   },
   ask: {
     cost: 10,
-    description: "get answer to a request for additional information",
+    description: "get a clarification on the original question/request",
     returnType: "string",
     args: [
       {

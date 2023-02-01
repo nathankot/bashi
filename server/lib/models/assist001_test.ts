@@ -355,6 +355,7 @@ Action: finish()`,
           },
           signal: null as any,
           whisperEndpoint: null as any,
+          googleSearch: async () => [],
         },
         {
           model: "assist-001",

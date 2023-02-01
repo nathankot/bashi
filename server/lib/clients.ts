@@ -1,5 +1,6 @@
 import * as r from "redis";
 import { Configuration, OpenAIApi } from "openai";
+import { google } from "google-apis";
 
 import "dotenv/load.ts";
 
@@ -38,3 +39,26 @@ if (whisperEndpoint == null || whisperEndpoint.length === 0) {
 }
 
 export { whisperEndpoint };
+
+const customSearch = google.customsearch("v1");
+export async function googleSearch(
+  query: string,
+  maxResults: number = 10
+): Promise<
+  {
+    link: string;
+    title: string;
+    snippet: string;
+  }[]
+> {
+  const result = await customSearch.cse.list({
+    q: query,
+  });
+  return (
+    result.data.items?.slice(0, maxResults).map((r) => ({
+      title: r.title ?? "<no title>",
+      link: r.link ?? "<no link>",
+      snippet: r.snippet ?? "<no snippet>",
+    })) ?? []
+  );
+}

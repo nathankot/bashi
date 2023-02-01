@@ -72,6 +72,33 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   },
 };
 
+const extractInformation: BuiltinCommandDefinition<
+  ["string", "string"],
+  "string"
+> = {
+  returnType: "string",
+  description:
+    "summarize or extract arbitrary information from input text/code",
+  args: [
+    { name: "full description of what to extract", type: "string" },
+    { name: "input", type: "string" },
+  ],
+  run: async (modelDeps, [desc, input]) => {
+    const output = await runPassthrough(
+      modelDeps,
+      { model: "passthrough-openai-000" },
+      {
+        openAiModel: "text-davinci-003",
+        request: `Condense and extract information from the text that follows. The requirement is "${desc}, the text is:\n\n${input}\n\nExtracted information:\n"`,
+      }
+    );
+    return {
+      type: "string",
+      value: output.result,
+    };
+  },
+};
+
 const math: BuiltinCommandDefinition<["string"], "string"> = {
   returnType: "string",
   description: `compute a math formula`,
@@ -166,6 +193,13 @@ ${text.value}`,
     "reword",
     "re-word",
     "editor",
+    "improve",
+    "check",
+    "revise",
+    "modify",
+    "adapt",
+    "rewrite",
+    "re-write",
   ],
 };
 
@@ -213,6 +247,13 @@ ${text.value satisfies string}`,
     "re-word",
     "editor",
     "lint",
+    "improve",
+    "check",
+    "revise",
+    "modify",
+    "adapt",
+    "rewrite",
+    "re-write",
   ],
 };
 
@@ -263,6 +304,7 @@ export const builtinCommands = {
   generateCode,
   translate,
   parseRelativeTime,
+  extractInformation,
 };
 
 export default builtinCommands;

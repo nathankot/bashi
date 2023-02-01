@@ -76,6 +76,7 @@ export const handler: Handlers<AllOutput, State & ApiState> = {
 
     const modelDeps: Omit<ModelDeps, "signal"> = {
       log,
+      googleSearch: ctx.state.clients.googleSearch,
       openai: ctx.state.clients.openai,
       whisperEndpoint: ctx.state.clients.whisperEndpoint,
       session: ctx.state.session,

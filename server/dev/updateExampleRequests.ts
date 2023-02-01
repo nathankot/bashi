@@ -4,7 +4,7 @@ import defaultPolicy from "@lib/faultHandling.ts";
 import { RequestContext } from "@lib/requestContext.ts";
 import { ModelDeps, run, models } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
-import { openai, whisperEndpoint } from "@lib/clients.ts";
+import { openai, whisperEndpoint, googleSearch } from "@lib/clients.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 
@@ -121,6 +121,7 @@ export default async function updateExamples(examplesFile: string) {
     faultHandlingPolicy: defaultPolicy,
     now: () => fixtures.now,
     session: fixtures.session,
+    googleSearch,
     openai,
     whisperEndpoint,
     signal: abortController.signal,

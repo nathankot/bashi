@@ -1,6 +1,6 @@
+import * as t from "io-ts";
 import * as r from "redis";
 import { Configuration, OpenAIApi } from "openai";
-import { google } from "google-apis";
 
 import "dotenv/load.ts";
 
@@ -40,10 +40,19 @@ if (whisperEndpoint == null || whisperEndpoint.length === 0) {
 
 export { whisperEndpoint };
 
-const customSearch = google.customsearch("v1");
+const GoogleSearchResponse = t.partial({
+  items: t.array(
+    t.type({
+      title: t.string,
+      link: t.string,
+      snippet: t.string,
+    })
+  ),
+});
+
 export async function googleSearch(
-  query: string,
-  maxResults: number = 10
+  q: string,
+  signal?: AbortSignal
 ): Promise<
   {
     link: string;
@@ -51,11 +60,25 @@ export async function googleSearch(
     snippet: string;
   }[]
 > {
-  const result = await customSearch.cse.list({
-    q: query,
-  });
+  const key = Deno.env.get("GOOGLE_SEARCH_API_KEY");
+  const cx = Deno.env.get("GOOGLE_SEARCH_ENGINE_ID");
+  if (key == null) {
+    throw new Error(`GOOGLE_SEARCH_API_KEY is missing`);
+  }
+  if (cx == null) {
+    throw new Error(`GOOGLE_SEARCH_ENGINE_ID is missing`);
+  }
+  const response = await fetch(
+    "https://www.googleapis.com/customsearch/v1?" +
+      new URLSearchParams({ key, cx, q, num: "5" }),
+    { signal }
+  );
+  const json = await response.json();
+  if (!GoogleSearchResponse.is(json)) {
+    throw new Error("could not parse response from google search");
+  }
   return (
-    result.data.items?.slice(0, maxResults).map((r) => ({
+    json.items?.map((r) => ({
       title: r.title ?? "<no title>",
       link: r.link ?? "<no link>",
       snippet: r.snippet ?? "<no snippet>",

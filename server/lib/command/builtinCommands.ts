@@ -72,6 +72,22 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   },
 };
 
+const search: BuiltinCommandDefinition<["string"], "string"> = {
+  description:
+    "get a list of (title, link, snippet) google search results, only use when information is not available directly",
+  returnType: "string",
+  args: [{ name: "query", type: "string" }],
+  run: async (modelDeps, [query]) => {
+    const results = await modelDeps.googleSearch(query.value, modelDeps.signal);
+    return {
+      type: "string",
+      value: results
+        .map((r) => `Title: ${r.title}\nLink: ${r.link}\nSnippet: ${r.snippet}`)
+        .join("\n---\n"),
+    };
+  },
+};
+
 const extractInformation: BuiltinCommandDefinition<
   ["string", "string"],
   "string"
@@ -305,6 +321,7 @@ export const builtinCommands = {
   translate,
   parseRelativeTime,
   extractInformation,
+  search,
 };
 
 export default builtinCommands;

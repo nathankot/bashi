@@ -1,8 +1,10 @@
 import {
+  TimeoutStrategy,
   ExponentialBackoff,
   SamplingBreaker,
   retry,
   circuitBreaker,
+  timeout,
   handleWhen,
   wrap,
 } from "cockatiel";
@@ -30,6 +32,13 @@ export const circuitBreakerPolicy =
     }),
   });
 
-export const defaultPolicy = wrap(retryPolicy, circuitBreakerPolicy);
+export const timeoutPolicy = (durationMilliseconds: number) =>
+  timeout(durationMilliseconds, TimeoutStrategy.Cooperative);
+
+export const defaultPolicy = wrap(
+  timeoutPolicy(30_000),
+  retryPolicy,
+  circuitBreakerPolicy
+);
 
 export default defaultPolicy;

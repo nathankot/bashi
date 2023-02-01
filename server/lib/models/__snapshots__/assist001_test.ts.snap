@@ -72,6 +72,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -104,6 +105,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -252,6 +254,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -284,6 +287,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -1685,6 +1689,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -2093,6 +2098,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools

@@ -512,12 +512,10 @@ Result: the result of the Action expression
 
   const existingActionGroups = resolvedActionGroups
     .map(
-      (g) =>
-        `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${
-          g.result.length > 150 ? "<result too long, redacted>" : g.result
-        }`
+      (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
     )
     .join("\n");
+  // g.result.length > 150 ? "<result too long, redacted>" : g.result
 
   const commandSet = makeCommandSet(
     filterUnnecessary(request + " " + existingActionGroups, commands)

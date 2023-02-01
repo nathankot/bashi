@@ -13,7 +13,6 @@
     "twind/sheets": "https://esm.sh/twind@0.16.17/sheets",
     "openai": "https://esm.sh/openai@^3.1.0",
     "redis": "https://esm.sh/@redis/client@1.4.2",
-    "google-apis": "https://esm.sh/googleapis@110.0.0",
     "node:events": "https://deno.land/std/node/events.ts",
     "io-ts": "https://esm.sh/io-ts@2.2.20",
     "io-ts-types": "https://esm.sh/io-ts-types@0.5.19",

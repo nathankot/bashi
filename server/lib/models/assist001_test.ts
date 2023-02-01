@@ -165,6 +165,35 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     ],
   },
   {
+    description: "server commands with identical inputs re-use results",
+    input: { requestContext: {} },
+    openAiResults: [
+      `Thought: blah\nAction: now(); ask("not reused because client command")`,
+    ],
+    initialState: {
+      modelCallCount: 1,
+      request: "some request",
+      resolvedCommands: [
+        {
+          type: "executed",
+          args: [],
+          id: "someid",
+          name: "now",
+          returnValue: "0000-00-00T00:00:00Z",
+        },
+        {
+          type: "executed",
+          args: [
+            { type: "string", value: "not reused because client command" },
+          ],
+          id: "someid",
+          name: "ask",
+          returnValue: "this should not be reused",
+        },
+      ],
+    },
+  },
+  {
     description: "client resolved command",
     input: { request: "some request" },
     openAiResults: [

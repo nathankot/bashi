@@ -300,6 +300,38 @@ export async function run(
           }
           if (serverCommandDef != null) {
             // 1b. Any commands that can be resolved server side should be
+
+            // If the command was already previously run with identical arguments,
+            // then re-use the return value.
+            for (const resolved of resolvedCommands) {
+              if (
+                resolved.name === pendingCommand.name &&
+                resolved.args.every((arg, i) => {
+                  const pendingArg = pendingCommand.args[i];
+                  if (pendingArg == null) {
+                    return false;
+                  }
+                  if (pendingArg.type !== arg.type) {
+                    return false;
+                  }
+                  if (
+                    "value" in pendingArg &&
+                    "value" in arg &&
+                    pendingArg.value !== arg.value
+                  ) {
+                    return false;
+                  }
+                  return true;
+                })
+              ) {
+                resolvedCommands.push({
+                  ...resolved,
+                  id: pendingCommand.id,
+                });
+                continue pendingCommandLoop;
+              }
+            }
+
             try {
               const resolved = await runBuiltinCommand(
                 serverCommandDef,
@@ -490,9 +522,6 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  // TODO add:
-  // * assignment support
-  // * do not make things up, use fail()
   const header = `Fulfill the question/request as best you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these features which available:

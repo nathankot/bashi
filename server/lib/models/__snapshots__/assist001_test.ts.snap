@@ -1113,6 +1113,126 @@ snapshot[`supports assignment 1`] = `
 }
 `;
 
+snapshot[`server commands with identical inputs re-use results 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "not reused because client command",
+            },
+          ],
+          id: "0.1",
+          name: "ask",
+          type: "parsed",
+        },
+      ],
+      resolvedCommands: [
+        {
+          args: [
+          ],
+          id: "someid",
+          name: "now",
+          returnValue: "0000-00-00T00:00:00Z",
+          type: "executed",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "not reused because client command",
+            },
+          ],
+          id: "someid",
+          name: "ask",
+          returnValue: "this should not be reused",
+          type: "executed",
+        },
+        {
+          args: [
+          ],
+          id: "0.0",
+          name: "now",
+          returnValue: "0000-00-00T00:00:00Z",
+          type: "executed",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      requestContext: {},
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: {
+      action: 'now(); ask("not reused because client command")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "not reused because client command",
+            },
+          ],
+          name: "ask",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "blah",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "someid",
+        name: "now",
+        returnValue: "0000-00-00T00:00:00Z",
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "not reused because client command",
+          },
+        ],
+        id: "someid",
+        name: "ask",
+        returnValue: "this should not be reused",
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: "0000-00-00T00:00:00Z",
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
 snapshot[`client resolved command 1`] = `
 {
   n: 1,
@@ -1239,7 +1359,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10Z",
+            value: "2022-12-19T08:41:10.000Z",
           },
           type: "executed",
         },
@@ -1298,7 +1418,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10Z",
+          value: "2022-12-19T08:41:10.000Z",
         },
         type: "executed",
       },
@@ -1347,7 +1467,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10Z",
+            value: "2022-12-19T08:41:10.000Z",
           },
           type: "executed",
         },
@@ -1406,7 +1526,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10Z",
+          value: "2022-12-19T08:41:10.000Z",
         },
         type: "executed",
       },
@@ -1455,7 +1575,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
           name: "now",
           returnValue: {
             type: "string",
-            value: "2022-12-19T08:41:10Z",
+            value: "2022-12-19T08:41:10.000Z",
           },
           type: "executed",
         },
@@ -1514,7 +1634,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
         name: "now",
         returnValue: {
           type: "string",
-          value: "2022-12-19T08:41:10Z",
+          value: "2022-12-19T08:41:10.000Z",
         },
         type: "executed",
       },

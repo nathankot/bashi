@@ -74,7 +74,7 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
 
 const search: BuiltinCommandDefinition<["string"], "string"> = {
   description:
-    "get a list of (title, link, snippet) google search results, only use when information is not available directly",
+    "get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known",
   returnType: "string",
   args: [{ name: "query", type: "string" }],
   run: async (modelDeps, [query]) => {

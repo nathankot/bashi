@@ -497,7 +497,7 @@ function makePrompt(
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 

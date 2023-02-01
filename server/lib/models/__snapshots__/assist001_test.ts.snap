@@ -59,7 +59,7 @@ snapshot[`all commands resolved on the server 2`] = `
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -72,7 +72,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -92,7 +92,7 @@ Thought: ',
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -105,7 +105,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -241,7 +241,7 @@ snapshot[`command overloads work 2`] = `
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -254,7 +254,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -274,7 +274,7 @@ Thought: ',
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -287,7 +287,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -1676,7 +1676,7 @@ snapshot[`nested calls 2`] = `
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -1689,7 +1689,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
@@ -2085,7 +2085,7 @@ some text",
 
 The language for Action is a tiny subset of javascript, only use these features which available:
 
-* function calls
+* function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
 
@@ -2098,7 +2098,7 @@ Functions are declared below, you must not use any functions other then those be
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
-\`search(query: string): string\` - get a list of (title, link, snippet) google search results, only use when information is not available directly
+\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 \`askForText(): string\` - get the input text for editing
 \`finish(): void\` - mark request/question as fulfilled
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools

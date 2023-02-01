@@ -110,6 +110,7 @@ extension Command {
                 )
             },
             returnType: self.returnType.toAPIRepresentation(),
+            cost: Double(self.cost.rawValue),
             triggerTokens: self.triggerTokens
         )
     }

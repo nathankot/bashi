@@ -163,6 +163,7 @@ public actor CommandsController {
     static let builtinCommands = [
         AnonymousCommand(
             name: "answer",
+            cost: .Low,
             description: "answer the original question directly",
             args: [.init(type: .string, name: "answer")],
             returnType: .void,
@@ -172,6 +173,7 @@ public actor CommandsController {
             }),
         AnonymousCommand(
             name: "ask",
+            cost: .Low,
             description: "get answer to a request for additional information",
             args: [.init(type: .string, name: "question")],
             returnType: .string) { api, ctx, args in

@@ -34,6 +34,7 @@ public class CalendarCommands: BundledPlugin {
         return [
             AnonymousCommand(
                 name: "createCalendarEvent",
+                cost: .Low,
                 description: "create a calendar event for a certain date and time",
                 args: [
                         .init(type: .string, name: "name"),

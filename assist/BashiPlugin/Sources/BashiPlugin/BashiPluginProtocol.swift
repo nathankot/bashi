@@ -119,8 +119,15 @@ import Foundation
     }
 }
 
+@objc public enum CommandCost : Int {
+    case Low = -100
+    case Medium = 0
+    case High = 1000
+}
+
 @objc public protocol Command {
     var name: String { get }
+    var cost: CommandCost { get }
     var description: String { get }
     var args: [CommandArgDef] { get }
     var triggerTokens: [String]? { get }
@@ -141,6 +148,7 @@ import Foundation
 
 public class AnonymousCommand: Command {
     public let name: String
+    public let cost: CommandCost
     public let description: String
     public let args: [CommandArgDef]
     public var returnType: BashiValueType
@@ -153,6 +161,7 @@ public class AnonymousCommand: Command {
 
     public init(
         name: String,
+        cost: CommandCost,
         description: String,
         args: [CommandArgDef] = [],
         returnType: BashiValueType,
@@ -164,6 +173,7 @@ public class AnonymousCommand: Command {
         ) async throws -> BashiValue
     ) {
         self.name = name
+        self.cost = cost
         self.description = description
         self.args = args
         self.returnType = returnType

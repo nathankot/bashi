@@ -26,6 +26,7 @@
             return [
                 AnonymousCommand(
                     name: "mock_command",
+                    cost: .Low,
                     description: "do some thing",
                     returnType: .string
                 ) { api, ctx, _ in
@@ -33,6 +34,7 @@
                 },
                 AnonymousCommand(
                     name: "mock_command_throws",
+                    cost: .Low,
                     description: "do some thing",
                     returnType: .void
                 ) { api, ctx, args in
@@ -40,6 +42,7 @@
                 },
                 AnonymousCommand(
                     name: "mock_command_return_argument",
+                    cost: .Low,
                     description: "do some thing",
                     args: [.init(type: .string, name: "any string")],
                     returnType: .string
@@ -51,6 +54,7 @@
                 },
                 AnonymousCommand(
                     name: "mock_display",
+                    cost: .Low,
                     description: "display a message to the user",
                     args: [.init(type: .string, name: "message")],
                     returnType: .void
@@ -60,6 +64,7 @@
                 },
                 AnonymousCommand(
                     name: "mock_wrong_return_type",
+                    cost: .Low,
                     description: "do some thing",
                     returnType: .string
                 ) { api, ctx, _ in

@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 
 import { ModelDeps } from "./modelDeps.ts";
+import { IS_DEV } from "@lib/constants.ts";
 
 const model = "passthrough-openai-000";
 
@@ -35,6 +36,9 @@ export async function run(
   configuration: Configuration,
   input: Input
 ): Promise<Output> {
+  if (IS_DEV()) {
+    deps.log("info", `passthrough model prompt: ${input.request}`);
+  }
   const completion = await deps.openai.createCompletion(
     {
       model: input.openAiModel,
@@ -54,6 +58,7 @@ export async function run(
   });
 
   const result = completion.data.choices[0]?.text ?? "";
+  deps.log("info", `passthrough model result: ${result}`);
 
   return {
     model,

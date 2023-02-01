@@ -71,7 +71,10 @@ export const Output = t.type({
   ]),
 });
 export type Output = t.TypeOf<typeof Output> & {
-  dev?: { prompt: string; completion: string }[];
+  dev?: {
+    results: string[];
+    prompts: { prompt: string; completion: string }[];
+  };
 };
 
 export const defaultConfiguration: Partial<Configuration> = {
@@ -219,12 +222,7 @@ export async function run(
 
   const clientCommands = configuration.commands;
 
-  let dev:
-    | {
-        prompt: string;
-        completion: string;
-      }[]
-    | undefined = IS_DEV() ? [] : undefined;
+  let dev: Output["dev"] = IS_DEV() ? { prompts: [], results: [] } : undefined;
 
   const session = modelDeps.session;
   const isContinue = input.request == null;
@@ -410,10 +408,15 @@ export async function run(
         }
 
         // 2. Any resolutions from the above go into the new prompt
+        const result = topLevelExpressionResults.map(valueToString).join("; ");
         resolvedActionGroups.push({
           ...pending,
-          result: topLevelExpressionResults.map(valueToString).join("; "),
+          result,
         });
+        dev?.results.push(result);
+        if (IS_DEV()) {
+          log("info", `result: ${result}`);
+        }
 
         // Reaching here implies that anything pending has been
         // dealt with and we are ready for more model output:
@@ -472,7 +475,7 @@ export async function run(
       log("info", { message: "tokens used" });
       let text = completion.data.choices[0]?.text ?? "";
 
-      dev?.push({
+      dev?.prompts.push({
         prompt,
         completion: text,
       });

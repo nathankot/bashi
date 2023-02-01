@@ -88,6 +88,21 @@ const INPUTS: {
   {
     prompt: "make a calendar event for next tuesday noon, lunch with Bill",
   },
+  {
+    prompt: "there is a function I don't understand, can help me summarize it?",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `function something(num) {
+  if (num < 0) return -1;
+  else if (num == 0) return 1;
+  else {
+      return (num * something(num - 1));
+  }
+}`,
+      },
+    },
+  },
 
   // TODO: something like 'highlight the selected string', will it be able to differentiate from
   // having the request string be in the request?

@@ -103,7 +103,7 @@ const extractInformation: BuiltinCommandDefinition<
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: "summarize/extract the information from text/code",
+  description: "describe/summarize/extract information from the given string",
   args: [
     { name: "full description of what the output should be", type: "string" },
     { name: "inputTextOrCode", type: "string" },

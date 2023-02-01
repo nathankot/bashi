@@ -65,7 +65,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -73,8 +73,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
@@ -98,7 +98,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -106,8 +106,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
@@ -247,7 +247,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -255,8 +255,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
@@ -280,7 +280,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -288,8 +288,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
@@ -1802,7 +1802,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -1810,8 +1810,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
@@ -2211,7 +2211,7 @@ The language for Action is a tiny subset of javascript, only use these available
 
 Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
 
-\`answer(answer: string): void\` - answer the original question directly
+\`answer(answer: string): void\` - respond to the original question/request
 \`insertText(text: string): void\` - insert text into current cursor location
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
@@ -2219,8 +2219,8 @@ Functions are declared below, you must not use any other functions. When calling
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get answer to a request for additional information
-\`extractInformation("full description of what to extract": string, input: string): string\` - summarize or extract arbitrary information from input text/code
+\`ask(question: string): string\` - get a clarification on the original question/request
+\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
 \`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:

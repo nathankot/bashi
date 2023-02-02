@@ -1093,6 +1093,41 @@ Action: "some string"; 123; currentTimeForTimezone('Pacific/Auckland') 1`] = `
 }
 `;
 
+snapshot[`parseActionGroup: Thought: multiline strings should work
+Action: editCode("func main() {
+  fmt.Println(\\"Hello World\\")
+}", "go lang", "make it compile"); 1`] = `
+{
+  action: 'editCode("func main() {
+  fmt.Println(\\\\"Hello World\\\\")
+}", "go lang", "make it compile");',
+  expressions: [
+    {
+      args: [
+        {
+          type: "string",
+          value: 'func main() {
+  fmt.Println("Hello World")
+}',
+        },
+        {
+          type: "string",
+          value: "go lang",
+        },
+        {
+          type: "string",
+          value: "make it compile",
+        },
+      ],
+      name: "editCode",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "multiline strings should work",
+}
+`;
+
 snapshot[`parseActionGroup: Thought no colon doesnt work
 Action hahaha 1`] = `
 '{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 

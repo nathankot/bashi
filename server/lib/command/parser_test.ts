@@ -84,6 +84,7 @@ Result: blah blah blah blah
 123123`,
   `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
   `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+  `Thought: multiline strings should work\nAction: editCode("func main() {\n  fmt.Println(\\"Hello World\\")\n}", "go lang", "make it compile");`,
 
   // Invalid examples:
   `Thought no colon doesnt work\nAction hahaha`,

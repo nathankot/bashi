@@ -81,8 +81,7 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
 const search: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: 1000,
-  description:
-    "get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known",
+  description: "get list of website titles and links from the search query",
   returnType: "string",
   args: [{ name: "query", type: "string" }],
   run: async (modelDeps, [query]) => {
@@ -94,6 +93,7 @@ const search: BuiltinCommandDefinition<["string"], "string"> = {
         .join("\n---\n"),
     };
   },
+  triggerTokens: ["search", "google", "find"],
 };
 
 const extractInformation: BuiltinCommandDefinition<
@@ -221,6 +221,8 @@ ${text.value}`,
     "change",
     "alter",
     "fix",
+    "move",
+    "align",
     "reword",
     "re-word",
     "editor",
@@ -270,6 +272,8 @@ ${text.value satisfies string}`,
     "class",
     "variable",
     "code",
+    "move",
+    "align",
     "refactor",
     "re-factor",
     "edit",

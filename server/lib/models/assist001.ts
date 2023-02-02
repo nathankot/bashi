@@ -82,11 +82,11 @@ export const defaultConfiguration: Partial<Configuration> = {
 };
 
 const privateBuiltinCommands = {
-  askForText: {
+  getInputText: {
     isBuiltin: true,
     cost: -1000,
     returnType: "string",
-    description: "get the input text for editing",
+    description: "get input text/code that the request may refer to",
     args: [],
     run: async (_, __, memory) => {
       if (
@@ -542,15 +542,17 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.`;
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer

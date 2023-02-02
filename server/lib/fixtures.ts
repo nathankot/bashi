@@ -33,9 +33,10 @@ export const commandSet: CommandSet = {
       },
     ],
   },
-  insertText: {
+  returnText: {
     cost: -10000,
-    description: "insert text into current cursor location",
+    description:
+      "provide text that was being generated/edited back to the client",
     returnType: "void",
     args: [
       {

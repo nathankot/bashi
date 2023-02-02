@@ -27,21 +27,23 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -59,21 +61,23 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -149,21 +153,23 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -181,21 +187,23 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -1315,21 +1323,23 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -1379,7 +1389,7 @@ snapshot[`request needs more context 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); editProse(askForText(), "convert to poem"); now()',
+      action: 'now(); editProse(getInputText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -1392,7 +1402,7 @@ snapshot[`request needs more context 1`] = `
             {
               args: [
               ],
-              name: "askForText",
+              name: "getInputText",
               type: "call",
             },
             {
@@ -1458,14 +1468,14 @@ snapshot[`request needs more context - still missing 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editProse(askForText(), "convert to poem"); now()',
+      action: 'editProse(getInputText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
             {
               args: [
               ],
-              name: "askForText",
+              name: "getInputText",
               type: "call",
             },
             {
@@ -1549,14 +1559,14 @@ snapshot[`request needs more context - wrong type 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editProse(askForText(), "convert to poem"); now()',
+      action: 'editProse(getInputText(), "convert to poem"); now()',
       expressions: [
         {
           args: [
             {
               args: [
               ],
-              name: "askForText",
+              name: "getInputText",
               type: "call",
             },
             {
@@ -1640,21 +1650,23 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
 * function calls and composition/nesting
 * string concatenation using +
 * simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. When calling pay attention to syntax and ensure strings are escaped correctly. Prefer functions ordered earlier in thelist.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`insertText(text: string): void\` - insert text into current cursor location
+\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`askForText(): string\` - get the input text for editing
+\`getInputText(): string\` - get input text/code that the request may refer to
 \`math("a mathjs expression ": string): string\` - compute a math formula
 \`now(): string\` - get the users current ISO8601 datetime
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
@@ -1675,7 +1687,7 @@ Thought: I need to call some command
 Action: someCommand()
 Result: "blah"
 Thought: I need to do something
-Action: editProse(askForText(), "convert to poem"); now()
+Action: editProse(getInputText(), "convert to poem"); now()
 Result: "the result of editProse()"; "2022-12-19T08:41:10Z"
 Thought: ',
 ]

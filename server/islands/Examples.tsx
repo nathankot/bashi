@@ -23,7 +23,7 @@ export default function Examples() {
         <div class="mb-3">
           <div>{example.prompt}</div>
           <div class="whitespace-pre text-xs font-mono overflow-x-auto">
-            {JSON.stringify(example.result, null, "  ")}
+            {JSON.stringify(example, null, "  ")}
           </div>
         </div>
       ))}

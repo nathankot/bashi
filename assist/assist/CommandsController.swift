@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Cocoa
 import BashiClient
 import BashiPlugin
 
@@ -38,7 +39,7 @@ public actor CommandsController {
             },
             askFn: { question in
                 return try await self.state.transitionAndWaitforStateCallback { callback in
-                    .NeedsInput(
+                        .NeedsInput(
                         messages: messages,
                         type: .Question(message: question, onAnswer: callback)
                     )
@@ -65,7 +66,7 @@ public actor CommandsController {
                 case .resultNeedsRequestContext(let resultNeedsContext):
                     if resultNeedsContext.missingRequestContext.text != nil {
                         let text = try await state.transitionAndWaitforStateCallback { callback in
-                            .NeedsInput(
+                                .NeedsInput(
                                 messages: messages,
                                 type: .RequestContextText(
                                     onReceive: callback))
@@ -158,6 +159,10 @@ public actor CommandsController {
         public func ask(question: String) async throws -> String {
             return try await askFn(question)
         }
+
+        public func storeTextInPasteboard(text: String) async throws {
+            NSPasteboard.general.writeObjects([NSString(string: text)])
+        }
     }
 
     static let builtinCommands = [
@@ -166,23 +171,34 @@ public actor CommandsController {
             cost: .Low,
             description: "respond to the original question/request",
             args: [.init(type: .string, name: "answer")],
-            returnType: .void,
-            runFn: { api, ctx, args in
-                try await api.respond(message: args.first?.string ?? "could not get message")
-                return .init(.void)
-            }),
+            returnType: .void
+        ) { api, ctx, args in
+            try await api.respond(message: args.first?.string ?? "could not get message")
+            return .init(.void)
+        },
         AnonymousCommand(
             name: "ask",
             cost: .Low,
             description: "get a clarification on the original question/request",
             args: [.init(type: .string, name: "question")],
-            returnType: .string) { api, ctx, args in
+            returnType: .string
+        ) { api, ctx, args in
             guard let question = args.first?.string else {
                 throw AppError.Internal("expected first argument to be a string")
             }
             let response = try await api.ask(question: question)
             return .init(.string(response))
         },
+        AnonymousCommand(
+            name: "returnText",
+            cost: .Low,
+            description: "provide text that was being generated/edited back to the client",
+            returnType: .void
+        ) { api, ctx, args in
+            try await api.storeTextInPasteboard(text: args.first?.string ?? "")
+            try await api.respond(message: "The result has been copied to your clipboard")
+            return .void
+        }
     ]
 
     public actor Context: BashiPlugin.CommandContext {

@@ -103,6 +103,60 @@ const INPUTS: {
       },
     },
   },
+  {
+    prompt:
+      "given a list of verbs can you help me find additional verbs that mean about the same thing",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `
+    "edit",
+    "change",
+    "alter",
+    "fix",
+    "move",
+    "align",
+    "reword",
+    "re-word",
+    "editor",
+    "improve",
+    "check",
+    "revise",
+    "modify",
+    "adapt",
+    "rewrite",
+    "re-write",
+`,
+      },
+    },
+  },
+  {
+    prompt:
+      "edit this list of verbs with additional items that mean about the same thing",
+    requestContext: {
+      text: {
+        type: "string",
+        value: `
+    "edit",
+    "change",
+    "alter",
+    "fix",
+    "move",
+    "align",
+    "reword",
+    "re-word",
+    "editor",
+    "improve",
+    "check",
+    "revise",
+    "modify",
+    "adapt",
+    "rewrite",
+    "re-write",
+`,
+      },
+    },
+  },
 
   // TODO: something like 'highlight the selected string', will it be able to differentiate from
   // having the request string be in the request?
@@ -158,25 +212,30 @@ export default async function updateExamples(examplesFile: string) {
       "info",
       `found new example, running model with prompt: ${promptWithVariant}`
     );
-    const output = await run(modelDeps, "assist-001", {
-      request: input.prompt,
-      requestContext: input.requestContext,
-      resolvedCommands: input.resolvedCommands,
-    });
-    if (!("result" in output)) {
-      throw new Error(`unexpected output: ${JSON.stringify(output)}`);
-    }
+    try {
+      const output = await run(modelDeps, "assist-001", {
+        request: input.prompt,
+        requestContext: input.requestContext,
+        resolvedCommands: input.resolvedCommands,
+      });
+      if (!("result" in output)) {
+        throw new Error(`unexpected output: ${JSON.stringify(output)}`);
+      }
 
-    log("info", `got result for: ${promptWithVariant}`);
-    hasChanges = true;
-    newExamples.push({
-      updated: new Date().toISOString(),
-      prompt: promptWithVariant,
-      dev: (output as any).dev,
-      result: output.result,
-      requestContext: input.requestContext ?? {},
-      resolvedCommands: input.resolvedCommands ?? {},
-    });
+      log("info", `got result for: ${promptWithVariant}`);
+      hasChanges = true;
+      newExamples.push({
+        updated: new Date().toISOString(),
+        prompt: promptWithVariant,
+        dev: (output as any).dev,
+        result: output.result,
+        requestContext: input.requestContext ?? {},
+        resolvedCommands: input.resolvedCommands ?? {},
+      });
+    } catch (e) {
+      log("error", "model run failed with error, ignoring result");
+      log("error", e);
+    }
   }
 
   if (hasChanges) {

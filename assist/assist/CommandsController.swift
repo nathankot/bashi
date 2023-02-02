@@ -122,8 +122,8 @@ public actor CommandsController {
 
                 case .resultFinished(let resultFinished):
                     if messages.count == 1 {
-                        if let lastValue = resultFinished.resolvedCommands.reversed().compactMap({ (v) -> String? in
-                                switch v.returnValue {
+                        if let lastValue = resultFinished.results.reversed().compactMap({ (v) -> String? in
+                                switch v {
                                 case .stringValue(let s): return s.value
                                 case .numberValue(let n): return "\(n)"
                                 case .booleanValue(let b): return b.value ? "True" : "False"

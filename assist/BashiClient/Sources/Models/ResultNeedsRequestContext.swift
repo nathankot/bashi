@@ -15,12 +15,12 @@ public class ResultNeedsRequestContext: APIModel {
 
     public var missingRequestContext: RequestContextRequirement
 
-    public var resolvedCommands: [CommandExecuted]
+    public var results: [Value]
 
-    public init(type: `Type`, missingRequestContext: RequestContextRequirement, resolvedCommands: [CommandExecuted]) {
+    public init(type: `Type`, missingRequestContext: RequestContextRequirement, results: [Value]) {
         self.type = type
         self.missingRequestContext = missingRequestContext
-        self.resolvedCommands = resolvedCommands
+        self.results = results
     }
 
     public required init(from decoder: Decoder) throws {
@@ -28,7 +28,7 @@ public class ResultNeedsRequestContext: APIModel {
 
         type = try container.decode("type")
         missingRequestContext = try container.decode("missingRequestContext")
-        resolvedCommands = try container.decodeArray("resolvedCommands")
+        results = try container.decodeArray("results")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -36,14 +36,14 @@ public class ResultNeedsRequestContext: APIModel {
 
         try container.encode(type, forKey: "type")
         try container.encode(missingRequestContext, forKey: "missingRequestContext")
-        try container.encode(resolvedCommands, forKey: "resolvedCommands")
+        try container.encode(results, forKey: "results")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ResultNeedsRequestContext else { return false }
       guard self.type == object.type else { return false }
       guard self.missingRequestContext == object.missingRequestContext else { return false }
-      guard self.resolvedCommands == object.resolvedCommands else { return false }
+      guard self.results == object.results else { return false }
       return true
     }
 

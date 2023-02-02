@@ -15,12 +15,12 @@ public class ResultPendingCommands: APIModel {
 
     public var pendingCommands: [Command]
 
-    public var resolvedCommands: [CommandExecuted]
+    public var results: [Value]
 
-    public init(type: `Type`, pendingCommands: [Command], resolvedCommands: [CommandExecuted]) {
+    public init(type: `Type`, pendingCommands: [Command], results: [Value]) {
         self.type = type
         self.pendingCommands = pendingCommands
-        self.resolvedCommands = resolvedCommands
+        self.results = results
     }
 
     public required init(from decoder: Decoder) throws {
@@ -28,7 +28,7 @@ public class ResultPendingCommands: APIModel {
 
         type = try container.decode("type")
         pendingCommands = try container.decodeArray("pendingCommands")
-        resolvedCommands = try container.decodeArray("resolvedCommands")
+        results = try container.decodeArray("results")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -36,14 +36,14 @@ public class ResultPendingCommands: APIModel {
 
         try container.encode(type, forKey: "type")
         try container.encode(pendingCommands, forKey: "pendingCommands")
-        try container.encode(resolvedCommands, forKey: "resolvedCommands")
+        try container.encode(results, forKey: "results")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ResultPendingCommands else { return false }
       guard self.type == object.type else { return false }
       guard self.pendingCommands == object.pendingCommands else { return false }
-      guard self.resolvedCommands == object.resolvedCommands else { return false }
+      guard self.results == object.results else { return false }
       return true
     }
 

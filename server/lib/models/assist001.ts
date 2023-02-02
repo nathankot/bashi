@@ -254,6 +254,13 @@ export async function run(
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
+  const resultsExternal = (): Value[] =>
+    resolvedCommands
+      // Results should only have the top level commands:
+      .filter((c) => (c.id.match(/\./g) ?? []).length === 1)
+      .filter((c) => c.returnValue.type !== "void")
+      .map((c) => c.returnValue);
+
   // Interpreter loop that does the following:
   //
   // 1. For each pending thought/action, find commands and try to resolve them
@@ -357,7 +364,7 @@ export async function run(
                   result: {
                     type: "needs_request_context",
                     missingRequestContext: e.requirement,
-                    resolvedCommands,
+                    results: resultsExternal(),
                   },
                   dev,
                 };
@@ -396,7 +403,7 @@ export async function run(
             result: {
               type: "pending_commands",
               pendingCommands: commandsToSendToClient,
-              resolvedCommands,
+              results: resultsExternal(),
             },
             dev,
           };
@@ -524,7 +531,7 @@ export async function run(
     request,
     result: {
       type: "finished",
-      resolvedCommands,
+      results: resultsExternal(),
     },
     dev,
   };

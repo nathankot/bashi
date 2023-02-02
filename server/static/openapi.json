@@ -738,7 +738,7 @@
         "type": "object",
         "required": [
           "type",
-          "resolvedCommands"
+          "results"
         ],
         "properties": {
           "type": {
@@ -747,10 +747,10 @@
             ],
             "type": "string"
           },
-          "resolvedCommands": {
+          "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CommandExecuted"
+              "$ref": "#/components/schemas/Value"
             }
           }
         }
@@ -760,7 +760,7 @@
         "required": [
           "type",
           "pendingCommands",
-          "resolvedCommands"
+          "results"
         ],
         "properties": {
           "type": {
@@ -775,10 +775,10 @@
               "$ref": "#/components/schemas/Command"
             }
           },
-          "resolvedCommands": {
+          "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CommandExecuted"
+              "$ref": "#/components/schemas/Value"
             }
           }
         }
@@ -788,7 +788,7 @@
         "required": [
           "type",
           "missingRequestContext",
-          "resolvedCommands"
+          "results"
         ],
         "properties": {
           "type": {
@@ -800,10 +800,10 @@
           "missingRequestContext": {
             "$ref": "#/components/schemas/RequestContextRequirement"
           },
-          "resolvedCommands": {
+          "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CommandExecuted"
+              "$ref": "#/components/schemas/Value"
             }
           }
         }

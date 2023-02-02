@@ -8,42 +8,14 @@ snapshot[`all commands resolved on the server 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
         },
         {
-          args: [
-            {
-              type: "string",
-              value: "pi^2 + 123",
-            },
-          ],
-          id: "0.1",
-          name: "math",
-          returnValue: {
-            type: "string",
-            value: "132.86960440108936",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "1.0",
-          name: "finish",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
+          type: "string",
+          value: "132.86960440108936",
         },
       ],
       type: "finished",
@@ -55,7 +27,7 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -75,7 +47,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -88,7 +59,7 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -108,7 +79,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -135,32 +105,14 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
         },
         {
-          args: [
-            {
-              type: "string",
-              value: "pi^2 + 123",
-            },
-          ],
-          id: "0.1",
-          name: "math",
-          returnValue: {
-            type: "string",
-            value: "132.86960440108936",
-          },
-          type: "executed",
+          type: "string",
+          value: "132.86960440108936",
         },
       ],
       type: "finished",
@@ -178,54 +130,14 @@ snapshot[`command overloads work 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-            {
-              type: "string",
-              value: "string",
-            },
-            {
-              type: "string",
-              value: "concat",
-            },
-          ],
-          id: "0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "stringconcat",
-          },
-          type: "executed",
+          type: "string",
+          value: "stringconcat",
         },
         {
-          args: [
-            {
-              type: "number",
-              value: 123,
-            },
-            {
-              type: "number",
-              value: 1,
-            },
-          ],
-          id: "0.1",
-          name: "__+__",
-          returnValue: {
-            type: "number",
-            value: 124,
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "1.0",
-          name: "finish",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
+          type: "number",
+          value: 124,
         },
       ],
       type: "finished",
@@ -237,7 +149,7 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -257,7 +169,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -270,7 +181,7 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -290,7 +201,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -330,60 +240,7 @@ snapshot[`infix + operand support 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          id: "0.0.0.1.0",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-12-19T03:41:10-05:00",
-            },
-            {
-              type: "string",
-              value: " hello",
-            },
-          ],
-          id: "0.0.0.1",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00 hello",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "infix ",
-            },
-            {
-              type: "string",
-              value: "2022-12-19T03:41:10-05:00 hello",
-            },
-          ],
-          id: "0.0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "infix 2022-12-19T03:41:10-05:00 hello",
-          },
-          type: "executed",
-        },
+      results: [
       ],
       type: "pending_commands",
     },
@@ -520,60 +377,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          id: "0.0.0.0.1",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "The time in New York is ",
-            },
-            {
-              type: "string",
-              value: "2022-12-19T03:41:10-05:00",
-            },
-          ],
-          id: "0.0.0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "The time in New York is 2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "The time in New York is 2022-12-19T03:41:10-05:00",
-            },
-            {
-              type: "string",
-              value: " and I have created a calendar event for dinner with your wife 5 days from now.",
-            },
-          ],
-          id: "0.0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
-          },
-          type: "executed",
-        },
+      results: [
       ],
       type: "pending_commands",
     },
@@ -742,85 +546,10 @@ snapshot[`supports model outputs with top level infix call 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0.0.0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          id: "0.0.1",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-12-19T08:41:10Z",
-            },
-            {
-              type: "string",
-              value: " ",
-            },
-          ],
-          id: "0.0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z ",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-12-19T08:41:10Z ",
-            },
-            {
-              type: "string",
-              value: "2022-12-19T03:41:10-05:00",
-            },
-          ],
-          id: "0.0",
-          name: "__+__",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "in 5 days",
-            },
-          ],
-          id: "0.1.0",
-          name: "parseRelativeTime",
-          returnValue: {
-            type: "string",
-            value: "2022-12-24T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
         },
       ],
       type: "pending_commands",
@@ -987,21 +716,10 @@ snapshot[`supports model outputs with top level expression 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-            {
-              type: "string",
-              value: "Pacific/Auckland",
-            },
-          ],
-          id: "0.2",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T21:41:10+13:00",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T21:41:10+13:00",
         },
       ],
       type: "finished",
@@ -1019,91 +737,10 @@ snapshot[`supports assignment 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-            {
-              type: "string",
-              value: "a",
-            },
-            {
-              type: "number",
-              value: 123,
-            },
-          ],
-          id: "0.0",
-          name: "__=__",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "b",
-            },
-            {
-              type: "number",
-              value: 111,
-            },
-          ],
-          id: "0.1",
-          name: "__=__",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "a",
-            },
-          ],
-          id: "0.2.0",
-          name: "\$ref",
-          returnValue: {
-            type: "number",
-            value: 123,
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "b",
-            },
-          ],
-          id: "0.2.1",
-          name: "\$ref",
-          returnValue: {
-            type: "number",
-            value: 111,
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "number",
-              value: 123,
-            },
-            {
-              type: "number",
-              value: 111,
-            },
-          ],
-          id: "0.2",
-          name: "__+__",
-          returnValue: {
-            type: "number",
-            value: 234,
-          },
-          type: "executed",
+          type: "number",
+          value: 234,
         },
       ],
       type: "finished",
@@ -1134,35 +771,8 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
-        {
-          args: [
-          ],
-          id: "someid",
-          name: "now",
-          returnValue: "0000-00-00T00:00:00Z",
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "not reused because client command",
-            },
-          ],
-          id: "someid",
-          name: "ask",
-          returnValue: "this should not be reused",
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: "0000-00-00T00:00:00Z",
-          type: "executed",
-        },
+      results: [
+        "0000-00-00T00:00:00Z",
       ],
       type: "pending_commands",
     },
@@ -1254,17 +864,10 @@ snapshot[`client resolved command 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
         },
       ],
       type: "pending_commands",
@@ -1340,28 +943,10 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
         },
       ],
       type: "pending_commands",
@@ -1448,28 +1033,10 @@ snapshot[`client resolved command - wrong return type 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
         },
       ],
       type: "pending_commands",
@@ -1556,28 +1123,10 @@ snapshot[`client resolved command - fulfilled 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10.000Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
         },
       ],
       type: "pending_commands",
@@ -1673,36 +1222,10 @@ snapshot[`nested calls 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
         {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          id: "0.0",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "5 days from now",
-            },
-          ],
-          id: "0.1.0",
-          name: "parseRelativeTime",
-          returnValue: {
-            type: "string",
-            value: "2022-12-24T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
         },
       ],
       type: "pending_commands",
@@ -1792,7 +1315,7 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -1812,7 +1335,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -1841,17 +1363,10 @@ snapshot[`request needs more context 1`] = `
           type: "string",
         },
       },
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0.0",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
         },
       ],
       type: "needs_request_context",
@@ -1931,18 +1446,7 @@ snapshot[`request needs more context - still missing 1`] = `
           type: "string",
         },
       },
-      resolvedCommands: [
-        {
-          args: [
-          ],
-          id: "0",
-          name: "someCommand",
-          returnValue: {
-            type: "string",
-            value: "blah",
-          },
-          type: "executed",
-        },
+      results: [
       ],
       type: "needs_request_context",
     },
@@ -2028,18 +1532,7 @@ snapshot[`request needs more context - wrong type 1`] = `
           type: "string",
         },
       },
-      resolvedCommands: [
-        {
-          args: [
-          ],
-          id: "0",
-          name: "someCommand",
-          returnValue: {
-            type: "string",
-            value: "blah",
-          },
-          type: "executed",
-        },
+      results: [
       ],
       type: "needs_request_context",
     },
@@ -2125,68 +1618,14 @@ snapshot[`request needs more context - fulfilled 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-          ],
-          id: "0",
-          name: "someCommand",
-          returnValue: {
-            type: "string",
-            value: "blah",
-          },
-          type: "executed",
+          type: "string",
+          value: "the result of editProse()",
         },
         {
-          args: [
-          ],
-          id: "1.0.0",
-          name: "askForText",
-          returnValue: {
-            type: "string",
-            value: "some text",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "some text",
-            },
-            {
-              type: "string",
-              value: "convert to poem",
-            },
-          ],
-          id: "1.0",
-          name: "editProse",
-          returnValue: {
-            type: "string",
-            value: "the result of editProse()",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "1.1",
-          name: "now",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T08:41:10Z",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "2.0",
-          name: "finish",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
         },
       ],
       type: "finished",
@@ -2201,7 +1640,7 @@ snapshot[`request needs more context - fulfilled 2`] = `
   "Rewrite and edit the following text. The requirement is 'convert to poem':
 
 some text",
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question cannot be answered, do not make things up, indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, indicate failure with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -2221,7 +1660,6 @@ Functions are declared below, you must not use any other functions. When calling
 \`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - get a clarification on the original question/request
 \`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
-\`search(query: string): string\` - get a list of (title, link, snippet) search results, must use sparingly only when the answer is not directly known
 
 Use the following format:
 Request: the question or request you must answer
@@ -2270,7 +1708,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
           type: "parsed",
         },
       ],
-      resolvedCommands: [
+      results: [
       ],
       type: "pending_commands",
     },
@@ -2325,46 +1763,14 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      resolvedCommands: [
+      results: [
         {
-          args: [
-            {
-              type: "string",
-              value: "how are you?",
-            },
-          ],
-          id: "0.0",
-          name: "ask",
-          returnValue: {
-            type: "string",
-            value: "good",
-          },
-          type: "executed",
+          type: "string",
+          value: "good",
         },
         {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          id: "0.1",
-          name: "currentTimeForTimezone",
-          returnValue: {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-          type: "executed",
-        },
-        {
-          args: [
-          ],
-          id: "1.0",
-          name: "finish",
-          returnValue: {
-            type: "void",
-          },
-          type: "executed",
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
         },
       ],
       type: "finished",

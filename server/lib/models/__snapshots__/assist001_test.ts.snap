@@ -27,7 +27,7 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -37,18 +37,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -61,7 +61,7 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -71,18 +71,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -153,7 +153,7 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -163,18 +163,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -187,7 +187,7 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -197,18 +197,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -1323,7 +1323,7 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -1333,18 +1333,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -1648,9 +1648,11 @@ snapshot[`request needs more context - fulfilled 1`] = `
 snapshot[`request needs more context - fulfilled 2`] = `
 [
   "Rewrite and edit the following text. The requirement is 'convert to poem':
+some text
 
-some text",
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+The re-written text is:
+",
+  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -1660,18 +1662,18 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
 
 \`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - provide text that was being generated/edited back to the client
+\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`getInputText(): string\` - get input text/code that the request may refer to
-\`math("a mathjs expression ": string): string\` - compute a math formula
-\`now(): string\` - get the users current ISO8601 datetime
-\`parseRelativeTime(naturalLanguageRelativeTime: string): string\` - parse ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - get a clarification on the original question/request
-\`extractInformation("full description of what the output should be": string, inputTextOrCode: string): string\` - describe/summarize/extract information from the given string
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - parse ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer

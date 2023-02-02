@@ -14,7 +14,7 @@ const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 const now: BuiltinCommandDefinition<[], "string"> = {
   isBuiltin: true,
   cost: -1000,
-  description: "get the users current ISO8601 datetime",
+  description: "get current ISO8601 datetime",
   args: [],
   run: async (deps, []) => ({
     type: "string",
@@ -34,7 +34,7 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   description: "parse ISO8601 datetime relative to now from natural language",
   args: [
     {
-      name: "naturalLanguageRelativeTime",
+      name: "natural language relative time",
       type: "string",
     },
   ],
@@ -63,8 +63,8 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: -1000,
   returnType: "string",
-  description: `get the ISO8601 datetime for the given timezone`,
-  args: [{ name: "tz database timezone name", type: "string" }],
+  description: `get ISO8601 datetime for the given timezone`,
+  args: [{ name: "tz database timezone", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
   run: async ({ log, session, now }, [timeZone]) => {
     return {
@@ -105,8 +105,8 @@ const extractInformation: BuiltinCommandDefinition<
   returnType: "string",
   description: "describe/summarize/extract information from the given string",
   args: [
-    { name: "full description of what the output should be", type: "string" },
-    { name: "inputTextOrCode", type: "string" },
+    { name: "full description of desired output", type: "string" },
+    { name: "input text/code", type: "string" },
   ],
   run: async (modelDeps, [desc, input]) => {
     const output = await runPassthrough(
@@ -128,8 +128,8 @@ const math: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: -1000,
   returnType: "string",
-  description: `compute a math formula`,
-  args: [{ name: "a mathjs expression ", type: "string" }],
+  description: `get the result of a math formula`,
+  args: [{ name: "formula", type: "string" }],
   run: async ({ log, session }, [expr]) => {
     try {
       const result = mathjs.evaluate(expr.value);
@@ -145,17 +145,17 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: `translate something into a target language`,
+  description: `translate text into target language`,
   args: [
-    { name: "full name of the target language", type: "string" },
-    { name: "string to translate", type: "string" },
+    { name: "input", type: "string" },
+    { name: "target language full name", type: "string" },
   ],
-  run: async (modelDeps, [targetLanguage, request]) => {
+  run: async (modelDeps, [input, targetLanguage]) => {
     const output = await runTranslate(
       modelDeps,
       { model: "translate-000" },
       {
-        request: request.value,
+        request: input.value,
         targetLanguage: targetLanguage.value,
       }
     );
@@ -198,8 +198,8 @@ const editProse: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `edit prose using the given requirements`,
   args: [
-    { name: "prose to edit", type: "string" },
-    { name: "full description of all desired changes", type: "string" },
+    { name: "input", type: "string" },
+    { name: "full description of desired changes", type: "string" },
   ],
   run: async (modelDeps, [text, editingRequirement]) => {
     const output = await runPassthrough(
@@ -210,8 +210,10 @@ const editProse: BuiltinCommandDefinition<["string", "string"], "string"> = {
         request: `Rewrite and edit the following text. The requirement is '${
           editingRequirement.value satisfies string
         }':
+${text.value}
 
-${text.value}`,
+The re-written text is:
+`,
       }
     );
     return { type: "string", value: output.result.trim() };
@@ -244,11 +246,11 @@ const editCode: BuiltinCommandDefinition<
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: `edit code using the given requirements`,
+  description: `edit code in programming language using the given requirements`,
   args: [
-    { name: "code to edit", type: "string" },
-    { name: "programming language name", type: "string" },
-    { name: "full description of all desired changes", type: "string" },
+    { name: "input", type: "string" },
+    { name: "language", type: "string" },
+    { name: "full description of desired changes", type: "string" },
   ],
   run: async (modelDeps, [text, language, editingRequirement]) => {
     const output = await runPassthrough(
@@ -259,8 +261,10 @@ const editCode: BuiltinCommandDefinition<
         request: `Edit or refactor the code below based on the given requirement.
 Programming language is '${language.value satisfies string}'.
 The requirement is '${editingRequirement.value satisfies string}':
+${text.value satisfies string}
 
-${text.value satisfies string}`,
+The full edited code is:
+`,
       }
     );
     return { type: "string", value: output.result.trim() };
@@ -298,11 +302,11 @@ const generateCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
   isBuiltin: true,
   cost: 10,
   returnType: "string",
-  description: `generate code for the given request`,
+  description: `generate code for the given language and verbose description/requirements`,
   args: [
-    { name: "full name of target programming language", type: "string" },
+    { name: "language", type: "string" },
     {
-      name: "verbose description of what code is being generated",
+      name: "requirements",
       type: "string",
     },
   ],

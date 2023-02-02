@@ -35,8 +35,7 @@ export const commandSet: CommandSet = {
   },
   returnText: {
     cost: -10000,
-    description:
-      "provide text that was being generated/edited back to the client",
+    description: "send back modified input or generated result",
     returnType: "void",
     args: [
       {
@@ -47,7 +46,7 @@ export const commandSet: CommandSet = {
   },
   ask: {
     cost: 10,
-    description: "get a clarification on the original question/request",
+    description: "clarify the original question/request",
     returnType: "string",
     args: [
       {

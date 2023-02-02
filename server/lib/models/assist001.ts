@@ -542,7 +542,7 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. If the question is unclear or cannot be answered, do not make things up, instead indicate failure with fail().
+  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
 
 The language for Action is a tiny subset of javascript, only use these available features:
 
@@ -552,7 +552,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. Only functions that return void produce side effects.`;
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer

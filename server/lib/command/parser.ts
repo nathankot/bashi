@@ -56,7 +56,6 @@ enum T {
   KeywordVar,
 
   // BackQuote,
-  // Other,
   Equals,
   Plus,
   LParen,
@@ -64,12 +63,105 @@ enum T {
   Space,
   Comma,
   SemiColon,
+  // Char,
 }
+
+// A fake RegExp instance, which allows us to pass in more complex
+// logic into the lexer to support parsing complex template strings.
+export const customBackQuoteStringLiteralRegExp: RegExp = {
+  lastIndex: 0,
+  source: "^",
+  global: true,
+  ignoreCase: false,
+  multiline: false,
+  dotAll: false,
+  sticky: false,
+  unicode: false,
+  flags: "g",
+  [Symbol.split]() {
+    throw new Error("unimplemented");
+  },
+  [Symbol.replace]() {
+    throw new Error("unimplemented");
+  },
+  [Symbol.search]() {
+    throw new Error("unimplemented");
+  },
+  [Symbol.matchAll]() {
+    throw new Error("unimplemented");
+  },
+  [Symbol.match]() {
+    throw new Error("unimplemented");
+  },
+  compile() {
+    return this;
+  },
+  exec() {
+    throw new Error("unimplemented");
+  },
+  test(str): boolean {
+    if (str[0] !== "`") {
+      return false;
+    }
+    let currentIndex = 1;
+    let backquoteDepth = 1;
+    let curlyDepth = 0;
+    try {
+      while (currentIndex < str.length) {
+        if (backquoteDepth === 0 && curlyDepth === 0) {
+          break;
+        }
+        // Skip any escaped backquotes
+        if (str.substring(currentIndex, currentIndex + 2) === "\\`") {
+          currentIndex = currentIndex + 2;
+          continue;
+        }
+        // Skip any escaped dollar signs
+        if (str.substring(currentIndex, currentIndex + 2) === "\\$") {
+          currentIndex = currentIndex + 2;
+          continue;
+        }
+        // Increment curly depth:
+        if (
+          str.substring(currentIndex, currentIndex + 2) === "${" &&
+          backquoteDepth > curlyDepth
+        ) {
+          curlyDepth++;
+          currentIndex = currentIndex + 2;
+          continue;
+        }
+        // Decrement curly depth:
+        if (str[currentIndex] === "}" && curlyDepth >= backquoteDepth) {
+          curlyDepth--;
+          currentIndex++;
+          continue;
+        }
+        if (str[currentIndex] === "`") {
+          if (curlyDepth < backquoteDepth) {
+            // Decrement backquote depth
+            backquoteDepth--;
+          } else {
+            // Increment backquote depth
+            backquoteDepth++;
+          }
+          currentIndex++;
+          continue;
+        }
+        // If we reach here its just a random character so we ignore it.
+        currentIndex++;
+      }
+      // We are successful if we reached a nesting level of 0 in the end:
+      return backquoteDepth === 0 && curlyDepth === 0;
+    } finally {
+      this.lastIndex = currentIndex;
+    }
+  },
+};
 
 const lexer = buildLexer([
   [true, /^'([^'\\]|\\.)*'/g, T.SingleQuoteStringLiteral],
   [true, /^"([^"\\]|\\.)*"/g, T.DoubleQuoteStringLiteral],
-  [true, /^`([^`\\]|\\.)*`/g, T.BackQuoteStringLiteral],
+  [true, customBackQuoteStringLiteralRegExp, T.BackQuoteStringLiteral],
   [true, /^[\+\-]?\d+(\.\d+)?/g, T.NumberLiteral],
   [true, /^true/g, T.TrueLiteral],
   [true, /^false/g, T.FalseLiteral],
@@ -85,15 +177,16 @@ const lexer = buildLexer([
   [true, /^\)/g, T.RParen],
   [true, /^\,/g, T.Comma],
   [true, /^;/g, T.SemiColon],
-  // [true, /^`/g, T.BackQuote]
-  // [true, /^./g, T.Other]
   [true, /^\s+/g, T.Space],
+  // [true, /^`/g, T.BackQuote],
+  // [true, /^./g, T.Char],
 ]);
 
-const PAREN_GROUP = rule<T, Expr>();
-const VALUE = rule<T, Value>();
-const INFIX_CALL = rule<T, Expr>();
 const FUNC_CALL = rule<T, Call>();
+const INFIX_CALL = rule<T, Expr>();
+const PAREN_GROUP = rule<T, Expr>();
+// const TEMPLATE_STRING = rule<T, Call>();
+const VALUE = rule<T, Value>();
 const VAR_REF = rule<T, Call>();
 
 const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP, VAR_REF);
@@ -153,6 +246,14 @@ VALUE.setPattern(
     }
   )
 );
+
+// TEMPLATE_STRING.setPattern(
+//   p.kmid(
+//     p.tok(T.BackQuote),
+//     p.list_sc(p.alt(p.list_sc(p.tok(T.Char)))),
+//     p.tok(T.BackQuote)
+//   )
+// );
 
 VAR_REF.setPattern(
   p.apply(p.tok(T.Identifier), (id) => ({

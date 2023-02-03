@@ -408,7 +408,7 @@ snapshot[`parseStatements: someCall("a string " + concated("STRING + blah" + (b(
 ]
 `;
 
-snapshot[`parseStatements: someCall(\`a string 123 \${interpolate(\`me \${"ha"} true false\`)}\`) 1`] = `'{"index":38,"rowBegin":1,"columnBegin":39,"rowEnd":1,"columnEnd":41}: Unable to consume token: me'`;
+snapshot[`parseStatements: someCall(\`a string 123 \${interpolate(\`me \${"ha \\" \$ \`" + \`\${ \`"test"\`}\`} true false\`)}\`) 1`] = `'{"index":85,"rowBegin":1,"columnBegin":86,"rowEnd":1,"columnEnd":86}: Unable to tokenize the rest of the input: }\`)'`;
 
 snapshot[`parseStatements: someCall(\`a string \${not_interpolated()}\`) 1`] = `
 [

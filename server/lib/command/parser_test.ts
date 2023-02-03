@@ -1,5 +1,10 @@
+import { assertEquals } from "std/testing/asserts.ts";
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import { parseStatements, parseActionGroup } from "./parser.ts";
+import {
+  parseStatements,
+  parseActionGroup,
+  customBackQuoteStringLiteralRegExp,
+} from "./parser.ts";
 
 for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
@@ -21,7 +26,7 @@ for (const expr of [
   `SOMECALL()`,
   `someCall("hi" + ("there" + ("is" + "nesting")))`,
   `someCall("a string " + concated("STRING + blah" + (b() + c()) + "$"))`,
-  'someCall(`a string 123 ${interpolate(`me ${"ha"} true false`)}`)',
+  'someCall(`a string 123 ${interpolate(`me ${"ha \\" $ `" + `${ `"test"`}`} true false`)}`)',
   "someCall(`a string ${not_interpolated()}`)",
   `123123`,
   `"hi there"`,
@@ -106,4 +111,22 @@ Result: blah blah blah blah
       }
     }
   );
+}
+
+for (const test of [
+  ["`hello`", true, (str) => str.length],
+  ["`hello`   ", true, (str) => str.length - 3],
+  ["`abc`, `abc`", true, (str) => str.length - 7],
+  ["`hello \\``", true, (str) => str.length],
+  ["`hello \\` `", true, (str) => str.length],
+  ["`hello \\` ${``} `", true, (str) => str.length],
+  ["`hello \\` ${`` + `${v} ${` {} \\${}`}`} `", true, (str) => str.length],
+] as [string, boolean, (str: string) => number][]) {
+  Deno.test(`customBackQuoteStringLiteralRegExp.test(${test[0]})`, (t) => {
+    assertEquals(customBackQuoteStringLiteralRegExp.test(test[0]), test[1]);
+    assertEquals(
+      customBackQuoteStringLiteralRegExp.lastIndex,
+      test[2](test[0])
+    );
+  });
 }

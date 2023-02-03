@@ -54,6 +54,19 @@ snapshot[`parseStatements: someCall() 1`] = `
 ]
 `;
 
+snapshot[`parseStatements:    someCall()
+
+  1`] = `
+[
+  {
+    args: [
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseStatements: someCall('a', 111) 1`] = `
 [
   {
@@ -387,6 +400,23 @@ snapshot[`parseStatements: someCall("a string " + concated("STRING + blah" + (b(
         ],
         name: "__+__",
         type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string 123 \${interpolate(\`me \${"ha"} true false\`)}\`) 1`] = `'{"index":38,"rowBegin":1,"columnBegin":39,"rowEnd":1,"columnEnd":41}: Unable to consume token: me'`;
+
+snapshot[`parseStatements: someCall(\`a string \${not_interpolated()}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a string \${not_interpolated()}",
       },
     ],
     name: "someCall",

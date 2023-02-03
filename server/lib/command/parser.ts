@@ -55,6 +55,8 @@ enum T {
   KeywordLet,
   KeywordVar,
 
+  // BackQuote,
+  // Other,
   Equals,
   Plus,
   LParen,
@@ -83,7 +85,9 @@ const lexer = buildLexer([
   [true, /^\)/g, T.RParen],
   [true, /^\,/g, T.Comma],
   [true, /^;/g, T.SemiColon],
-  [false, /^\s+/g, T.Space],
+  // [true, /^`/g, T.BackQuote]
+  // [true, /^./g, T.Other]
+  [true, /^\s+/g, T.Space],
 ]);
 
 const PAREN_GROUP = rule<T, Expr>();
@@ -96,6 +100,8 @@ const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP, VAR_REF);
 const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP, VAR_REF);
 const STATEMENT = rule<T, Expr>();
 const STATEMENTS = rule<T, Expr[]>();
+
+const ANY_SPACE = p.rep_sc(p.tok(T.Space));
 
 PAREN_GROUP.setPattern(p.kmid(p.tok(T.LParen), EXPR, p.tok(T.RParen)));
 
@@ -163,7 +169,10 @@ FUNC_CALL.setPattern(
       p.tok(T.Identifier),
       p.tok(T.LParen),
       p.opt_sc(
-        p.kleft(p.list_sc(EXPR, p.tok(T.Comma)), p.opt_sc(p.tok(T.Comma)))
+        p.kleft(
+          p.list_sc(EXPR, p.seq(ANY_SPACE, p.tok(T.Comma), ANY_SPACE)),
+          p.opt_sc(p.seq(ANY_SPACE, p.tok(T.Comma), ANY_SPACE))
+        )
       ),
       p.tok(T.RParen)
     ),
@@ -179,15 +188,21 @@ INFIX_CALL.setPattern(
   // operand form: a1 `f` a2
   p.lrec_sc(
     p.apply(
-      p.seq(EXPR_WITHOUT_INFIX_CALL, p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
-      ([lhs, operand, rhs]): Call => ({
+      p.seq(
+        EXPR_WITHOUT_INFIX_CALL,
+        ANY_SPACE,
+        p.tok(T.Plus),
+        ANY_SPACE,
+        EXPR_WITHOUT_INFIX_CALL
+      ),
+      ([lhs, , operand, , rhs]): Call => ({
         type: "call",
         name: "__" + operand.text + "__",
         args: [lhs, rhs],
       })
     ),
-    p.seq(p.tok(T.Plus), EXPR_WITHOUT_INFIX_CALL),
-    (lhs, [operand, rhs]): Call => ({
+    p.seq(ANY_SPACE, p.tok(T.Plus), ANY_SPACE, EXPR_WITHOUT_INFIX_CALL),
+    (lhs, [, operand, , rhs]): Call => ({
       type: "call",
       name: "__" + operand.text + "__",
       args: [lhs, rhs],
@@ -200,11 +215,18 @@ STATEMENT.setPattern(
     EXPR,
     p.kright(
       p.opt(
-        p.alt(p.tok(T.KeywordConst), p.tok(T.KeywordLet), p.tok(T.KeywordVar))
+        p.seq(
+          p.alt(
+            p.tok(T.KeywordConst),
+            p.tok(T.KeywordLet),
+            p.tok(T.KeywordVar)
+          ),
+          ANY_SPACE
+        )
       ),
       p.apply(
-        p.seq(p.tok(T.Identifier), p.tok(T.Equals), EXPR),
-        ([id, , expr]): Call => ({
+        p.seq(p.tok(T.Identifier), ANY_SPACE, p.tok(T.Equals), ANY_SPACE, EXPR),
+        ([id, , , , expr]): Call => ({
           type: "call",
           name: "__=__",
           args: [{ type: "string", value: id.text }, expr],
@@ -218,18 +240,27 @@ STATEMENTS.setPattern(
   p.kleft(
     p.list_sc(
       STATEMENT,
-      p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon)))
+      p.seq(
+        ANY_SPACE,
+        p.tok(T.SemiColon),
+        p.rep_sc(p.tok(T.SemiColon)),
+        ANY_SPACE
+      )
     ),
-    p.rep_sc(p.tok(T.SemiColon))
+    p.seq(ANY_SPACE, p.rep_sc(p.tok(T.SemiColon)), ANY_SPACE)
   )
 );
 
 export function parseExpression(str: string): Expr {
-  return expectSingleResult(expectEOF(EXPR.parse(lexer.parse(str))));
+  return expectSingleResult(
+    expectEOF(p.kmid(ANY_SPACE, EXPR, ANY_SPACE).parse(lexer.parse(str)))
+  );
 }
 
 export function parseStatements(str: string): Expr[] {
-  return expectSingleResult(expectEOF(STATEMENTS.parse(lexer.parse(str))));
+  return expectSingleResult(
+    expectEOF(p.kmid(ANY_SPACE, STATEMENTS, ANY_SPACE).parse(lexer.parse(str)))
+  );
 }
 
 enum T2 {

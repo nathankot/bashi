@@ -408,23 +408,6 @@ snapshot[`parseStatements: someCall("a string " + concated("STRING + blah" + (b(
 ]
 `;
 
-snapshot[`parseStatements: someCall(\`a string 123 \${interpolate(\`me \${"ha \\" \$ \`" + \`\${ \`"test"\`}\`} true false\`)}\`) 1`] = `'{"index":85,"rowBegin":1,"columnBegin":86,"rowEnd":1,"columnEnd":86}: Unable to tokenize the rest of the input: }\`)'`;
-
-snapshot[`parseStatements: someCall(\`a string \${not_interpolated()}\`) 1`] = `
-[
-  {
-    args: [
-      {
-        type: "string",
-        value: "a string \${not_interpolated()}",
-      },
-    ],
-    name: "someCall",
-    type: "call",
-  },
-]
-`;
-
 snapshot[`parseStatements: 123123 1`] = `
 [
   {
@@ -655,6 +638,316 @@ snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123 
 ]
 `;
 
+snapshot[`parseStatements: someCall(\`\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`\${\`\`}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`\${someCall(\`\${123}\`)}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "",
+                  },
+                  {
+                    type: "number",
+                    value: 123,
+                  },
+                ],
+                name: "__+__",
+                type: "call",
+              },
+            ],
+            name: "someCall",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`\${someCall(\`\${'abc{}' + "}{}def" + \`g\`}\`)}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "",
+                  },
+                  {
+                    args: [
+                      {
+                        args: [
+                          {
+                            type: "string",
+                            value: "abc{}",
+                          },
+                          {
+                            type: "string",
+                            value: "}{}def",
+                          },
+                        ],
+                        name: "__+__",
+                        type: "call",
+                      },
+                      {
+                        type: "string",
+                        value: "g",
+                      },
+                    ],
+                    name: "__+__",
+                    type: "call",
+                  },
+                ],
+                name: "__+__",
+                type: "call",
+              },
+            ],
+            name: "someCall",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string \\\${not_interpolated()}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a string \${not_interpolated()}",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string \${interpolated()}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a string ",
+          },
+          {
+            args: [
+            ],
+            name: "interpolated",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string \${"interpolated"}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a string interpolated",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string \${\`interpolated\`}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a string interpolated",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string \${\`interpolated\` + \`\${"hard"}\`}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a string ",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "interpolated",
+              },
+              {
+                type: "string",
+                value: "hard",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string 123 \${interpolate(\`{}\`)} hello\`) 1`] = `
+[
+  {
+    args: [
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a string 123 ",
+              },
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "{}",
+                  },
+                ],
+                name: "interpolate",
+                type: "call",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: " hello",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a string 123 \${\`hello\`    } hello\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a string 123 hello hello",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someCall(\`a \\\`string 123 \${\`he\\\`llo\`}\`) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a \`string 123 he\`llo",
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseStatements: assign =  1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseStatements: malformed("a" 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
@@ -792,8 +1085,8 @@ snapshot[`parseStatements: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnB
 snapshot[`parseStatements: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result: blah blah blah blah 1`] = `
+    Action: someFunction(123, "str", true)
+    Result: blah blah blah blah 1`] = `
 {
   action: 'someFunction(123, "str", true)',
   expressions: [
@@ -822,8 +1115,8 @@ snapshot[`parseActionGroup: Thought: I need to do something
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result: 1`] = `
+    Action: someFunction(123, "str", true)
+    Result: 1`] = `
 {
   action: 'someFunction(123, "str", true)',
   expressions: [
@@ -852,8 +1145,8 @@ snapshot[`parseActionGroup: Thought: I need to do something
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result:  1`] = `
+    Action: someFunction(123, "str", true)
+    Result:  1`] = `
 {
   action: 'someFunction(123, "str", true)',
   expressions: [
@@ -882,8 +1175,8 @@ snapshot[`parseActionGroup: Thought: I need to do something
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
-  Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
-  Result: blah blah blah blah 1`] = `
+    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
+    Result: blah blah blah blah 1`] = `
 {
   action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
   expressions: [
@@ -910,7 +1203,7 @@ snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmm
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something
-  Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
+    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
 {
   action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
   expressions: [
@@ -953,7 +1246,7 @@ snapshot[`parseActionGroup: Thought: I need to do something
 `;
 
 snapshot[`parseActionGroup: tHOUght: I need to do something
-  aCTion  :    someFunction();; someOtherFunction() 1`] = `
+    aCTion  :    someFunction();; someOtherFunction() 1`] = `
 {
   action: "someFunction();; someOtherFunction()",
   expressions: [
@@ -976,8 +1269,8 @@ snapshot[`parseActionGroup: tHOUght: I need to do something
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
-  Action: someFunction(); someOtherFunction()
-  Result: blah blah blah blah 1`] = `
+    Action: someFunction(); someOtherFunction()
+    Result: blah blah blah blah 1`] = `
 {
   action: "someFunction(); someOtherFunction()",
   expressions: [
@@ -1000,13 +1293,13 @@ snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
 `;
 
 snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
-  Action: someFunction();
-   someOtherFunction("Result:")
-Result: blah blah blah blah
-123123 1`] = `
+    Action: someFunction();
+     someOtherFunction("Result:")
+  Result: blah blah blah blah
+  123123 1`] = `
 {
   action: 'someFunction();
-   someOtherFunction("Result:")',
+     someOtherFunction("Result:")',
   expressions: [
     {
       args: [
@@ -1026,7 +1319,7 @@ Result: blah blah blah blah
     },
   ],
   result: "blah blah blah blah
-123123",
+  123123",
   thought: "I need to do something Action: head fake",
 }
 `;

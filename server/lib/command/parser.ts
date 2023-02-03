@@ -1,6 +1,8 @@
 import * as t from "io-ts";
 import * as p from "typescript-parsec";
 
+import { strUntil } from "./parser_until.ts";
+
 import {
   // Token,
   buildLexer,
@@ -9,7 +11,7 @@ import {
   expectSingleResult,
 } from "typescript-parsec";
 
-import { Value } from "@lib/valueTypes.ts";
+import { Value, StringValue } from "@lib/valueTypes.ts";
 
 export type Call = {
   type: "call";
@@ -49,119 +51,30 @@ enum T {
   NumberLiteral,
   SingleQuoteStringLiteral,
   DoubleQuoteStringLiteral,
-  BackQuoteStringLiteral,
 
   KeywordConst,
   KeywordLet,
   KeywordVar,
 
-  // BackQuote,
+  BackQuote,
+  Dollar,
   Equals,
   Plus,
   LParen,
   RParen,
+  LCurly,
+  RCurly,
   Space,
   Comma,
   SemiColon,
-  // Char,
-}
 
-// A fake RegExp instance, which allows us to pass in more complex
-// logic into the lexer to support parsing complex template strings.
-export const customBackQuoteStringLiteralRegExp: RegExp = {
-  lastIndex: 0,
-  source: "^",
-  global: true,
-  ignoreCase: false,
-  multiline: false,
-  dotAll: false,
-  sticky: false,
-  unicode: false,
-  flags: "g",
-  [Symbol.split]() {
-    throw new Error("unimplemented");
-  },
-  [Symbol.replace]() {
-    throw new Error("unimplemented");
-  },
-  [Symbol.search]() {
-    throw new Error("unimplemented");
-  },
-  [Symbol.matchAll]() {
-    throw new Error("unimplemented");
-  },
-  [Symbol.match]() {
-    throw new Error("unimplemented");
-  },
-  compile() {
-    return this;
-  },
-  exec() {
-    throw new Error("unimplemented");
-  },
-  test(str): boolean {
-    if (str[0] !== "`") {
-      return false;
-    }
-    let currentIndex = 1;
-    let backquoteDepth = 1;
-    let curlyDepth = 0;
-    try {
-      while (currentIndex < str.length) {
-        if (backquoteDepth === 0 && curlyDepth === 0) {
-          break;
-        }
-        // Skip any escaped backquotes
-        if (str.substring(currentIndex, currentIndex + 2) === "\\`") {
-          currentIndex = currentIndex + 2;
-          continue;
-        }
-        // Skip any escaped dollar signs
-        if (str.substring(currentIndex, currentIndex + 2) === "\\$") {
-          currentIndex = currentIndex + 2;
-          continue;
-        }
-        // Increment curly depth:
-        if (
-          str.substring(currentIndex, currentIndex + 2) === "${" &&
-          backquoteDepth > curlyDepth
-        ) {
-          curlyDepth++;
-          currentIndex = currentIndex + 2;
-          continue;
-        }
-        // Decrement curly depth:
-        if (str[currentIndex] === "}" && curlyDepth >= backquoteDepth) {
-          curlyDepth--;
-          currentIndex++;
-          continue;
-        }
-        if (str[currentIndex] === "`") {
-          if (curlyDepth < backquoteDepth) {
-            // Decrement backquote depth
-            backquoteDepth--;
-          } else {
-            // Increment backquote depth
-            backquoteDepth++;
-          }
-          currentIndex++;
-          continue;
-        }
-        // If we reach here its just a random character so we ignore it.
-        currentIndex++;
-      }
-      // We are successful if we reached a nesting level of 0 in the end:
-      return backquoteDepth === 0 && curlyDepth === 0;
-    } finally {
-      this.lastIndex = currentIndex;
-    }
-  },
-};
+  EscapedChar,
+  Char,
+}
 
 const lexer = buildLexer([
   [true, /^'([^'\\]|\\.)*'/g, T.SingleQuoteStringLiteral],
   [true, /^"([^"\\]|\\.)*"/g, T.DoubleQuoteStringLiteral],
-  [true, customBackQuoteStringLiteralRegExp, T.BackQuoteStringLiteral],
   [true, /^[\+\-]?\d+(\.\d+)?/g, T.NumberLiteral],
   [true, /^true/g, T.TrueLiteral],
   [true, /^false/g, T.FalseLiteral],
@@ -171,26 +84,44 @@ const lexer = buildLexer([
 
   [true, /^[a-zA-Z_-][a-zA-Z0-9_-]*/g, T.Identifier],
 
+  [true, /^`/g, T.BackQuote],
   [true, /^\+/g, T.Plus],
   [true, /^=/g, T.Equals],
   [true, /^\(/g, T.LParen],
   [true, /^\)/g, T.RParen],
+  [true, /^\$/g, T.Dollar],
+  [true, /^{/g, T.LCurly],
+  [true, /^}/g, T.RCurly],
   [true, /^\,/g, T.Comma],
   [true, /^;/g, T.SemiColon],
+
   [true, /^\s+/g, T.Space],
-  // [true, /^`/g, T.BackQuote],
-  // [true, /^./g, T.Char],
+  [true, /^\\./g, T.EscapedChar],
+  [true, /^./g, T.Char],
 ]);
 
 const FUNC_CALL = rule<T, Call>();
 const INFIX_CALL = rule<T, Expr>();
 const PAREN_GROUP = rule<T, Expr>();
-// const TEMPLATE_STRING = rule<T, Call>();
+const TEMPLATE_STRING = rule<T, Expr>();
 const VALUE = rule<T, Value>();
 const VAR_REF = rule<T, Call>();
 
-const EXPR = p.alt(VALUE, FUNC_CALL, INFIX_CALL, PAREN_GROUP, VAR_REF);
-const EXPR_WITHOUT_INFIX_CALL = p.alt(VALUE, FUNC_CALL, PAREN_GROUP, VAR_REF);
+const EXPR = p.alt(
+  VALUE,
+  TEMPLATE_STRING,
+  FUNC_CALL,
+  INFIX_CALL,
+  PAREN_GROUP,
+  VAR_REF
+);
+const EXPR_WITHOUT_INFIX_CALL = p.alt(
+  VALUE,
+  FUNC_CALL,
+  TEMPLATE_STRING,
+  PAREN_GROUP,
+  VAR_REF
+);
 const STATEMENT = rule<T, Expr>();
 const STATEMENTS = rule<T, Expr[]>();
 
@@ -205,8 +136,7 @@ VALUE.setPattern(
       p.tok(T.FalseLiteral),
       p.tok(T.NumberLiteral),
       p.tok(T.SingleQuoteStringLiteral),
-      p.tok(T.DoubleQuoteStringLiteral),
-      p.tok(T.BackQuoteStringLiteral)
+      p.tok(T.DoubleQuoteStringLiteral)
     ),
     (tok) => {
       switch (tok.kind) {
@@ -230,13 +160,6 @@ VALUE.setPattern(
               .substring(1, tok.text.length - 1)
               .replaceAll(`\\"`, `"`),
           };
-        case T.BackQuoteStringLiteral:
-          return {
-            type: "string",
-            value: tok.text
-              .substring(1, tok.text.length - 1)
-              .replaceAll("\\`", "`"),
-          };
         default:
           const exhaustiveCheck: never = tok;
           throw new Error(
@@ -247,13 +170,42 @@ VALUE.setPattern(
   )
 );
 
-// TEMPLATE_STRING.setPattern(
-//   p.kmid(
-//     p.tok(T.BackQuote),
-//     p.list_sc(p.alt(p.list_sc(p.tok(T.Char)))),
-//     p.tok(T.BackQuote)
-//   )
-// );
+TEMPLATE_STRING.setPattern(
+  p.apply(
+    p.kmid(
+      p.tok(T.BackQuote),
+      p.rep(
+        p.alt(
+          p.kmid(
+            p.seq(p.tok(T.Dollar), p.tok(T.LCurly), ANY_SPACE),
+            EXPR,
+            p.seq(ANY_SPACE, p.tok(T.RCurly))
+          ),
+          p.apply(
+            strUntil(["$", "`"], ["$", "`"]),
+            (value): StringValue => ({
+              type: "string",
+              value,
+            })
+          )
+        )
+      ),
+      p.tok(T.BackQuote)
+    ),
+    (exprs: Expr[]) =>
+      exprs.reduce(
+        (a, e) =>
+          a.type === "string" && e.type === "string"
+            ? { type: "string", value: a.value + e.value }
+            : {
+                type: "call",
+                name: "__+__",
+                args: [a, e],
+              },
+        { type: "string", value: "" }
+      )
+  )
+);
 
 VAR_REF.setPattern(
   p.apply(p.tok(T.Identifier), (id) => ({
@@ -269,6 +221,7 @@ FUNC_CALL.setPattern(
     p.seq(
       p.tok(T.Identifier),
       p.tok(T.LParen),
+      ANY_SPACE,
       p.opt_sc(
         p.kleft(
           p.list_sc(EXPR, p.seq(ANY_SPACE, p.tok(T.Comma), ANY_SPACE)),
@@ -277,7 +230,7 @@ FUNC_CALL.setPattern(
       ),
       p.tok(T.RParen)
     ),
-    ([{ text: name }, , maybeArgs]) => ({
+    ([{ text: name }, , , maybeArgs]) => ({
       type: "call",
       name,
       args: maybeArgs ?? [],
@@ -340,10 +293,11 @@ STATEMENT.setPattern(
 STATEMENTS.setPattern(
   p.kleft(
     p.list_sc(
-      STATEMENT,
+      p.kmid(ANY_SPACE, STATEMENT, ANY_SPACE),
       p.seq(
         ANY_SPACE,
         p.tok(T.SemiColon),
+        ANY_SPACE,
         p.rep_sc(p.tok(T.SemiColon)),
         ANY_SPACE
       )

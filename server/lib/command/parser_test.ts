@@ -1,10 +1,5 @@
-import { assertEquals } from "std/testing/asserts.ts";
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import {
-  parseStatements,
-  parseActionGroup,
-  customBackQuoteStringLiteralRegExp,
-} from "./parser.ts";
+import { parseStatements, parseActionGroup } from "./parser.ts";
 
 for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
@@ -26,8 +21,6 @@ for (const expr of [
   `SOMECALL()`,
   `someCall("hi" + ("there" + ("is" + "nesting")))`,
   `someCall("a string " + concated("STRING + blah" + (b() + c()) + "$"))`,
-  'someCall(`a string 123 ${interpolate(`me ${"ha \\" $ `" + `${ `"test"`}`} true false`)}`)',
-  "someCall(`a string ${not_interpolated()}`)",
   `123123`,
   `"hi there"`,
   `true; 123123; 'hi there'`,
@@ -36,6 +29,20 @@ for (const expr of [
   `let a_aaa = someCall(123 + 44, "abc")`,
   `const a_aaa = someCall(123 + 44, "abc")`,
   `const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123`,
+
+  // template literals
+  "someCall(``)",
+  "someCall(`${``}`)",
+  "someCall(`${someCall(`${123}`)}`)",
+  "someCall(`${someCall(`${'abc{}' + \"}{}def\" + `g`}`)}`)",
+  "someCall(`a string \\${not_interpolated()}`)",
+  "someCall(`a string ${interpolated()}`)",
+  'someCall(`a string ${"interpolated"}`)',
+  "someCall(`a string ${`interpolated`}`)",
+  'someCall(`a string ${`interpolated` + `${"hard"}`}`)',
+  "someCall(`a string 123 ${interpolate(`{}`)} hello`)",
+  "someCall(`a string 123 ${`hello`    } hello`)",
+  "someCall(`a \\`string 123 ${`he\\`llo`}`)",
 
   // malformed:
   `assign = `,
@@ -67,33 +74,32 @@ for (const expr of [
 
 for (const expr of [
   `Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result: blah blah blah blah`,
+    Action: someFunction(123, "str", true)
+    Result: blah blah blah blah`,
   `Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result:`,
+    Action: someFunction(123, "str", true)
+    Result:`,
   `Thought: I need to do something
-  Action: someFunction(123, "str", true)
-  Result: `,
+    Action: someFunction(123, "str", true)
+    Result: `,
   `Thought: I need to do something action: thought: hmmm
-  Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
-  Result: blah blah blah blah`,
+    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
+    Result: blah blah blah blah`,
   `Thought: I need to do something
-  Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
+    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
   `tHOUght: I need to do something
-  aCTion  :    someFunction();; someOtherFunction()`,
+    aCTion  :    someFunction();; someOtherFunction()`,
   `Thought: I need to do something Action: head fake
-  Action: someFunction(); someOtherFunction()
-  Result: blah blah blah blah`,
+    Action: someFunction(); someOtherFunction()
+    Result: blah blah blah blah`,
   `Thought: I need to do something Action: head fake
-  Action: someFunction();
-   someOtherFunction("Result:")
-Result: blah blah blah blah
-123123`,
+    Action: someFunction();
+     someOtherFunction("Result:")
+  Result: blah blah blah blah
+  123123`,
   `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
   `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
   `Thought: multiline strings should work\nAction: editCode("func main() {\n  fmt.Println(\\"Hello World\\")\n}", "go lang", "make it compile");`,
-
   // Invalid examples:
   `Thought no colon doesnt work\nAction hahaha`,
   `Action: action should not come first\nThought: ha`,
@@ -111,22 +117,4 @@ Result: blah blah blah blah
       }
     }
   );
-}
-
-for (const test of [
-  ["`hello`", true, (str) => str.length],
-  ["`hello`   ", true, (str) => str.length - 3],
-  ["`abc`, `abc`", true, (str) => str.length - 7],
-  ["`hello \\``", true, (str) => str.length],
-  ["`hello \\` `", true, (str) => str.length],
-  ["`hello \\` ${``} `", true, (str) => str.length],
-  ["`hello \\` ${`` + `${v} ${` {} \\${}`}`} `", true, (str) => str.length],
-] as [string, boolean, (str: string) => number][]) {
-  Deno.test(`customBackQuoteStringLiteralRegExp.test(${test[0]})`, (t) => {
-    assertEquals(customBackQuoteStringLiteralRegExp.test(test[0]), test[1]);
-    assertEquals(
-      customBackQuoteStringLiteralRegExp.lastIndex,
-      test[2](test[0])
-    );
-  });
 }

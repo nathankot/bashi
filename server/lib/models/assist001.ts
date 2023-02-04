@@ -1,3 +1,5 @@
+// @deno-types="@/types/gpt-3-encoder.d.ts"
+import * as gptEncoder from "gpt-3-encoder";
 import * as t from "io-ts";
 
 import { IS_DEV } from "@lib/constants.ts";
@@ -307,7 +309,7 @@ export async function run(
       loopNumber++;
       // 1. For each pending thought/action, find expressions and try to resolve them
       if (pending != null) {
-        const actionGroupsSofar = Object.values(resolvedActionGroups).length;
+        const actionGroupsSoFar = Object.values(resolvedActionGroups).length;
         const topLevelExpressions = parseStatements(pending.action);
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
@@ -315,7 +317,7 @@ export async function run(
         let topLevelExpressionResults: Value[] = [];
         for (const [i, topLevelExpression] of topLevelExpressions.entries()) {
           const pendingCommandsOrResult = getPendingCommandsOrResult(
-            `${actionGroupsSofar}.${i}`,
+            `${actionGroupsSoFar}.${i}`,
             topLevelExpression,
             resolvedCommandsDict()
           );
@@ -440,11 +442,25 @@ export async function run(
         }
 
         // 2. Any resolutions from the above go into the new prompt
-        const result = topLevelExpressionResults.map(valueToString).join("; ");
-        resolvedActionGroups.push({
-          ...pending,
-          result,
-        });
+        let resultStrings = [];
+        for (const [i, result] of topLevelExpressionResults.entries()) {
+          const varName = `result_${actionGroupsSoFar}_${i}`;
+          memory.variables[varName] = result;
+          let resultStr = valueToString(result);
+          try {
+            const toksLength = gptEncoder.encode(resultStr).length;
+            if (toksLength > 300) {
+              resultStr =
+                resultStr.substring(0, 300 * 4) +
+                " [... truncated: full value stored in var `" +
+                varName +
+                "`]";
+            }
+          } catch {}
+          resultStrings.push(resultStr);
+        }
+        const result = resultStrings.join("; ");
+        resolvedActionGroups.push({ ...pending, result });
         dev?.results.push(result);
         if (IS_DEV()) {
           log("info", `result: ${result}`);

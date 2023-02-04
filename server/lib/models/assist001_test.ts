@@ -348,6 +348,17 @@ Action: finish()`,
       resolvedCommands: [],
     },
   },
+  {
+    description: "long results are truncated and stored in variables",
+    input: { request: "some request" },
+    openAiResults: [
+      `some thought\nAction: longVar = "${new Array(500)
+        .fill("word")
+        .join(" ")}"; longVar`,
+      `some thought\nAction: finish()`,
+    ],
+    snapshotPrompts: true,
+  },
 
   // model uses wrong arg types
   // model uses wrong arg count

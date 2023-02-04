@@ -27,9 +27,9 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -37,7 +37,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -52,8 +52,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -61,9 +61,9 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -71,7 +71,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -86,8 +86,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -153,9 +153,9 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -163,7 +163,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -178,8 +178,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -187,9 +187,9 @@ Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -197,7 +197,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -212,8 +212,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1497,9 +1497,9 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -1507,7 +1507,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -1522,8 +1522,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1826,9 +1826,9 @@ some text
 
 The re-written text is:
 ",
-  'Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -1836,7 +1836,7 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
@@ -1851,8 +1851,8 @@ Functions are declared below, you must not use any other functions. Do not assum
 
 Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1966,6 +1966,103 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
   },
   state: undefined,
 }
+`;
+
+snapshot[`long results are truncated and stored in variables 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`long results are truncated and stored in variables 2`] = `
+[
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+
+The language for Action is a tiny subset of javascript, only available features should be used:
+
+* function calls and composition/nesting
+* string concatenation using +
+* simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
+
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+
+\`answer(answer: string): void\` - respond to the original question/request
+\`returnText(text: string): void\` - send back modified input or generated result
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`getInputText(): string\` - get input text/code that the request may refer to
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
+Result: the result of the Action expression
+... (this Thought/Action/Result can repeat N times)
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+
+The language for Action is a tiny subset of javascript, only available features should be used:
+
+* function calls and composition/nesting
+* string concatenation using +
+* simple variable assignment using var
+* string, number and boolean literals
+  * strings should be wrapped in backquotes (\`)
+
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+
+\`answer(answer: string): void\` - respond to the original question/request
+\`returnText(text: string): void\` - send back modified input or generated result
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`getInputText(): string\` - get input text/code that the request may refer to
+\`math(formula: string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`ask(question: string): string\` - clarify the original question/request
+\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
+Result: the result of the Action expression
+... (this Thought/Action/Result can repeat N times)
+
+Begin!
+
+Request: some request
+Thought: some thought
+Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar
+Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
+Thought: ',
+]
 `;
 
 snapshot[`example A step 1 1`] = `

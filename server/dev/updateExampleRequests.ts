@@ -105,34 +105,7 @@ const INPUTS: {
   },
   {
     prompt:
-      "given a list of verbs can you help me find additional verbs that mean about the same thing",
-    requestContext: {
-      text: {
-        type: "string",
-        value: `
-    "edit",
-    "change",
-    "alter",
-    "fix",
-    "move",
-    "align",
-    "reword",
-    "re-word",
-    "editor",
-    "improve",
-    "check",
-    "revise",
-    "modify",
-    "adapt",
-    "rewrite",
-    "re-write",
-`,
-      },
-    },
-  },
-  {
-    prompt:
-      "edit this list of verbs with additional items that mean about the same thing",
+      "given this list of verbs can you help me add additional verbs that mean the same thing?",
     requestContext: {
       text: {
         type: "string",

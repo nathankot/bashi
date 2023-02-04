@@ -46,7 +46,7 @@ const pendingRequestContextState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'editProse(getInputText(), "convert to poem"); now()',
+      action: 'editText(getInputText(), "convert to poem"); now()',
       expressions: [
         {
           type: "call",
@@ -54,7 +54,7 @@ const pendingRequestContextState = () =>
             { type: "call", name: "getInputText", args: [] },
             { type: "string", value: "convert to poem" },
           ],
-          name: "editProse",
+          name: "editText",
         },
         {
           type: "call",
@@ -249,7 +249,7 @@ Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRel
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); editProse(getInputText(), "convert to poem"); now()`,
+Action: now(); editText(getInputText(), "convert to poem"); now()`,
     ],
   },
   {
@@ -269,7 +269,7 @@ Action: now(); editProse(getInputText(), "convert to poem"); now()`,
     description: "request needs more context - fulfilled",
     input: { requestContext: { text: { type: "string", value: `some text` } } },
     openAiResults: [
-      `the result of editProse()`,
+      `the result of editText()`,
       `I am finished\nAction: finish()`,
     ],
     snapshotPrompts: true,
@@ -278,7 +278,7 @@ Action: now(); editProse(getInputText(), "convert to poem"); now()`,
   {
     description: "fulfilled but max loops",
     input: { requestContext: { text: { type: "string", value: `some text` } } },
-    openAiResults: [`the result of editProse()`],
+    openAiResults: [`the result of editText()`],
     snapshotError: true,
     initialState: {
       ...pendingRequestContextState(),

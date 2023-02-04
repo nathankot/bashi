@@ -495,9 +495,26 @@ export async function run(
           max_tokens: session.configuration.maxResponseTokens,
           best_of: session.configuration.bestOf,
           echo: false,
-          temperature: 0.5,
+          temperature: 0.3,
           prompt: [prompt],
           stop: "\nResult:",
+          logit_bias: {
+            8818: -10, // `function`
+            22446: -100, // `().`
+            14804: -100, // `=>`
+            5218: -100, // ` =>`
+            21737: -10, // `[]`
+            58: -10, // `[`
+            60: -10, // `]`
+            685: -10, // ` [`
+            2361: -10, // ` ]`
+            14692: -10, // `["`
+            8973: -10, // `"]`
+            1391: -10, // ` {`
+            1782: -10, // ` }`
+            90: -10, // `{`
+            92: -10, // `}`
+          },
         },
         {
           signal: modelDeps.signal,
@@ -532,7 +549,12 @@ export async function run(
   } catch (e) {
     isFinished = true;
     if (IS_DEV()) {
-      log("error", `dev information during error: ${JSON.stringify(dev)}`);
+      log(
+        "error",
+        `dev information (completions) during error: ${JSON.stringify(
+          dev?.prompts.map((p) => p.completion)
+        )}`
+      );
     }
     throw e;
   } finally {
@@ -567,9 +589,9 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best and directly as you can. Aim to minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail().
+  const header = `Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only use these available features:
+The language for Action is a tiny subset of javascript, only available features should be used:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -577,12 +599,12 @@ The language for Action is a tiny subset of javascript, only use these available
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The requestor only receives a response if the function explicitly indicates it.`;
+Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer
-Thought: you should always think about what to do
-Action: one or more expressions composing available functions delimited by ;
+Thought: always think what needs to happen to fulfill the request
+Action: one or more expressions delimited by ; composing only available functions from above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)`;
 

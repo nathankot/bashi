@@ -31,7 +31,7 @@ const parseRelativeTime: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: 10,
   returnType: "string",
-  description: "parse ISO8601 datetime relative to now from natural language",
+  description: "get ISO8601 datetime relative to now from natural language",
   args: [
     {
       name: "natural language relative time",
@@ -78,10 +78,10 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   },
 };
 
-const search: BuiltinCommandDefinition<["string"], "string"> = {
+const topWebsitesForQuery: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: 1000,
-  description: "get list of website titles and links from the search query",
+  description: "get website titles and links from the search query",
   returnType: "string",
   args: [{ name: "query", type: "string" }],
   run: async (modelDeps, [query]) => {
@@ -192,14 +192,17 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
   ],
 };
 
-const editProse: BuiltinCommandDefinition<["string", "string"], "string"> = {
+const editText: BuiltinCommandDefinition<["string", "string"], "string"> = {
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: `edit prose using the given requirements`,
+  description: `edit input using the given requirements. prefer editCode() for code`,
   args: [
     { name: "input", type: "string" },
-    { name: "full description of desired changes", type: "string" },
+    {
+      name: "full description of desired changes or additions",
+      type: "string",
+    },
   ],
   run: async (modelDeps, [text, editingRequirement]) => {
     const output = await runPassthrough(
@@ -246,11 +249,14 @@ const editCode: BuiltinCommandDefinition<
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: `edit code in programming language using the given requirements`,
+  description: `edit code using the given requirements`,
   args: [
     { name: "input", type: "string" },
-    { name: "language", type: "string" },
-    { name: "full description of desired changes", type: "string" },
+    { name: "programming language or 'unknown'", type: "string" },
+    {
+      name: "full description of desired changes or additions",
+      type: "string",
+    },
   ],
   run: async (modelDeps, [text, language, editingRequirement]) => {
     const output = await runPassthrough(
@@ -342,13 +348,13 @@ export const builtinCommands = {
   now,
   math,
   currentTimeForTimezone,
-  editProse,
+  editText,
   editCode,
   generateCode,
   translate,
   parseRelativeTime,
   extractInformation,
-  search,
+  topWebsitesForQuery,
 };
 
 export default builtinCommands;

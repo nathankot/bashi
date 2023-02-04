@@ -304,6 +304,30 @@ The full edited code is:
   ],
 };
 
+const writeCommitMessage: BuiltinCommandDefinition<["string"], "string"> = {
+  isBuiltin: true,
+  cost: 1000,
+  returnType: "string",
+  description: `write git commit message based on input diff`,
+  args: [{ name: "diff", type: "string" }],
+  run: async (modelDeps, [diff]) => {
+    const output = await runPassthrough(
+      modelDeps,
+      { model: "passthrough-openai-000" },
+      {
+        openAiModel: "text-davinci-003",
+        request: `Write a git commit message based on the following diff:
+${diff.value}
+
+The commit message:
+`,
+      }
+    );
+    return { type: "string", value: output.result.trim() };
+  },
+  triggerTokens: ["commit", "git", "diff"],
+};
+
 const generateCode: BuiltinCommandDefinition<["string", "string"], "string"> = {
   isBuiltin: true,
   cost: 10,
@@ -351,6 +375,7 @@ export const builtinCommands = {
   editText,
   editCode,
   generateCode,
+  writeCommitMessage,
   translate,
   parseRelativeTime,
   extractInformation,

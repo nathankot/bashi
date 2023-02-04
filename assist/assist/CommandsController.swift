@@ -179,7 +179,7 @@ public actor CommandsController {
         AnonymousCommand(
             name: "ask",
             cost: .Low,
-            description: "get a clarification on the original question/request",
+            description: "clarify the original question/request",
             args: [.init(type: .string, name: "question")],
             returnType: .string
         ) { api, ctx, args in

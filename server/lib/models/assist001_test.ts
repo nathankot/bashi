@@ -144,6 +144,14 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     description: "supports model outputs with top level infix call",
     input: { request: "some request" },
     openAiResults: [
+      " Do somethign\nAction: currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife');",
+      ``,
+    ],
+  },
+  {
+    description: "supports model outputs using template strings",
+    input: { request: "some request" },
+    openAiResults: [
       ` I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
       ``,
     ],

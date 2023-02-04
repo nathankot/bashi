@@ -557,6 +557,180 @@ snapshot[`supports model outputs with top level infix call 1`] = `
       results: [
         {
           type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      requestContext: {},
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: "currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "in ",
+                        },
+                        {
+                          type: "number",
+                          value: 5,
+                        },
+                      ],
+                      name: "__+__",
+                      type: "call",
+                    },
+                    {
+                      type: "string",
+                      value: " days",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "Do somethign",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in ",
+          },
+          {
+            type: "number",
+            value: 5,
+          },
+        ],
+        id: "0.1.0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "in 5",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5",
+          },
+          {
+            type: "string",
+            value: " days",
+          },
+        ],
+        id: "0.1.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "in 5 days",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5 days",
+          },
+        ],
+        id: "0.1.0",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs using template strings 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
           value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
         },
       ],

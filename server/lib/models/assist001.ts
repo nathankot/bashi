@@ -4,7 +4,12 @@ import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
-import { ValueType, Value, valueToString } from "@lib/valueTypes.ts";
+import {
+  ValueType,
+  Value,
+  valueToString,
+  ValueForType,
+} from "@lib/valueTypes.ts";
 import {
   Input,
   ResultFinished,
@@ -116,6 +121,28 @@ const privateBuiltinCommands = {
   } as BuiltinCommandDefinition<["string"], "void">,
 };
 
+function overload<
+  LHS extends ValueType,
+  RHS extends ValueType,
+  R extends ValueType
+>(
+  lhs: LHS,
+  rhs: RHS,
+  returnType: R,
+  fn: (lhs: ValueForType<LHS>, rhs: ValueForType<RHS>) => ValueForType<R>
+): AnyBuiltinCommandDefinition {
+  return {
+    isBuiltin: true,
+    description: `overload for ${lhs}, ${rhs} => ${returnType}`,
+    args: [
+      { name: "lhs", type: lhs },
+      { name: "rhs", type: rhs },
+    ],
+    returnType,
+    run: async (_, [lhs, rhs]) => fn(lhs, rhs),
+  };
+}
+
 // Commands that the model implicitly knows, does not need to be
 // sent to the model explicitly.
 const languageBuiltinCommands = {
@@ -153,33 +180,31 @@ const languageBuiltinCommands = {
   },
   "__+__": {
     overloads: [
-      {
-        isBuiltin: true,
-        description: "number addition the + infix operand",
-        args: [
-          { name: "lhs", type: "number" },
-          { name: "rhs", type: "number" },
-        ],
-        returnType: "number",
-        run: async (_, [lhs, rhs]) => ({
-          type: "number",
-          value: lhs.value + rhs.value,
-        }),
-      } as BuiltinCommandDefinition<["number", "number"], "number">,
-      {
-        isBuiltin: true,
-        args: [
-          { name: "lhs", type: "string" },
-          { name: "rhs", type: "string" },
-        ],
-        description: "string concatenation using the + infix operand",
-        returnType: "string",
-        run: async (_, [lhs, rhs]) => ({
-          type: "string",
-          value: lhs.value + rhs.value,
-        }),
-      } as BuiltinCommandDefinition<["string", "string"], "string">,
-    ] as AnyBuiltinCommandDefinition[],
+      overload("number", "number", "number", (l, r) => ({
+        type: "number",
+        value: l.value + r.value,
+      })),
+      overload("string", "string", "string", (l, r) => ({
+        type: "string",
+        value: l.value + r.value,
+      })),
+      overload("number", "string", "string", (l, r) => ({
+        type: "string",
+        value: l.value.toString() + r.value,
+      })),
+      overload("string", "number", "string", (l, r) => ({
+        type: "string",
+        value: l.value + r.value.toString(),
+      })),
+      overload("boolean", "string", "string", (l, r) => ({
+        type: "string",
+        value: (l.value === true ? "true" : "false") + r.value,
+      })),
+      overload("string", "boolean", "string", (l, r) => ({
+        type: "string",
+        value: l.value + (r.value === true ? "true" : "false"),
+      })),
+    ],
   },
 };
 
@@ -470,7 +495,7 @@ export async function run(
           max_tokens: session.configuration.maxResponseTokens,
           best_of: session.configuration.bestOf,
           echo: false,
-          temperature: 0.1,
+          temperature: 0.5,
           prompt: [prompt],
           stop: "\nResult:",
         },

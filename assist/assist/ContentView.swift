@@ -12,6 +12,8 @@ import KeyboardShortcuts
 struct ContentView: View {
     @ObservedObject var state: AppState
     var controller: AppController?
+    @State private var requestTextfieldValue: String = ""
+    @FocusState private var requestTextFieldFocus: Bool
 
     var body: some View {
         VStack {
@@ -37,6 +39,7 @@ struct ContentView: View {
             if state.accountNumber == "" {
                 Text("Provide your account number first.").font(.callout)
                 Button("Open settings", action: showSettings)
+                Spacer()
             } else {
                 switch state.state {
                 case .Idle:
@@ -46,6 +49,18 @@ struct ContentView: View {
                         Text("Set up a shortcut key for push-to-talk").font(.callout)
                         Button("Open settings", action: showSettings)
                     }
+                    Spacer()
+                    TextField("Enter request", text: $requestTextfieldValue)
+                        .focused($requestTextFieldFocus)
+                        .onChange(of: requestTextFieldFocus, perform: { v in
+                            state.update(requestTextFieldFocus: v)
+                        })
+                        .onReceive(state.$isRequestTextFieldFocused, perform: { v in
+                            self.requestTextFieldFocus = v
+                        })
+                        .onSubmit {
+                            controller?.makeRequest(requestTextfieldValue)
+                        }
                 case .AwaitingRequest:
                     Text("Listening...").font(.callout)
                     if let s = state.currentTranscription {
@@ -54,6 +69,7 @@ struct ContentView: View {
                     if let k = pushToTalkShortcut {
                         Text("Press \(k.description) again to finish talking").font(.callout)
                     }
+                    Spacer()
                     Button("Cancel", action: cancelRequest)
                 case let .Processing(messages):
                     Text("Request:").font(.callout)
@@ -76,6 +92,7 @@ struct ContentView: View {
                             Text("Press \(k.description) to respond").font(.callout)
                         }
                     }
+                    Spacer()
                     Button("Cancel", action: cancelRequest)
                 case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: _)):
                     Text("Context required, please copy the text that matches the following requirement:")
@@ -92,12 +109,12 @@ struct ContentView: View {
                         Text("Unexpected error. Please try again.")
                     }
                     Button("Dismiss", action: dismissError)
+                    Spacer()
                 default:
                     Text("Unsupported state: \(String(reflecting: state.state))")
                 }
 
             }
-            Spacer()
         }
             .padding()
             .frame(maxWidth: 300, minHeight: 200)

@@ -15,6 +15,7 @@ import Combine
 
 extension KeyboardShortcuts.Name {
     static let pushToTalk = Self("pushToTalk")
+    static let focusTextEntry = Self("focusTextEntry")
 }
 
 actor AppController {
@@ -27,7 +28,8 @@ actor AppController {
     let statusBarItem: NSStatusItem
 
     var isRecording = false
-    var keyboardShortcutsTask: Task<Void, Error>? = nil
+    var focusRequestTextFieldShortcutTask: Task<Void, Error>? = nil
+    var pushToTalkShortcutTask: Task<Void, Error>? = nil
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
     var pasteboardContextTask: Task<Void, Error>? = nil
 
@@ -44,13 +46,13 @@ actor AppController {
     }
 
     deinit {
-        keyboardShortcutsTask?.cancel()
+        pushToTalkShortcutTask?.cancel()
     }
 
     func prepare() async {
-        if self.keyboardShortcutsTask == nil {
+        if self.pushToTalkShortcutTask == nil {
             logger.info("listening to keyboard shortcuts")
-            keyboardShortcutsTask = Task {
+            pushToTalkShortcutTask = Task {
                 for await e in KeyboardShortcuts.events(for: .pushToTalk) {
                     guard case .keyUp = e else {
                         continue
@@ -79,6 +81,19 @@ actor AppController {
                             break
                         }
                     }
+                }
+            }
+        }
+
+        if self.focusRequestTextFieldShortcutTask == nil {
+            focusRequestTextFieldShortcutTask = Task {
+                for await e in KeyboardShortcuts.events(for: .focusTextEntry) {
+                    guard case .keyUp = e else {
+                        continue
+                    }
+                    await togglePopover(shouldShow: true)
+                    await focusRequestTextField()
+
                 }
             }
         }
@@ -129,7 +144,7 @@ actor AppController {
             await state.handleError(error)
         }
     }
-    
+
     func stopRecordingAnswer() async {
         do {
             let bestTranscription = try await audioRecordingController.stopRecording()
@@ -156,12 +171,16 @@ actor AppController {
             guard let bestTranscription = bestTranscription else {
                 throw AppError.NoTranscriptionFound
             }
-            Task {
-                // Spin up a new task so that we do not block the app controller:
-                await commandsController.process(initialRequest: bestTranscription)
-            }
+            makeRequest(bestTranscription)
         } catch {
             await state.handleError(error)
+        }
+    }
+
+    nonisolated func makeRequest(_ request: String) {
+        Task {
+            // Spin up a new task so that we do not block the app controller:
+            await commandsController.process(initialRequest: request)
         }
     }
 
@@ -178,6 +197,10 @@ actor AppController {
 
     func dismissError() async {
         try? await state.transition(newState: .Idle)
+    }
+
+    func focusRequestTextField() async {
+        await state.update(requestTextFieldFocus: true)
     }
 
     func quit() async {

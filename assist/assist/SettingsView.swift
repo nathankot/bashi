@@ -46,7 +46,11 @@ struct SettingsView: View {
             Spacer(minLength: 30)
 
             KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)
-            Text("Hold this shortcut key to enable the microphone, release to send the request.")
+            Text("Use this shortcut to enable the microphone, tap again to send the request.")
+                .font(.caption)
+            
+            KeyboardShortcuts.Recorder("Focus on request textbox", name: .focusTextEntry)
+            Text("Use this shortcut to type a request.")
                 .font(.caption)
 
             Spacer(minLength: 30)

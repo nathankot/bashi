@@ -72,6 +72,7 @@ public final class AppState: ObservableObject {
             case RequestContextText(description: String, onReceive: (String) -> Void)
         }
     }
+    
 
     static let shared = AppState()
 
@@ -79,7 +80,8 @@ public final class AppState: ObservableObject {
     @Published var session: BashiSession? = nil
     @Published public private(set) var state: State = .Idle
     @Published public private(set) var currentTranscription: String? = nil
-
+    @Published public private(set) var isRequestTextFieldFocused = false
+    
     public init(accountNumber: String? = nil) {
         logger.info("initializing app state")
         if let an = accountNumber {
@@ -140,7 +142,11 @@ public final class AppState: ObservableObject {
     public func update(currentTranscription s: String?) {
         currentTranscription = s
     }
-
+    
+    public func update(requestTextFieldFocus b: Bool) {
+        isRequestTextFieldFocused = b
+    }
+    
     public func transition<R>(
         newState: State,
         closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }

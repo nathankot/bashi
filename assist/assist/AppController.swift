@@ -47,8 +47,6 @@ actor AppController {
     }
 
     func prepare() async {
-        await audioRecordingController.prepare()
-
         if self.keyboardShortcutsTask == nil {
             logger.info("listening to keyboard shortcuts")
             keyboardShortcutsTask = Task {

@@ -35,15 +35,6 @@ actor AudioRecordingController {
         return AsyncThrowingPublisher(published)
     }
     
-    func prepare() async {
-        let authStatus = await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { authStatus in
-                continuation.resume(returning: authStatus)
-            }
-        }
-        speechRecognizerAuthStatus = authStatus
-    }
-    
     private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
         let audioEngine = AVAudioEngine()
         
@@ -71,7 +62,12 @@ actor AudioRecordingController {
         transcribedSubject = nil
     }
     
-    func startRecording() throws -> AsyncThrowingPublisher<AnyPublisher<String, Error>> {
+    func startRecording() async throws -> AsyncThrowingPublisher<AnyPublisher<String, Error>> {
+        speechRecognizerAuthStatus = await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { authStatus in
+                continuation.resume(returning: authStatus)
+            }
+        }
         if speechRecognizerAuthStatus != .authorized {
             throw AppError.InsufficientAppPermissions("speech recognition")
         }

@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build test test-update bench vendor check clients
+.PHONY: up up-all dev build test test-update bench update-lock check clients
 compose_command = docker-compose
 
 up:
@@ -32,10 +32,8 @@ bench:
 check:
 	cd ./server && deno check --lock-write ./main.ts
 
-vendor: check
-	cd ./server && cp ./deno.json ./deno.vendored.json
-	cd ./server && rm -rf vendor
-	cd ./server && deno vendor -c ./deno.vendored.json --import-map ./import_map.json --force --reload main.ts vendor_extra.ts
+update:
+	cd ./server && deno cache --check --lock-write --reload main.ts cache_imports.ts
 
 clients:
 	-rm -rf ./assist/BashiClient

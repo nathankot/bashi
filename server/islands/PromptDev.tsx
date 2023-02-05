@@ -3,7 +3,7 @@ import { useState, useEffect } from "preact/hooks";
 import { commandSet } from "@lib/fixtures.ts";
 import { CommandSet } from "@lib/command/types.ts";
 import { Session } from "@lib/session.ts";
-import { POSTRequest as PostSessionRequest } from "@routes/api/sessions.ts";
+import { POSTRequest } from "@routes/api/sessions_types.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
 
@@ -13,7 +13,7 @@ export default function PromptDev() {
   const [sessionId, setSessionId] = useState<null | string>(null);
 
   useEffect(() => {
-    let body: PostSessionRequest = {
+    let body: POSTRequest = {
       configuration: {},
       modelConfigurations: {
         "assist-001": {

@@ -30,10 +30,10 @@ bench:
 	cd ./server && deno bench --allow-env --allow-read
 
 check:
-	cd ./server && deno check --lock-write ./main.ts
+	cd ./server && deno check --lock deno.prod.lock ./main.ts
 
 update:
-	cd ./server && deno cache --check --lock-write --reload main.ts cache_imports.ts
+	cd ./server && deno cache --check --lock deno.prod.lock --lock-write --reload main.ts cache_imports.ts
 
 clients:
 	-rm -rf ./assist/BashiClient

@@ -60,6 +60,7 @@ struct ContentView: View {
                         })
                         .onSubmit {
                             controller?.makeRequest(requestTextfieldValue)
+                            requestTextfieldValue = ""
                         }
                 case .AwaitingRequest:
                     Text("Listening...").font(.callout)
@@ -77,7 +78,7 @@ struct ContentView: View {
                         Text($0.message)
                     }
                     Text("Processing...").font(.callout)
-                case let .NeedsInput(messages: messages, type: .Question(question, _)):
+                case let .NeedsInput(messages: messages, type: .Question(question, onAnswer: onAnswer)):
                     List(messages) {
                         Text($0.message)
                     }
@@ -92,11 +93,36 @@ struct ContentView: View {
                             Text("Press \(k.description) to respond").font(.callout)
                         }
                     }
-                    Spacer()
                     Button("Cancel", action: cancelRequest)
-                case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: _)):
-                    Text("Context required, please copy the text that matches the following requirement:")
+                    Spacer()
+                    TextField("Enter response", text: $requestTextfieldValue)
+                        .focused($requestTextFieldFocus)
+                        .onChange(of: requestTextFieldFocus, perform: { v in
+                            state.update(requestTextFieldFocus: v)
+                        })
+                        .onReceive(state.$isRequestTextFieldFocused, perform: { v in
+                            self.requestTextFieldFocus = v
+                        })
+                        .onSubmit {
+                            onAnswer(requestTextfieldValue)
+                            requestTextfieldValue = ""
+                        }
+                case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: let onReceive)):
+                    Text("Context required, either copy the text that matches the following requirement, or enter it below:")
                     Text(desc)
+                    Spacer()
+                    TextField("Enter response", text: $requestTextfieldValue)
+                        .focused($requestTextFieldFocus)
+                        .onChange(of: requestTextFieldFocus, perform: { v in
+                            state.update(requestTextFieldFocus: v)
+                        })
+                        .onReceive(state.$isRequestTextFieldFocused, perform: { v in
+                            self.requestTextFieldFocus = v
+                        })
+                        .onSubmit {
+                            onReceive(requestTextfieldValue)
+                            requestTextfieldValue = ""
+                        }
                     Button("Cancel", action: cancelRequest)
                 case .Finished(let messages):
                     List(messages) {

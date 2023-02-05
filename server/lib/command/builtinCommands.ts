@@ -316,10 +316,16 @@ const writeCommitMessage: BuiltinCommandDefinition<["string"], "string"> = {
       { model: "passthrough-openai-000" },
       {
         openAiModel: "text-davinci-003",
-        request: `Write a git commit message based on the following diff:
+        request: `Write a git commit title and message based on the following diff:
 ${diff.value}
 
-The commit message:
+Use the format:
+
+<Title in under 50 words>
+
+<Description a bit more verbose but still concise>
+
+Begin!
 `,
       }
     );

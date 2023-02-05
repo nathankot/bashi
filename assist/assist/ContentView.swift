@@ -69,8 +69,9 @@ struct ContentView: View {
                             Text("Hold \(k.description) to respond").font(.callout)
                         }
                     }
-                case .NeedsInput(messages: _, type: .RequestContextText(onReceive: _)):
-                    Text("Context required, please copy the text that the model will operate on")
+                case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: _)):
+                    Text("Context required, please copy the text that matches the following requirement:")
+                    Text(desc)
                 case .Finished(let messages):
                     List(messages) {
                         Text($0.message)

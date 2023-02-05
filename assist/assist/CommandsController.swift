@@ -69,6 +69,7 @@ public actor CommandsController {
                                 .NeedsInput(
                                 messages: messages,
                                 type: .RequestContextText(
+                                    description: resultNeedsContext.missingRequestContext.text!.description,
                                     onReceive: callback))
                         }
                         requestContext.text = .init(type: .string, value: text)

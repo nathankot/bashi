@@ -524,13 +524,17 @@
       "StringValueRequirement": {
         "type": "object",
         "required": [
-          "type"
+          "type",
+          "description"
         ],
         "properties": {
           "type": {
             "enum": [
               "string"
             ],
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           }
         }

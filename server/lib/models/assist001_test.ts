@@ -46,12 +46,16 @@ const pendingRequestContextState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInputText(), "convert to poem"); now()',
+      action: 'editText(getInputText("the text"), "convert to poem"); now()',
       expressions: [
         {
           type: "call",
           args: [
-            { type: "call", name: "getInputText", args: [] },
+            {
+              type: "call",
+              name: "getInputText",
+              args: [{ type: "string", value: "the text" }],
+            },
             { type: "string", value: "convert to poem" },
           ],
           name: "editText",
@@ -249,7 +253,7 @@ Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRel
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); editText(getInputText(), "convert to poem"); now()`,
+Action: now(); editText(getInputText("the text"), "convert to poem"); now()`,
     ],
   },
   {

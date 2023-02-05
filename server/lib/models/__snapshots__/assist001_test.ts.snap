@@ -43,7 +43,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -77,7 +77,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -169,7 +169,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -203,7 +203,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -1513,7 +1513,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -1544,6 +1544,7 @@ snapshot[`request needs more context 1`] = `
     result: {
       missingRequestContext: {
         text: {
+          description: "the text",
           type: "string",
         },
       },
@@ -1563,7 +1564,7 @@ snapshot[`request needs more context 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); editText(getInputText(), "convert to poem"); now()',
+      action: 'now(); editText(getInputText("the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -1575,6 +1576,10 @@ snapshot[`request needs more context 1`] = `
           args: [
             {
               args: [
+                {
+                  type: "string",
+                  value: "the text",
+                },
               ],
               name: "getInputText",
               type: "call",
@@ -1627,6 +1632,7 @@ snapshot[`request needs more context - still missing 1`] = `
     result: {
       missingRequestContext: {
         text: {
+          description: "the text",
           type: "string",
         },
       },
@@ -1642,12 +1648,16 @@ snapshot[`request needs more context - still missing 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInputText(), "convert to poem"); now()',
+      action: 'editText(getInputText("the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
             {
               args: [
+                {
+                  type: "string",
+                  value: "the text",
+                },
               ],
               name: "getInputText",
               type: "call",
@@ -1713,6 +1723,7 @@ snapshot[`request needs more context - wrong type 1`] = `
     result: {
       missingRequestContext: {
         text: {
+          description: "the text",
           type: "string",
         },
       },
@@ -1733,12 +1744,16 @@ snapshot[`request needs more context - wrong type 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInputText(), "convert to poem"); now()',
+      action: 'editText(getInputText("the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
             {
               args: [
+                {
+                  type: "string",
+                  value: "the text",
+                },
               ],
               name: "getInputText",
               type: "call",
@@ -1842,7 +1857,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -1863,7 +1878,7 @@ Thought: I need to call some command
 Action: someCommand()
 Result: "blah"
 Thought: I need to do something
-Action: editText(getInputText(), "convert to poem"); now()
+Action: editText(getInputText("the text"), "convert to poem"); now()
 Result: "the result of editText()"; "2022-12-19T08:41:10Z"
 Thought: ',
 ]
@@ -2007,7 +2022,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
@@ -2041,7 +2056,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText(): string\` - get input text/code that the request may refer to
+\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
 \`math(formula: string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language

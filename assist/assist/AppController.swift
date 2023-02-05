@@ -87,7 +87,13 @@ actor AppController {
                     let strings = pasteboard.readObjects(forClasses: [NSString.self]) ?? []
                     let newChangeCount = pasteboard.changeCount
                     if newChangeCount > lastChangeCount,
-                        case let .NeedsInput(messages: _, type: .RequestContextText(onReceive: callback)) = await state.state,
+                        case let .NeedsInput(
+                            messages: _,
+                            type: .RequestContextText(
+                                description: _,
+                                onReceive: callback
+                            )
+                        ) = await state.state,
                         let text = strings.first as? String {
                         logger.info("found new string value in the Pasteboard, using as text context")
                         callback(text)

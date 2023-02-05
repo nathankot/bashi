@@ -23,10 +23,14 @@ export type RequestContext = t.TypeOf<typeof RequestContext>;
 type KnownRequestContextDefProps = {
   [K in keyof Required<KnownRequestContext>]: t.TypeC<{
     type: t.LiteralC<Required<KnownRequestContext>[K]["type"]>;
+    description: t.StringC;
   }>;
 };
 
-export const StringValueRequirement = t.type({ type: StringType });
+export const StringValueRequirement = t.type({
+  type: StringType,
+  description: t.string,
+});
 export type StringValueRequirement = t.TypeOf<typeof StringValueRequirement>;
 
 export const NumberValueRequirement = t.type({ type: NumberType });
@@ -47,7 +51,10 @@ export const RequestContextRequirement = t.intersection([
     Object.entries(KnownRequestContext.props).reduce(
       (a, [key, propDef]) => ({
         ...a,
-        [key]: t.type({ type: propDef.props.type }),
+        [key]: t.type({
+          type: propDef.props.type,
+          description: t.string,
+        }),
       }),
       {} as Partial<KnownRequestContextDefProps>
     ) as KnownRequestContextDefProps

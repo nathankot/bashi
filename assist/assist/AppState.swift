@@ -69,7 +69,7 @@ public final class AppState: ObservableObject {
         public enum InputType {
             case Confirm(message: String)
             case Question(message: String, onAnswer: (String) -> Void)
-            case RequestContextText(onReceive: (String) -> Void)
+            case RequestContextText(description: String, onReceive: (String) -> Void)
         }
     }
 

@@ -94,17 +94,22 @@ const privateBuiltinCommands = {
     cost: -1000,
     returnType: "string",
     description: "get input text/code that the request may refer to",
-    args: [],
-    run: async (_, __, memory) => {
+    args: [{ name: "required input description", type: "string" }],
+    run: async (_, [desc], memory) => {
       if (
         memory.requestContext.text == null ||
         memory.requestContext.text.type !== "string"
       ) {
-        throw new RequestContextRequired({ text: { type: "string" } });
+        throw new RequestContextRequired({
+          text: {
+            type: "string",
+            description: desc.value,
+          },
+        });
       }
       return memory.requestContext.text;
     },
-  } as BuiltinCommandDefinition<[], "string">,
+  } as BuiltinCommandDefinition<["string"], "string">,
   finish: {
     isBuiltin: true,
     cost: -1000,

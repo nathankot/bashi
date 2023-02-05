@@ -38,13 +38,13 @@ export default function PromptDev() {
 
   const onCommandsChange = (t: string) => {
     try {
-      const decoded = CommandSet.decode(JSON.parse(t));
-      if (decoded.right == null) {
+      const decoded = JSON.parse(t);
+      if (!CommandSet.is(decoded)) {
         setError("could not decode commands");
         return;
       }
       setError(null);
-      setCommands(decoded.right);
+      setCommands(decoded);
     } catch {
       setError("could not parse json");
     }

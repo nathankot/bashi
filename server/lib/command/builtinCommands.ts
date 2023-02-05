@@ -308,7 +308,7 @@ const writeCommitMessage: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: 1000,
   returnType: "string",
-  description: `write git commit message based on input diff`,
+  description: `generate a git commit title/message based on diff from input text`,
   args: [{ name: "diff", type: "string" }],
   run: async (modelDeps, [diff]) => {
     const output = await runPassthrough(
@@ -316,16 +316,13 @@ const writeCommitMessage: BuiltinCommandDefinition<["string"], "string"> = {
       { model: "passthrough-openai-000" },
       {
         openAiModel: "text-davinci-003",
-        request: `Write a git commit title and message based on the following diff:
+        request: `Write a short (under 50 characters) git commit title as best you can by summarizing the following diff:
+
+\`\`\`diff
 ${diff.value}
+\`\`\`
 
-Use the format:
-
-<Title in under 50 words>
-
-<Description a bit more verbose but still concise>
-
-Begin!
+Result:
 `,
       }
     );

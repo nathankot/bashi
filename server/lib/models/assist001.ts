@@ -518,7 +518,7 @@ export async function run(
           max_tokens: session.configuration.maxResponseTokens,
           best_of: session.configuration.bestOf,
           echo: false,
-          temperature: 0.5,
+          temperature: 0.3,
           prompt: [prompt],
           stop: "\nResult:",
           logit_bias: {
@@ -537,6 +537,15 @@ export async function run(
             1782: -10, // ` }`
             90: -10, // `{`
             92: -10, // `}`
+            11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
+            7783: 10, // `return`
+            32165: 10, // `fail`
+            15643: 10, // `finish`
+            41484: 10, // `answer`
+            2093: 1, // `ask`
+            7220: 1, // `user`
+            7203: 1, // `("`
+            4943: 1, // `")`
           },
         },
         {
@@ -571,6 +580,12 @@ export async function run(
     }
   } catch (e) {
     isFinished = true;
+    if ("response" in e) {
+      log(
+        "error",
+        `got openAI error, response status was: ${e.response.status}, response data: \n${e.response.data}`
+      );
+    }
     if (IS_DEV()) {
       log(
         "error",

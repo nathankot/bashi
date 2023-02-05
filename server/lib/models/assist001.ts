@@ -464,7 +464,7 @@ export async function run(
           echo: false,
           temperature: 0.3,
           prompt: [prompt],
-          stop: ["\nResult:", "finish()"],
+          stop: "\nResult:",
           logit_bias: {
             8818: -10, // `function`
             22446: -100, // `().`

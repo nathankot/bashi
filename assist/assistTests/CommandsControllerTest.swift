@@ -42,7 +42,7 @@ final class CommandsControllerTest: XCTestCase {
                         model: .assist001,
                         request: "some request",
                         result: self.mockResults.count == 0
-                            ? .resultFinished(.init(type: .finished, resolvedCommands: []))
+                            ? .resultFinished(.init(type: .finished, results: []))
                         : self.mockResults.removeFirst()
                     )
 
@@ -65,8 +65,8 @@ final class CommandsControllerTest: XCTestCase {
                     .commandParsed(.init(id: "1", type: .parsed, name: "mock_display", args: [
                         .stringValue(.init(type: .string, value: "something"))
                     ]))
-                ], resolvedCommands: [])),
-                .resultFinished(.init(type: .finished, resolvedCommands: []))
+                ], results: [])),
+                .resultFinished(.init(type: .finished, results: []))
         ]
 
         await commandsController.process(initialRequest: "some request")
@@ -86,17 +86,11 @@ final class CommandsControllerTest: XCTestCase {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
                     .commandParsed(.init(id: "0", type: .parsed, name: "mock_command", args: [])),
-                ], resolvedCommands: [])),
-                .resultFinished(.init(type: .finished, resolvedCommands: [
+                ], results: [])),
+                .resultFinished(.init(type: .finished, results: [
                 // Note here that commands controller ultimately uses what the server
                 // returns as 'resolved commands' as the source of truth:
-                .init(
-                    id: "0",
-                    type: .executed,
-                    name: "mock_command",
-                    args: [],
-                    returnValue: .stringValue(
-                            .init(type: .string, value: "some result hello")))
+                .stringValue(.init(type: .string, value: "some result hello"))
                 ]))
         ]
 
@@ -116,11 +110,11 @@ final class CommandsControllerTest: XCTestCase {
     func testAsk() async throws {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
-                    .commandParsed(.init(id: "1", type: .parsed, name: "ask", args: [
+                    .commandParsed(.init(id: "1", type: .parsed, name: "getInput", args: [
                         .stringValue(.init(type: .string, value: "what is your name?"))
                     ]))
-                ], resolvedCommands: [])),
-                .resultFinished(.init(type: .finished, resolvedCommands: []))
+                ], results: [])),
+                .resultFinished(.init(type: .finished, results: []))
         ]
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -154,47 +148,6 @@ final class CommandsControllerTest: XCTestCase {
         }
     }
 
-    func testRequestContextText() async throws {
-        mockResults = [
-                .resultNeedsRequestContext(
-                    .init(type: .needsRequestContext,
-                          missingRequestContext: .init(text: .init(type: .string)),
-                          resolvedCommands: [])),
-                .resultFinished(.init(type: .finished, resolvedCommands: []))
-        ]
-
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            group.addTask {
-                await self.commandsController.process(initialRequest: "some request")
-            }
-            group.addTask {
-                let needsInputStatePub = await self.state.$state.first {
-                    if case .NeedsInput = $0 { return true }
-                    else { return false }
-                }
-                await withCheckedContinuation { continuation in
-                    self.subs.insert(needsInputStatePub.sink(receiveValue: { state in
-                        if case let .NeedsInput(_, inputType) = state {
-                            if case let .RequestContextText(callback) = inputType {
-                                callback("some text context")
-                                continuation.resume()
-                            }
-                        }
-                    }))
-                }
-
-            }
-            for try await _ in group { }
-        }
-
-        guard case .Finished = await state.state else {
-            XCTFail("expected a finished result")
-            return
-        }
-        
-        XCTAssertEqual(modelInputs[0].requestContext?.text?.value, "some text context")
-    }
-
     func testWrongArgumentType() async throws {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
@@ -202,7 +155,7 @@ final class CommandsControllerTest: XCTestCase {
                     // number is the wrong arg type:
                     .numberValue(.init(type: .number, value: 123))
                     ]))
-                ], resolvedCommands: []))
+                ], results: []))
         ]
         await commandsController.process(initialRequest: "some request")
         if case let .Error(e) = await state.state {
@@ -216,7 +169,7 @@ final class CommandsControllerTest: XCTestCase {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
                     .commandParsed(.init(id: "0", type: .parsed, name: "mock_display", args: []))
-                ], resolvedCommands: []))
+                ], results: []))
         ]
         await commandsController.process(initialRequest: "some request")
         if case let .Error(e) = await state.state {
@@ -230,7 +183,7 @@ final class CommandsControllerTest: XCTestCase {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
                     .commandParsed(.init(id: "0", type: .parsed, name: "mock_wrong_return_type", args: []))
-                ], resolvedCommands: []))
+                ], results: []))
         ]
         await commandsController.process(initialRequest: "some request")
         if case let .Error(e) = await state.state {
@@ -244,7 +197,7 @@ final class CommandsControllerTest: XCTestCase {
         mockResults = [
                 .resultPendingCommands(.init(type: .pendingCommands, pendingCommands: [
                     .commandParsed(.init(id: "0", type: .parsed, name: "non_existent", args: []))
-                ], resolvedCommands: []))
+                ], results: []))
         ]
         await commandsController.process(initialRequest: "some request")
         if case let .Error(e) = await state.state {

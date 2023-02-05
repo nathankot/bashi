@@ -55,6 +55,14 @@ export const commandSet: CommandSet = {
       },
     ],
   },
+  getInputText: {
+    cost: 10,
+    description: "get input text/code that the request may refer to",
+    returnType: "string",
+    args: [
+      { name: "short sentence describing required input", type: "string" },
+    ],
+  },
   createCalendarEvent: {
     cost: -1000,
     description: "create a calendar event on a certain date and time",

@@ -43,12 +43,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -77,12 +77,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -169,12 +169,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -203,12 +203,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -255,7 +255,6 @@ snapshot[`infix + operand support 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -392,7 +391,6 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -565,7 +563,6 @@ snapshot[`supports model outputs with top level infix call 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -739,7 +736,6 @@ snapshot[`supports model outputs using template strings 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -961,7 +957,6 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 2,
@@ -1057,7 +1052,6 @@ snapshot[`client resolved command 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1136,7 +1130,6 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1226,7 +1219,6 @@ snapshot[`client resolved command - wrong return type 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1316,7 +1308,6 @@ snapshot[`client resolved command - fulfilled 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1415,7 +1406,6 @@ snapshot[`nested calls 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1513,12 +1503,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -1542,24 +1532,30 @@ snapshot[`request needs more context 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      missingRequestContext: {
-        text: {
-          description: "the text",
-          type: "string",
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "the text",
+            },
+          ],
+          id: "0.1.0",
+          name: "getInputText",
+          type: "parsed",
         },
-      },
+      ],
       results: [
         {
           type: "string",
           value: "2022-12-19T08:41:10Z",
         },
       ],
-      type: "needs_request_context",
+      type: "pending_commands",
     },
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1630,20 +1626,26 @@ snapshot[`request needs more context - still missing 1`] = `
     model: "assist-001",
     request: "some request",
     result: {
-      missingRequestContext: {
-        text: {
-          description: "the text",
-          type: "string",
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "the text",
+            },
+          ],
+          id: "1.0.0",
+          name: "getInputText",
+          type: "parsed",
         },
-      },
+      ],
       results: [
       ],
-      type: "needs_request_context",
+      type: "pending_commands",
     },
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -1713,101 +1715,7 @@ snapshot[`request needs more context - still missing 1`] = `
 }
 `;
 
-snapshot[`request needs more context - wrong type 1`] = `
-{
-  n: 0,
-  output: {
-    dev: undefined,
-    model: "assist-001",
-    request: "some request",
-    result: {
-      missingRequestContext: {
-        text: {
-          description: "the text",
-          type: "string",
-        },
-      },
-      results: [
-      ],
-      type: "needs_request_context",
-    },
-  },
-  state: {
-    memory: {
-      requestContext: {
-        text: {
-          type: "number",
-          value: 123,
-        },
-      },
-      variables: {},
-    },
-    modelCallCount: 1,
-    pending: {
-      action: 'editText(getInputText("the text"), "convert to poem"); now()',
-      expressions: [
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "the text",
-                },
-              ],
-              name: "getInputText",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "convert to poem",
-            },
-          ],
-          name: "editText",
-          type: "call",
-        },
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-      ],
-      result: undefined,
-      thought: "I need to do something",
-    },
-    request: "some request",
-    resolvedActionGroups: [
-      {
-        action: "someCommand()",
-        expressions: [
-          {
-            args: [
-            ],
-            name: "someCommand",
-            type: "call",
-          },
-        ],
-        result: '"blah"',
-        thought: "I need to call some command",
-      },
-    ],
-    resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0",
-        name: "someCommand",
-        returnValue: {
-          type: "string",
-          value: "blah",
-        },
-        type: "executed",
-      },
-    ],
-  },
-}
-`;
+snapshot[`request needs more context - wrong type 1`] = `"command getInputText expects return type to be string but got number"`;
 
 snapshot[`request needs more context - fulfilled 1`] = `
 {
@@ -1857,12 +1765,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -1918,7 +1826,6 @@ snapshot[`top level commands are resolved sequentially 1`] = `
   },
   state: {
     memory: {
-      requestContext: {},
       variables: {},
     },
     modelCallCount: 1,
@@ -2022,12 +1929,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer
@@ -2056,12 +1963,12 @@ Functions are declared below, any other functions must not be used. Do not assum
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
-\`extractInformation("full description of desired output": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
 Request: the question or request you must answer

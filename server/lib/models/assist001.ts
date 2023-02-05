@@ -15,7 +15,6 @@ import {
 import {
   Input,
   ResultFinished,
-  ResultNeedsRequestContext,
   ResultPendingCommands,
 } from "./assistShared.ts";
 
@@ -34,8 +33,6 @@ import {
   filterUnnecessary,
   runBuiltinCommand,
 } from "@lib/command.ts";
-
-import { RequestContextRequired } from "@lib/requestContext.ts";
 
 export const State = t.type({
   request: t.string,
@@ -71,11 +68,7 @@ export { Input };
 export const Output = t.type({
   model: Name,
   request: t.string,
-  result: t.union([
-    ResultFinished,
-    ResultNeedsRequestContext,
-    ResultPendingCommands,
-  ]),
+  result: t.union([ResultFinished, ResultPendingCommands]),
 });
 export type Output = t.TypeOf<typeof Output> & {
   dev?: {
@@ -89,29 +82,6 @@ export const defaultConfiguration: Partial<Configuration> = {
 };
 
 const privateBuiltinCommands = {
-  getInputText: {
-    isBuiltin: true,
-    cost: -1000,
-    returnType: "string",
-    description: "get input text/code that the request may refer to",
-    args: [
-      { name: "short sentence describing required input", type: "string" },
-    ],
-    run: async (_, [desc], memory) => {
-      if (
-        memory.requestContext.text == null ||
-        memory.requestContext.text.type !== "string"
-      ) {
-        throw new RequestContextRequired({
-          text: {
-            type: "string",
-            description: desc.value,
-          },
-        });
-      }
-      return memory.requestContext.text;
-    },
-  } as BuiltinCommandDefinition<["string"], "string">,
   finish: {
     isBuiltin: true,
     cost: -1000,
@@ -241,15 +211,9 @@ export async function run(
 ): Promise<Output> {
   let log = modelDeps.log;
 
-  if (
-    !(
-      "request" in input ||
-      "requestContext" in input ||
-      "resolvedCommands" in input
-    )
-  ) {
+  if (!("request" in input || "resolvedCommands" in input)) {
     throw new HTTPError(
-      `at least one of 'request', 'requestContext' or 'resolvedCommands' must be populated`,
+      `at least one of 'request' or 'resolvedCommands' must be populated`,
       400
     );
   }
@@ -274,10 +238,6 @@ export async function run(
   let memory = {
     variables: {
       ...state?.memory?.variables,
-    },
-    requestContext: {
-      ...input.requestContext,
-      ...state?.memory?.requestContext,
     },
   };
   let modelCallCount = state?.modelCallCount ?? 0;
@@ -381,30 +341,14 @@ export async function run(
               }
             }
 
-            try {
-              const resolved = await runBuiltinCommand(
-                serverCommandDef,
-                modelDeps,
-                pendingCommand,
-                memory
-              );
-              resolvedCommands.push(resolved);
-              continue pendingCommandLoop;
-            } catch (e) {
-              if (e instanceof RequestContextRequired) {
-                return {
-                  model: "assist-001",
-                  request,
-                  result: {
-                    type: "needs_request_context",
-                    missingRequestContext: e.requirement,
-                    results: resultsExternal(),
-                  },
-                  dev,
-                };
-              }
-              throw e;
-            }
+            const resolved = await runBuiltinCommand(
+              serverCommandDef,
+              modelDeps,
+              pendingCommand,
+              memory
+            );
+            resolvedCommands.push(resolved);
+            continue pendingCommandLoop;
           } else if (clientCommandDef != null) {
             //   1a. If the client provided any resolutions, use them
             const maybeClientResolution =

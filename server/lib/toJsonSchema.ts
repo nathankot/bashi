@@ -8,7 +8,6 @@ import { SessionPublic } from "@lib/session.ts";
 import { ResponseError } from "@lib/errors.ts";
 import {
   ResultFinished,
-  ResultNeedsRequestContext,
   ResultPendingCommands,
 } from "@lib/models/assistShared.ts";
 
@@ -27,15 +26,6 @@ import {
   CommandExecuted,
   CommandParsed,
 } from "@lib/command/types.ts";
-
-import {
-  RequestContext,
-  RequestContextRequirement,
-  StringValueRequirement,
-  NumberValueRequirement,
-  BooleanValueRequirement,
-  ValueRequirement,
-} from "@lib/requestContext.ts";
 
 type SupportedTag =
   | "AnyType"
@@ -362,22 +352,6 @@ namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
 namedJSONSchemaObjects["#/components/schemas/ValueType"] =
   toJSONSchema(ValueType);
 
-namedJSONSchemaObjects["#/components/schemas/StringValueRequirement"] =
-  toJSONSchema(StringValueRequirement);
-namedJSONSchemaObjects["#/components/schemas/NumberValueRequirement"] =
-  toJSONSchema(NumberValueRequirement);
-namedJSONSchemaObjects["#/components/schemas/BooleanValueRequirement"] =
-  toJSONSchema(BooleanValueRequirement);
-namedJSONSchemaObjects["#/components/schemas/ValueRequirement"] =
-  toJSONSchema(ValueRequirement);
-
-namedJSONSchemaObjects["#/components/schemas/RequestContext"] =
-  toJSONSchema(RequestContext);
-namedJSONSchemaObjects["#/components/schemas/RequestContextRequirement"] =
-  toJSONSchema(RequestContextRequirement);
-// namedJSONSchemaObjects["#/components/schemas/RequestContextDefinitionType"] =
-//   toJSONSchema(RequestContextDef.types[1].codomain);
-
 namedJSONSchemaObjects["#/components/schemas/CommandExecuted"] =
   toJSONSchema(CommandExecuted);
 namedJSONSchemaObjects["#/components/schemas/CommandParsed"] =
@@ -391,8 +365,6 @@ namedJSONSchemaObjects["#/components/schemas/ResultFinished"] =
   toJSONSchema(ResultFinished);
 namedJSONSchemaObjects["#/components/schemas/ResultPendingCommands"] =
   toJSONSchema(ResultPendingCommands);
-namedJSONSchemaObjects["#/components/schemas/ResultNeedsRequestContext"] =
-  toJSONSchema(ResultNeedsRequestContext);
 
 for (const [modelName, model] of Object.entries(models)) {
   // Custom request handlers will come with their own public-facing input schema definition.

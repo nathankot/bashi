@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
-import { RequestContext } from "@lib/requestContext.ts";
 import { ModelDeps, run, models } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint, googleSearch } from "@lib/clients.ts";
@@ -16,7 +15,6 @@ export const Example = t.intersection([
     prompt: t.string,
   }),
   t.partial({
-    requestContext: RequestContext,
     resolvedCommands: models["assist-001"].Input.props.resolvedCommands,
   }),
 ]);
@@ -26,7 +24,6 @@ export type Example = t.TypeOf<typeof Example>;
 const INPUTS: {
   variant?: string;
   prompt: string;
-  requestContext?: RequestContext;
   resolvedCommands?: NonNullable<
     t.TypeOf<typeof models["assist-001"]["Input"]>["resolvedCommands"]
   >;
@@ -56,8 +53,8 @@ const INPUTS: {
   },
   {
     prompt: "help me fix spelling and grammar mistakes",
-    requestContext: {
-      text: {
+    resolvedCommands: {
+      getInputText: {
         type: "string",
         value: `stp by step, heart to hard, left right left. is we all fall down..`,
       },
@@ -65,8 +62,8 @@ const INPUTS: {
   },
   {
     prompt: "edit this function in go lang in order to make it compile",
-    requestContext: {
-      text: {
+    resolvedCommands: {
+      getInputText: {
         type: "string",
         value: `
   function doSomething() int {
@@ -78,8 +75,8 @@ const INPUTS: {
   },
   {
     prompt: "edit this function in order to make it compile",
-    requestContext: {
-      text: {
+    resolvedCommands: {
+      getInputText: {
         type: "string",
         value: `function doSomething() int { return "55" }`,
       },
@@ -90,8 +87,8 @@ const INPUTS: {
   },
   {
     prompt: "there is a function I don't understand, can help me summarize it?",
-    requestContext: {
-      text: {
+    resolvedCommands: {
+      getInputText: {
         type: "string",
         value: `function something(num) {
   if (num < 0) return -1;
@@ -106,8 +103,8 @@ const INPUTS: {
   {
     prompt:
       "given this list of verbs can you help me add additional verbs that mean the same thing?",
-    requestContext: {
-      text: {
+    resolvedCommands: {
+      getInputText: {
         type: "string",
         value: `
     "edit",
@@ -189,13 +186,37 @@ export default async function updateExamples(examplesFile: string) {
       `found new example, running model with prompt: ${promptWithVariant}`
     );
     try {
-      const output = await run(modelDeps, "assist-001", {
-        request: input.prompt,
-        requestContext: input.requestContext,
-        resolvedCommands: input.resolvedCommands,
-      });
-      if (!("result" in output)) {
-        throw new Error(`unexpected output: ${JSON.stringify(output)}`);
+      let resolvedCommands: t.TypeOf<
+        typeof models["assist-001"]["Input"]
+      >["resolvedCommands"] = {};
+
+      let output: t.TypeOf<typeof models["assist-001"]["Output"]> | null = null;
+      modelLoop: while (true) {
+        output = await run(modelDeps, "assist-001", {
+          request: input.prompt,
+          resolvedCommands,
+        });
+        if (!("result" in output)) {
+          throw new Error(`unexpected output: ${JSON.stringify(output)}`);
+        }
+        const result = output.result;
+        if (result.type === "pending_commands") {
+          let hasResolution = false;
+          for (const pending of result.pendingCommands) {
+            const fixtureResolution = (input.resolvedCommands ?? {})[
+              pending.name
+            ];
+            if (fixtureResolution == null) {
+              continue;
+            }
+            resolvedCommands[pending.id] = fixtureResolution;
+            hasResolution = true;
+          }
+          if (hasResolution) {
+            continue modelLoop;
+          }
+        }
+        break;
       }
 
       log("info", `got result for: ${promptWithVariant}`);
@@ -205,7 +226,6 @@ export default async function updateExamples(examplesFile: string) {
         prompt: promptWithVariant,
         dev: (output as any).dev,
         result: output.result,
-        requestContext: input.requestContext ?? {},
         resolvedCommands: input.resolvedCommands ?? {},
       });
     } catch (e) {

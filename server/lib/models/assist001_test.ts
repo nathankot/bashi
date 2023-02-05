@@ -39,10 +39,10 @@ const pendingClientCommandState = () =>
         type: "executed",
       },
     ],
-    memory: { variables: {}, requestContext: {} },
+    memory: { variables: {} },
   } satisfies Session["assist001State"]);
 
-const pendingRequestContextState = () =>
+const pendingInputTextState = () =>
   ({
     modelCallCount: 1,
     pending: {
@@ -93,7 +93,7 @@ const pendingRequestContextState = () =>
         returnValue: { type: "string", value: "blah" },
       },
     ],
-    memory: { variables: {}, requestContext: {} },
+    memory: { variables: {} },
   } satisfies Session["assist001State"]);
 
 for (const test of [
@@ -178,7 +178,7 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
   },
   {
     description: "server commands with identical inputs re-use results",
-    input: { requestContext: {} },
+    input: { resolvedCommands: [] },
     openAiResults: [
       `Thought: blah\nAction: now(); ask("not reused because client command")`,
     ],
@@ -258,34 +258,55 @@ Action: now(); editText(getInputText("the text"), "convert to poem"); now()`,
   },
   {
     description: "request needs more context - still missing",
-    input: { requestContext: {} },
+    input: { resolvedCommands: [] },
     openAiResults: [],
-    initialState: pendingRequestContextState(),
+    initialState: pendingInputTextState(),
   },
   {
     description: "request needs more context - wrong type",
-    input: { requestContext: { text: { type: "number", value: 123 } } },
+    input: {
+      resolvedCommands: {
+        "1.0.0": {
+          type: "number",
+          value: 123,
+        },
+      },
+    },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingRequestContextState(),
+    initialState: pendingInputTextState(),
   },
   {
     description: "request needs more context - fulfilled",
-    input: { requestContext: { text: { type: "string", value: `some text` } } },
+    input: {
+      resolvedCommands: {
+        "1.0.0": {
+          type: "string",
+          value: "some text",
+        },
+      },
+    },
     openAiResults: [
       `the result of editText()`,
       `I am finished\nAction: finish()`,
     ],
     snapshotPrompts: true,
-    initialState: pendingRequestContextState(),
+    initialState: pendingInputTextState(),
   },
   {
     description: "fulfilled but max loops",
-    input: { requestContext: { text: { type: "string", value: `some text` } } },
+    input: {
+      resolvedCommands: {
+        "1.0.0": {
+          type: "string",
+          value: `some text`,
+        },
+      },
+    },
     openAiResults: [`the result of editText()`],
     snapshotError: true,
     initialState: {
-      ...pendingRequestContextState(),
+      ...pendingInputTextState(),
       modelCallCount: MAX_MODEL_CALLS,
     },
   },
@@ -347,7 +368,6 @@ Action: finish()`,
         thought: "some thought",
       },
       request: "some request",
-      requestContext: {},
       resolvedActionGroups: [],
       resolvedCommands: [],
     },

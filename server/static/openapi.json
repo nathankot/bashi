@@ -521,101 +521,6 @@
           "void"
         ]
       },
-      "StringValueRequirement": {
-        "type": "object",
-        "required": [
-          "type",
-          "description"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "string"
-            ],
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
-      "NumberValueRequirement": {
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "number"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "BooleanValueRequirement": {
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "boolean"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "ValueRequirement": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/StringValueRequirement"
-          },
-          {
-            "$ref": "#/components/schemas/NumberValueRequirement"
-          },
-          {
-            "$ref": "#/components/schemas/BooleanValueRequirement"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "string": "#/components/schemas/StringValueRequirement",
-            "number": "#/components/schemas/NumberValueRequirement",
-            "boolean": "#/components/schemas/BooleanValueRequirement"
-          }
-        }
-      },
-      "RequestContext": {
-        "type": "object",
-        "additionalProperties": {
-          "$ref": "#/components/schemas/Value"
-        },
-        "properties": {
-          "text": {
-            "$ref": "#/components/schemas/StringValue"
-          },
-          "language": {
-            "$ref": "#/components/schemas/StringValue"
-          }
-        }
-      },
-      "RequestContextRequirement": {
-        "type": "object",
-        "additionalProperties": {
-          "$ref": "#/components/schemas/ValueRequirement"
-        },
-        "properties": {
-          "text": {
-            "$ref": "#/components/schemas/StringValueRequirement"
-          },
-          "language": {
-            "$ref": "#/components/schemas/StringValueRequirement"
-          }
-        }
-      },
       "CommandExecuted": {
         "type": "object",
         "required": [
@@ -787,39 +692,11 @@
           }
         }
       },
-      "ResultNeedsRequestContext": {
-        "type": "object",
-        "required": [
-          "type",
-          "missingRequestContext",
-          "results"
-        ],
-        "properties": {
-          "type": {
-            "enum": [
-              "needs_request_context"
-            ],
-            "type": "string"
-          },
-          "missingRequestContext": {
-            "$ref": "#/components/schemas/RequestContextRequirement"
-          },
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Value"
-            }
-          }
-        }
-      },
       "models_assist-001_Input": {
         "type": "object",
         "properties": {
           "request": {
             "type": "string"
-          },
-          "requestContext": {
-            "$ref": "#/components/schemas/RequestContext"
           },
           "resolvedCommands": {
             "type": "object",
@@ -852,9 +729,6 @@
                 "$ref": "#/components/schemas/ResultFinished"
               },
               {
-                "$ref": "#/components/schemas/ResultNeedsRequestContext"
-              },
-              {
                 "$ref": "#/components/schemas/ResultPendingCommands"
               }
             ],
@@ -862,7 +736,6 @@
               "propertyName": "type",
               "mapping": {
                 "finished": "#/components/schemas/ResultFinished",
-                "needs_request_context": "#/components/schemas/ResultNeedsRequestContext",
                 "pending_commands": "#/components/schemas/ResultPendingCommands"
               }
             }

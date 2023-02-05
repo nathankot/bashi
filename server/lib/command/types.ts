@@ -2,14 +2,9 @@ import * as t from "io-ts";
 
 import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
 import { ModelDeps } from "@lib/models.ts";
-import {
-  RequestContext,
-  RequestContextRequirement,
-} from "@lib/requestContext.ts";
 
 export const Memory = t.type({
   variables: t.record(t.string, Value),
-  requestContext: RequestContext,
 });
 export type Memory = t.TypeOf<typeof Memory>;
 
@@ -57,7 +52,6 @@ export type AnyBuiltinCommandDefinition = Omit<
   isBuiltin: true;
   returnType: ValueType | "mixed";
   run: (deps: ModelDeps, args: any, memory: Memory) => Promise<Value>;
-  requestContextRequirement?: RequestContextRequirement;
 };
 
 export const CommandSet = t.record(t.string, CommandDefinition);

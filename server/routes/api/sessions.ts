@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import * as b64 from "std/encoding/base64.ts";
 
 import { Handlers } from "$fresh/server.ts";
@@ -8,12 +9,27 @@ import { SESSION_EXPIRY_MS } from "@lib/constants.ts";
 import { renderError, renderJSON, handleError } from "@lib/util.ts";
 import { wrap } from "@lib/log.ts";
 import { SessionPublic, defaultConfiguration } from "@lib/session.ts";
-import { builtinCommands } from "@lib/command.ts";
+import { CommandSet, builtinCommands } from "@lib/command.ts";
 import { msgpack } from "@/msgpack.ts";
 import toJSONSchema from "@lib/toJsonSchema.ts";
 
 import { State } from "./_middleware.ts";
-import { POSTRequest, POSTResponse } from "./sessions_types.ts";
+
+export const POSTRequest = t.intersection([
+  t.type({
+    modelConfigurations: SessionPublic.props.modelConfigurations,
+  }),
+  t.partial({
+    configuration: t.partial(SessionPublic.props.configuration.props),
+  }),
+]);
+export type POSTRequest = t.TypeOf<typeof POSTRequest>;
+
+export const POSTResponse = t.type({
+  session: SessionPublic,
+  builtinCommands: CommandSet,
+});
+export type POSTResponse = t.TypeOf<typeof POSTResponse>;
 
 export const meta = {
   post: {

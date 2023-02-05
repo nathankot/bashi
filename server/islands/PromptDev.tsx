@@ -1,11 +1,12 @@
 import { useState, useEffect } from "preact/hooks";
 
 import { commandSet } from "@lib/fixtures.ts";
-import { CommandSet } from "@lib/command/types.ts";
-import { Session } from "@lib/session.ts";
-import { POSTRequest } from "@routes/api/sessions_types.ts";
 import TextPrompt from "./TextPrompt.tsx";
 import AudioPrompt from "./AudioPrompt.tsx";
+
+import type { CommandSet } from "@lib/command/types.ts";
+import type { Session } from "@lib/session.ts";
+import type { POSTRequest } from "@routes/api/sessions.ts";
 
 export default function PromptDev() {
   const [error, setError] = useState<string | null>(null);
@@ -39,10 +40,6 @@ export default function PromptDev() {
   const onCommandsChange = (t: string) => {
     try {
       const decoded = JSON.parse(t);
-      if (!CommandSet.is(decoded)) {
-        setError("could not decode commands");
-        return;
-      }
       setError(null);
       setCommands(decoded);
     } catch {

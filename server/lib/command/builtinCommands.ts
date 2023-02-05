@@ -105,7 +105,10 @@ const extractInformation: BuiltinCommandDefinition<
   returnType: "string",
   description: "describe/summarize/extract information from the given string",
   args: [
-    { name: "full description of desired output", type: "string" },
+    {
+      name: "full description of desired output and its format",
+      type: "string",
+    },
     { name: "input text/code", type: "string" },
   ],
   run: async (modelDeps, [desc, input]) => {

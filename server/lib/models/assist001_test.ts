@@ -16,13 +16,13 @@ const pendingClientCommandState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'now(); ask("what do you want?")',
+      action: 'now(); getInput("what do you want?")',
       expressions: [
         { type: "call", args: [], name: "now" },
         {
           type: "call",
           args: [{ type: "string", value: "what do you want?" }],
-          name: "ask",
+          name: "getInput",
         },
       ],
       result: undefined,
@@ -46,14 +46,14 @@ const pendingInputTextState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInputText("the text"), "convert to poem"); now()',
+      action: 'editText(getInput("the text"), "convert to poem"); now()',
       expressions: [
         {
           type: "call",
           args: [
             {
               type: "call",
-              name: "getInputText",
+              name: "getInput",
               args: [{ type: "string", value: "the text" }],
             },
             { type: "string", value: "convert to poem" },
@@ -133,7 +133,7 @@ Action: finish()`,
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
+Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
       ``,
     ],
   },
@@ -141,7 +141,7 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     description: "supports model outputs with lots of newlines",
     input: { request: "some request" },
     openAiResults: [
-      `\nI need to get the current time in New York, create a calendar event 5 days from now, and answer the question.\nAction: \nanswer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");\nfinish();`,
+      `\nI need to get the current time in New York, create a calendar event 5 days from now, and answer the question.\nAction: \nsendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");\nfinish();`,
     ],
   },
   {
@@ -180,7 +180,7 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
-      `Thought: blah\nAction: now(); ask("not reused because client command")`,
+      `Thought: blah\nAction: now(); getInput("not reused because client command")`,
     ],
     initialState: {
       modelCallCount: 1,
@@ -199,7 +199,7 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
             { type: "string", value: "not reused because client command" },
           ],
           id: "someid",
-          name: "ask",
+          name: "getInput",
           returnValue: "this should not be reused",
         },
       ],
@@ -210,7 +210,7 @@ Action: answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); ask("what do you want?")`,
+Action: now(); getInput("what do you want?")`,
     ],
   },
   {
@@ -253,7 +253,7 @@ Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRel
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); editText(getInputText("the text"), "convert to poem"); now()`,
+Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
     ],
   },
   {
@@ -333,7 +333,7 @@ Action: now(); math()`,
     input: { request: "some request" },
     openAiResults: [
       `some thought
-Action: ask("how are you?"); currentTimeForTimezone("America/New_York")`,
+Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
     ],
   },
   {
@@ -351,11 +351,11 @@ Action: finish()`,
       modelCallCount: 1,
       pending: {
         action:
-          'ask("how are you?"); currentTimeForTimezone("America/New_York")',
+          'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
         expressions: [
           {
             args: [{ type: "string", value: "how are you?" }],
-            name: "ask",
+            name: "getInput",
             type: "call",
           },
           {

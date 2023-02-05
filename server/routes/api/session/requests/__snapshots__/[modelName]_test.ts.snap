@@ -14,7 +14,7 @@ snapshot[`POST /api/session/requests/assist-001: success 1`] = `
           },
         ],
         id: "0.0",
-        name: "answer",
+        name: "sendResponse",
         type: "parsed",
       },
     ],

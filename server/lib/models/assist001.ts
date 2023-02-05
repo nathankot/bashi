@@ -485,8 +485,6 @@ export async function run(
             7783: 1, // `return`
             32165: 2, // `fail`
             15643: 2, // `finish`
-            41484: 1, // `answer`
-            2093: 1, // `ask`
             7220: 1, // `user`
             7203: 1, // `("`
             4943: 1, // `")`

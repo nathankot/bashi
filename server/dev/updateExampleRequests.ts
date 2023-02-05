@@ -54,7 +54,7 @@ const INPUTS: {
   {
     prompt: "help me fix spelling and grammar mistakes",
     resolvedCommands: {
-      getInputText: {
+      getInput: {
         type: "string",
         value: `stp by step, heart to hard, left right left. is we all fall down..`,
       },
@@ -63,7 +63,7 @@ const INPUTS: {
   {
     prompt: "edit this function in go lang in order to make it compile",
     resolvedCommands: {
-      getInputText: {
+      getInput: {
         type: "string",
         value: `
   function doSomething() int {
@@ -76,7 +76,7 @@ const INPUTS: {
   {
     prompt: "edit this function in order to make it compile",
     resolvedCommands: {
-      getInputText: {
+      getInput: {
         type: "string",
         value: `function doSomething() int { return "55" }`,
       },
@@ -88,7 +88,7 @@ const INPUTS: {
   {
     prompt: "there is a function I don't understand, can help me summarize it?",
     resolvedCommands: {
-      getInputText: {
+      getInput: {
         type: "string",
         value: `function something(num) {
   if (num < 0) return -1;
@@ -104,7 +104,7 @@ const INPUTS: {
     prompt:
       "given this list of verbs can you help me add additional verbs that mean the same thing?",
     resolvedCommands: {
-      getInputText: {
+      getInput: {
         type: "string",
         value: `
     "edit",

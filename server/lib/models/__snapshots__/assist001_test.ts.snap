@@ -39,15 +39,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -73,15 +71,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -165,15 +161,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -199,15 +193,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -244,7 +236,7 @@ snapshot[`infix + operand support 1`] = `
             },
           ],
           id: "0.0",
-          name: "answer",
+          name: "sendResponse",
           type: "parsed",
         },
       ],
@@ -259,7 +251,7 @@ snapshot[`infix + operand support 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'answer("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
+      action: 'sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
       expressions: [
         {
           args: [
@@ -294,7 +286,7 @@ snapshot[`infix + operand support 1`] = `
               type: "call",
             },
           ],
-          name: "answer",
+          name: "sendResponse",
           type: "call",
         },
       ],
@@ -380,7 +372,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
             },
           ],
           id: "0.0",
-          name: "answer",
+          name: "sendResponse",
           type: "parsed",
         },
       ],
@@ -395,7 +387,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'answer("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+      action: 'sendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");
 finish();',
       expressions: [
@@ -432,7 +424,7 @@ finish();',
               type: "call",
             },
           ],
-          name: "answer",
+          name: "sendResponse",
           type: "call",
         },
         {
@@ -945,7 +937,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
             },
           ],
           id: "0.1",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -961,7 +953,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: 'now(); ask("not reused because client command")',
+      action: 'now(); getInput("not reused because client command")',
       expressions: [
         {
           args: [
@@ -976,7 +968,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
               value: "not reused because client command",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
       ],
@@ -1003,7 +995,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
           },
         ],
         id: "someid",
-        name: "ask",
+        name: "getInput",
         returnValue: "this should not be reused",
         type: "executed",
       },
@@ -1037,7 +1029,7 @@ snapshot[`client resolved command 1`] = `
             },
           ],
           id: "0.1",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1056,7 +1048,7 @@ snapshot[`client resolved command 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); ask("what do you want?")',
+      action: 'now(); getInput("what do you want?")',
       expressions: [
         {
           args: [
@@ -1071,7 +1063,7 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
       ],
@@ -1115,7 +1107,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
             },
           ],
           id: "0.1",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1134,7 +1126,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); ask("what do you want?")',
+      action: 'now(); getInput("what do you want?")',
       expressions: [
         {
           args: [
@@ -1149,7 +1141,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "what do you want?",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
       ],
@@ -1204,7 +1196,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
             },
           ],
           id: "0.1",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1223,7 +1215,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); ask("what do you want?")',
+      action: 'now(); getInput("what do you want?")',
       expressions: [
         {
           args: [
@@ -1238,7 +1230,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
               value: "what do you want?",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
       ],
@@ -1293,7 +1285,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
             },
           ],
           id: "0.1",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1312,7 +1304,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); ask("what do you want?")',
+      action: 'now(); getInput("what do you want?")',
       expressions: [
         {
           args: [
@@ -1327,7 +1319,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
               value: "what do you want?",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
       ],
@@ -1499,15 +1491,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -1541,7 +1531,7 @@ snapshot[`request needs more context 1`] = `
             },
           ],
           id: "0.1.0",
-          name: "getInputText",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1560,7 +1550,7 @@ snapshot[`request needs more context 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); editText(getInputText("the text"), "convert to poem"); now()',
+      action: 'now(); editText(getInput("the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -1577,7 +1567,7 @@ snapshot[`request needs more context 1`] = `
                   value: "the text",
                 },
               ],
-              name: "getInputText",
+              name: "getInput",
               type: "call",
             },
             {
@@ -1635,7 +1625,7 @@ snapshot[`request needs more context - still missing 1`] = `
             },
           ],
           id: "1.0.0",
-          name: "getInputText",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1650,7 +1640,7 @@ snapshot[`request needs more context - still missing 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInputText("the text"), "convert to poem"); now()',
+      action: 'editText(getInput("the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -1661,7 +1651,7 @@ snapshot[`request needs more context - still missing 1`] = `
                   value: "the text",
                 },
               ],
-              name: "getInputText",
+              name: "getInput",
               type: "call",
             },
             {
@@ -1715,7 +1705,7 @@ snapshot[`request needs more context - still missing 1`] = `
 }
 `;
 
-snapshot[`request needs more context - wrong type 1`] = `"command getInputText expects return type to be string but got number"`;
+snapshot[`request needs more context - wrong type 1`] = `"command getInput expects return type to be string but got number"`;
 
 snapshot[`request needs more context - fulfilled 1`] = `
 {
@@ -1761,15 +1751,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -1786,7 +1774,7 @@ Thought: I need to call some command
 Action: someCommand()
 Result: "blah"
 Thought: I need to do something
-Action: editText(getInputText("the text"), "convert to poem"); now()
+Action: editText(getInput("the text"), "convert to poem"); now()
 Result: "the result of editText()"; "2022-12-19T08:41:10Z"
 Thought: ',
 ]
@@ -1815,7 +1803,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
             },
           ],
           id: "0.0",
-          name: "ask",
+          name: "getInput",
           type: "parsed",
         },
       ],
@@ -1830,7 +1818,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'ask("how are you?"); currentTimeForTimezone("America/New_York")',
+      action: 'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
       expressions: [
         {
           args: [
@@ -1839,7 +1827,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
               value: "how are you?",
             },
           ],
-          name: "ask",
+          name: "getInput",
           type: "call",
         },
         {
@@ -1925,15 +1913,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:
@@ -1959,15 +1945,13 @@ The language for Action is a tiny subset of javascript, only available features 
 
 Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
-\`answer(answer: string): void\` - respond to the original question/request
-\`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
+\`sendResponse(answer: string): void\` - return response for original question/request back to the user
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`ask(question: string): string\` - clarify the original question/request
-\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
 Use the following format:

@@ -154,9 +154,9 @@ public actor CommandsController {
 
     static let builtinCommands = [
         AnonymousCommand(
-            name: "answer",
+            name: "sendResponse",
             cost: .Low,
-            description: "respond to the original question/request",
+            description: "return response for original question/request back to the user",
             args: [.init(type: .string, name: "answer")],
             returnType: .void
         ) { api, ctx, args in
@@ -170,10 +170,10 @@ public actor CommandsController {
             return .init(.void)
         },
         AnonymousCommand(
-            name: "ask",
+            name: "getInput",
             cost: .Low,
-            description: "clarify the original question/request",
-            args: [.init(type: .string, name: "question")],
+            description: "ask user to question/request or for input additional input",
+            args: [.init(type: .string, name: "question asking for required information")],
             returnType: .string
         ) { api, ctx, args in
             guard let question = args.first?.string else {
@@ -182,34 +182,6 @@ public actor CommandsController {
             let response = try await api.ask(question: question)
             return .init(.string(response))
         },
-        AnonymousCommand(
-            name: "getInputText",
-            cost: .Low,
-            description: "get input text/code that the request may refer to",
-            args: [.init(type: .string, name: "short sentence describing required input")],
-            returnType: .string
-        ) { api, ctx, args in
-            guard let question = args.first?.string else {
-                throw AppError.Internal("expected first argument to be a string")
-            }
-            let response = try await api.ask(question: question)
-            return .init(.string(response))
-        },
-        AnonymousCommand(
-            name: "returnText",
-            cost: .Low,
-            description: "provide text that was being generated/edited back to the client",
-            returnType: .void
-        ) { api, ctx, args in
-            let result = args.first?.string ?? ""
-            if result.count > 280 {
-                try await api.storeTextInPasteboard(text: result)
-                try await api.respond(message: "The result has been copied to your clipboard")
-            } else {
-                try await api.respond(message: result)
-            }
-            return .void
-        }
     ]
 
     public actor Context: BashiPlugin.CommandContext {

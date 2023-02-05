@@ -22,9 +22,10 @@ export const handlerCtx: HandlerContext<{}> = {
 };
 
 export const commandSet: CommandSet = {
-  answer: {
-    cost: -10000,
-    description: "respond to the original question/request",
+  sendResponse: {
+    cost: -100,
+    description:
+      "return response for original question/request back to the user",
     returnType: "void",
     args: [
       {
@@ -33,34 +34,15 @@ export const commandSet: CommandSet = {
       },
     ],
   },
-  returnText: {
-    cost: -10000,
-    description: "send back modified input or generated result",
-    returnType: "void",
-    args: [
-      {
-        name: "text",
-        type: "string",
-      },
-    ],
-  },
-  ask: {
-    cost: 10,
-    description: "clarify the original question/request",
+  getInput: {
+    cost: -100,
+    description: "ask user to question/request or for input additional input",
     returnType: "string",
     args: [
       {
-        name: "question",
+        name: "question asking for required information",
         type: "string",
       },
-    ],
-  },
-  getInputText: {
-    cost: 10,
-    description: "get input text/code that the request may refer to",
-    returnType: "string",
-    args: [
-      { name: "short sentence describing required input", type: "string" },
     ],
   },
   createCalendarEvent: {

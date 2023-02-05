@@ -25,7 +25,7 @@ for (const test of [
           choices: [
             {
               text: `Thought run some actions
-Action: answer("mock response")`,
+Action: sendResponse("mock response")`,
             },
           ],
         },

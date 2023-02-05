@@ -35,11 +35,11 @@ public class CalendarCommands: BundledPlugin {
             AnonymousCommand(
                 name: "createCalendarEvent",
                 cost: .Low,
-                description: "create a calendar event for a certain date and time",
+                description: "make calendar event for the given name, datetime and duration",
                 args: [
                         .init(type: .string, name: "name"),
                         .init(type: .string, name: "iso8601Date"),
-                        .init(type: .number, name: "duration in hours or 1 if unknown")
+                        .init(type: .number, name: "event duration in hours")
                 ],
                 returnType: .void,
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],

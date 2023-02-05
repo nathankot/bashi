@@ -482,10 +482,10 @@ export async function run(
             90: -10, // `{`
             92: -10, // `}`
             11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
-            7783: 10, // `return`
-            32165: 10, // `fail`
-            15643: 10, // `finish`
-            41484: 10, // `answer`
+            7783: 1, // `return`
+            32165: 2, // `fail`
+            15643: 2, // `finish`
+            41484: 1, // `answer`
             2093: 1, // `ask`
             7220: 1, // `user`
             7203: 1, // `("`

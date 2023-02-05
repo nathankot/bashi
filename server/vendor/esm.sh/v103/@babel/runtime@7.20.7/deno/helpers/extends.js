@@ -1,2 +1,0 @@
-/* esm.sh - esbuild bundle(@babel/runtime@7.20.7/helpers/extends) deno production */
-var s=Object.defineProperty;var u=(e,t)=>{for(var n in t)s(e,n,{get:t[n],enumerable:!0})};var f={};u(f,{default:()=>r});function r(){return r=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var a in n)Object.prototype.hasOwnProperty.call(n,a)&&(e[a]=n[a])}return e},r.apply(this,arguments)}var{default:o,...d}=f,i=o!==void 0?o:d;export{i as default};

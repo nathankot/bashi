@@ -142,9 +142,6 @@ import Foundation
 
 @objc public protocol CommandContext {
     var request: String { get }
-    var requestContextStrings: Dictionary<String, String> { get }
-    var requestContextNumbers: Dictionary<String, Double> { get }
-    var requestContextBooleans: Dictionary<String, Bool> { get }
 }
 
 public class AnonymousCommand: Command {

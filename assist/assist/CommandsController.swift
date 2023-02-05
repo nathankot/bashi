@@ -31,7 +31,6 @@ public actor CommandsController {
     public func process(initialRequest: String) async {
         var messages: [Message] = [.init(id: 0, message: initialRequest, type: .request)]
         var request: String? = initialRequest
-        let requestContext = RequestContext.init()
         var resolvedCommands: [String: Value] = [:]
         let pluginAPI = PluginAPI(
             respondFn: { response in
@@ -50,7 +49,6 @@ public actor CommandsController {
             interpreterLoop: while true {
                 let input = ModelsAssist001Input(
                     request: request,
-                    requestContext: requestContext,
                     resolvedCommands: resolvedCommands)
 
                 let response = try await state.transition(newState: .Processing(messages: messages)) { transition in
@@ -63,23 +61,9 @@ public actor CommandsController {
                 request = nil
 
                 switch response.result {
-                case .resultNeedsRequestContext(let resultNeedsContext):
-                    if resultNeedsContext.missingRequestContext.text != nil {
-                        let text = try await state.transitionAndWaitforStateCallback { callback in
-                                .NeedsInput(
-                                messages: messages,
-                                type: .RequestContextText(
-                                    description: resultNeedsContext.missingRequestContext.text!.description,
-                                    onReceive: callback))
-                        }
-                        requestContext.text = .init(type: .string, value: text)
-                    }
 
                 case .resultPendingCommands(let resultPending):
-                    let commandContext = Context.from(
-                        request: initialRequest,
-                        requestContext: requestContext
-                    )
+                    let commandContext = Context.from(request: initialRequest)
 
                     for c in resultPending.pendingCommands {
                         guard case let .commandParsed(pendingCommand) = c else {
@@ -177,15 +161,11 @@ public actor CommandsController {
             returnType: .void
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
-            if ctx.requestContextStrings["text"] != nil {
-                try await api.storeTextInPasteboard(text: result)
-                if result.count < 560 {
-                    try await api.respond(message: result + " (also copied to your clipboard")
-                } else {
-                    try await api.respond(message: "The result has been copied to your clipboard")
-                }
-            } else {
+            if result.count < 560 {
                 try await api.respond(message: result)
+            } else {
+                try await api.storeTextInPasteboard(text: result)
+                try await api.respond(message: "The result has been copied to your clipboard")
             }
             return .init(.void)
         },
@@ -203,13 +183,26 @@ public actor CommandsController {
             return .init(.string(response))
         },
         AnonymousCommand(
+            name: "getInputText",
+            cost: .Low,
+            description: "get input text/code that the request may refer to",
+            args: [.init(type: .string, name: "short sentence describing required input")],
+            returnType: .string
+        ) { api, ctx, args in
+            guard let question = args.first?.string else {
+                throw AppError.Internal("expected first argument to be a string")
+            }
+            let response = try await api.ask(question: question)
+            return .init(.string(response))
+        },
+        AnonymousCommand(
             name: "returnText",
             cost: .Low,
             description: "provide text that was being generated/edited back to the client",
             returnType: .void
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
-            if ctx.requestContextStrings["text"] != nil || result.count > 280 {
+            if result.count > 280 {
                 try await api.storeTextInPasteboard(text: result)
                 try await api.respond(message: "The result has been copied to your clipboard")
             } else {
@@ -222,61 +215,13 @@ public actor CommandsController {
     public actor Context: BashiPlugin.CommandContext {
 
         nonisolated public let request: String
-        nonisolated public let requestContextStrings: Dictionary<String, String>
-        nonisolated public let requestContextNumbers: Dictionary<String, Double>
-        nonisolated public let requestContextBooleans: Dictionary<String, Bool>
 
-        public static func from(request: String, requestContext: RequestContext) -> Context {
-            var requestContextStrings: Dictionary<String, String> = [:]
-            var requestContextNumbers: Dictionary<String, Double> = [:]
-            var requestContextBooleans: Dictionary<String, Bool> = [:]
-
-            for (name, value) in requestContext.additionalProperties {
-                switch value {
-                case .stringValue(let v):
-                    requestContextStrings.updateValue(v.value, forKey: name)
-                case .numberValue(let v):
-                    requestContextNumbers.updateValue(v.value, forKey: name)
-                case .booleanValue(let v):
-                    requestContextBooleans.updateValue(v.value, forKey: name)
-                case .voidValue:
-                    break
-                }
-            }
-
-            // Use reflection, this ensures that the following does not need
-            // to be updated when new well-known request context values are added.
-            let mirror = Mirror(reflecting: requestContext)
-            for attr in mirror.children {
-                guard let label = attr.label else { continue }
-                switch attr.value {
-                case let v as StringValue:
-                    requestContextStrings.updateValue(v.value, forKey: label)
-                case let v as NumberValue:
-                    requestContextNumbers.updateValue(v.value, forKey: label)
-                case let v as BooleanValue:
-                    requestContextBooleans.updateValue(v.value, forKey: label)
-                default:
-                    continue
-                }
-            }
-
-
-            return Context(
-                request: request,
-                requestContextStrings: requestContextStrings,
-                requestContextNumbers: requestContextNumbers,
-                requestContextBooleans: requestContextBooleans)
+        public static func from(request: String) -> Context {
+            return Context(request: request)
         }
 
-        public init(request: String,
-            requestContextStrings: Dictionary<String, String> = [:],
-            requestContextNumbers: Dictionary<String, Double> = [:],
-            requestContextBooleans: Dictionary<String, Bool> = [:]) {
+        public init(request: String) {
             self.request = request
-            self.requestContextStrings = requestContextStrings
-            self.requestContextNumbers = requestContextNumbers
-            self.requestContextBooleans = requestContextBooleans
         }
     }
 }

@@ -9,13 +9,10 @@ public class ModelsAssist001Input: APIModel {
 
     public var request: String?
 
-    public var requestContext: RequestContext?
-
     public var resolvedCommands: [String: Value]?
 
-    public init(request: String? = nil, requestContext: RequestContext? = nil, resolvedCommands: [String: Value]? = nil) {
+    public init(request: String? = nil, resolvedCommands: [String: Value]? = nil) {
         self.request = request
-        self.requestContext = requestContext
         self.resolvedCommands = resolvedCommands
     }
 
@@ -23,7 +20,6 @@ public class ModelsAssist001Input: APIModel {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
 
         request = try container.decodeIfPresent("request")
-        requestContext = try container.decodeIfPresent("requestContext")
         resolvedCommands = try container.decodeIfPresent("resolvedCommands")
     }
 
@@ -31,14 +27,12 @@ public class ModelsAssist001Input: APIModel {
         var container = encoder.container(keyedBy: StringCodingKey.self)
 
         try container.encodeIfPresent(request, forKey: "request")
-        try container.encodeIfPresent(requestContext, forKey: "requestContext")
         try container.encodeIfPresent(resolvedCommands, forKey: "resolvedCommands")
     }
 
     public func isEqual(to object: Any?) -> Bool {
       guard let object = object as? ModelsAssist001Input else { return false }
       guard self.request == object.request else { return false }
-      guard self.requestContext == object.requestContext else { return false }
       guard self.resolvedCommands == object.resolvedCommands else { return false }
       return true
     }

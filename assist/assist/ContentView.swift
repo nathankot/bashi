@@ -107,23 +107,6 @@ struct ContentView: View {
                             onAnswer(requestTextfieldValue)
                             requestTextfieldValue = ""
                         }
-                case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: let onReceive)):
-                    Text("Context required, either copy the text that matches the following requirement, or enter it below:")
-                    Text(desc)
-                    Spacer()
-                    TextField("Enter response", text: $requestTextfieldValue)
-                        .focused($requestTextFieldFocus)
-                        .onChange(of: requestTextFieldFocus, perform: { v in
-                            state.update(requestTextFieldFocus: v)
-                        })
-                        .onReceive(state.$isRequestTextFieldFocused, perform: { v in
-                            self.requestTextFieldFocus = v
-                        })
-                        .onSubmit {
-                            onReceive(requestTextfieldValue)
-                            requestTextfieldValue = ""
-                        }
-                    Button("Cancel", action: cancelRequest)
                 case .Finished(let messages):
                     List(messages) {
                         Text($0.message)

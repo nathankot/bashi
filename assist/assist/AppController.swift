@@ -109,9 +109,9 @@ actor AppController {
                     if newChangeCount > lastChangeCount,
                         case let .NeedsInput(
                             messages: _,
-                            type: .RequestContextText(
-                                description: _,
-                                onReceive: callback
+                            type: .Question(
+                                message: _,
+                                onAnswer: callback
                             )
                         ) = await state.state,
                         let text = strings.first as? String {

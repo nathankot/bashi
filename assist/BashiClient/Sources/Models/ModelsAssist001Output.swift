@@ -19,7 +19,6 @@ public class ModelsAssist001Output: APIModel {
 
     public enum Result: Codable, Equatable {
         case resultFinished(ResultFinished)
-        case resultNeedsRequestContext(ResultNeedsRequestContext)
         case resultPendingCommands(ResultPendingCommands)
 
         public init(from decoder: Decoder) throws {
@@ -28,8 +27,6 @@ public class ModelsAssist001Output: APIModel {
             switch discriminator {
             case "finished":
                 self = .resultFinished(try ResultFinished(from: decoder))
-            case "needs_request_context":
-                self = .resultNeedsRequestContext(try ResultNeedsRequestContext(from: decoder))
             case "pending_commands":
                 self = .resultPendingCommands(try ResultPendingCommands(from: decoder))
             default:
@@ -41,8 +38,6 @@ public class ModelsAssist001Output: APIModel {
             var container = encoder.singleValueContainer()
             switch self {
             case .resultFinished(let content):
-                try container.encode(content)
-            case .resultNeedsRequestContext(let content):
                 try container.encode(content)
             case .resultPendingCommands(let content):
                 try container.encode(content)

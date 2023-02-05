@@ -41,7 +41,7 @@ struct ContentView: View {
                 switch state.state {
                 case .Idle:
                     if let k = pushToTalkShortcut {
-                        Text("Hold \(k.description) to push-to-talk").font(.callout)
+                        Text("Press \(k.description) to push-to-talk").font(.callout)
                     } else {
                         Text("Set up a shortcut key for push-to-talk").font(.callout)
                         Button("Open settings", action: showSettings)
@@ -50,6 +50,9 @@ struct ContentView: View {
                     Text("Listening...").font(.callout)
                     if let s = state.currentTranscription {
                         Text(s)
+                    }
+                    if let k = pushToTalkShortcut {
+                        Text("Press \(k.description) again to finish talking").font(.callout)
                     }
                     Button("Cancel", action: cancelRequest)
                 case let .Processing(messages):
@@ -65,9 +68,12 @@ struct ContentView: View {
                     Text(question)
                     if let s = state.currentTranscription {
                         Text(s)
+                        if let k = pushToTalkShortcut {
+                            Text("Press \(k.description) again to finish talking").font(.callout)
+                        }
                     } else {
                         if let k = pushToTalkShortcut {
-                            Text("Hold \(k.description) to respond").font(.callout)
+                            Text("Press \(k.description) to respond").font(.callout)
                         }
                     }
                     Button("Cancel", action: cancelRequest)

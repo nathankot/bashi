@@ -36,7 +36,7 @@ export const timeoutPolicy = (durationMilliseconds: number) =>
   timeout(durationMilliseconds, TimeoutStrategy.Cooperative);
 
 export const defaultPolicy = wrap(
-  timeoutPolicy(30_000),
+  timeoutPolicy(60_000),
   retryPolicy,
   circuitBreakerPolicy
 );

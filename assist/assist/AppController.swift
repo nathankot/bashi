@@ -26,6 +26,7 @@ actor AppController {
     let popover: NSPopover
     let statusBarItem: NSStatusItem
 
+    var isRecording = false
     var keyboardShortcutsTask: Task<Void, Error>? = nil
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
     var pasteboardContextTask: Task<Void, Error>? = nil
@@ -51,23 +52,29 @@ actor AppController {
             logger.info("listening to keyboard shortcuts")
             keyboardShortcutsTask = Task {
                 for await e in KeyboardShortcuts.events(for: .pushToTalk) {
+                    guard case .keyUp = e else {
+                        continue
+                    }
                     let state = await state.state
-                    switch e {
-                    case .keyDown:
-                        switch state {
-                        case .Idle, .Finished, .Error:
-                            await startRecordingRequest()
-                        case .NeedsInput(_, type: .Question):
-                            await startRecordingAnswer()
-                        default:
-                            break
-                        }
-                    case .keyUp:
+                    if isRecording {
                         switch state {
                         case .AwaitingRequest:
                             await stopRecordingRequest()
+                            isRecording = false
                         case .NeedsInput(_, type: .Question):
                             await stopRecordingAnswer()
+                            isRecording = false
+                        default:
+                            break
+                        }
+                    } else {
+                        switch state {
+                        case .Idle, .Finished, .Error:
+                            await startRecording(newState: .AwaitingRequest)
+                            isRecording = true
+                        case .NeedsInput(_, type: .Question):
+                            await startRecording(newState: state)
+                            isRecording = true
                         default:
                             break
                         }
@@ -103,9 +110,14 @@ actor AppController {
         }
     }
 
-    func startRecordingAnswer() async {
+    func startRecording(newState: AppState.State) async {
         do {
-            let transcriptions = try await audioRecordingController.startRecording()
+            let transcriptions = try await state.transition(newState: newState) { doTransition in
+                let transcriptions = try await audioRecordingController.startRecording()
+                await doTransition()
+                await togglePopover(shouldShow: true)
+                return transcriptions
+            }
             transcriptionUpdatingTask = Task {
                 try Task.checkCancellation()
                 for try await transcription in transcriptions {
@@ -117,7 +129,7 @@ actor AppController {
             await state.handleError(error)
         }
     }
-
+    
     func stopRecordingAnswer() async {
         do {
             let bestTranscription = try await audioRecordingController.stopRecording()
@@ -130,29 +142,6 @@ actor AppController {
                 onAnswer(bestTranscription)
             default:
                 throw AppError.Internal("expected state to be NeedsInput, Question")
-            }
-        } catch {
-            await state.handleError(error)
-        }
-    }
-
-    func startRecordingRequest() async {
-        if await state.accountNumber.isEmpty {
-            return
-        }
-        do {
-            let transcriptions = try await state.transition(newState: .AwaitingRequest) { doTransition in
-                let transcriptions = try await audioRecordingController.startRecording()
-                await doTransition()
-                await togglePopover(shouldShow: true)
-                return transcriptions
-            }
-            transcriptionUpdatingTask = Task {
-                try Task.checkCancellation()
-                for try await transcription in transcriptions {
-                    await state.update(currentTranscription: transcription)
-                }
-                await state.update(currentTranscription: nil)
             }
         } catch {
             await state.handleError(error)

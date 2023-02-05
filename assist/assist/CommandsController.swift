@@ -162,7 +162,9 @@ public actor CommandsController {
         }
 
         public func storeTextInPasteboard(text: String) async throws {
-            NSPasteboard.general.writeObjects([NSString(string: text)])
+            let pasteboard = NSPasteboard.general
+            pasteboard.declareTypes([.string], owner: nil)
+            pasteboard.setString(text, forType: .string)
         }
     }
 
@@ -174,7 +176,17 @@ public actor CommandsController {
             args: [.init(type: .string, name: "answer")],
             returnType: .void
         ) { api, ctx, args in
-            try await api.respond(message: args.first?.string ?? "could not get message")
+            let result = args.first?.string ?? ""
+            if ctx.requestContextStrings["text"] != nil {
+                try await api.storeTextInPasteboard(text: result)
+                if result.count < 560 {
+                    try await api.respond(message: result + " (also copied to your clipboard")
+                } else {
+                    try await api.respond(message: "The result has been copied to your clipboard")
+                }
+            } else {
+                try await api.respond(message: result)
+            }
             return .init(.void)
         },
         AnonymousCommand(
@@ -196,8 +208,13 @@ public actor CommandsController {
             description: "provide text that was being generated/edited back to the client",
             returnType: .void
         ) { api, ctx, args in
-            try await api.storeTextInPasteboard(text: args.first?.string ?? "")
-            try await api.respond(message: "The result has been copied to your clipboard")
+            let result = args.first?.string ?? ""
+            if ctx.requestContextStrings["text"] != nil || result.count > 280 {
+                try await api.storeTextInPasteboard(text: result)
+                try await api.respond(message: "The result has been copied to your clipboard")
+            } else {
+                try await api.respond(message: result)
+            }
             return .void
         }
     ]

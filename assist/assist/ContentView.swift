@@ -51,6 +51,7 @@ struct ContentView: View {
                     if let s = state.currentTranscription {
                         Text(s)
                     }
+                    Button("Cancel", action: cancelRequest)
                 case let .Processing(messages):
                     Text("Request:").font(.callout)
                     List(messages) {
@@ -69,9 +70,11 @@ struct ContentView: View {
                             Text("Hold \(k.description) to respond").font(.callout)
                         }
                     }
+                    Button("Cancel", action: cancelRequest)
                 case .NeedsInput(messages: _, type: .RequestContextText(description: let desc, onReceive: _)):
                     Text("Context required, please copy the text that matches the following requirement:")
                     Text(desc)
+                    Button("Cancel", action: cancelRequest)
                 case .Finished(let messages):
                     List(messages) {
                         Text($0.message)
@@ -86,11 +89,16 @@ struct ContentView: View {
                 default:
                     Text("Unsupported state: \(String(reflecting: state.state))")
                 }
+
             }
             Spacer()
         }
             .padding()
             .frame(maxWidth: 300, minHeight: 200)
+    }
+
+    func cancelRequest() {
+        Task { await controller?.cancelRequest() }
     }
 
     func dismissError() {

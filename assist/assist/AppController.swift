@@ -176,6 +176,17 @@ actor AppController {
         }
     }
 
+    func cancelRequest() async {
+        do {
+            transcriptionUpdatingTask?.cancel()
+            transcriptionUpdatingTask = nil
+            _ = try? await audioRecordingController.stopRecording()
+            try await state.transition(newState: .Idle)
+        } catch {
+            await state.handleError(error)
+        }
+    }
+
     func dismissError() async {
         try? await state.transition(newState: .Idle)
     }

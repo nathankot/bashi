@@ -79,7 +79,7 @@ public final class AppState: ObservableObject {
     @Published var session: BashiSession? = nil
     @Published public private(set) var state: State = .Idle
     @Published public private(set) var currentTranscription: String? = nil
-    
+
     public init(accountNumber: String? = nil) {
         logger.info("initializing app state")
         if let an = accountNumber {
@@ -93,10 +93,12 @@ public final class AppState: ObservableObject {
              (.Idle, .Processing),
              (.AwaitingRequest, .AwaitingRequest),
              (.AwaitingRequest, .Processing),
+             (.AwaitingRequest, .Idle),
              (.Processing, .Processing),
              (.Processing, .NeedsInput),
              (.Processing, .Finished),
              (.NeedsInput, .Processing),
+             (.NeedsInput, .Idle),
              (.Finished, .Idle),
              (.Finished, .AwaitingRequest),
              (.Finished, .Processing),
@@ -134,7 +136,7 @@ public final class AppState: ObservableObject {
 
         return try await closure()
     }
-    
+
     public func update(currentTranscription s: String?) {
         currentTranscription = s
     }
@@ -160,7 +162,7 @@ public final class AppState: ObservableObject {
             })
         }
     }
-    
+
     public func transitionAndWaitforStateCallback<R>(
         makeNewState: @escaping (@escaping (R) -> Void) -> AppState.State
     ) async throws -> R {

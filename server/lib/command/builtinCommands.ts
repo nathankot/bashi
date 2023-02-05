@@ -129,7 +129,7 @@ const math: BuiltinCommandDefinition<["string"], "string"> = {
   cost: -1000,
   returnType: "string",
   description: `get the result of a math formula`,
-  args: [{ name: "formula", type: "string" }],
+  args: [{ name: "formula (ascii characters only)", type: "string" }],
   run: async ({ log, session }, [expr]) => {
     try {
       const result = mathjs.evaluate(expr.value);

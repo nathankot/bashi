@@ -94,7 +94,9 @@ const privateBuiltinCommands = {
     cost: -1000,
     returnType: "string",
     description: "get input text/code that the request may refer to",
-    args: [{ name: "required input description", type: "string" }],
+    args: [
+      { name: "short sentence describing required input", type: "string" },
+    ],
     run: async (_, [desc], memory) => {
       if (
         memory.requestContext.text == null ||
@@ -620,12 +622,12 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.`;
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)`;
 

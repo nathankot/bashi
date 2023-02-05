@@ -37,14 +37,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -53,7 +53,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -71,14 +71,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -87,7 +87,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -163,14 +163,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -179,7 +179,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -197,14 +197,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -213,7 +213,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1507,14 +1507,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -1523,7 +1523,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -1851,14 +1851,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -1867,7 +1867,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -2016,14 +2016,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -2032,7 +2032,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 
@@ -2050,14 +2050,14 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, you must not use any other functions. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when certain functions that indicate this are used.
+Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
 
 \`answer(answer: string): void\` - respond to the original question/request
 \`returnText(text: string): void\` - send back modified input or generated result
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`getInputText("required input description": string): string\` - get input text/code that the request may refer to
-\`math(formula: string): string\` - get the result of a math formula
+\`getInputText("short sentence describing required input": string): string\` - get input text/code that the request may refer to
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`ask(question: string): string\` - clarify the original question/request
@@ -2066,7 +2066,7 @@ Functions are declared below, you must not use any other functions. Do not assum
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; composing only available functions from above
+Action: one or more expressions delimited by ; only using functions/features referenced above
 Result: the result of the Action expression
 ... (this Thought/Action/Result can repeat N times)
 

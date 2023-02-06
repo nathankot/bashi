@@ -198,19 +198,6 @@ public actor CommandsController {
             let response = try await api.ask(question: question)
             return .init(.string(response))
         },
-        AnonymousCommand(
-            name: "getClarification",
-            cost: .Low,
-            description: "clarify the original question/request",
-            args: [.init(type: .string, name: "question asking for clarification")],
-            returnType: .string
-        ) { api, ctx, args in
-            guard let question = args.first?.string else {
-                throw AppError.Internal("expected first argument to be a string")
-            }
-            let response = try await api.ask(question: question)
-            return .init(.string(response))
-        },
     ]
 
     public actor Context: BashiPlugin.CommandContext {

@@ -531,6 +531,7 @@ export async function run(
             1782: -10, // ` }`
             90: -10, // `{`
             92: -10, // `}`
+            1640: -1, // `for` - try reduce tendency of the model to use for loops
             11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
             32165: 1, // `fail`
             15643: 1, // `finish`

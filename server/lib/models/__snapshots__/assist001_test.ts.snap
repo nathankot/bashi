@@ -27,65 +27,73 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
@@ -122,6 +130,40 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
 }
 `;
 
+snapshot[`empty action is implicitly a finish() 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      results: [
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`empty action + result is implicitly a finish() 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      results: [
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
 snapshot[`command overloads work 1`] = `
 {
   n: 2,
@@ -149,65 +191,73 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
@@ -1479,33 +1529,37 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
@@ -1739,33 +1793,37 @@ some text
 
 The re-written text is:
 ",
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
@@ -1901,65 +1959,73 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 
 Request: some request
 Thought: ',
-  'Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.
+Below is a minimal example of all available features:
+
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - ask user to question/request or for input additional input
-\`sendResponse(answer: string): void\` - return response for original question/request back to the user
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
-... (this Thought/Action/Result can repeat N times)
 
 Begin!
 

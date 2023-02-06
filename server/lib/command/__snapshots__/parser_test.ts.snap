@@ -1082,7 +1082,10 @@ snapshot[`parseStatements: someCall(true, a(true(), 123()), "hello"(),) 1`] = `'
 
 snapshot[`parseStatements: testing blah 1`] = `'{"index":8,"rowBegin":1,"columnBegin":9,"rowEnd":1,"columnEnd":13}: Unable to consume token: blah'`;
 
-snapshot[`parseStatements: empty string 1`] = `"<END-OF-FILE>: Unable to consume token: <END-OF-FILE>"`;
+snapshot[`parseStatements: empty string 1`] = `
+[
+]
+`;
 
 snapshot[`parseActionGroup: Thought: I need to do something
     Action: someFunction(123, "str", true)
@@ -1171,6 +1174,29 @@ snapshot[`parseActionGroup: Thought: I need to do something
   ],
   result: undefined,
   thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:
+    Result:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
 }
 `;
 

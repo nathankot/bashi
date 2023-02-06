@@ -118,6 +118,16 @@ Action: now(); math("pi^2 + 123")`,
     ],
   },
   {
+    description: "empty action is implicitly a finish()",
+    input: { request: "some request" },
+    openAiResults: [`empty action\nAction: `],
+  },
+  {
+    description: "empty action + result is implicitly a finish()",
+    input: { request: "some request" },
+    openAiResults: [`empty action\nAction: \nResult:`],
+  },
+  {
     description: "command overloads work",
     input: { request: "some request" },
     openAiResults: [

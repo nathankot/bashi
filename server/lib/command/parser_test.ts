@@ -82,6 +82,11 @@ for (const expr of [
   `Thought: I need to do something
     Action: someFunction(123, "str", true)
     Result: `,
+  `Thought: Empty actions should be supported
+    Action:
+    Result: `,
+  `Thought: Empty actions should be supported
+    Action: `,
   `Thought: I need to do something action: thought: hmmm
     Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
     Result: blah blah blah blah`,

@@ -313,6 +313,9 @@ export function parseExpression(str: string): Expr {
 }
 
 export function parseStatements(str: string): Expr[] {
+  if (str.trim() === "") {
+    return [];
+  }
   return expectSingleResult(
     expectEOF(p.kmid(ANY_SPACE, STATEMENTS, ANY_SPACE).parse(lexer.parse(str)))
   );
@@ -349,9 +352,12 @@ ACTION_GROUP.setPattern(
   p.apply(
     p.seq(
       p.apply(p.kright(p.tok(T2.KeywordThought), STRING), (str) => str.trim()),
-      p.apply(p.kright(p.tok(T2.KeywordAction), STRING), (str) => str.trim()),
+      p.apply(
+        p.kright(p.tok(T2.KeywordAction), p.opt_sc(STRING)),
+        (str) => str?.trim() ?? ""
+      ),
       p.opt_sc(
-        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt(STRING)), (str) => {
+        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt_sc(STRING)), (str) => {
           const result = str != null ? str.trim() : "";
           if (result.length === 0) {
             return undefined;

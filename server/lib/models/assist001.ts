@@ -430,6 +430,10 @@ export async function run(
             isFinished = true;
           }
         }
+        // Mark as finished if top level commands were empty (implicit finish):
+        if (topLevelExpressions.length === 0) {
+          isFinished = true;
+        }
       }
 
       if (isFinished) {

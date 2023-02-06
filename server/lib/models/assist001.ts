@@ -51,7 +51,7 @@ export const State = t.type({
 });
 export type State = t.TypeOf<typeof State>;
 
-export const MAX_LOOPS = 15;
+export const MAX_LOOPS = 500;
 export const MAX_MODEL_CALLS = 5;
 
 export const Name = t.literal("assist-001");
@@ -566,24 +566,27 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Never just repeat the question back to the user.
+  const header = `Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The language used in Action is a small subset of javascript. Only these features are available:
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
 * function calls and composition/nesting
 * string concatenation using +
-* simple variable assignment using var
+* simple variable assignment using var (variables must be explicitly assigned)
 * string, number and boolean literals
-  * strings should be wrapped in backquotes (\`)
 
-Functions are declared below. Unknown functions must not be used. Do not assume variables exist unless explicitly assigned. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
+Below is a minimal example of all available features:
 
-  const format = `Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request, take into account previous results
-Action: one or more expressions delimited by ; in the language for Action referenced above. keep things simple
-Result: the result of the Action delimited by ;
-... (this Thought/Action/Result can repeat N times)`;
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
 
   const existingActionGroups = resolvedActionGroups
     .map(
@@ -598,8 +601,6 @@ Result: the result of the Action delimited by ;
   return `${header}
 
 ${commandSet}
-
-${format}
 
 Begin!
 

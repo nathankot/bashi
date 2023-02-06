@@ -44,17 +44,6 @@ export const commandSet: CommandSet = {
       },
     ],
   },
-  getClarification: {
-    cost: -100,
-    description: "clarify the original question/request",
-    returnType: "string",
-    args: [
-      {
-        name: "question asking for clarification",
-        type: "string",
-      },
-    ],
-  },
   getInput: {
     cost: -100,
     description:

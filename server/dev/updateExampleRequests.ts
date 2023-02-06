@@ -74,19 +74,11 @@ const INPUTS: {
     },
   },
   {
-    prompt: "edit this function in order to make it compile",
-    resolvedCommands: {
-      getInput: {
-        type: "string",
-        value: `function doSomething() int { return "55" }`,
-      },
-    },
-  },
-  {
     prompt: "make a calendar event for next tuesday noon, lunch with Bill",
   },
   {
-    prompt: "there is a function I don't understand, can help me summarize it?",
+    prompt:
+      "there is a function in javascript I don't understand, can help me summarize it?",
     resolvedCommands: {
       getInput: {
         type: "string",

@@ -24,8 +24,7 @@ export const handlerCtx: HandlerContext<{}> = {
 export const commandSet: CommandSet = {
   sendResponse: {
     cost: -100,
-    description:
-      "return response for original question/request back to the user",
+    description: "return response for original question/request back to user",
     returnType: "void",
     args: [
       {
@@ -34,9 +33,32 @@ export const commandSet: CommandSet = {
       },
     ],
   },
+  writeResponse: {
+    cost: -100,
+    description: "help user write response for original question/request",
+    returnType: "void",
+    args: [
+      {
+        name: "answer",
+        type: "string",
+      },
+    ],
+  },
+  getClarification: {
+    cost: -100,
+    description: "clarify the original question/request",
+    returnType: "string",
+    args: [
+      {
+        name: "question asking for clarification",
+        type: "string",
+      },
+    ],
+  },
   getInput: {
     cost: -100,
-    description: "ask user to question/request or for input additional input",
+    description:
+      "get additional input from user, typically text/code used as input into other functions",
     returnType: "string",
     args: [
       {

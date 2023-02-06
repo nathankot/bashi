@@ -199,9 +199,9 @@ const editText: BuiltinCommandDefinition<["string", "string"], "string"> = {
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: `edit input using the given requirements. prefer editCode() for code`,
+  description: `edit text using the given requirements. prefer editCode() for code`,
   args: [
-    { name: "input", type: "string" },
+    { name: "text to edit", type: "string" },
     {
       name: "full description of desired changes or additions",
       type: "string",
@@ -254,7 +254,7 @@ const editCode: BuiltinCommandDefinition<
   returnType: "string",
   description: `edit code using the given requirements`,
   args: [
-    { name: "input", type: "string" },
+    { name: "code to edit", type: "string" },
     { name: "programming language or 'unknown'", type: "string" },
     {
       name: "full description of desired changes or additions",

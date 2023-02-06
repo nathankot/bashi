@@ -170,10 +170,39 @@ public actor CommandsController {
             return .init(.void)
         },
         AnonymousCommand(
+            name: "writeResponse",
+            cost: .Low,
+            description: "help user write response for original question/request",
+            args: [.init(type: .string, name: "answer")],
+            returnType: .void
+        ) { api, ctx, args in
+            let result = args.first?.string ?? ""
+            if result.count < 560 {
+                try await api.respond(message: result)
+            } else {
+                try await api.storeTextInPasteboard(text: result)
+                try await api.respond(message: "The result has been copied to your clipboard")
+            }
+            return .init(.void)
+        },
+        AnonymousCommand(
             name: "getInput",
             cost: .Low,
             description: "ask user to question/request or for input additional input",
             args: [.init(type: .string, name: "question asking for required information")],
+            returnType: .string
+        ) { api, ctx, args in
+            guard let question = args.first?.string else {
+                throw AppError.Internal("expected first argument to be a string")
+            }
+            let response = try await api.ask(question: question)
+            return .init(.string(response))
+        },
+        AnonymousCommand(
+            name: "getClarification",
+            cost: .Low,
+            description: "clarify the original question/request",
+            args: [.init(type: .string, name: "question asking for clarification")],
             returnType: .string
         ) { api, ctx, args in
             guard let question = args.first?.string else {

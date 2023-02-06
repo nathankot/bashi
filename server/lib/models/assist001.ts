@@ -482,12 +482,9 @@ export async function run(
             90: -10, // `{`
             92: -10, // `}`
             11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
-            7783: 1, // `return`
-            32165: 2, // `fail`
-            15643: 2, // `finish`
+            32165: 1, // `fail`
+            15643: 1, // `finish`
             7220: 1, // `user`
-            7203: 1, // `("`
-            4943: 1, // `")`
           },
         },
         {
@@ -569,9 +566,9 @@ function makePrompt(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): string {
-  const header = `Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Do not repeat the question back to the user.
+  const header = `Fulfill the question/request as best and directly as you can. Be concise and minimize the number of Actions used. Do not make things up. If the question is unclear or cannot be answered indicate with fail(). Never just repeat the question back to the user.
 
-The language for Action is a tiny subset of javascript, only available features should be used:
+The language used in Action is a small subset of javascript. Only these features are available:
 
 * function calls and composition/nesting
 * string concatenation using +
@@ -579,13 +576,13 @@ The language for Action is a tiny subset of javascript, only available features 
 * string, number and boolean literals
   * strings should be wrapped in backquotes (\`)
 
-Functions are declared below, any other functions must not be used. Do not assume state/variables exist unless explicitly referenced. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list. The user only receives a response when functions explicitly indicate this.`;
+Functions are declared below. Unknown functions must not be used. Do not assume variables exist unless explicitly assigned. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
 
   const format = `Use the following format:
 Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request
-Action: one or more expressions delimited by ; only using functions/features referenced above
-Result: the result of the Action expression
+Thought: always think what needs to happen to fulfill the request, take into account previous results
+Action: one or more expressions delimited by ; in the language for Action referenced above. keep things simple
+Result: the result of the Action delimited by ;
 ... (this Thought/Action/Result can repeat N times)`;
 
   const existingActionGroups = resolvedActionGroups
@@ -593,7 +590,6 @@ Result: the result of the Action expression
       (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
     )
     .join("\n");
-  // g.result.length > 150 ? "<result too long, redacted>" : g.result
 
   const commandSet = makeCommandSet(
     filterUnnecessary(request + " " + existingActionGroups, commands)

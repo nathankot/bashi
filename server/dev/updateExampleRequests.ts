@@ -100,33 +100,33 @@ const INPUTS: {
       },
     },
   },
-  {
-    prompt:
-      "given this list of verbs can you help me add additional verbs that mean the same thing?",
-    resolvedCommands: {
-      getInput: {
-        type: "string",
-        value: `
-    "edit",
-    "change",
-    "alter",
-    "fix",
-    "move",
-    "align",
-    "reword",
-    "re-word",
-    "editor",
-    "improve",
-    "check",
-    "revise",
-    "modify",
-    "adapt",
-    "rewrite",
-    "re-write",
-`,
-      },
-    },
-  },
+  //   {
+  //     prompt:
+  //       "given this list of verbs can you help me add additional verbs that mean the same thing?",
+  //     resolvedCommands: {
+  //       getInput: {
+  //         type: "string",
+  //         value: `
+  //     "edit",
+  //     "change",
+  //     "alter",
+  //     "fix",
+  //     "move",
+  //     "align",
+  //     "reword",
+  //     "re-word",
+  //     "editor",
+  //     "improve",
+  //     "check",
+  //     "revise",
+  //     "modify",
+  //     "adapt",
+  //     "rewrite",
+  //     "re-write",
+  // `,
+  //       },
+  //     },
+  //   },
   {
     prompt: "help me write a commit message please",
   },

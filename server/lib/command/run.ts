@@ -39,7 +39,8 @@ export async function runBuiltinCommand(
   const defsToTry =
     "overloads" in definition ? definition.overloads : [definition];
 
-  const args = command.args;
+  const args = [...command.args];
+
   for (const definition of defsToTry) {
     if (!checkArgumentsValid(definition, args)) {
       continue;

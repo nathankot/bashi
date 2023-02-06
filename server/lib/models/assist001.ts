@@ -316,6 +316,43 @@ export async function run(
           if (clientCommandDef == null && serverCommandDef == null) {
             throw new Error(`the command ${commandName} is unknown`);
           }
+
+          // For commands that are not overloaded, try type coercion,
+          // the following is supported:
+          //
+          // number -> string
+          // number -> boolean
+          // string -> number
+          const notOverloadedCommand =
+            serverCommandDef != null && "overloads" in serverCommandDef
+              ? null
+              : serverCommandDef ?? clientCommandDef;
+          if (notOverloadedCommand != null) {
+            for (const [i, argDef] of notOverloadedCommand.args.entries()) {
+              const a = pendingCommand.args[i];
+              if (a == null) break;
+              if (a.type === argDef.type) continue;
+              if (a.type === "number" && argDef.type === "string") {
+                pendingCommand.args[i] = {
+                  type: "string",
+                  value: `${a.value}`,
+                };
+              }
+              if (a.type === "number" && argDef.type === "boolean") {
+                pendingCommand.args[i] = {
+                  type: "boolean",
+                  value: a.value === 1,
+                };
+              }
+              if (a.type === "string" && argDef.type === "number") {
+                const parsed = parseInt(a.value, 10);
+                if (!isNaN(parsed)) {
+                  pendingCommand.args[i] = { type: "number", value: parsed };
+                }
+              }
+            }
+          }
+
           if (serverCommandDef != null) {
             // 1b. Any commands that can be resolved server side should be
 

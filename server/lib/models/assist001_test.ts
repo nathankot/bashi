@@ -325,7 +325,7 @@ Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
     input: { request: "some request" },
     openAiResults: [
       `I need to do something
-Action: now(); math(123)`,
+Action: now(); math(true)`,
     ],
     snapshotError: true,
   },
@@ -410,9 +410,15 @@ Action: finish()`,
       `some thought\nAction: finish()`,
     ],
   },
-
-  // model uses wrong arg types
-  // model uses wrong arg count
+  {
+    description: "string to number and vice versa implicit conversion",
+    input: { request: "some request" },
+    openAiResults: [
+      `some thought\nAction: math(123123)`,
+      `some thought\nAction: commandWithNumberArg("123123.00")`,
+      `some thought\nAction: finish()`,
+    ],
+  },
 ] as {
   description: string;
   openAiResults?: string[];
@@ -448,7 +454,7 @@ Action: finish()`,
           log: () => {},
           now: () => fixtures.now,
           openai: openAiClient as any,
-          session: session,
+          session,
           setUpdatedSession: (s) => {
             session = s;
           },
@@ -458,7 +464,14 @@ Action: finish()`,
         },
         {
           model: "assist-001",
-          commands: fixtures.commandSet,
+          commands: {
+            ...fixtures.commandSet,
+            commandWithNumberArg: {
+              args: [{ type: "number", name: "some number" }],
+              description: "some fixture command",
+              returnType: "void",
+            },
+          },
         },
         test.input
       );

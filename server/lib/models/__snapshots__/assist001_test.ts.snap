@@ -56,6 +56,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -92,6 +93,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -220,6 +222,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -256,6 +259,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -1627,6 +1631,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -1899,6 +1904,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -2067,6 +2073,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -2103,6 +2110,7 @@ Known functions are declared below. Unknown functions must not be used. Pay atte
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
 
@@ -2146,6 +2154,110 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     },
   },
   state: undefined,
+}
+`;
+
+snapshot[`string to number and vice versa implicit conversion 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "number",
+              value: 123123,
+            },
+          ],
+          id: "1.0",
+          name: "commandWithNumberArg",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "123123",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "123123",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "123123",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: 'commandWithNumberArg("123123.00")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "123123.00",
+            },
+          ],
+          name: "commandWithNumberArg",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "some thought",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "math(123123)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123123,
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"123123"',
+        thought: "some thought",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "123123",
+          },
+        ],
+        id: "0.0",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "123123",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 

@@ -25,7 +25,6 @@ import {
   BuiltinCommandDefinition,
   ActionGroup,
   parseActionGroup,
-  parseStatements,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -256,12 +255,9 @@ export async function run(
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
+  // todo: the following missing value literal expressions:
   const topLevelResults = (): Value[] =>
-    resolvedCommands
-      // Results should only have the top level commands:
-      .filter((c) => (c.id.match(/\./g) ?? []).length === 1)
-      .filter((c) => c.returnValue.type !== "void")
-      .map((c) => c.returnValue);
+    memory.topLevelResults.filter((r) => r.type !== "void");
 
   // Interpreter loop that does the following:
   //
@@ -284,23 +280,28 @@ export async function run(
       loopNumber++;
       // 1. For each pending thought/action, find expressions and try to resolve them
       if (pending != null) {
-        const actionGroupsSoFar = Object.values(resolvedActionGroups).length;
-        const topLevelExpressions = parseStatements(pending.action);
+        const actionsSoFar = resolvedActionGroups.length;
+        const expressionsSoFar = resolvedActionGroups.reduce(
+          (a, g) => a + g.expressions.length,
+          0
+        );
+        const currentActionExpressions = pending.expressions;
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let pendingCommands: CommandParsed[] = [];
-        let topLevelExpressionResults: Value[] = [];
-        for (const [i, topLevelExpression] of topLevelExpressions.entries()) {
+        let currentActionTopLevelResults: Value[] = [];
+        for (const [i, expr] of currentActionExpressions.entries()) {
           const pendingCommandsOrResult = getPendingCommandsOrResult(
-            `${actionGroupsSoFar}.${i}`,
-            topLevelExpression,
+            `${actionsSoFar}.${i}`,
+            expr,
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
-            topLevelExpressionResults.push(pendingCommandsOrResult.result);
-            memory.topLevelResults.push(pendingCommandsOrResult.result);
-          }
-          if ("pendingCommands" in pendingCommandsOrResult) {
+            currentActionTopLevelResults.push(pendingCommandsOrResult.result);
+            // Update top level results in memory:
+            memory.topLevelResults[expressionsSoFar + i] =
+              pendingCommandsOrResult.result;
+          } else if ("pendingCommands" in pendingCommandsOrResult) {
             pendingCommands = pendingCommandsOrResult.pendingCommands;
             // Break here so that the client is able to handle this top level
             // call, before handling the next one.
@@ -356,10 +357,11 @@ export async function run(
           if (serverCommandDef != null) {
             // 1b. Any commands that can be resolved server side should be
 
-            // If the command was already previously run with identical arguments,
-            // then re-use the return value.
+            // If the command is not a language command and was already previously
+            // run with identical arguments, then re-use the return value.
             for (const resolved of resolvedCommands) {
               if (
+                !(resolved.name in languageBuiltinCommands) &&
                 resolved.name === pendingCommand.name &&
                 resolved.args.every((arg, i) => {
                   const pendingArg = pendingCommand.args[i];
@@ -434,14 +436,17 @@ export async function run(
         }
 
         // Go through the loop again if we have not resolved all top-level commands:
-        if (topLevelExpressionResults.length !== topLevelExpressions.length) {
+        if (
+          currentActionTopLevelResults.length !==
+          currentActionExpressions.length
+        ) {
           continue commandResolutionLoop;
         }
 
         // 2. Any resolutions from the above go into the new prompt
         let resultStrings = [];
-        for (const [i, result] of topLevelExpressionResults.entries()) {
-          const varName = `result_${actionGroupsSoFar}_${i}`;
+        for (const [i, result] of currentActionTopLevelResults.entries()) {
+          const varName = `result_${actionsSoFar}_${i}`;
           memory.variables[varName] = result;
           let resultStr = valueToString(result);
           try {
@@ -468,7 +473,7 @@ export async function run(
         pending = null;
 
         // Mark as finished if any of the top level commands were sinks:
-        for (const topLevelExpr of topLevelExpressions) {
+        for (const topLevelExpr of currentActionExpressions) {
           if (topLevelExpr.type !== "call") {
             continue;
           }
@@ -477,7 +482,7 @@ export async function run(
           }
         }
         // Mark as finished if top level commands were empty (implicit finish):
-        if (topLevelExpressions.length === 0) {
+        if (currentActionExpressions.length === 0) {
           isFinished = true;
         }
       }

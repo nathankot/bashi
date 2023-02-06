@@ -618,18 +618,6 @@ snapshot[`supports model outputs with top level infix call 1`] = `
           type: "string",
           value: "2022-12-19T03:41:10-05:00",
         },
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
       ],
       variables: {},
     },
@@ -809,10 +797,6 @@ snapshot[`supports model outputs using template strings 1`] = `
           type: "string",
           value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
         },
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
-        },
       ],
       variables: {},
     },
@@ -973,6 +957,14 @@ snapshot[`supports model outputs with top level expression 1`] = `
     request: "some request",
     result: {
       results: [
+        {
+          type: "string",
+          value: "some string",
+        },
+        {
+          type: "number",
+          value: 123,
+        },
         {
           type: "string",
           value: "2022-12-19T21:41:10+13:00",
@@ -1512,10 +1504,6 @@ snapshot[`nested calls 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
         {
           type: "string",
           value: "2022-12-19T03:41:10-05:00",
@@ -2143,7 +2131,27 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         {
           type: "string",
-          value: "hello result",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "this should not show up twice",
+        },
+        {
+          type: "string",
+          value: "new result",
+        },
+        {
+          type: "string",
+          value: "this should show up",
         },
         {
           type: "string",

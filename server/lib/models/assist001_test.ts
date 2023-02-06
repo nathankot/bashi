@@ -400,10 +400,10 @@ Action: finish()`,
     openAiResults: [
       `some thought\nAction: "hello result"`,
       `some thought\nAction: result`,
-      `some thought\nAction: var a = "b"`, // assignment returns void which should be ignored
+      `some thought\nAction: var a = "b"; "should override result within same action"; result`, // assignment returns void which should be ignored
       `some thought\nAction: rEsUlt`, // any case
       `some thought\nAction: var result = "new result"`, // override
-      `some thought\nAction: "this should not show up"`,
+      `some thought\nAction: "this should not show up twice"`,
       `some thought\nAction: result`, // should be the variable
       `some thought\nAction: "this should show up"`,
       `some thought\nAction: reSult`, // should be the result

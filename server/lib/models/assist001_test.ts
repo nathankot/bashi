@@ -39,7 +39,7 @@ const pendingClientCommandState = () =>
         type: "executed",
       },
     ],
-    memory: { variables: {} },
+    memory: { variables: {}, topLevelResults: [] },
   } satisfies Session["assist001State"]);
 
 const pendingInputTextState = () =>
@@ -93,7 +93,7 @@ const pendingInputTextState = () =>
         returnValue: { type: "string", value: "blah" },
       },
     ],
-    memory: { variables: {} },
+    memory: { variables: {}, topLevelResults: [] },
   } satisfies Session["assist001State"]);
 
 for (const test of [
@@ -392,6 +392,23 @@ Action: finish()`,
       `some thought\nAction: finish()`,
     ],
     snapshotPrompts: true,
+  },
+  {
+    description:
+      "the 'result' var name is magic and refers to the previous result if not already assigned",
+    input: { request: "some request" },
+    openAiResults: [
+      `some thought\nAction: "hello result"`,
+      `some thought\nAction: result`,
+      `some thought\nAction: var a = "b"`, // assignment returns void which should be ignored
+      `some thought\nAction: rEsUlt`, // any case
+      `some thought\nAction: var result = "new result"`, // override
+      `some thought\nAction: "this should not show up"`,
+      `some thought\nAction: result`, // should be the variable
+      `some thought\nAction: "this should show up"`,
+      `some thought\nAction: reSult`, // should be the result
+      `some thought\nAction: finish()`,
+    ],
   },
 
   // model uses wrong arg types

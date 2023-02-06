@@ -52,7 +52,7 @@ export const State = t.type({
 export type State = t.TypeOf<typeof State>;
 
 export const MAX_LOOPS = 500;
-export const MAX_MODEL_CALLS = 5;
+export const MAX_MODEL_CALLS = 10;
 
 export const Name = t.literal("assist-001");
 export type Name = t.TypeOf<typeof Name>;
@@ -132,10 +132,18 @@ const languageBuiltinCommands = {
     returnType: "mixed",
     run: async (_, [iden], memory) => {
       const maybeValue = memory.variables[iden.value];
-      if (maybeValue == null) {
-        throw new Error(`the variable '${iden.value}' does not exist`);
+      if (maybeValue != null) {
+        return maybeValue;
       }
-      return maybeValue;
+      if (iden.value.toLowerCase() === "result") {
+        const maybeLastResult = [...memory.topLevelResults]
+          .reverse()
+          .filter((r) => r.type !== "void")[0];
+        if (maybeLastResult != null) {
+          return maybeLastResult;
+        }
+      }
+      throw new Error(`the variable '${iden.value}' does not exist`);
     },
   } as BuiltinCommandDefinition<["string"], "mixed">,
   "__=__": {
@@ -235,11 +243,11 @@ export async function run(
   }
 
   // Key pieces of state:
-  let memory = {
-    variables: {
-      ...state?.memory?.variables,
-    },
+  let memory: Memory = {
+    variables: { ...state?.memory?.variables },
+    topLevelResults: [...(state?.memory?.topLevelResults ?? [])],
   };
+
   let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending;
   let resolvedCommands = state?.resolvedCommands ?? [];
@@ -248,7 +256,7 @@ export async function run(
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
-  const resultsExternal = (): Value[] =>
+  const topLevelResults = (): Value[] =>
     resolvedCommands
       // Results should only have the top level commands:
       .filter((c) => (c.id.match(/\./g) ?? []).length === 1)
@@ -290,6 +298,7 @@ export async function run(
           );
           if ("result" in pendingCommandsOrResult) {
             topLevelExpressionResults.push(pendingCommandsOrResult.result);
+            memory.topLevelResults.push(pendingCommandsOrResult.result);
           }
           if ("pendingCommands" in pendingCommandsOrResult) {
             pendingCommands = pendingCommandsOrResult.pendingCommands;
@@ -381,7 +390,7 @@ export async function run(
             result: {
               type: "pending_commands",
               pendingCommands: commandsToSendToClient,
-              results: resultsExternal(),
+              results: topLevelResults(),
             },
             dev,
           };
@@ -559,7 +568,7 @@ export async function run(
     request,
     result: {
       type: "finished",
-      results: resultsExternal(),
+      results: topLevelResults(),
     },
     dev,
   };

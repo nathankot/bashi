@@ -297,6 +297,8 @@ snapshot[`infix + operand support 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -433,6 +435,8 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -605,6 +609,24 @@ snapshot[`supports model outputs with top level infix call 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -778,6 +800,16 @@ snapshot[`supports model outputs using template strings 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -999,6 +1031,9 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        "0000-00-00T00:00:00Z",
+      ],
       variables: {},
     },
     modelCallCount: 2,
@@ -1094,6 +1129,12 @@ snapshot[`client resolved command 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1172,6 +1213,12 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1261,6 +1308,12 @@ snapshot[`client resolved command - wrong return type 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1350,6 +1403,12 @@ snapshot[`client resolved command - fulfilled 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1448,6 +1507,16 @@ snapshot[`nested calls 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1600,6 +1669,12 @@ snapshot[`request needs more context 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1690,6 +1765,8 @@ snapshot[`request needs more context - still missing 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -1838,7 +1915,7 @@ Thought: ',
 ]
 `;
 
-snapshot[`fulfilled but max loops 1`] = `"max iteration count of 5 reached"`;
+snapshot[`fulfilled but max loops 1`] = `"max iteration count of 10 reached"`;
 
 snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
@@ -1872,6 +1949,8 @@ snapshot[`top level commands are resolved sequentially 1`] = `
   },
   state: {
     memory: {
+      topLevelResults: [
+      ],
       variables: {},
     },
     modelCallCount: 1,
@@ -2035,6 +2114,39 @@ Action: longVar = "word word word word word word word word word word word word w
 Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
 Thought: ',
 ]
+`;
+
+snapshot[`the 'result' var name is magic and refers to the previous result if not already assigned 1`] = `
+{
+  n: 10,
+  output: {
+    dev: undefined,
+    model: "assist-001",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "this should show up",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
 `;
 
 snapshot[`example A step 1 1`] = `

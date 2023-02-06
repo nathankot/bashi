@@ -14,6 +14,7 @@ Deno.test("timezones", async (t) => {
 
   let result = await builtinCommands.now.run(deps, [], {
     variables: {},
+    topLevelResults: [],
   });
   assertEquals(result.value, "2022-12-19T17:41:10+09:00");
   assertEquals(new Date(result.value).getTime(), fixtures.now.getTime());
@@ -26,7 +27,7 @@ Deno.test("timezones", async (t) => {
         value: "tomorrow noon",
       },
     ],
-    { variables: {} }
+    { variables: {}, topLevelResults: [] }
   );
   assertEquals(result.value, "2022-12-20T12:00:00+09:00");
   new Date(result.value);
@@ -39,7 +40,7 @@ Deno.test("timezones", async (t) => {
         value: "Pacific/Auckland",
       },
     ],
-    { variables: {} }
+    { variables: {}, topLevelResults: [] }
   );
   assertEquals(result.value, "2022-12-19T21:41:10+13:00");
   new Date(result.value);

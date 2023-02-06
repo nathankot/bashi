@@ -4,6 +4,7 @@ import { Value, ValueType, ValueForType } from "@lib/valueTypes.ts";
 import { ModelDeps } from "@lib/models.ts";
 
 export const Memory = t.type({
+  topLevelResults: t.array(Value),
   variables: t.record(t.string, Value),
 });
 export type Memory = t.TypeOf<typeof Memory>;

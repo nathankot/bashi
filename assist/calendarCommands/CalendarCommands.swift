@@ -29,7 +29,7 @@ public class CalendarCommands: BundledPlugin {
 
     public func prepare() async throws {
     }
-    
+
     public func provideCommands() -> [Command] {
         return [
             AnonymousCommand(
@@ -44,21 +44,10 @@ public class CalendarCommands: BundledPlugin {
                 returnType: .void,
                 triggerTokens: ["calendar", "event", "appointment", "meeting"],
                 runFn: { (api, ctx, args) async throws -> BashiValue in
-                    let granted: Bool = try await withCheckedThrowingContinuation { continuation in
-                        DispatchQueue.main.sync {
-                            self.eventStore.requestAccess(to: .event) { granted, err in
-                                if let e = err {
-                                    continuation.resume(with: .failure(e))
-                                } else {
-                                    continuation.resume(with: .success(granted))
-                                }
-                            }
-                        }
-                    }
+                    let granted = try await self.eventStore.requestAccess(to: .event)
                     if !granted {
                         throw ErrorType.noEventStorePermissions
                     }
-                    
                     guard let name = args[0].string else {
                         logger.error("could not find calendar name")
                         throw ErrorType.internalError
@@ -75,14 +64,50 @@ public class CalendarCommands: BundledPlugin {
                     guard let defaultCalendar = self.eventStore.defaultCalendarForNewEvents else {
                         throw ErrorType.noDefaultCalendar
                     }
-
                     let event = EKEvent.init(eventStore: self.eventStore)
                     event.startDate = date
                     event.title = name
                     event.endDate = date.addingTimeInterval(60 * 60 * hours.doubleValue)
                     event.calendar = defaultCalendar
-                    
                     try self.eventStore.save(event, span: .thisEvent, commit: true)
+                    return .init(.void)
+                }),
+
+            AnonymousCommand(
+                name: "createReminder",
+                cost: .Low,
+                description: "set a reminder for a certain date and time",
+                args: [
+                        .init(type: .string, name: "reminder name"),
+                        .init(type: .string, name: "iso8601Date"),
+                ],
+                returnType: .void,
+                triggerTokens: ["remind", "reminder", "remember", "inform", "alarm", "alert"],
+                runFn: { (api, ctx, args) async throws -> BashiValue in
+                    let granted = try await self.eventStore.requestAccess(to: .reminder)
+                    if !granted {
+                        throw ErrorType.noEventStorePermissions
+                    }
+                    guard let name = args[0].string else {
+                        logger.error("could not find reminder name")
+                        throw ErrorType.internalError
+                    }
+                    guard let date = args[1].maybeAsDate else {
+                        logger.info("date time received was: \(args[1].string ?? "")")
+                        logger.error("could not find reminder date parsed from natural language date time")
+                        throw ErrorType.internalError
+                    }
+                    guard let calendar = self.eventStore.defaultCalendarForNewReminders() ?? self.eventStore.calendars(for: .reminder).first  else {
+                        throw ErrorType.noDefaultCalendar
+                    }
+                    let reminder = EKReminder(eventStore: self.eventStore)
+                    let reminderDate = Calendar.current.dateComponents(in: .current, from: date)
+                    reminder.title = name
+                    reminder.calendar = calendar
+                    reminder.dueDateComponents = reminderDate
+                    reminder.startDateComponents = reminderDate
+
+                    try self.eventStore.save(reminder, commit: true)
                     return .init(.void)
                 })
         ]

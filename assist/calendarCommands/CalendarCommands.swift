@@ -70,6 +70,7 @@ public class CalendarCommands: BundledPlugin {
                     event.endDate = date.addingTimeInterval(60 * 60 * hours.doubleValue)
                     event.calendar = defaultCalendar
                     try self.eventStore.save(event, span: .thisEvent, commit: true)
+                    await api.indicateCommandResult(message: "Calendar event created")
                     return .init(.void)
                 }),
 
@@ -108,6 +109,7 @@ public class CalendarCommands: BundledPlugin {
                     reminder.startDateComponents = reminderDate
 
                     try self.eventStore.save(reminder, commit: true)
+                    await api.indicateCommandResult(message: "Reminder created")
                     return .init(.void)
                 })
         ]

@@ -33,8 +33,8 @@ public actor CommandsController {
         var request: String? = initialRequest
         var resolvedCommands: [String: Value] = [:]
         let pluginAPI = PluginAPI(
-            respondFn: { response in
-                messages.append(.init(id: messages.count, message: response, type: .modelResponse))
+            messageFn: { response, type in
+                messages.append(.init(id: messages.count, message: response, type: type))
             },
             askFn: { question in
                 return try await self.state.transitionAndWaitforStateCallback { callback in
@@ -115,7 +115,7 @@ public actor CommandsController {
                                 default: return nil
                                 }
                             }).first {
-                            try await pluginAPI.respondFn(lastValue)
+                            await pluginAPI.messageFn(lastValue, .modelResponse)
                         }
                     }
                     try await state.transition(newState: .Finished(messages: messages))
@@ -128,19 +128,24 @@ public actor CommandsController {
     }
 
     class PluginAPI: BashiPluginAPI {
-        let respondFn: (String) async throws -> Void
+        
+        let messageFn: (String, MessageType) async -> Void
         let askFn: (String) async throws -> String
 
-        init(respondFn: @escaping (String) async throws -> Void,
+        init(messageFn: @escaping (String, MessageType) async -> Void,
             askFn: @escaping (String) async throws -> String) {
-            self.respondFn = respondFn
+            self.messageFn = messageFn
             self.askFn = askFn
         }
 
-        public func respond(message: String) async throws {
-            return try await respondFn(message)
+        public func respond(message: String) async {
+            return await messageFn(message, .modelResponse)
         }
 
+        public func indicateCommandResult(message: String) async {
+            return await messageFn(message, .sideEffectResult)
+        }
+        
         public func ask(question: String) async throws -> String {
             return try await askFn(question)
         }
@@ -162,10 +167,10 @@ public actor CommandsController {
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
             if result.count < 560 {
-                try await api.respond(message: result)
+                await api.respond(message: result)
             } else {
                 try await api.storeTextInPasteboard(text: result)
-                try await api.respond(message: "The result has been copied to your clipboard")
+                await api.respond(message: "The result has been copied to your clipboard")
             }
             return .init(.void)
         },
@@ -178,10 +183,10 @@ public actor CommandsController {
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
             if result.count < 560 {
-                try await api.respond(message: result)
+                await api.respond(message: result)
             } else {
                 try await api.storeTextInPasteboard(text: result)
-                try await api.respond(message: "The result has been copied to your clipboard")
+                await api.respond(message: "The result has been copied to your clipboard")
             }
             return .init(.void)
         },

@@ -59,7 +59,7 @@
                     args: [.init(type: .string, name: "message")],
                     returnType: .void
                 ) { api, ctx, args in
-                    try await api.respond(message: args.first?.string ?? "<could not get message>")
+                    await api.respond(message: args.first?.string ?? "<could not get message>")
                     return .init(.void)
                 },
                 AnonymousCommand(

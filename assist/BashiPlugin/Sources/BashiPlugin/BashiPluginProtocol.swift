@@ -2,7 +2,8 @@ import os
 import Foundation
 
 @objc public protocol BashiPluginAPI {
-    @objc func respond(message: String) async throws
+    @objc func indicateCommandResult(message: String) async
+    @objc func respond(message: String) async
     @objc func ask(question: String) async throws -> String
     @objc func storeTextInPasteboard(text: String) async throws
 }
@@ -106,7 +107,7 @@ import Foundation
         fraclocalFormatter.locale = Locale.current
         fraclocalFormatter.timeZone = TimeZone.current
         fraclocalFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        
+
         for parse in [
             formatter.date,
             fracFormatter.date,
@@ -120,7 +121,7 @@ import Foundation
     }
 }
 
-@objc public enum CommandCost : Int {
+@objc public enum CommandCost: Int {
     case Low = -100
     case Medium = 0
     case High = 1000

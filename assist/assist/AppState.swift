@@ -53,6 +53,7 @@ public enum MessageType: Equatable {
     case request
     case userResponse
     case modelResponse
+    case sideEffectResult
 }
 
 @MainActor

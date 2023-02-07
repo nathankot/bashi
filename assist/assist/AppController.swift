@@ -189,6 +189,7 @@ actor AppController {
             transcriptionUpdatingTask?.cancel()
             transcriptionUpdatingTask = nil
             _ = try? await audioRecordingController.stopRecording()
+            isRecording = false
             try await state.transition(newState: .Idle)
         } catch {
             await state.handleError(error)

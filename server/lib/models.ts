@@ -4,65 +4,49 @@ import { HTTPError } from "@lib/errors.ts";
 import { ModelDeps } from "./models/modelDeps.ts";
 
 ////////////////////////////////////////////////////
-// BEGIN section to edit when adding new models
+// BEGIN section to edit when adding new external models
 
 import * as assist001 from "./models/assist001.ts";
 import * as translate000 from "./models/translate000.ts";
 import * as code000 from "./models/code000.ts";
-import * as noop from "./models/noop.ts";
 import * as whisper000 from "./models/whisper000.ts";
-import * as passthroughOpenAi000 from "./models/passthroughOpenai000.ts";
 
+// Note: only externally available models need to be here:
 export const models = {
   "assist-001": assist001,
-  // "assist-001": assist001,
   "translate-000": translate000,
   "code-000": code000,
   "whisper-000": whisper000,
-  "passthrough-openai-000": passthroughOpenAi000,
-  noop: noop,
 };
 
 export const Configuration = t.partial({
   "assist-001": assist001.Configuration,
-  // "assist-001": assist001.Configuration,
   "translate-000": translate000.Configuration,
   "code-000": code000.Configuration,
   "whisper-000": whisper000.Configuration,
-  "passthrough-openai-000": passthroughOpenAi000.Configuration,
-  noop: noop.Configuration,
 });
 
 export const AllConfiguration = t.union([
   assist001.Configuration,
-  // assist001.Configuration,
-  noop.Configuration,
   translate000.Configuration,
   code000.Configuration,
   whisper000.Configuration,
-  passthroughOpenAi000.Configuration,
 ]);
 export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
 export const AllInput = t.union([
   assist001.Input,
-  // assist001.Input,
-  noop.Input,
   translate000.Input,
   code000.Input,
   whisper000.Input,
-  passthroughOpenAi000.Input,
 ]);
 export type AllInput = t.TypeOf<typeof AllInput>;
 
 export const AllOutput = t.union([
   assist001.Output,
-  // assist001.Output,
-  noop.Output,
   translate000.Output,
   code000.Output,
   whisper000.Output,
-  passthroughOpenAi000.Output,
 ]);
 export type AllOutput = t.TypeOf<typeof AllOutput>;
 

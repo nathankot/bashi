@@ -28,19 +28,13 @@ extension BashiClient {
 
                     public var code000: ModelsCode000Configuration?
 
-                    public var noop: ModelsNoopConfiguration?
-
-                    public var passthroughOpenai000: ModelsPassthroughOpenai000Configuration?
-
                     public var translate000: ModelsTranslate000Configuration?
 
                     public var whisper000: ModelsWhisper000Configuration?
 
-                    public init(assist001: ModelsAssist001Configuration? = nil, code000: ModelsCode000Configuration? = nil, noop: ModelsNoopConfiguration? = nil, passthroughOpenai000: ModelsPassthroughOpenai000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
+                    public init(assist001: ModelsAssist001Configuration? = nil, code000: ModelsCode000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
                         self.assist001 = assist001
                         self.code000 = code000
-                        self.noop = noop
-                        self.passthroughOpenai000 = passthroughOpenai000
                         self.translate000 = translate000
                         self.whisper000 = whisper000
                     }
@@ -50,8 +44,6 @@ extension BashiClient {
 
                         assist001 = try container.decodeIfPresent("assist-001")
                         code000 = try container.decodeIfPresent("code-000")
-                        noop = try container.decodeIfPresent("noop")
-                        passthroughOpenai000 = try container.decodeIfPresent("passthrough-openai-000")
                         translate000 = try container.decodeIfPresent("translate-000")
                         whisper000 = try container.decodeIfPresent("whisper-000")
                     }
@@ -61,8 +53,6 @@ extension BashiClient {
 
                         try container.encodeIfPresent(assist001, forKey: "assist-001")
                         try container.encodeIfPresent(code000, forKey: "code-000")
-                        try container.encodeIfPresent(noop, forKey: "noop")
-                        try container.encodeIfPresent(passthroughOpenai000, forKey: "passthrough-openai-000")
                         try container.encodeIfPresent(translate000, forKey: "translate-000")
                         try container.encodeIfPresent(whisper000, forKey: "whisper-000")
                     }
@@ -71,8 +61,6 @@ extension BashiClient {
                       guard let object = object as? ModelConfigurations else { return false }
                       guard self.assist001 == object.assist001 else { return false }
                       guard self.code000 == object.code000 else { return false }
-                      guard self.noop == object.noop else { return false }
-                      guard self.passthroughOpenai000 == object.passthroughOpenai000 else { return false }
                       guard self.translate000 == object.translate000 else { return false }
                       guard self.whisper000 == object.whisper000 else { return false }
                       return true

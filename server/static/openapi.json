@@ -47,12 +47,6 @@
                       },
                       "whisper-000": {
                         "$ref": "#/components/schemas/models_whisper-000_Configuration"
-                      },
-                      "passthrough-openai-000": {
-                        "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
-                      },
-                      "noop": {
-                        "$ref": "#/components/schemas/models_noop_Configuration"
                       }
                     }
                   },
@@ -293,102 +287,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/models_whisper-000_Output"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/error"
-          },
-          "401": {
-            "$ref": "#/components/responses/error"
-          },
-          "403": {
-            "$ref": "#/components/responses/error"
-          }
-        }
-      }
-    },
-    "/session/requests/passthrough-openai-000": {
-      "post": {
-        "operationId": "post_session_passthrough-openai-000",
-        "summary": "TODO",
-        "description": "TODO",
-        "security": [
-          {
-            "account_number": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/session_id"
-          }
-        ],
-        "requestBody": {
-          "description": "TODO",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/models_passthrough-openai-000_Input"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "TODO",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/models_passthrough-openai-000_Output"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/error"
-          },
-          "401": {
-            "$ref": "#/components/responses/error"
-          },
-          "403": {
-            "$ref": "#/components/responses/error"
-          }
-        }
-      }
-    },
-    "/session/requests/noop": {
-      "post": {
-        "operationId": "post_session_noop",
-        "summary": "TODO",
-        "description": "TODO",
-        "security": [
-          {
-            "account_number": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/session_id"
-          }
-        ],
-        "requestBody": {
-          "description": "TODO",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/models_noop_Input"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "TODO",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/models_noop_Output"
                 }
               }
             }
@@ -901,110 +799,6 @@
           }
         }
       },
-      "models_passthrough-openai-000_Input": {
-        "type": "object",
-        "required": [
-          "openAiModel",
-          "request"
-        ],
-        "properties": {
-          "openAiModel": {
-            "type": "string"
-          },
-          "request": {
-            "type": "string"
-          }
-        }
-      },
-      "models_passthrough-openai-000_Output": {
-        "type": "object",
-        "required": [
-          "model",
-          "openAiModel",
-          "request",
-          "result"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "passthrough-openai-000"
-            ],
-            "type": "string"
-          },
-          "openAiModel": {
-            "type": "string"
-          },
-          "request": {
-            "type": "string"
-          },
-          "result": {
-            "type": "string"
-          }
-        }
-      },
-      "models_passthrough-openai-000_Configuration": {
-        "type": "object",
-        "required": [
-          "model"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "passthrough-openai-000"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "models_noop_Input": {
-        "type": "object",
-        "required": [
-          "request"
-        ],
-        "properties": {
-          "request": {
-            "enum": [
-              "noop"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "models_noop_Output": {
-        "type": "object",
-        "required": [
-          "model",
-          "result"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "noop"
-            ],
-            "type": "string"
-          },
-          "result": {
-            "enum": [
-              "noop"
-            ],
-            "type": "string"
-          }
-        }
-      },
-      "models_noop_Configuration": {
-        "type": "object",
-        "required": [
-          "model"
-        ],
-        "properties": {
-          "model": {
-            "enum": [
-              "noop"
-            ],
-            "type": "string"
-          }
-        }
-      },
       "Session": {
         "type": "object",
         "required": [
@@ -1062,12 +856,6 @@
               },
               "whisper-000": {
                 "$ref": "#/components/schemas/models_whisper-000_Configuration"
-              },
-              "passthrough-openai-000": {
-                "$ref": "#/components/schemas/models_passthrough-openai-000_Configuration"
-              },
-              "noop": {
-                "$ref": "#/components/schemas/models_noop_Configuration"
               }
             }
           }

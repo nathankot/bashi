@@ -163,12 +163,6 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **ModelsCode000Configuration**
 - **ModelsCode000Input**
 - **ModelsCode000Output**
-- **ModelsNoopConfiguration**
-- **ModelsNoopInput**
-- **ModelsNoopOutput**
-- **ModelsPassthroughOpenai000Configuration**
-- **ModelsPassthroughOpenai000Input**
-- **ModelsPassthroughOpenai000Output**
 - **ModelsTranslate000Configuration**
 - **ModelsTranslate000Input**
 - **ModelsTranslate000Output**
@@ -186,8 +180,6 @@ To add support for a specific asynchronous library, just add an extension on `AP
 
 - **BashiClient.PostSessionAssist001**: POST `/session/requests/assist-001`
 - **BashiClient.PostSessionCode000**: POST `/session/requests/code-000`
-- **BashiClient.PostSessionNoop**: POST `/session/requests/noop`
-- **BashiClient.PostSessionPassthroughOpenai000**: POST `/session/requests/passthrough-openai-000`
 - **BashiClient.PostSessionTranslate000**: POST `/session/requests/translate-000`
 - **BashiClient.PostSessionWhisper000**: POST `/session/requests/whisper-000`
 - **BashiClient.PostSessions**: POST `/sessions`

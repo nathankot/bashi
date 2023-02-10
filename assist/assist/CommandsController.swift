@@ -109,17 +109,15 @@ public actor CommandsController {
                     continue interpreterLoop
 
                 case .resultFinished(let resultFinished):
-                    if messages.count == 1 {
-                        if let lastValue = resultFinished.results.reversed().compactMap({ (v) -> String? in
-                                switch v {
-                                case .stringValue(let s): return s.value
-                                case .numberValue(let n): return "\(n)"
-                                case .booleanValue(let b): return b.value ? "True" : "False"
-                                default: return nil
-                                }
-                            }).first {
-                            await pluginAPI.messageFn(lastValue, .modelResponse)
+                    if let lastValue = resultFinished.results.reversed().compactMap({ (v) -> String? in
+                        switch v {
+                        case .stringValue(let s): return s.value
+                        case .numberValue(let n): return "\(n)"
+                        case .booleanValue(let b): return b.value ? "True" : "False"
+                        default: return nil
                         }
+                    }).first {
+                        await pluginAPI.messageFn(lastValue, .modelResponse)
                     }
                     try await state.transition(newState: .Finished(messages: messages))
                     return

@@ -1,4 +1,4 @@
-.PHONY: up up-all dev build test test-update bench update-lock check clients
+.PHONY: up up-all dev build test test-update clients
 compose_command = docker-compose
 
 up:
@@ -12,25 +12,14 @@ build:
 	commit=$(shell git rev-parse head) \
 	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
-dev: export REDIS_URL=redis://localhost:6379
-dev: export WHISPER_TRANSCRIBE_ENDPOINT=http://localhost:9000/asr
 dev:
-	cd ./server && ./dev.ts
+	cd ./server && make dev
 
 test:
-	cd ./server && deno test --allow-env --allow-read
+	cd ./server && make test
 
 test-update:
-	cd ./server && deno test --allow-env --allow-read --allow-write -- --update
-
-bench:
-	cd ./server && deno bench --allow-env --allow-read
-
-check:
-	cd ./server && deno check --lock deno.prod.lock ./main.ts
-
-update:
-	cd ./server && deno cache --check --lock deno.prod.lock --lock-write --reload main.ts cache_imports.ts
+	cd ./server && make test-update
 
 clients:
 	-rm -rf ./assist/BashiClient

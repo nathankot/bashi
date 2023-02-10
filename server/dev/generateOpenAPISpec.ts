@@ -19,10 +19,10 @@ export default async function generateOpenAPISpec() {
       version: "0.1.0",
       description: "TODO",
       termsOfService: "TODO",
-      // license: {
-      //   name: "TODO",
-      //   url: "TODO",
-      // },
+      license: {
+        name: "GNU AFFERO GENERAL PUBLIC LICENSE",
+        url: "https://www.gnu.org/licenses/",
+      },
     },
     servers: [
       {

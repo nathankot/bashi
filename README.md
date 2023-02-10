@@ -1,7 +1,11 @@
 # 🌁 Bashi
 
-Bashi is an extensible, ready-to-use platform that bridges LLMs to tasks and
-actions.
+_Note: Bashi is still very early stage and under active development, if you are
+looking for a polished product you will be disappointed. But if you are looking
+to spend some time building your own personal assistant AI then you're at the
+right place!_
+
+Bashi is an extensible platform that bridges LLMs to tasks and actions.
 
 It comes with an OSX personal assistant app, so you can try it out
 quickly, and mould the app to your own needs.
@@ -10,7 +14,7 @@ This repo has two components:
 
 - The Bashi API server.
 - The OSX app 'assist', which serves as an example client implementation, as
-  well as a usable product (albeit it needs some more work!)
+  well as a usable product
 
 Examples of the assist OSX app in action:
 
@@ -132,7 +136,7 @@ Open the `xcworkspace` in Xcode:
 open assist/assist.xcworkspace
 ```
 
-You'll want to build the 'assist' scheme. **Note** by default the app points to
+Build the 'assist' scheme. **Note** by default the app points to
 `http://localhost:8003/api` which corresponds to the server running in docker
 via `make up-all`. If you are running the server with `make dev` you'll want to
 update the API base URL to `http://localhost:8080/api`by going to the app
@@ -168,3 +172,39 @@ For the server use `make test` to run tests, and `make test-update` to update
 test snapshots. [Snapshot
 testing](https://deno.land/manual@v1.28.3/basics/testing/snapshot_testing) is
 used liberally, for better or for worse 🙈
+
+### Bug reports
+
+Running the server in `make dev` results in more verbose logging, please copy
+and paste the error output into any bug reports (after redacting sensitive
+information, if any).
+
+### Known issues
+
+(Need to migrate these to GH issues)
+
+- If the model does not have the commands to complete the request, it will tend
+  to just repeat the question back to the user.
+
+  - A general knowledge lookup command would be useful here, the existing search
+    command is not sufficient as it does not provide a knowledge graph. Perhaps
+    this command can have multiple layers - ask a LLM first, if no answer use
+    some search API.
+
+- The model gets confused when there are overlapping commands relevant to a
+  request. For example if you ask it to `write example code to create a reminder
+using swift`, it ends up calling the `createReminder()` command instead.
+
+  - I'm exploring an approach to alleviate this by having a pre-process stage
+    where the command set is filtered down, this could also result in token savings.
+
+- The model will sometimes output an un-parseable expression leading to error. A
+  quick fix is usually to rephrase your request, in the long term the following
+  approaches are being considered:
+
+  - Progressively loosen the definition of the action language to accomodate for common model errors.
+  - Support configurable automatic retries.
+  - Prompt engineering and fine tuning.
+
+- Apple APIs for audio recording and transcription is hard :( Push-to-talk is
+  very flaky with airpods on.

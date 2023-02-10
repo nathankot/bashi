@@ -25,6 +25,6 @@ public struct BashiClient {
     public enum Server {
 
         /** Local development server **/
-        public static let main = "http://localhost:8080/api"
+        public static let main = "http://localhost:8003/api"
     }
 }

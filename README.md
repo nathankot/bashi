@@ -133,8 +133,10 @@ open assist/assist.xcworkspace
 ```
 
 You'll want to build the 'assist' scheme. **Note** by default the app points to
-`http://localhost:8080` which corresponds to `make dev`. If you are running the
-server in Docker you'll want to update the API base URL by going to the app settings.
+`http://localhost:8003/api` which corresponds to the server running in docker
+via `make up-all`. If you are running the server with `make dev` you'll want to
+update the API base URL to `http://localhost:8080/api`by going to the app
+settings.
 
 Any changes to the API surface will require a new swift client to be generated
 using `make clients`.

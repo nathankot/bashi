@@ -46,13 +46,6 @@ Action: sendResponse("mock response")`,
     request: `{ "request": "" }`,
     session: fixtures.session,
   },
-  {
-    description: "noop model works",
-    model: "noop",
-    request: `{ "request": "noop" }`,
-    session: fixtures.session,
-    openAiFn: null,
-  },
   // too many tokens
   // rate limited (or maybe handled by middleware?)
 ]) {

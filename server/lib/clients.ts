@@ -4,11 +4,6 @@ import { Configuration, OpenAIApi } from "openai";
 
 import "dotenv/load.ts";
 
-const redisUrl = Deno.env.get("REDIS_URL");
-if (redisUrl == null || redisUrl.length === 0) {
-  throw new Error("REDIS_URL must be declared");
-}
-
 export async function withRedis<T>(
   f: (client: ReturnType<typeof r.createClient>) => Promise<T>
 ): Promise<T> {
@@ -34,10 +29,6 @@ export const openai = new OpenAIApi(
 );
 
 const whisperEndpoint = Deno.env.get("WHISPER_TRANSCRIBE_ENDPOINT")!;
-if (whisperEndpoint == null || whisperEndpoint.length === 0) {
-  throw new Error("WHISPER_TRANSCRIBE_ENDPOINT must be declared");
-}
-
 export { whisperEndpoint };
 
 const GoogleSearchResponse = t.partial({

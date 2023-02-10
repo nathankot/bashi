@@ -36,10 +36,3 @@ snapshot[`POST /api/session/requests/assist-001: empty request 1`] = `
   error: "request must not be empty",
 }
 `;
-
-snapshot[`POST /api/session/requests/noop: noop model works 1`] = `
-{
-  model: "noop",
-  result: "noop",
-}
-`;

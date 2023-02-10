@@ -37,12 +37,15 @@ public actor CommandsController {
                 messages.append(.init(id: messages.count, message: response, type: type))
             },
             askFn: { question in
-                return try await self.state.transitionAndWaitforStateCallback { callback in
-                        .NeedsInput(
+                messages.append(.init(id: messages.count, message: question, type: .modelResponse))
+                let response = try await self.state.transitionAndWaitforStateCallback { callback in
+                    .NeedsInput(
                         messages: messages,
-                        type: .Question(message: question, onAnswer: callback)
+                        type: .Question(onAnswer: callback)
                     )
                 }
+                messages.append(.init(id: messages.count, message: response.count > 280 ? response.prefix(280) + " [truncated]" : response, type: .userResponse))
+                return response
             })
 
         do {
@@ -166,11 +169,11 @@ public actor CommandsController {
             returnType: .void
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
-            if result.count < 560 {
+            if result.count < 280 {
                 await api.respond(message: result)
             } else {
                 try await api.storeTextInPasteboard(text: result)
-                await api.respond(message: "The result has been copied to your clipboard")
+                await api.indicateCommandResult(message: "The result has been copied to your clipboard")
             }
             return .init(.void)
         },
@@ -182,11 +185,11 @@ public actor CommandsController {
             returnType: .void
         ) { api, ctx, args in
             let result = args.first?.string ?? ""
-            if result.count < 560 {
+            if result.count < 280 {
                 await api.respond(message: result)
             } else {
                 try await api.storeTextInPasteboard(text: result)
-                await api.respond(message: "The result has been copied to your clipboard")
+                await api.indicateCommandResult(message: "The result has been copied to your clipboard")
             }
             return .init(.void)
         },

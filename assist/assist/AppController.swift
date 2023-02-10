@@ -109,10 +109,7 @@ actor AppController {
                     if newChangeCount > lastChangeCount,
                         case let .NeedsInput(
                             messages: _,
-                            type: .Question(
-                                message: _,
-                                onAnswer: callback
-                            )
+                            type: .Question(onAnswer: callback)
                         ) = await state.state,
                         let text = strings.first as? String {
                         logger.info("found new string value in the Pasteboard, using as text context")
@@ -150,7 +147,7 @@ actor AppController {
             let bestTranscription = try await audioRecordingController.stopRecording()
             let state = await state.state
             switch state {
-            case let .NeedsInput(messages: _, type: .Question(_, onAnswer: onAnswer)):
+            case let .NeedsInput(messages: _, type: .Question(onAnswer: onAnswer)):
                 guard let bestTranscription = bestTranscription else {
                     throw AppError.NoTranscriptionFound
                 }

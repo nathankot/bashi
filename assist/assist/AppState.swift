@@ -54,6 +54,7 @@ public enum MessageType: Equatable {
     case userResponse
     case modelResponse
     case sideEffectResult
+    case transcribing
 }
 
 @MainActor
@@ -68,25 +69,31 @@ public final class AppState: ObservableObject {
         case Error(AppError)
 
         public enum InputType {
-            case Confirm(message: String)
-            case Question(message: String, onAnswer: (String) -> Void)
+            case Confirm
+            case Question(onAnswer: (String) -> Void)
         }
     }
     
 
     static let shared = AppState()
 
+    #if DEBUG
+    @AppStorage("accountNumber") var accountNumber: String = "123123"
+    #else
     @AppStorage("accountNumber") var accountNumber: String = ""
+    #endif
     @Published var session: BashiSession? = nil
     @Published public private(set) var state: State = .Idle
     @Published public private(set) var currentTranscription: String? = nil
     @Published public private(set) var isRequestTextFieldFocused = false
     
-    public init(accountNumber: String? = nil) {
+    public init(accountNumber: String? = nil, state: State = .Idle, currentTranscription: String? = nil) {
         logger.info("initializing app state")
         if let an = accountNumber {
             self.accountNumber = an
         }
+        self.state = state
+        self.currentTranscription = currentTranscription
     }
 
     public func canTransition(newState: State) -> Bool {

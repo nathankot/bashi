@@ -129,8 +129,7 @@ final class CommandsControllerTest: XCTestCase {
                 await withCheckedContinuation { continuation in
                     self.subs.insert(needsInputStatePub.sink(receiveValue: { state in
                         if case let .NeedsInput(_, inputType) = state {
-                            if case let .Question(question, callback) = inputType {
-                                XCTAssertEqual(question, "what is your name?")
+                            if case let .Question(callback) = inputType {
                                 callback("some answer")
                                 continuation.resume()
                             }

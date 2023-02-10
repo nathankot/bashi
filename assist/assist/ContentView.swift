@@ -35,82 +35,84 @@ struct ContentView: View {
 
             let pushToTalkShortcut = KeyboardShortcuts.getShortcut(for: .pushToTalk)
 
-            Spacer()
+            Spacer(minLength: 30)
             if state.accountNumber == "" {
-                Text("Provide your account number first.").font(.callout)
+                Text("Provide your account number first.").font(.callout).foregroundColor(.gray)
                 Button("Open settings", action: showSettings)
                 Spacer()
             } else {
                 switch state.state {
                 case .Idle:
                     if let k = pushToTalkShortcut {
-                        Text("Press \(k.description) to push-to-talk").font(.callout)
+                        Text("Press \(k.description) to start push-to-talk").font(.callout).foregroundColor(.gray)
                     } else {
-                        Text("Set up a shortcut key for push-to-talk").font(.callout)
+                        Text("Set up a shortcut key for push-to-talk").font(.callout).foregroundColor(.gray)
                         Button("Open settings", action: showSettings)
                     }
                     Spacer()
                     TextField("Enter request", text: $requestTextfieldValue)
                         .focused($requestTextFieldFocus)
                         .onChange(of: requestTextFieldFocus, perform: { v in
-                            state.update(requestTextFieldFocus: v)
-                        })
+                        state.update(requestTextFieldFocus: v)
+                    })
                         .onReceive(state.$isRequestTextFieldFocused, perform: { v in
-                            self.requestTextFieldFocus = v
-                        })
+                        self.requestTextFieldFocus = v
+                    })
                         .onSubmit {
-                            controller?.makeRequest(requestTextfieldValue)
-                            requestTextfieldValue = ""
-                        }
+                        controller?.makeRequest(requestTextfieldValue)
+                        requestTextfieldValue = ""
+                    }
                 case .AwaitingRequest:
-                    Text("Listening...").font(.callout)
-                    if let s = state.currentTranscription {
-                        Text(s)
-                    }
-                    if let k = pushToTalkShortcut {
-                        Text("Press \(k.description) again to finish talking").font(.callout)
-                    }
+                    let s = state.currentTranscription ?? ""
+                    MessageListView(messages: [
+                        .init(id: 0, message: s + " ...", type: .transcribing)
+                    ])
                     Spacer()
+                    if let k = pushToTalkShortcut {
+                        Text("Press \(k.description) again to finish talking")
+                            .font(.callout)
+                            .foregroundColor(.gray)
+                    }
                     Button("Cancel", action: cancelRequest)
                 case let .Processing(messages):
-                    Text("Request:").font(.callout)
-                    List(messages) {
-                        Text($0.message)
-                    }
-                    Text("Processing...").font(.callout)
-                case let .NeedsInput(messages: messages, type: .Question(question, onAnswer: onAnswer)):
-                    List(messages) {
-                        Text($0.message)
-                    }
-                    Text(question)
+                    MessageListView(messages: messages)
+                    Text("Processing...").font(.callout).foregroundColor(.gray)
+                case let .NeedsInput(messages: messages, type: .Question(onAnswer)):
                     if let s = state.currentTranscription {
-                        Text(s)
+                        MessageListView(messages: messages + [
+                            .init(id: messages.count, message: s + " ...", type: .transcribing)
+                        ])
+                        Spacer()
                         if let k = pushToTalkShortcut {
-                            Text("Press \(k.description) again to finish talking").font(.callout)
+                            Text("Press \(k.description) again to finish talking")
+                                .font(.callout)
+                                .foregroundColor(.gray)
                         }
                     } else {
+                        MessageListView(messages: messages)
+                        Spacer()
+                        HStack {
+                            TextField("Enter response", text: $requestTextfieldValue)
+                                .focused($requestTextFieldFocus)
+                                .onChange(of: requestTextFieldFocus, perform: { v in
+                                    state.update(requestTextFieldFocus: v)
+                                }).onReceive(state.$isRequestTextFieldFocused) { v in
+                                    self.requestTextFieldFocus = v
+                                }.onSubmit {
+                                    onAnswer(requestTextfieldValue)
+                                    requestTextfieldValue = ""
+                                }
+                            Button("Cancel", action: cancelRequest)
+                        }
                         if let k = pushToTalkShortcut {
-                            Text("Press \(k.description) to respond").font(.callout)
+                            Text("Press \(k.description) to speak or copy some text to use it as the response")
+                                .font(.callout)
+                                .foregroundColor(.gray)
                         }
                     }
-                    Button("Cancel", action: cancelRequest)
-                    Spacer()
-                    TextField("Enter response", text: $requestTextfieldValue)
-                        .focused($requestTextFieldFocus)
-                        .onChange(of: requestTextFieldFocus, perform: { v in
-                            state.update(requestTextFieldFocus: v)
-                        })
-                        .onReceive(state.$isRequestTextFieldFocused, perform: { v in
-                            self.requestTextFieldFocus = v
-                        })
-                        .onSubmit {
-                            onAnswer(requestTextfieldValue)
-                            requestTextfieldValue = ""
-                        }
                 case .Finished(let messages):
-                    List(messages) {
-                        Text($0.message)
-                    }
+                    MessageListView(messages: messages)
+                    Spacer(minLength: 20)
                     Button("Done", action: dismissError)
                 case .Error(let e):
                     switch e {
@@ -126,7 +128,7 @@ struct ContentView: View {
             }
         }
             .padding()
-            .frame(maxWidth: 300, minHeight: 200)
+            .frame(maxWidth: 300, minHeight: 200, maxHeight: 483)
     }
 
     func cancelRequest() {
@@ -146,12 +148,84 @@ struct ContentView: View {
     }
 }
 
+struct MessageListView: View {
+    let messages: [Message]
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading) {
+                    ForEach(messages) {
+                        MessageView(message: $0).id($0.id)
+                    }
+                }
+                .onAppear { proxy.scrollTo(messages.last?.id, anchor: .bottom) }
+                .onChange(of: messages.count, perform: { _ in proxy.scrollTo(messages.last?.id)})
+            }
+        }
+    }
+}
+
+struct MessageView: View {
+    let message: Message
+    var body: some View {
+        HStack {
+            Text(message.message)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(message.type == .transcribing ? .gray : .white)
+                .italic(message.type == .transcribing)
+        }
+            .padding()
+            .background(message.type == .modelResponse
+                ? .purple
+            : .black)
+            .cornerRadius(6)
+    }
+}
+
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(state: AppState(accountNumber: ""))
             .previewDisplayName("Needs account number")
         ContentView(state: AppState(accountNumber: "123"))
             .previewDisplayName("Idle")
+        ContentView(state: AppState(accountNumber: "123", state: .AwaitingRequest))
+            .previewDisplayName("Awaiting Request")
+        ContentView(state: AppState(accountNumber: "123", state: .AwaitingRequest, currentTranscription: "some transcription"))
+            .previewDisplayName("Awaiting Request - transcribing")
+        ContentView(state: AppState(
+            accountNumber: "123",
+            state: .Processing(messages: [
+                .init(id: 0, message: "please help me", type: .request)
+            ])))
+        .previewDisplayName("Processing initial request")
+        ContentView(state: AppState(
+            accountNumber: "123",
+            state: .NeedsInput(messages: [
+                .init(id: 0, message: "please help me", type: .request),
+                .init(id: 1, message: "provide the text input", type: .modelResponse)
+            ], type: .Question(onAnswer: { _ in }))))
+        .previewDisplayName("Needs text input")
+        ContentView(state: AppState(
+            accountNumber: "123",
+            state: .NeedsInput(messages: [
+                .init(id: 0, message: "please help me", type: .request),
+                .init(id: 1, message: "provide the text input", type: .modelResponse)
+            ], type: .Question(onAnswer: { _ in })),
+            currentTranscription: "some answer being transcribed"
+        ))
+        .previewDisplayName("Needs text input - transcribing")
+        ContentView(state: AppState(
+            accountNumber: "123",
+            state: .Finished(messages: [
+                .init(id: 0, message: "please help me", type: .request),
+                .init(id: 1, message: "please provide some input", type: .modelResponse),
+                .init(id: 2, message: "okay here is input A Nullam ullamcorper auctor sapien, nec vulputate nisl aliquam non. Nam nec mauris nulla. Proin tempor, lacus sit amet condimentum sollicitudin, ligula ligula sodales dui, vel faucibus tellus nibh egestas turpis.", type: .userResponse),
+                .init(id: 3, message: "please provide some content", type: .modelResponse),
+                .init(id: 4, message: "The result has been copied to your clipboard", type: .sideEffectResult)
+            ])
+        ))
+        .previewDisplayName("Finished")
     }
 }
 

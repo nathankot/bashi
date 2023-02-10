@@ -627,15 +627,16 @@ function makePrompt(
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ;. keep things simple
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct
 Result: the result(s) of the Action
 ... (this Thought/Action/Result can repeat N times)
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 
-* function calls and composition/nesting
+* function calls and composition/nesting, results can be assigned to variables
 * string concatenation using +
-* simple variable assignment using var (variables must be explicitly assigned)
+* simple variable assignment using var
+* reference to variables assigned with var
 * string, number and boolean literals
 
 Below is a minimal example of all available features:

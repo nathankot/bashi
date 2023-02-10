@@ -1,16 +1,18 @@
 # 🌁 Bashi
 
-Bashi offers an extensible, ready-to-use platform that bridges LLMs to tasks and
+Bashi is an extensible, ready-to-use platform that bridges LLMs to tasks and
 actions.
 
-This repo contains two components:
+It comes with an OSX personal assistant app, so you can try it out
+quickly, and mould the app to your own needs.
+
+This repo has two components:
 
 - The Bashi API server.
-- An example client called 'assist' for OSX that demonstrates a personal
-  assistant menubar app built on top of the server/platform. While it works,
-  it's currently very rudimentary.
+- The OSX app 'assist', which serves as an example client implementation, as
+  well as a usable product (albeit it needs some more work!)
 
-Examples of the assist OSX app:
+Examples of the assist OSX app in action:
 
 <p float="left">
   <img src="images/example_1.png?raw=true" width="200" />
@@ -87,7 +89,7 @@ functionality as possible.
 Clients just need to interface with the API defined in
 [`openapi.json`](server/static/openapi.json). There are plenty of OpenAPI
 definition -> client library generation tools out there to help get things
-started.
+started if you wish to write a client in a new language.
 
 ## Running it locally
 

@@ -2,13 +2,8 @@
 compose_command = docker-compose
 
 up:
-ifndef OPENAI_KEY
-	@echo "OPENAI_KEY must be declared"
-	@exit 1
-else
 	commit=$(shell git rev-parse head) \
-	openai_key=${OPENAI_KEY} ${compose_command} up
-endif
+	${compose_command} up
 
 up-all: compose_command = docker-compose -f docker-compose.yml -f server.docker-compose.yml
 up-all: up
@@ -17,6 +12,8 @@ build:
 	commit=$(shell git rev-parse head) \
 	docker-compose -f docker-compose.yml -f server.docker-compose.yml build
 
+dev: export REDIS_URL=redis://localhost:6379
+dev: export WHISPER_TRANSCRIBE_ENDPOINT=http://localhost:9000/asr
 dev:
 	cd ./server && ./dev.ts
 

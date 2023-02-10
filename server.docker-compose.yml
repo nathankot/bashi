@@ -9,8 +9,8 @@ services:
         GIT_REVISION: "${commit}"
     ports:
       - "8003:8080"
+    env_file: ./server/.env
     environment:
-      OPENAI_KEY: "${openai_key}"
       WHISPER_TRANSCRIBE_ENDPOINT: http://whisper:8080/asr
       REDIS_URL: redis://redis:6379
     networks:

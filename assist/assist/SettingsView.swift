@@ -28,21 +28,6 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            TextField("Account Number", text: $accountNumber)
-                .onAppear {
-                    accountNumber = state.accountNumber
-                }
-                .onChange(of: state.accountNumber) {
-                    accountNumber = $0
-                }
-            if accountNumberInvalid || overrideAccountNumberInvalid {
-                Text("Account number is invalid")
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-            Button("Create account number") {
-            }
-            
             Spacer(minLength: 30)
 
             KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)

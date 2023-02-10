@@ -77,11 +77,10 @@ public final class AppState: ObservableObject {
 
     static let shared = AppState()
 
-    #if DEBUG
-    @AppStorage("accountNumber") var accountNumber: String = "123123"
-    #else
-    @AppStorage("accountNumber") var accountNumber: String = ""
-    #endif
+    // The account number is a relic of the past and does not do anything.
+    // It be removed once the concept has been removed from the API.
+    @Published var accountNumber: String = "123123"
+    
     @Published var session: BashiSession? = nil
     @Published public private(set) var state: State = .Idle
     @Published public private(set) var currentTranscription: String? = nil

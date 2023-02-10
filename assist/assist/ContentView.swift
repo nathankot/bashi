@@ -174,6 +174,7 @@ struct MessageView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundColor(message.type == .transcribing ? .gray : .white)
                 .italic(message.type == .transcribing)
+                .textSelection(.enabled)
         }
             .padding()
             .background(message.type == .modelResponse

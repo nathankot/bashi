@@ -42,7 +42,10 @@ struct SettingsView: View {
             
             HStack {
                 Button("Save") {
-                    Task { await save() }
+                    Task {
+                        await save()
+                        dismiss()
+                    }
                 }
                 Button("Cancel", role: .cancel) {
                     dismiss()

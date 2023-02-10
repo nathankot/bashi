@@ -128,7 +128,7 @@ struct ContentView: View {
             }
         }
             .padding()
-            .frame(maxWidth: 300, minHeight: 200, maxHeight: 483)
+            .frame(maxWidth: 300, minHeight: 300, maxHeight: 483)
     }
 
     func cancelRequest() {
@@ -162,6 +162,7 @@ struct MessageListView: View {
                 .onChange(of: messages.count, perform: { _ in proxy.scrollTo(messages.last?.id)})
             }
         }
+        .frame(maxHeight: .infinity)
     }
 }
 

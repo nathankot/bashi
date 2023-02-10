@@ -538,6 +538,7 @@ export async function run(
             92: -10, // `}`
             1640: -1, // `for` - try reduce tendency of the model to use for loops
             11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
+            7785: 1, // `var`
             32165: 1, // `fail`
             15643: 1, // `finish`
             7220: 1, // `user`
@@ -627,23 +628,21 @@ function makePrompt(
 Use the following format:
 Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
 ... (this Thought/Action/Result can repeat N times)
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-
 * function calls and composition/nesting, results can be assigned to variables
 * string concatenation using +
 * simple variable assignment using var
-* reference to variables assigned with var
+* reference to previously assigned variables
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
-Known functions are declared below. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
 
   const existingActionGroups = resolvedActionGroups
     .map(

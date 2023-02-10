@@ -19,10 +19,10 @@ Examples of the assist OSX app in action:
   <img src="images/example_2.png?raw=true" width="200" />
 </p>
 
-## Reverse REPL
+## LLM+REPL
 
 Bashi uses a novel approach in that the LLM is asked to write Javascript and the
-server effectively acts as a 'reverse REPL'. Below are some example
+server effectively provides a REPL for the model. Below are some example
 prompt+completions. All of these are real examples that you can try on the OSX
 app :+1:
 
@@ -95,7 +95,8 @@ started if you wish to write a client in a new language.
 
 ### Server
 
-After cloning the repo, set up your API keys:
+After cloning the repo, set up your API keys. At minimum you'll need an OpenAI
+API key.
 
 ```sh
 cp server/.env.template server/.env

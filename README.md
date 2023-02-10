@@ -10,6 +10,13 @@ This repo contains two components:
   assistant menubar app built on top of the server/platform. While it works,
   it's currently very rudimentary.
 
+Examples of the assist OSX app:
+
+<p float="left">
+  <img src="images/example_1.png?raw=true" width="200" />
+  <img src="images/example_2.png?raw=true" width="200" />
+</p>
+
 ## Reverse REPL
 
 Bashi uses a novel approach in that the LLM is asked to write Javascript and the

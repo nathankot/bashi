@@ -80,9 +80,7 @@ AnonymousCommand(
 
 Commands can be resolved on either the client or the server. The example above
 is a command resolved on the client. In contrast, there are commands like `math`
-that are resolved on the server. When deciding where a command should live, the
-server should be the default - this allows multiple clients to share as much
-functionality as possible.
+that are resolved on the server.
 
 ### Write your own client
 
@@ -125,6 +123,8 @@ open http://localhost:8080
 ```
 
 ### OSX App
+
+Currently pre-built binaries are not available so you'll need to build the OSX app yourself.
 
 Open the `xcworkspace` in Xcode:
 

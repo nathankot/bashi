@@ -16,6 +16,7 @@ public actor APIController {
 
     let state: AppState
     let pluginsController: PluginsController
+    var lastAPIBaseURL: String = ""
 
     public init(state: AppState, pluginsController: PluginsController) {
         self.state = state
@@ -70,6 +71,7 @@ public actor APIController {
         let timezone = TimeZone.current.identifier
         let locale = Locale.current.identifier(.bcp47)
 
+        let apiBaseURL = await state.apiBaseURL
         let commandDefinitions = await pluginsController.commandDefinitions
         let accountNumber = await state.accountNumber
         if !force {
@@ -78,11 +80,13 @@ public actor APIController {
                     (
                         session.accountNumber,
                         session.configuration.timezoneName,
-                        session.configuration.locale
+                        session.configuration.locale,
+                        lastAPIBaseURL
                     ) == (
                         accountNumber,
                         timezone,
-                        locale
+                        locale,
+                        apiBaseURL
                     ) {
                     // Nothing to do as the current session is still valid
                     // for at least another 10 minutes.
@@ -123,6 +127,7 @@ public actor APIController {
                     logger.debug("raw response is: \(String(data: d, encoding: .utf8)!)")
                 }
             #endif
+            lastAPIBaseURL = apiBaseURL
             await MainActor.run { state.session = success.session }
             return success.session
         }
@@ -134,7 +139,8 @@ public actor APIController {
         #endif
 
         let accountNumber = await state.accountNumber
-        let apiClient = APIClient(baseURL: BashiClient.Server.main, defaultHeaders: [
+        let apiBaseURL = await state.apiBaseURL
+        let apiClient = APIClient(baseURL: apiBaseURL == "" ? BashiClient.Server.main : apiBaseURL, defaultHeaders: [
             "Authorization": "Bearer \(accountNumber)",
             ])
 

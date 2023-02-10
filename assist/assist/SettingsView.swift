@@ -14,8 +14,8 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var state: AppState
-    @State var accountNumber = ""
     @State var accountNumberInvalid = false
+    @State var apiBaseURL: String = ""
     @State var isSaving = false
 
     var overrideAccountNumberInvalid = false
@@ -23,12 +23,17 @@ struct SettingsView: View {
     init(state s: AppState, overrideAccountNumberInvalid: Bool = false) {
         self.state = s
         self.overrideAccountNumberInvalid = overrideAccountNumberInvalid
-        self.accountNumber = state.accountNumber
     }
 
     var body: some View {
         Form {
             Spacer(minLength: 30)
+            
+            TextField("API base URL", text: $apiBaseURL)
+                .onAppear { self.apiBaseURL = state.apiBaseURL }
+                .onChange(of: state.apiBaseURL) { self.apiBaseURL = $0 }
+            Text("Defaults to " + BashiClient.Server.main)
+                .font(.caption)
 
             KeyboardShortcuts.Recorder("Push to talk", name: .pushToTalk)
             Text("Use this shortcut to enable the microphone, tap again to send the request.")
@@ -60,34 +65,7 @@ struct SettingsView: View {
     func save() async {
         isSaving = true
         defer { isSaving = false }
-
-        // Verify the account number:
-        if accountNumber == "" {
-            accountNumberInvalid = true
-            return
-        }
-        if accountNumber != state.accountNumber {
-            let apiClient = APIClient(baseURL: BashiClient.Server.main, defaultHeaders: [
-                "Authorization": "Bearer \(accountNumber)"])
-            let request = BashiClient.PostSessions.Request(
-                body: .init(modelConfigurations: .init())
-            )
-            let response = await withCheckedContinuation { continuation in
-                apiClient.makeRequest(request, complete: { response in
-                    continuation.resume(returning: response)
-                })
-            }
-            switch try? response.result.get() {
-            case .status401, .status403:
-                accountNumberInvalid = true
-                return
-            default:
-                break
-            }
-        }
-
-        accountNumberInvalid = false
-        state.accountNumber = accountNumber
+        state.apiBaseURL = apiBaseURL
         dismiss()
     }
 }

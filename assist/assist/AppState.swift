@@ -81,6 +81,7 @@ public final class AppState: ObservableObject {
     // It be removed once the concept has been removed from the API.
     @Published var accountNumber: String = "123123"
     
+    @AppStorage("apiBaseURL") var apiBaseURL: String = BashiClient.Server.main
     @Published var session: BashiSession? = nil
     @Published public private(set) var state: State = .Idle
     @Published public private(set) var currentTranscription: String? = nil

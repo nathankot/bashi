@@ -92,6 +92,9 @@ const INPUTS: {
       },
     },
   },
+  {
+    prompt: "generate code in swift to create a new reminder on iOS",
+  },
   //   {
   //     prompt:
   //       "given this list of verbs can you help me add additional verbs that mean the same thing?",

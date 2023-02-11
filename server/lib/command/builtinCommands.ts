@@ -84,6 +84,7 @@ const topWebsitesForQuery: BuiltinCommandDefinition<["string"], "string"> = {
   description: "get website titles and links from the search query",
   returnType: "string",
   args: [{ name: "query", type: "string" }],
+  disable: (Deno.env.get("GOOGLE_SEARCH_API_KEY") ?? "") === "",
   run: async (modelDeps, [query]) => {
     const results = await modelDeps.googleSearch(query.value, modelDeps.signal);
     return {

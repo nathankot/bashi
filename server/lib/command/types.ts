@@ -33,6 +33,7 @@ export type BuiltinCommandDefinition<
 > = Omit<CommandDefinition, "args" | "returnType"> & {
   isBuiltin: true;
   returnType: R;
+  disable?: boolean;
   args: {
     [K in keyof A]: {
       type: A[K];

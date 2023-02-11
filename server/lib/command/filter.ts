@@ -178,15 +178,18 @@ export function filterUnnecessary(
 ): CommandSet {
   const result: CommandSet = {};
   const words = parseWordsFromRequest(request);
-  functionLoop: for (const [k, f] of Object.entries(commandSet)) {
-    if (f.triggerTokens == null || f.triggerTokens.length === 0) {
-      result[k] = f;
-      continue functionLoop;
+  commandLoop: for (const [k, c] of Object.entries(commandSet)) {
+    if ("disable" in c && c.disable === true) {
+      continue commandLoop;
     }
-    for (const trigger of f.triggerTokens) {
+    if (c.triggerTokens == null || c.triggerTokens.length === 0) {
+      result[k] = c;
+      continue commandLoop;
+    }
+    for (const trigger of c.triggerTokens) {
       if (words[trigger.toLowerCase()] === true) {
-        result[k] = f;
-        continue functionLoop;
+        result[k] = c;
+        continue commandLoop;
       }
     }
   }

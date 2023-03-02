@@ -27,10 +27,11 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Use the following format:
-Request: the question or request you must answer
+You must use the following format in your responses:
+
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -43,7 +44,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -57,16 +58,18 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Begin!
+You must use the following format in your responses:
 
-Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -79,7 +82,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -93,15 +96,19 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: I need to do something
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Thought: I need to do something
 Action: now(); math("pi^2 + 123")
-Result: "2022-12-19T08:41:10Z"; "132.86960440108936"
-Thought: ',
+Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    role: "assistant",
+  },
 ]
 `;
 
@@ -191,10 +198,11 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Use the following format:
-Request: the question or request you must answer
+You must use the following format in your responses:
+
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -207,7 +215,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -221,16 +229,18 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Begin!
+You must use the following format in your responses:
 
-Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -243,7 +253,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -257,15 +267,19 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: I need to do something
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Thought: I need to do something
 Action: "string" + "concat"; 123 + 1
-Result: "stringconcat"; 124
-Thought: ',
+Result: "stringconcat"; 124',
+    role: "assistant",
+  },
 ]
 `;
 
@@ -1586,10 +1600,11 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Use the following format:
-Request: the question or request you must answer
+You must use the following format in your responses:
+
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -1602,7 +1617,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -1616,12 +1631,13 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: ',
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
 ]
 `;
 
@@ -1853,15 +1869,11 @@ snapshot[`request needs more context - fulfilled 1`] = `
 
 snapshot[`request needs more context - fulfilled 2`] = `
 [
-  "Rewrite and edit the following text. The requirement is 'convert to poem':
-some text
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-The re-written text is:
-",
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+You must use the following format in your responses:
 
-Use the following format:
-Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -1874,7 +1886,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -1888,18 +1900,25 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: I need to call some command
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Thought: I need to call some command
 Action: someCommand()
-Result: "blah"
-Thought: I need to do something
+Result: "blah"',
+    role: "assistant",
+  },
+  {
+    content: 'Thought: I need to do something
 Action: editText(getInput("the text"), "convert to poem"); now()
-Result: "the result of editText()"; "2022-12-19T08:41:10Z"
-Thought: ',
+Result: "the result of editText()"; "2022-12-19T08:41:10Z"',
+    role: "assistant",
+  },
 ]
 `;
 
@@ -2026,10 +2045,11 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Use the following format:
-Request: the question or request you must answer
+You must use the following format in your responses:
+
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -2042,7 +2062,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -2056,16 +2076,18 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Begin!
+You must use the following format in your responses:
 
-Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -2078,7 +2100,7 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
@@ -2092,15 +2114,19 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: some thought
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Thought: some thought
 Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar
-Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
-Thought: ',
+Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+    role: "assistant",
+  },
 ]
 `;
 

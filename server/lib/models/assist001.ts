@@ -475,7 +475,9 @@ export async function run(
     if ("response" in e) {
       log(
         "error",
-        `got openAI error, response status was: ${e.response.status}, response data: \n${e.response.data}`
+        `got openAI error, response status was: ${
+          e.response.status
+        }, response data: \n${JSON.stringify(e.response.data)}`
       );
     }
     if (IS_DEV()) {

@@ -1,4 +1,5 @@
 import { noop } from "cockatiel";
+import { ChatCompletionRequestMessage } from "openai";
 
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
@@ -433,11 +434,30 @@ Action: finish()`,
       ...fixtures.session,
       assist002State: test.initialState,
     };
-    let prompts: string[] = [];
+    let prompts: ChatCompletionRequestMessage[] = [];
 
     const openAiClient = {
+      createChatCompletion(opts: { messages: ChatCompletionRequestMessage[] }) {
+        prompts = [...prompts, ...opts.messages];
+        const text = (test.openAiResults ?? [])[n];
+        if (text == null) {
+          throw new Error(`openai mock on index ${n} not available`);
+        }
+        n++;
+        return {
+          data: {
+            choices: [
+              {
+                message: {
+                  role: "assistant",
+                  content: text,
+                },
+              },
+            ],
+          },
+        };
+      },
       createCompletion(opts: { prompt: [string] }) {
-        prompts.push(opts.prompt[0]);
         const text = (test.openAiResults ?? [])[n];
         if (text == null) {
           throw new Error(`openai mock on index ${n} not available`);

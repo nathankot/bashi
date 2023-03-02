@@ -2,6 +2,11 @@
 import * as gptEncoder from "gpt-3-encoder";
 import * as t from "io-ts";
 
+import {
+  ChatCompletionRequestMessage,
+  ChatCompletionResponseMessage,
+} from "openai";
+
 import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
@@ -12,11 +17,7 @@ import {
   valueToString,
   ValueForType,
 } from "@lib/valueTypes.ts";
-import {
-  Input,
-  ResultFinished,
-  ResultPendingCommands,
-} from "./assistShared.ts";
+import { Input, Result } from "./assistShared.ts";
 
 import {
   Memory,
@@ -67,12 +68,12 @@ export { Input };
 export const Output = t.type({
   model: Name,
   request: t.string,
-  result: t.union([ResultFinished, ResultPendingCommands]),
+  result: Result,
 });
 export type Output = t.TypeOf<typeof Output> & {
   dev?: {
     results: string[];
-    prompts: { prompt: string; completion: string }[];
+    messages: (ChatCompletionRequestMessage | ChatCompletionResponseMessage)[];
   };
 };
 
@@ -227,7 +228,7 @@ export async function run(
 
   const clientCommands = configuration.commands;
 
-  let dev: Output["dev"] = IS_DEV() ? { prompts: [], results: [] } : undefined;
+  let dev: Output["dev"] = IS_DEV() ? { messages: [], results: [] } : undefined;
 
   const session = modelDeps.session;
   const isContinue = input.request == null;
@@ -500,7 +501,7 @@ export async function run(
       modelCallCount++;
 
       // 3. Plugs the prompt into the model to ask for thought/actions to take
-      const prompt = makePrompt(
+      const messages = makePromptMessages(
         {
           ...clientCommands,
           ...builtinCommands,
@@ -510,15 +511,13 @@ export async function run(
         resolvedActionGroups
       );
 
-      const completion = await modelDeps.openai.createCompletion(
+      const completion = await modelDeps.openai.createChatCompletion(
         {
-          model: "text-davinci-003",
+          messages,
+          model: "gpt-3.5-turbo",
           // TODO return error if completion tokens has reached this limit
           max_tokens: session.configuration.maxResponseTokens,
-          best_of: session.configuration.bestOf,
-          echo: false,
           temperature: 0.3,
-          prompt: [prompt],
           stop: "\nResult:",
           logit_bias: {
             8818: -10, // `function`
@@ -550,14 +549,17 @@ export async function run(
       );
       log = wrap({ total_tokens: completion.data.usage?.total_tokens }, log);
       log("info", { message: "tokens used" });
-      let text = completion.data.choices[0]?.text ?? "";
+      const responseMessage = completion.data.choices[0]?.message;
+      let text = responseMessage?.content ?? "";
 
-      dev?.prompts.push({
-        prompt,
-        completion: text,
-      });
+      if (dev != null) {
+        dev.messages = [...messages];
+        if (responseMessage != null) {
+          dev.messages.push(responseMessage);
+        }
+      }
 
-      if (text === "") {
+      if (responseMessage == null || text === "") {
         isFinished = true;
         break;
       }
@@ -579,14 +581,16 @@ export async function run(
     if ("response" in e) {
       log(
         "error",
-        `got openAI error, response status was: ${e.response.status}, response data: \n${e.response.data}`
+        `got openAI error, response status was: ${
+          e.response.status
+        }, response data: \n${JSON.stringify(e.response.data)}`
       );
     }
     if (IS_DEV()) {
       log(
         "error",
         `dev information (completions) during error: ${JSON.stringify(
-          dev?.prompts.map((p) => p.completion)
+          dev?.messages
         )}`
       );
     }
@@ -618,15 +622,15 @@ export async function run(
   };
 }
 
-function makePrompt(
+function makePromptMessages(
   commands: CommandSet,
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
-): string {
-  const header = `Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+): ChatCompletionRequestMessage[] {
+  const header = `Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
-Use the following format:
-Request: the question or request you must answer
+You must use the following format in your responses:
+
 Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
 Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
 Result: the result(s) of the Action
@@ -639,31 +643,30 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * reference to previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of all available features:
+Below is a minimal example of an Action using all available features:
 Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
 
-  const existingActionGroups = resolvedActionGroups
-    .map(
-      (g) => `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`
-    )
-    .join("\n");
-
   const commandSet = makeCommandSet(
-    filterUnnecessary(request + " " + existingActionGroups, commands)
+    filterUnnecessary(
+      request +
+        " " +
+        resolvedActionGroups.map((g) => `${g.thought} ${g.action} ${g.result}`),
+      commands
+    )
   ).join("\n");
 
-  return `${header}
-
-${commandSet}
-
-Begin!
-
-Request: ${request}${
-    existingActionGroups.length > 0 ? "\n" + existingActionGroups : ""
-  }
-Thought: `;
+  return [
+    { role: "system", content: `${header}\n\n${commandSet}` },
+    { role: "user", content: request },
+    ...resolvedActionGroups.map(
+      (g): ChatCompletionRequestMessage => ({
+        role: "assistant",
+        content: `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`,
+      })
+    ),
+  ];
 }
 
 function makeCommandSet(commands: CommandSet): string[] {

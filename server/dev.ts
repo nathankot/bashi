@@ -13,7 +13,11 @@ window.IS_DEV = true;
 
 const srv = dev(import.meta.url, "./main.ts");
 // update the prompt examples file:
-const e = updateExamples("./static/assist_examples.jsonl");
 const s = generateOpenAPISpec();
 
-await Promise.all([srv, e, s]);
+const examples = async (resolve) => {
+  await updateExamples("./static/assist001.examples.jsonl", "assist-001");
+  await updateExamples("./static/assist002.examples.jsonl", "assist-002");
+};
+
+await Promise.all([srv, examples(), s]);

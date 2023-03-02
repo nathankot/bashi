@@ -1,21 +1,22 @@
 import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
-import { ModelDeps, run, models } from "@lib/models.ts";
+import { ModelDeps, run } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint, googleSearch } from "@lib/clients.ts";
+import { Input, Result } from "@lib/models/assistShared.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 
-export const Example = t.intersection([
+const Example = t.intersection([
   t.type({
     updated: t.string,
     dev: t.any,
-    result: models["assist-001"].Output.props.result,
+    result: Result,
     prompt: t.string,
   }),
   t.partial({
-    resolvedCommands: models["assist-001"].Input.props.resolvedCommands,
+    resolvedCommands: Input.props.resolvedCommands,
   }),
 ]);
 
@@ -24,9 +25,7 @@ export type Example = t.TypeOf<typeof Example>;
 const INPUTS: {
   variant?: string;
   prompt: string;
-  resolvedCommands?: NonNullable<
-    t.TypeOf<typeof models["assist-001"]["Input"]>["resolvedCommands"]
-  >;
+  resolvedCommands?: NonNullable<t.TypeOf<typeof Input>["resolvedCommands"]>;
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
@@ -130,7 +129,10 @@ const INPUTS: {
   // having the request string be in the request?
 ];
 
-export default async function updateExamples(examplesFile: string) {
+export default async function updateExamples(
+  examplesFile: string,
+  modelName: "assist-001" | "assist-002" = "assist-001"
+) {
   log("info", `reading existing examples file: ${examplesFile}`);
 
   const bs = Deno.readFileSync(examplesFile);
@@ -181,13 +183,11 @@ export default async function updateExamples(examplesFile: string) {
       `found new example, running model with prompt: ${promptWithVariant}`
     );
     try {
-      let resolvedCommands: t.TypeOf<
-        typeof models["assist-001"]["Input"]
-      >["resolvedCommands"] = {};
+      let resolvedCommands: t.TypeOf<typeof Input>["resolvedCommands"] = {};
 
-      let output: t.TypeOf<typeof models["assist-001"]["Output"]> | null = null;
+      let output: { result: Result } | null = null;
       modelLoop: while (true) {
-        output = await run(modelDeps, "assist-001", {
+        output = await run(modelDeps, modelName, {
           request: input.prompt,
           resolvedCommands,
         });

@@ -6,17 +6,8 @@ import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
-import {
-  ValueType,
-  Value,
-  valueToString,
-  ValueForType,
-} from "@lib/valueTypes.ts";
-import {
-  Input,
-  ResultFinished,
-  ResultPendingCommands,
-} from "./assistShared.ts";
+import { Value, valueToString } from "@lib/valueTypes.ts";
+import { Input, Result, languageBuiltinCommands } from "./assistShared.ts";
 
 import {
   Memory,
@@ -67,7 +58,7 @@ export { Input };
 export const Output = t.type({
   model: Name,
   request: t.string,
-  result: t.union([ResultFinished, ResultPendingCommands]),
+  result: Result,
 });
 export type Output = t.TypeOf<typeof Output> & {
   dev?: {
@@ -97,101 +88,6 @@ const privateBuiltinCommands = {
     args: [{ name: "reason", type: "string" }],
     run: async (_, ___) => ({ type: "void" }),
   } as BuiltinCommandDefinition<["string"], "void">,
-};
-
-function overload<
-  LHS extends ValueType,
-  RHS extends ValueType,
-  R extends ValueType
->(
-  lhs: LHS,
-  rhs: RHS,
-  returnType: R,
-  fn: (lhs: ValueForType<LHS>, rhs: ValueForType<RHS>) => ValueForType<R>
-): AnyBuiltinCommandDefinition {
-  return {
-    isBuiltin: true,
-    description: `overload for ${lhs}, ${rhs} => ${returnType}`,
-    args: [
-      { name: "lhs", type: lhs },
-      { name: "rhs", type: rhs },
-    ],
-    returnType,
-    run: async (_, [lhs, rhs]) => fn(lhs, rhs),
-  };
-}
-
-// Commands that the model implicitly knows, does not need to be
-// sent to the model explicitly.
-const languageBuiltinCommands = {
-  $ref: {
-    isBuiltin: true,
-    description: "retrieve a variable",
-    args: [{ name: "identifier", type: "string" }],
-    returnType: "mixed",
-    run: async (_, [iden], memory) => {
-      const maybeValue = memory.variables[iden.value];
-      if (maybeValue != null) {
-        return maybeValue;
-      }
-      if (iden.value.toLowerCase() === "result") {
-        const maybeLastResult = [...memory.topLevelResults]
-          .reverse()
-          .filter((r) => r.type !== "void")[0];
-        if (maybeLastResult != null) {
-          return maybeLastResult;
-        }
-      }
-      throw new Error(`the variable '${iden.value}' does not exist`);
-    },
-  } as BuiltinCommandDefinition<["string"], "mixed">,
-  "__=__": {
-    overloads: ValueType.types
-      .map((t) => t.value)
-      .map(
-        (t): AnyBuiltinCommandDefinition => ({
-          isBuiltin: true,
-          description: "assign a variable",
-          args: [
-            { name: "identifier", type: "string" },
-            { name: "value", type: t },
-          ],
-          returnType: "void",
-          run: async (_, [lhs, rhs], memory) => {
-            memory.variables[lhs.value] = rhs;
-            return { type: "void" };
-          },
-        })
-      ),
-  },
-  "__+__": {
-    overloads: [
-      overload("number", "number", "number", (l, r) => ({
-        type: "number",
-        value: l.value + r.value,
-      })),
-      overload("string", "string", "string", (l, r) => ({
-        type: "string",
-        value: l.value + r.value,
-      })),
-      overload("number", "string", "string", (l, r) => ({
-        type: "string",
-        value: l.value.toString() + r.value,
-      })),
-      overload("string", "number", "string", (l, r) => ({
-        type: "string",
-        value: l.value + r.value.toString(),
-      })),
-      overload("boolean", "string", "string", (l, r) => ({
-        type: "string",
-        value: (l.value === true ? "true" : "false") + r.value,
-      })),
-      overload("string", "boolean", "string", (l, r) => ({
-        type: "string",
-        value: l.value + (r.value === true ? "true" : "false"),
-      })),
-    ],
-  },
 };
 
 const serverCommands = {

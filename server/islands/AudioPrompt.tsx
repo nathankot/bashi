@@ -5,7 +5,7 @@ import type { Input } from "@lib/models/assist001.ts";
 
 export default function AudioPrompt(props: {
   sessionId: string;
-  model: "assist-001";
+  model: "assist-002";
 }) {
   if (!IS_BROWSER) {
     return <div></div>;

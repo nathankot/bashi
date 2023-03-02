@@ -113,5 +113,9 @@ export const session: Session = {
       model: "assist-001",
       commands: commandSet,
     },
+    "assist-002": {
+      model: "assist-002",
+      commands: commandSet,
+    },
   },
 };

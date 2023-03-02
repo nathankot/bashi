@@ -3,7 +3,7 @@ import type { Input } from "@lib/models/assist001.ts";
 
 export default function TextPrompt(props: {
   sessionId: string;
-  model: "assist-001";
+  model: "assist-002";
 }) {
   const [prompt, setPrompt] = useState(
     localStorage.getItem("last_prompt") ?? ""

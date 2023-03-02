@@ -17,8 +17,8 @@ export default function PromptDev() {
     let body: POSTRequest = {
       configuration: {},
       modelConfigurations: {
-        "assist-001": {
-          model: "assist-001",
+        "assist-002": {
+          model: "assist-002",
           commands,
         },
       },
@@ -51,7 +51,7 @@ export default function PromptDev() {
     return <div>Loading session</div>;
   }
 
-  const model = "assist-001" as const;
+  const model = "assist-002" as const;
 
   return (
     <div>

@@ -6,7 +6,7 @@ export default function Examples() {
   const [examples, setExamples] = useState<Example[]>([]);
 
   useEffect(() => {
-    fetch("/assist_examples.jsonl")
+    fetch("/assist002.examples.jsonl")
       .then((r) => r.text())
       .then((t) =>
         t

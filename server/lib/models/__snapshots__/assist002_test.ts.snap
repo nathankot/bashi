@@ -1,0 +1,2336 @@
+export const snapshot = {};
+
+snapshot[`all commands resolved on the server 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`all commands resolved on the server 2`] = `
+[
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: I need to do something
+Action: now(); math("pi^2 + 123")
+Result: "2022-12-19T08:41:10Z"; "132.86960440108936"
+Thought: ',
+]
+`;
+
+snapshot[`all commands resolved on the server - implicit finish 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`empty action is implicitly a finish() 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`empty action + result is implicitly a finish() 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`command overloads work 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "stringconcat",
+        },
+        {
+          type: "number",
+          value: 124,
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`command overloads work 2`] = `
+[
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: I need to do something
+Action: "string" + "concat"; 123 + 1
+Result: "stringconcat"; 124
+Thought: ',
+]
+`;
+
+snapshot[`infix + operand support 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "infix 2022-12-19T03:41:10-05:00 hello",
+            },
+          ],
+          id: "0.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
+      expressions: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "infix ",
+                },
+                {
+                  args: [
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "America/New_York",
+                        },
+                      ],
+                      name: "currentTimeForTimezone",
+                      type: "call",
+                    },
+                    {
+                      type: "string",
+                      value: " hello",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.0.1.0",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+          {
+            type: "string",
+            value: " hello",
+          },
+        ],
+        id: "0.0.0.1",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00 hello",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "infix ",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00 hello",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "infix 2022-12-19T03:41:10-05:00 hello",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs with lots of newlines 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+            },
+          ],
+          id: "0.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'sendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");
+finish();',
+      expressions: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      type: "string",
+                      value: "The time in New York is ",
+                    },
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "America/New_York",
+                        },
+                      ],
+                      name: "currentTimeForTimezone",
+                      type: "call",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "5 days from now",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+        {
+          args: [
+          ],
+          name: "finish",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York, create a calendar event 5 days from now, and answer the question.",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.0.0.1",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "The time in New York is ",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+        ],
+        id: "0.0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "The time in New York is 2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "The time in New York is 2022-12-19T03:41:10-05:00",
+          },
+          {
+            type: "string",
+            value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs with top level infix call 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: "currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      args: [
+                        {
+                          type: "string",
+                          value: "in ",
+                        },
+                        {
+                          type: "number",
+                          value: 5,
+                        },
+                      ],
+                      name: "__+__",
+                      type: "call",
+                    },
+                    {
+                      type: "string",
+                      value: " days",
+                    },
+                  ],
+                  name: "__+__",
+                  type: "call",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "Do somethign",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in ",
+          },
+          {
+            type: "number",
+            value: 5,
+          },
+        ],
+        id: "0.1.0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "in 5",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5",
+          },
+          {
+            type: "string",
+            value: " days",
+          },
+        ],
+        id: "0.1.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "in 5 days",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5 days",
+          },
+        ],
+        id: "0.1.0",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs using template strings 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+      expressions: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                  ],
+                  name: "now",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: " ",
+                },
+              ],
+              name: "__+__",
+              type: "call",
+            },
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "America/New_York",
+                },
+              ],
+              name: "currentTimeForTimezone",
+              type: "call",
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "in 5 days",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0.0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0.1",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T08:41:10Z",
+          },
+          {
+            type: "string",
+            value: " ",
+          },
+        ],
+        id: "0.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z ",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-12-19T08:41:10Z ",
+          },
+          {
+            type: "string",
+            value: "2022-12-19T03:41:10-05:00",
+          },
+        ],
+        id: "0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "in 5 days",
+          },
+        ],
+        id: "0.1.0",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`supports model outputs with top level expression 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "some string",
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "2022-12-19T21:41:10+13:00",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`supports assignment 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "number",
+          value: 234,
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`server commands with identical inputs re-use results 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "not reused because client command",
+            },
+          ],
+          id: "0.1",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        "0000-00-00T00:00:00Z",
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        "0000-00-00T00:00:00Z",
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: {
+      action: 'now(); getInput("not reused because client command")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "not reused because client command",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "blah",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "someid",
+        name: "now",
+        returnValue: "0000-00-00T00:00:00Z",
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "not reused because client command",
+          },
+        ],
+        id: "someid",
+        name: "getInput",
+        returnValue: "this should not be reused",
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: "0000-00-00T00:00:00Z",
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`client resolved command 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: "0.1",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); getInput("what do you want?")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`client resolved command - continue but unresolved 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: "0.1",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); getInput("what do you want?")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`client resolved command - wrong return type 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: "0.1",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); getInput("what do you want?")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`client resolved command - fulfilled 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          id: "0.1",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); getInput("what do you want?")',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "what do you want?",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`client resolved command - fulfilled 2`] = `
+[
+]
+`;
+
+snapshot[`nested calls 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          id: "0.1",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "5 days from now",
+                },
+              ],
+              name: "parseRelativeTime",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "Dinner with Wife",
+            },
+          ],
+          name: "createCalendarEvent",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.0",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "5 days from now",
+          },
+        ],
+        id: "0.1.0",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-24T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`nested calls 2`] = `
+[
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: ',
+]
+`;
+
+snapshot[`request needs more context 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "the text",
+            },
+          ],
+          id: "0.1.0",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'now(); editText(getInput("the text"), "convert to poem"); now()',
+      expressions: [
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "the text",
+                },
+              ],
+              name: "getInput",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          name: "editText",
+          type: "call",
+        },
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`request needs more context - still missing 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "the text",
+            },
+          ],
+          id: "1.0.0",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'editText(getInput("the text"), "convert to poem"); now()',
+      expressions: [
+        {
+          args: [
+            {
+              args: [
+                {
+                  type: "string",
+                  value: "the text",
+                },
+              ],
+              name: "getInput",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "convert to poem",
+            },
+          ],
+          name: "editText",
+          type: "call",
+        },
+        {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "I need to do something",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        expressions: [
+          {
+            args: [
+            ],
+            name: "someCommand",
+            type: "call",
+          },
+        ],
+        result: '"blah"',
+        thought: "I need to call some command",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`request needs more context - wrong type 1`] = `"command getInput expects return type to be string but got number"`;
+
+snapshot[`request needs more context - fulfilled 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "the result of editText()",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`request needs more context - fulfilled 2`] = `
+[
+  "Rewrite and edit the following text. The requirement is 'convert to poem':
+some text
+
+The re-written text is:
+",
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: I need to call some command
+Action: someCommand()
+Result: "blah"
+Thought: I need to do something
+Action: editText(getInput("the text"), "convert to poem"); now()
+Result: "the result of editText()"; "2022-12-19T08:41:10Z"
+Thought: ',
+]
+`;
+
+snapshot[`fulfilled but max loops 1`] = `"max iteration count of 10 reached"`;
+
+snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
+
+snapshot[`wrong arg count 1`] = `"arguments are invalid"`;
+
+snapshot[`top level commands are resolved sequentially 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "how are you?",
+            },
+          ],
+          id: "0.0",
+          name: "getInput",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "how are you?",
+            },
+          ],
+          name: "getInput",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "some thought",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+    ],
+    resolvedCommands: [
+    ],
+  },
+}
+`;
+
+snapshot[`top level commands are resolved sequentially 2 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "good",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`long results are truncated and stored in variables 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`long results are truncated and stored in variables 2`] = `
+[
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: ',
+  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+
+Use the following format:
+Request: the question or request you must answer
+Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
+Result: the result(s) of the Action
+... (this Thought/Action/Result can repeat N times)
+
+The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
+* function calls and composition/nesting, results can be assigned to variables
+* string concatenation using +
+* simple variable assignment using var
+* reference to previously assigned variables
+* string, number and boolean literals
+
+Below is a minimal example of all available features:
+Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+
+Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+
+\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
+\`finish(): void\` - mark request/question as fulfilled
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`sendResponse(answer: string): void\` - return response for original question/request back to user
+\`writeResponse(answer: string): void\` - help user write response for original question/request
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+
+Begin!
+
+Request: some request
+Thought: some thought
+Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar
+Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
+Thought: ',
+]
+`;
+
+snapshot[`the 'result' var name is magic and refers to the previous result if not already assigned 1`] = `
+{
+  n: 10,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      results: [
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "this should not show up twice",
+        },
+        {
+          type: "string",
+          value: "new result",
+        },
+        {
+          type: "string",
+          value: "this should show up",
+        },
+        {
+          type: "string",
+          value: "this should show up",
+        },
+      ],
+      type: "finished",
+    },
+  },
+  state: undefined,
+}
+`;
+
+snapshot[`string to number and vice versa implicit conversion 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "number",
+              value: 123123,
+            },
+          ],
+          id: "1.0",
+          name: "commandWithNumberArg",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "123123",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "123123",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "123123",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: 'commandWithNumberArg("123123.00")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "123123.00",
+            },
+          ],
+          name: "commandWithNumberArg",
+          type: "call",
+        },
+      ],
+      result: undefined,
+      thought: "some thought",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "math(123123)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123123,
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"123123"',
+        thought: "some thought",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "123123",
+          },
+        ],
+        id: "0.0",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "123123",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`example A step 1 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+      ],
+      id: "0.0",
+      name: "a",
+      type: "parsed",
+    },
+    {
+      args: [
+      ],
+      id: "0.1.1",
+      name: "c",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 2 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "blah",
+        },
+      ],
+      id: "0.1",
+      name: "b",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 3 1`] = `
+{
+  pendingCommands: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "ha",
+        },
+      ],
+      id: "0",
+      name: "test",
+      type: "parsed",
+    },
+  ],
+}
+`;
+
+snapshot[`example A step 4 1`] = `
+{
+  result: {
+    type: "number",
+    value: 123,
+  },
+}
+`;

@@ -465,7 +465,7 @@ Action: finish()`,
         {
           model: "assist-001",
           commands: {
-            ...fixtures.commandSet,
+            ...fixtures.assist001CommandSet,
             commandWithNumberArg: {
               args: [{ type: "number", name: "some number" }],
               description: "some fixture command",

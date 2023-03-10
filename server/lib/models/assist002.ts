@@ -7,18 +7,21 @@ import {
   ChatCompletionResponseMessage,
 } from "openai";
 
-import { IS_DEV } from "@lib/constants.ts";
+import {
+  Input,
+  ResultPendingCommands,
+  languageBuiltinCommands,
+} from "./assistShared.ts";
 import { ModelDeps } from "./modelDeps.ts";
+import { IS_DEV } from "@lib/constants.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
-import { Input, Result, languageBuiltinCommands } from "./assistShared.ts";
 
 import {
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
-  BuiltinCommandDefinition,
   ActionGroup,
   parseActionGroup,
   CommandSet,
@@ -63,7 +66,7 @@ export { Input };
 export const Output = t.type({
   model: Name,
   request: t.string,
-  result: Result,
+  result: ResultPendingCommands,
 });
 export type Output = t.TypeOf<typeof Output> & {
   dev?: {
@@ -76,28 +79,8 @@ export const defaultConfiguration: Partial<Configuration> = {
   model: "assist-002",
 };
 
-const privateBuiltinCommands = {
-  finish: {
-    isBuiltin: true,
-    cost: -1000,
-    description: "mark request/question as fulfilled",
-    args: [],
-    run: async (_, []) => ({ type: "void" }),
-    returnType: "void",
-  } as BuiltinCommandDefinition<[], "void">,
-  fail: {
-    isBuiltin: true,
-    cost: -1000,
-    returnType: "void",
-    description: `indicate the request cannot be fulfilled with the available tools`,
-    args: [{ name: "reason", type: "string" }],
-    run: async (_, ___) => ({ type: "void" }),
-  } as BuiltinCommandDefinition<["string"], "void">,
-};
-
 const serverCommands = {
   ...builtinCommands,
-  ...privateBuiltinCommands,
   ...languageBuiltinCommands,
 } as Record<
   string,
@@ -106,11 +89,6 @@ const serverCommands = {
       overloads: AnyBuiltinCommandDefinition[];
     }
 >;
-
-const sinks: Record<string, true> = {
-  fail: true,
-  finish: true,
-};
 
 export async function run(
   modelDeps: ModelDeps,
@@ -127,6 +105,13 @@ export async function run(
   }
 
   const clientCommands = configuration.commands;
+
+  if (!("sendResponse" in clientCommands)) {
+    throw new HTTPError(
+      `the 'sendResponse' client command must be made available`,
+      400
+    );
+  }
 
   let dev: Output["dev"] = IS_DEV() ? { messages: [], results: [] } : undefined;
 
@@ -169,9 +154,7 @@ export async function run(
   // 2. Any resolutions from the above go into the new prompt
   // 3. Plugs the prompt into the model to ask for thought/actions to take
   // 4. Parse the completion into pending thought/actions
-  // 5. Update state with the current results, exit if we have reached a sink, otherwise goto (1)
-
-  let isFinished = false;
+  // 5. Update state with the current results, exit if the model is sending a response to the user, otherwise goto (1)
 
   try {
     let loopNumber = 0;
@@ -372,24 +355,6 @@ export async function run(
         // Reaching here implies that anything pending has been
         // dealt with and we are ready for more model output:
         pending = null;
-
-        // Mark as finished if any of the top level commands were sinks:
-        for (const topLevelExpr of currentActionExpressions) {
-          if (topLevelExpr.type !== "call") {
-            continue;
-          }
-          if (sinks[topLevelExpr.name] === true) {
-            isFinished = true;
-          }
-        }
-        // Mark as finished if top level commands were empty (implicit finish):
-        if (currentActionExpressions.length === 0) {
-          isFinished = true;
-        }
-      }
-
-      if (isFinished) {
-        break;
       }
 
       if (modelCallCount >= MAX_MODEL_CALLS) {
@@ -405,7 +370,6 @@ export async function run(
         {
           ...clientCommands,
           ...builtinCommands,
-          ...privateBuiltinCommands,
         },
         request,
         resolvedActionGroups
@@ -418,7 +382,6 @@ export async function run(
           // TODO return error if completion tokens has reached this limit
           max_tokens: session.configuration.maxResponseTokens,
           temperature: 0.3,
-          stop: "\nResult:",
           logit_bias: {
             8818: -10, // `function`
             22446: -100, // `().`
@@ -452,6 +415,10 @@ export async function run(
       const responseMessage = completion.data.choices[0]?.message;
       let text = responseMessage?.content ?? "";
 
+      if (IS_DEV()) {
+        log("info", `completion: ${text}`);
+      }
+
       if (dev != null) {
         dev.messages = [...messages];
         if (responseMessage != null) {
@@ -459,25 +426,32 @@ export async function run(
         }
       }
 
-      if (responseMessage == null || text === "") {
-        isFinished = true;
-        break;
-      }
-
       // 4. Parse the completion into pending thought/actions
-      if (!text.toLowerCase().startsWith("thought:")) {
-        text = "Thought: " + text;
-      }
-
       // 5. Update state with the current results, exit if we have reached a sink,
       //    otherwise goto (1)
-      pending = parseActionGroup(text);
-      if (IS_DEV()) {
-        log("info", `thought: ${pending.thought}; action: ${pending.action}`);
+      if (!text.toLowerCase().startsWith("thought:")) {
+        // Unstructured means a normal response that just needs to be sent back.
+        pending = {
+          thought: ``,
+          action: `sendResponse(<text>)`,
+          expressions: [
+            {
+              name: "sendResponse",
+              type: "call",
+              args: [
+                {
+                  type: "string",
+                  value: text,
+                },
+              ],
+            },
+          ],
+        };
+      } else {
+        pending = parseActionGroup(text);
       }
     }
   } catch (e) {
-    isFinished = true;
     if ("response" in e) {
       log(
         "error",
@@ -498,28 +472,16 @@ export async function run(
   } finally {
     modelDeps.setUpdatedSession({
       ...session,
-      assist002State: isFinished
-        ? undefined
-        : {
-            memory,
-            modelCallCount,
-            request,
-            pending: pending ?? null,
-            resolvedActionGroups,
-            resolvedCommands,
-          },
+      assist002State: {
+        memory,
+        modelCallCount,
+        request,
+        pending: pending ?? null,
+        resolvedActionGroups,
+        resolvedCommands,
+      },
     });
   }
-
-  return {
-    model: "assist-002",
-    request,
-    result: {
-      type: "finished",
-      results: topLevelResults(),
-    },
-    dev,
-  };
 }
 
 function makePromptMessages(
@@ -527,14 +489,12 @@ function makePromptMessages(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -560,12 +520,34 @@ Known functions are declared below in a typescript-like notation. Unknown functi
   return [
     { role: "system", content: `${header}\n\n${commandSet}` },
     { role: "user", content: request },
-    ...resolvedActionGroups.map(
-      (g): ChatCompletionRequestMessage => ({
-        role: "assistant",
-        content: `Thought: ${g.thought}\nAction: ${g.action}\nResult: ${g.result}`,
+    ...resolvedActionGroups
+      .map((g): ChatCompletionRequestMessage[] => {
+        if (g.expressions.length === 1) {
+          const firstExpr = g.expressions[0]!;
+          if (firstExpr.type === "call" && firstExpr.name === "sendResponse") {
+            return [
+              {
+                role: "assistant",
+                content:
+                  firstExpr.args[0]?.type === "string"
+                    ? firstExpr.args[0]!.value
+                    : "",
+              },
+            ];
+          }
+        }
+        return [
+          {
+            role: "assistant",
+            content: `Thought: ${g.thought}\nAction: ${g.action}`,
+          },
+          {
+            role: "system",
+            content: `Result: ${g.result}`,
+          },
+        ];
       })
-    ),
+      .reduce((a, messages) => [...a, ...messages], []),
   ];
 }
 

@@ -8,6 +8,19 @@ snapshot[`all commands resolved on the server 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Your request has been fulfilled.",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -18,24 +31,116 @@ snapshot[`all commands resolved on the server 1`] = `
           value: "132.86960440108936",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        result_0_1: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Your request has been fulfilled.",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: 'now(); math("pi^2 + 123")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "pi^2 + 123",
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
+        thought: "I need to do something",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "pi^2 + 123",
+          },
+        ],
+        id: "0.1",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -49,13 +154,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -66,14 +168,12 @@ Known functions are declared below in a typescript-like notation. Unknown functi
     role: "user",
   },
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -87,13 +187,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -105,14 +202,17 @@ Known functions are declared below in a typescript-like notation. Unknown functi
   },
   {
     content: 'Thought: I need to do something
-Action: now(); math("pi^2 + 123")
-Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+Action: now(); math("pi^2 + 123")',
     role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    role: "system",
   },
 ]
 `;
 
-snapshot[`all commands resolved on the server - implicit finish 1`] = `
+snapshot[`all commands resolved on the server - empty final response 1`] = `
 {
   n: 2,
   output: {
@@ -120,6 +220,19 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -130,44 +243,169 @@ snapshot[`all commands resolved on the server - implicit finish 1`] = `
           value: "132.86960440108936",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        result_0_1: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: 'now(); math("pi^2 + 123")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "pi^2 + 123",
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
+        thought: "I need to do something",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "pi^2 + 123",
+          },
+        ],
+        id: "0.1",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
-snapshot[`empty action is implicitly a finish() 1`] = `
+snapshot[`empty action tries to run the model again 1`] = `
 {
-  n: 1,
+  n: 2,
   output: {
     dev: undefined,
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
-}
-`;
-
-snapshot[`empty action + result is implicitly a finish() 1`] = `
-{
-  n: 1,
-  output: {
-    dev: undefined,
-    model: "assist-002",
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
     request: "some request",
-    result: {
-      results: [
-      ],
-      type: "finished",
-    },
+    resolvedActionGroups: [
+      {
+        action: "",
+        expressions: [
+        ],
+        result: "",
+        thought: "empty action",
+      },
+    ],
+    resolvedCommands: [
+    ],
   },
-  state: undefined,
 }
 `;
 
@@ -179,6 +417,19 @@ snapshot[`command overloads work 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -189,24 +440,140 @@ snapshot[`command overloads work 1`] = `
           value: 124,
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "stringconcat",
+        },
+        {
+          type: "number",
+          value: 124,
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "stringconcat",
+        },
+        result_0_1: {
+          type: "number",
+          value: 124,
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: '"string" + "concat"; 123 + 1',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "string",
+              },
+              {
+                type: "string",
+                value: "concat",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 1,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+        ],
+        result: '"stringconcat"; 124',
+        thought: "I need to do something",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "string",
+          },
+          {
+            type: "string",
+            value: "concat",
+          },
+        ],
+        id: "0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "stringconcat",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "number",
+            value: 123,
+          },
+          {
+            type: "number",
+            value: 1,
+          },
+        ],
+        id: "0.1",
+        name: "__+__",
+        returnValue: {
+          type: "number",
+          value: 124,
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
 snapshot[`command overloads work 2`] = `
 [
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -220,13 +587,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -237,14 +601,12 @@ Known functions are declared below in a typescript-like notation. Unknown functi
     role: "user",
   },
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -258,13 +620,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -276,9 +635,12 @@ Known functions are declared below in a typescript-like notation. Unknown functi
   },
   {
     content: 'Thought: I need to do something
-Action: "string" + "concat"; 123 + 1
-Result: "stringconcat"; 124',
+Action: "string" + "concat"; 123 + 1',
     role: "assistant",
+  },
+  {
+    content: 'Result: "stringconcat"; 124',
+    role: "system",
   },
 ]
 `;
@@ -456,8 +818,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     modelCallCount: 1,
     pending: {
       action: 'sendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
-createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");
-finish();',
+createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
       expressions: [
         {
           args: [
@@ -513,12 +874,6 @@ finish();',
             },
           ],
           name: "createCalendarEvent",
-          type: "call",
-        },
-        {
-          args: [
-          ],
-          name: "finish",
           type: "call",
         },
       ],
@@ -966,6 +1321,19 @@ snapshot[`supports model outputs with top level expression 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -980,10 +1348,103 @@ snapshot[`supports model outputs with top level expression 1`] = `
           value: "2022-12-19T21:41:10+13:00",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "some string",
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "2022-12-19T21:41:10+13:00",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "some string",
+        },
+        result_0_1: {
+          type: "number",
+          value: 123,
+        },
+        result_0_2: {
+          type: "string",
+          value: "2022-12-19T21:41:10+13:00",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+        expressions: [
+          {
+            type: "string",
+            value: "some string",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "Pacific/Auckland",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+        ],
+        result: '"some string"; 123; "2022-12-19T21:41:10+13:00"',
+        thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "Pacific/Auckland",
+          },
+        ],
+        id: "0.2",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T21:41:10+13:00",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
@@ -995,16 +1456,232 @@ snapshot[`supports assignment 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "number",
           value: 234,
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "void",
+        },
+        {
+          type: "void",
+        },
+        {
+          type: "number",
+          value: 234,
+        },
+      ],
+      variables: {
+        a: {
+          type: "number",
+          value: 123,
+        },
+        b: {
+          type: "number",
+          value: 111,
+        },
+        result_0_0: {
+          type: "void",
+        },
+        result_0_1: {
+          type: "void",
+        },
+        result_0_2: {
+          type: "number",
+          value: 234,
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "a = 123; b = 111; a + b",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a",
+              },
+              {
+                type: "number",
+                value: 123,
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "b",
+              },
+              {
+                type: "number",
+                value: 111,
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "a",
+                  },
+                ],
+                name: "\$ref",
+                type: "call",
+              },
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "b",
+                  },
+                ],
+                name: "\$ref",
+                type: "call",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+        ],
+        result: "void; void; 234",
+        thought: "I need to do something",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        id: "0.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "b",
+          },
+          {
+            type: "number",
+            value: 111,
+          },
+        ],
+        id: "0.1",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+        ],
+        id: "0.2.0",
+        name: "\$ref",
+        returnValue: {
+          type: "number",
+          value: 123,
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "b",
+          },
+        ],
+        id: "0.2.1",
+        name: "\$ref",
+        returnValue: {
+          type: "number",
+          value: 111,
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "number",
+            value: 123,
+          },
+          {
+            type: "number",
+            value: 111,
+          },
+        ],
+        id: "0.2",
+        name: "__+__",
+        returnValue: {
+          type: "number",
+          value: 234,
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
@@ -1601,14 +2278,12 @@ snapshot[`nested calls 1`] = `
 snapshot[`nested calls 2`] = `
 [
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -1622,13 +2297,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -1850,6 +2522,19 @@ snapshot[`request needs more context - fulfilled 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "2.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -1860,24 +2545,170 @@ snapshot[`request needs more context - fulfilled 1`] = `
           value: "2022-12-19T08:41:10Z",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        <1 empty item>,
+        {
+          type: "string",
+          value: "the result of editText()",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {
+        result_1_0: {
+          type: "string",
+          value: "the result of editText()",
+        },
+        result_1_1: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        expressions: [
+          {
+            args: [
+            ],
+            name: "someCommand",
+            type: "call",
+          },
+        ],
+        result: '"blah"',
+        thought: "I need to call some command",
+      },
+      {
+        action: 'editText(getInput("the text"), "convert to poem"); now()',
+        expressions: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "the text",
+                  },
+                ],
+                name: "getInput",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "convert to poem",
+              },
+            ],
+            name: "editText",
+            type: "call",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+        result: '"the result of editText()"; "2022-12-19T08:41:10Z"',
+        thought: "I need to do something",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "the text",
+          },
+        ],
+        id: "1.0.0",
+        name: "getInput",
+        returnValue: {
+          type: "string",
+          value: "some text",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "some text",
+          },
+          {
+            type: "string",
+            value: "convert to poem",
+          },
+        ],
+        id: "1.0",
+        name: "editText",
+        returnValue: {
+          type: "string",
+          value: "the result of editText()",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "1.1",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
 snapshot[`request needs more context - fulfilled 2`] = `
 [
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -1891,13 +2722,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -1908,16 +2736,22 @@ Known functions are declared below in a typescript-like notation. Unknown functi
     role: "user",
   },
   {
-    content: 'Thought: I need to call some command
-Action: someCommand()
-Result: "blah"',
+    content: "Thought: I need to call some command
+Action: someCommand()",
     role: "assistant",
   },
   {
+    content: 'Result: "blah"',
+    role: "system",
+  },
+  {
     content: 'Thought: I need to do something
-Action: editText(getInput("the text"), "convert to poem"); now()
-Result: "the result of editText()"; "2022-12-19T08:41:10Z"',
+Action: editText(getInput("the text"), "convert to poem"); now()',
     role: "assistant",
+  },
+  {
+    content: 'Result: "the result of editText()"; "2022-12-19T08:41:10Z"',
+    role: "system",
   },
 ]
 `;
@@ -2005,6 +2839,19 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -2015,10 +2862,112 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           value: "2022-12-19T03:41:10-05:00",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "good",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "good",
+        },
+        result_0_1: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: 'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "how are you?",
+              },
+            ],
+            name: "getInput",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "America/New_York",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+        ],
+        result: '"good"; "2022-12-19T03:41:10-05:00"',
+        thought: "some thought",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "how are you?",
+          },
+        ],
+        id: "0.0",
+        name: "getInput",
+        returnValue: {
+          type: "string",
+          value: "good",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "America/New_York",
+          },
+        ],
+        id: "0.1",
+        name: "currentTimeForTimezone",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T03:41:10-05:00",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
@@ -2030,30 +2979,152 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "1.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "void",
+        },
+        {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+      ],
+      variables: {
+        longVar: {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+        result_0_0: {
+          type: "void",
+        },
+        result_0_1: {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: 'longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "longVar",
+              },
+              {
+                type: "string",
+                value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "longVar",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: 'void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+        thought: "some thought",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "longVar",
+          },
+          {
+            type: "string",
+            value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+          },
+        ],
+        id: "0.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "longVar",
+          },
+        ],
+        id: "0.1",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -2067,13 +3138,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -2084,14 +3152,12 @@ Known functions are declared below in a typescript-like notation. Unknown functi
     role: "user",
   },
   {
-    content: 'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
 
-You must use the following format in your responses:
+Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
 
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
+Thought: always reason and think through what action should be taken to fulfill the request
+Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
 
 The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
 * function calls and composition/nesting, results can be assigned to variables
@@ -2105,13 +3171,10 @@ Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
 \`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -2123,9 +3186,12 @@ Known functions are declared below in a typescript-like notation. Unknown functi
   },
   {
     content: 'Thought: some thought
-Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar
-Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
     role: "assistant",
+  },
+  {
+    content: 'Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+    role: "system",
   },
 ]
 `;
@@ -2138,6 +3204,19 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     model: "assist-002",
     request: "some request",
     result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          id: "9.0",
+          name: "sendResponse",
+          type: "parsed",
+        },
+      ],
       results: [
         {
           type: "string",
@@ -2176,10 +3255,399 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           value: "this should show up",
         },
       ],
-      type: "finished",
+      type: "pending_commands",
     },
   },
-  state: undefined,
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "string",
+          value: "hello result",
+        },
+        {
+          type: "void",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "void",
+        },
+        {
+          type: "string",
+          value: "this should not show up twice",
+        },
+        {
+          type: "string",
+          value: "new result",
+        },
+        {
+          type: "string",
+          value: "this should show up",
+        },
+        {
+          type: "string",
+          value: "this should show up",
+        },
+      ],
+      variables: {
+        a: {
+          type: "string",
+          value: "b",
+        },
+        result: {
+          type: "string",
+          value: "new result",
+        },
+        result_0_0: {
+          type: "string",
+          value: "hello result",
+        },
+        result_1_0: {
+          type: "string",
+          value: "hello result",
+        },
+        result_2_0: {
+          type: "void",
+        },
+        result_2_1: {
+          type: "string",
+          value: "should override result within same action",
+        },
+        result_2_2: {
+          type: "string",
+          value: "should override result within same action",
+        },
+        result_3_0: {
+          type: "string",
+          value: "should override result within same action",
+        },
+        result_4_0: {
+          type: "void",
+        },
+        result_5_0: {
+          type: "string",
+          value: "this should not show up twice",
+        },
+        result_6_0: {
+          type: "string",
+          value: "new result",
+        },
+        result_7_0: {
+          type: "string",
+          value: "this should show up",
+        },
+        result_8_0: {
+          type: "string",
+          value: "this should show up",
+        },
+      },
+    },
+    modelCallCount: 10,
+    pending: {
+      action: "sendResponse(<text>)",
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "I have finished",
+            },
+          ],
+          name: "sendResponse",
+          type: "call",
+        },
+      ],
+      thought: "",
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: '"hello result"',
+        expressions: [
+          {
+            type: "string",
+            value: "hello result",
+          },
+        ],
+        result: '"hello result"',
+        thought: "some thought",
+      },
+      {
+        action: "result",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "result",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: '"hello result"',
+        thought: "some thought",
+      },
+      {
+        action: 'var a = "b"; "should override result within same action"; result',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a",
+              },
+              {
+                type: "string",
+                value: "b",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "should override result within same action",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "result",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: 'void; "should override result within same action"; "should override result within same action"',
+        thought: "some thought",
+      },
+      {
+        action: "rEsUlt",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "rEsUlt",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: '"should override result within same action"',
+        thought: "some thought",
+      },
+      {
+        action: 'var result = "new result"',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "result",
+              },
+              {
+                type: "string",
+                value: "new result",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+        thought: "some thought",
+      },
+      {
+        action: '"this should not show up twice"',
+        expressions: [
+          {
+            type: "string",
+            value: "this should not show up twice",
+          },
+        ],
+        result: '"this should not show up twice"',
+        thought: "some thought",
+      },
+      {
+        action: "result",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "result",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: '"new result"',
+        thought: "some thought",
+      },
+      {
+        action: '"this should show up"',
+        expressions: [
+          {
+            type: "string",
+            value: "this should show up",
+          },
+        ],
+        result: '"this should show up"',
+        thought: "some thought",
+      },
+      {
+        action: "reSult",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "reSult",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        result: '"this should show up"',
+        thought: "some thought",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "result",
+          },
+        ],
+        id: "1.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "hello result",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+          {
+            type: "string",
+            value: "b",
+          },
+        ],
+        id: "2.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "result",
+          },
+        ],
+        id: "2.2",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "should override result within same action",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "rEsUlt",
+          },
+        ],
+        id: "3.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "should override result within same action",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "result",
+          },
+          {
+            type: "string",
+            value: "new result",
+          },
+        ],
+        id: "4.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "result",
+          },
+        ],
+        id: "6.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "new result",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "reSult",
+          },
+        ],
+        id: "8.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "this should show up",
+        },
+        type: "executed",
+      },
+    ],
+  },
 }
 `;
 

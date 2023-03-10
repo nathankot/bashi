@@ -102,8 +102,7 @@ for (const test of [
     description: "all commands resolved on the server",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to do something
-Action: now(); math("pi^2 + 123")`,
+      `Action: now(); math("pi^2 + 123")`,
       `Your request has been fulfilled.`,
     ],
     snapshotPrompts: true,
@@ -111,33 +110,24 @@ Action: now(); math("pi^2 + 123")`,
   {
     description: "all commands resolved on the server - empty final response",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something
-Action: now(); math("pi^2 + 123")`,
-      ``,
-    ],
+    openAiResults: [`Action: now(); math("pi^2 + 123")`, ``],
   },
   {
     description: "empty action tries to run the model again",
     input: { request: "some request" },
-    openAiResults: [`Thought: empty action\nAction: `, `I have finished`],
+    openAiResults: [`Action: `, `I have finished`],
   },
   {
     description: "command overloads work",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something
-Action: "string" + "concat"; 123 + 1`,
-      `I have finished`,
-    ],
+    openAiResults: [`Action: "string" + "concat"; 123 + 1`, `I have finished`],
     snapshotPrompts: true,
   },
   {
     description: "infix + operand support",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to do something
-Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
+      `Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
       `I have finished`,
     ],
   },
@@ -145,14 +135,14 @@ Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " 
     description: "supports model outputs with lots of newlines",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: \nI need to get the current time in New York, create a calendar event 5 days from now, and answer the question.\nAction: \nsendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");`,
+      `Action: \nsendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");`,
     ],
   },
   {
     description: "supports model outputs with top level infix call",
     input: { request: "some request" },
     openAiResults: [
-      "Thought: Do somethign\nAction: currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife');",
+      "Action: currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife');",
       `I have finished`,
     ],
   },
@@ -160,7 +150,7 @@ Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " 
     description: "supports model outputs using template strings",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
+      `Action: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
       `I have finished`,
     ],
   },
@@ -168,23 +158,20 @@ Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " 
     description: "supports model outputs with top level expression",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+      `Action: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
       `I have finished`,
     ],
   },
   {
     description: "supports assignment",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something\nAction: a = 123; b = 111; a + b`,
-      `I have finished`,
-    ],
+    openAiResults: [`Action: a = 123; b = 111; a + b`, `I have finished`],
   },
   {
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
-      `Thought: blah\nAction: now(); getInput("not reused because client command")`,
+      `Action: now(); getInput("not reused because client command")`,
     ],
     initialState: {
       modelCallCount: 1,
@@ -212,10 +199,7 @@ Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " 
   {
     description: "client resolved command",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something
-Action: now(); getInput("what do you want?")`,
-    ],
+    openAiResults: [`Action: now(); getInput("what do you want?")`],
   },
   {
     description: "client resolved command - continue but unresolved",
@@ -247,8 +231,7 @@ Action: now(); getInput("what do you want?")`,
     description: "nested calls",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to get the current time in New York and create a calendar event 5 days from now
-Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")`,
+      `Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")`,
     ],
     snapshotPrompts: true,
   },
@@ -256,8 +239,7 @@ Action: currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRel
     description: "request needs more context",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: I need to do something
-Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
+      `Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
     ],
   },
   {
@@ -314,27 +296,20 @@ Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
   {
     description: "wrong arg type",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something
-Action: now(); math(true)`,
-    ],
+    openAiResults: [`Action: now(); math(true)`],
     snapshotError: true,
   },
   {
     description: "wrong arg count",
     input: { request: "some request" },
-    openAiResults: [
-      `Thought: I need to do something
-Action: now(); math()`,
-    ],
+    openAiResults: [`Action: now(); math()`],
     snapshotError: true,
   },
   {
     description: "top level commands are resolved sequentially",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: some thought
-Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
+      `Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
     ],
   },
   {
@@ -374,9 +349,7 @@ Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
     description: "long results are truncated and stored in variables",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: some thought\nAction: longVar = "${new Array(500)
-        .fill("word")
-        .join(" ")}"; longVar`,
+      `Action: longVar = "${new Array(500).fill("word").join(" ")}"; longVar`,
       `I have finished`,
     ],
     snapshotPrompts: true,
@@ -386,15 +359,15 @@ Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
       "the 'result' var name is magic and refers to the previous result if not already assigned",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: some thought\nAction: "hello result"`,
-      `Thought: some thought\nAction: result`,
-      `Thought: some thought\nAction: var a = "b"; "should override result within same action"; result`, // assignment returns void which should be ignored
-      `Thought: some thought\nAction: rEsUlt`, // any case
-      `Thought: some thought\nAction: var result = "new result"`, // override
-      `Thought: some thought\nAction: "this should not show up twice"`,
-      `Thought: some thought\nAction: result`, // should be the variable
-      `Thought: some thought\nAction: "this should show up"`,
-      `Thought: some thought\nAction: reSult`, // should be the result
+      `Action: "hello result"`,
+      `Action: result`,
+      `Action: var a = "b"; "should override result within same action"; result`, // assignment returns void which should be ignored
+      `Action: rEsUlt`, // any case
+      `Action: var result = "new result"`, // override
+      `Action: "this should not show up twice"`,
+      `Action: result`, // should be the variable
+      `Action: "this should show up"`,
+      `Action: reSult`, // should be the result
       `I have finished`,
     ],
   },
@@ -402,8 +375,8 @@ Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
     description: "string to number and vice versa implicit conversion",
     input: { request: "some request" },
     openAiResults: [
-      `Thought: some thought\nAction: math(123123)`,
-      `Thought: some thought\nAction: commandWithNumberArg("123123.00")`,
+      `Action: math(123123)`,
+      `Action: commandWithNumberArg("123123.00")`,
       `I have finished`,
     ],
   },

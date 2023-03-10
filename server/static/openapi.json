@@ -737,21 +737,7 @@
             "type": "string"
           },
           "result": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ResultFinished"
-              },
-              {
-                "$ref": "#/components/schemas/ResultPendingCommands"
-              }
-            ],
-            "discriminator": {
-              "propertyName": "type",
-              "mapping": {
-                "finished": "#/components/schemas/ResultFinished",
-                "pending_commands": "#/components/schemas/ResultPendingCommands"
-              }
-            }
+            "$ref": "#/components/schemas/ResultPendingCommands"
           }
         }
       },

@@ -23,7 +23,7 @@ import {
   Expr,
   AnyBuiltinCommandDefinition,
   ActionGroup,
-  parseActionGroup,
+  parseStatements,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -429,7 +429,7 @@ export async function run(
       // 4. Parse the completion into pending thought/actions
       // 5. Update state with the current results, exit if we have reached a sink,
       //    otherwise goto (1)
-      if (!text.toLowerCase().startsWith("thought:")) {
+      if (!text.toLowerCase().startsWith("action:")) {
         // Unstructured means a normal response that just needs to be sent back.
         pending = {
           thought: ``,
@@ -448,7 +448,13 @@ export async function run(
           ],
         };
       } else {
-        pending = parseActionGroup(text);
+        const statementStr = text.substring("action:".length);
+        const statements = parseStatements(statementStr);
+        pending = {
+          thought: ``,
+          action: statementStr,
+          expressions: statements,
+        };
       }
     }
   } catch (e) {
@@ -489,24 +495,34 @@ function makePromptMessages(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. Functions are available to be used in order to help with this process.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
 
-Your response can either be a normal message, or a structured message if you wish to use an action to run functions. The structured message format is:
+Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
-Thought: always reason and think through what action should be taken to fulfill the request
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure that the expressions are correct and all referenced variables were previously assigned
+Action: exampleAction("arg 1", arg2)
 
-The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-* function calls and composition/nesting, results can be assigned to variables
+It is possible to assign the result of an action to a variable:
+
+Action: var someVariable = exampleAction("arg 1", arg2)
+
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
+The action arguments are expressions that support the following:
+
+* nested function calls
 * string concatenation using +
-* simple variable assignment using var
-* reference to previously assigned variables
+* referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an Action using all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Below is a minimal example of an action with a complex argument expression using all available features:
 
-Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
+Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+
+Do not assume any language features exist beyond what is referenced above.
+
+Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
 
   const commandSet = makeCommandSet(
     filterUnnecessary(
@@ -552,28 +568,32 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 }
 
 function makeCommandSet(commands: CommandSet): string[] {
-  return Object.entries(commands)
-    .sort(([aName, a], [bName, b]) => {
-      if (aName === bName) return 0;
-      if ((a.cost ?? 0) !== (b.cost ?? 0)) {
-        return (a.cost ?? 0) < (b.cost ?? 0) ? -1 : 0;
-      }
-      if ("isBuiltin" in a && a.isBuiltin) {
-        return -1;
-      }
-      if ("isBuiltin" in b && b.isBuiltin) {
-        return 1;
-      }
-      return aName < bName ? -1 : 1;
-    })
-    .map(([name, c]) => {
-      const args = c.args.map(
-        (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
-      );
-      return `\`${name}(${args.join(", ")}): ${c.returnType}\` - ${
-        c.description
-      }`;
-    });
+  return (
+    Object.entries(commands)
+      .sort(([aName, a], [bName, b]) => {
+        if (aName === bName) return 0;
+        if ((a.cost ?? 0) !== (b.cost ?? 0)) {
+          return (a.cost ?? 0) < (b.cost ?? 0) ? -1 : 0;
+        }
+        if ("isBuiltin" in a && a.isBuiltin) {
+          return -1;
+        }
+        if ("isBuiltin" in b && b.isBuiltin) {
+          return 1;
+        }
+        return aName < bName ? -1 : 1;
+      })
+      // Prefer the model to send plain messages for responses:
+      .filter(([name]) => name !== "sendResponse")
+      .map(([name, c]) => {
+        const args = c.args.map(
+          (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`
+        );
+        return `\`${name}(${args.join(", ")}): ${c.returnType}\` - ${
+          c.description
+        }`;
+      })
+  );
 }
 
 export function getPendingCommandsOrResult(

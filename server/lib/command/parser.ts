@@ -4,7 +4,6 @@ import * as p from "typescript-parsec";
 import { strUntil } from "./parser_until.ts";
 
 import {
-  // Token,
   buildLexer,
   rule,
   expectEOF,
@@ -30,18 +29,6 @@ export type Expr = Call | Value;
 export const Expr: t.Type<Expr> = t.recursion("Expr", () =>
   t.union([Call, Value])
 );
-
-export const ActionGroup = t.intersection([
-  t.type({
-    thought: t.string,
-    action: t.string,
-    expressions: t.array(Expr),
-  }),
-  t.partial({
-    result: t.string,
-  }),
-]);
-export type ActionGroup = t.TypeOf<typeof ActionGroup>;
 
 enum T {
   Identifier,
@@ -318,74 +305,5 @@ export function parseStatements(str: string): Expr[] {
   }
   return expectSingleResult(
     expectEOF(p.kmid(ANY_SPACE, STATEMENTS, ANY_SPACE).parse(lexer.parse(str)))
-  );
-}
-
-enum T2 {
-  KeywordThought,
-  KeywordAction,
-  KeywordResult,
-
-  Char,
-  Newline,
-}
-
-const actionLexer = buildLexer([
-  [true, /^\n( *?)Thought( *?):/gi, T2.KeywordThought],
-  [true, /^\n( *?)Action( *?):/gi, T2.KeywordAction],
-  [true, /^\n( *?)Result( *?):/gi, T2.KeywordResult],
-  [true, /^\n/g, T2.Newline],
-  [true, /^./g, T2.Char],
-]);
-
-const STRING = rule<T2, string>();
-STRING.setPattern(
-  p.lrec_sc(
-    p.apply(p.alt(p.tok(T2.Char), p.tok(T2.Newline)), (c) => c.text),
-    p.alt(p.tok(T2.Char), p.tok(T2.Newline)),
-    (c1, c2) => c1 + c2.text
-  )
-);
-
-const ACTION_GROUP = rule<T2, ActionGroup>();
-ACTION_GROUP.setPattern(
-  p.apply(
-    p.seq(
-      p.apply(p.kright(p.tok(T2.KeywordThought), STRING), (str) => str.trim()),
-      p.apply(
-        p.kright(p.tok(T2.KeywordAction), p.opt_sc(STRING)),
-        (str) => str?.trim() ?? ""
-      ),
-      p.opt_sc(
-        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt_sc(STRING)), (str) => {
-          const result = str != null ? str.trim() : "";
-          if (result.length === 0) {
-            return undefined;
-          }
-          return result;
-        })
-      )
-    ),
-    ([thought, action, result]) => {
-      const expressions = parseStatements(action);
-      return {
-        thought,
-        action,
-        result,
-        expressions,
-      };
-    }
-  )
-);
-
-export function parseActionGroup(expr: string): ActionGroup {
-  return expectSingleResult(
-    expectEOF(
-      ACTION_GROUP.parse(
-        // Inject a newline so that the lexer can disambiguate between
-        // a leading Thought: vs a Thought: inside some contents.
-        actionLexer.parse(expr[0] !== "\n" ? "\n" + expr : expr)
-      )
-    )
   );
 }

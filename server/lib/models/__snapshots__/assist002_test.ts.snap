@@ -145,6 +145,10 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
 The action arguments are expressions that support the following:
 
 * nested function calls
@@ -182,6 +186,10 @@ Action: exampleAction("arg 1", arg2)
 It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
+
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
 
 The action arguments are expressions that support the following:
 
@@ -588,6 +596,10 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
 The action arguments are expressions that support the following:
 
 * nested function calls
@@ -625,6 +637,10 @@ Action: exampleAction("arg 1", arg2)
 It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
+
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
 
 The action arguments are expressions that support the following:
 
@@ -2302,6 +2318,10 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
 The action arguments are expressions that support the following:
 
 * nested function calls
@@ -2731,6 +2751,10 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
 The action arguments are expressions that support the following:
 
 * nested function calls
@@ -3151,6 +3175,10 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
+
 The action arguments are expressions that support the following:
 
 * nested function calls
@@ -3188,6 +3216,10 @@ Action: exampleAction("arg 1", arg2)
 It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
+
+It is also possible to have multiple sequential statements in a single action:
+
+Action: var a = exampleAction(); exampleAction2(a)
 
 The action arguments are expressions that support the following:
 

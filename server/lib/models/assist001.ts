@@ -1,6 +1,7 @@
 // @deno-types="@/types/gpt-3-encoder.d.ts"
 import * as gptEncoder from "gpt-3-encoder";
 import * as t from "io-ts";
+import * as p from "typescript-parsec";
 
 import { IS_DEV } from "@lib/constants.ts";
 import { ModelDeps } from "./modelDeps.ts";
@@ -14,15 +15,95 @@ import {
   Expr,
   AnyBuiltinCommandDefinition,
   BuiltinCommandDefinition,
-  ActionGroup,
-  parseActionGroup,
   CommandSet,
   CommandParsed,
   CommandExecuted,
   builtinCommands,
   filterUnnecessary,
+  parseStatements,
   runBuiltinCommand,
 } from "@lib/command.ts";
+
+const ActionGroup = t.intersection([
+  t.type({
+    thought: t.string,
+    action: t.string,
+    expressions: t.array(Expr),
+  }),
+  t.partial({
+    result: t.string,
+  }),
+]);
+type ActionGroup = t.TypeOf<typeof ActionGroup>;
+
+enum T2 {
+  KeywordThought,
+  KeywordAction,
+  KeywordResult,
+
+  Char,
+  Newline,
+}
+
+const actionLexer = p.buildLexer([
+  [true, /^\n( *?)Thought( *?):/gi, T2.KeywordThought],
+  [true, /^\n( *?)Action( *?):/gi, T2.KeywordAction],
+  [true, /^\n( *?)Result( *?):/gi, T2.KeywordResult],
+  [true, /^\n/g, T2.Newline],
+  [true, /^./g, T2.Char],
+]);
+
+const STRING = p.rule<T2, string>();
+STRING.setPattern(
+  p.lrec_sc(
+    p.apply(p.alt(p.tok(T2.Char), p.tok(T2.Newline)), (c) => c.text),
+    p.alt(p.tok(T2.Char), p.tok(T2.Newline)),
+    (c1, c2) => c1 + c2.text
+  )
+);
+
+const ACTION_GROUP = p.rule<T2, ActionGroup>();
+ACTION_GROUP.setPattern(
+  p.apply(
+    p.seq(
+      p.apply(p.kright(p.tok(T2.KeywordThought), STRING), (str) => str.trim()),
+      p.apply(
+        p.kright(p.tok(T2.KeywordAction), p.opt_sc(STRING)),
+        (str) => str?.trim() ?? ""
+      ),
+      p.opt_sc(
+        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt_sc(STRING)), (str) => {
+          const result = str != null ? str.trim() : "";
+          if (result.length === 0) {
+            return undefined;
+          }
+          return result;
+        })
+      )
+    ),
+    ([thought, action, result]) => {
+      const expressions = parseStatements(action);
+      return {
+        thought,
+        action,
+        result,
+        expressions,
+      };
+    }
+  )
+);
+
+export function parseActionGroup(expr: string): ActionGroup {
+  return p.expectSingleResult(
+    p.expectEOF(
+      ACTION_GROUP.parse(
+        // Inject a newline so that the lexer can disambiguate between
+        // a leading Thought: vs a Thought: inside some contents.
+        actionLexer.parse(expr[0] !== "\n" ? "\n" + expr : expr)
+      )
+    )
+  );
+}
 
 export const State = t.type({
   request: t.string,

@@ -22,7 +22,6 @@ import {
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
-  ActionGroup,
   parseStatements,
   CommandSet,
   CommandParsed,
@@ -31,6 +30,18 @@ import {
   filterUnnecessary,
   runBuiltinCommand,
 } from "@lib/command.ts";
+
+const ActionGroup = t.intersection([
+  t.type({
+    thought: t.string,
+    action: t.string,
+    expressions: t.array(Expr),
+  }),
+  t.partial({
+    result: t.string,
+  }),
+]);
+type ActionGroup = t.TypeOf<typeof ActionGroup>;
 
 export const State = t.type({
   request: t.string,

@@ -2334,3 +2334,415 @@ snapshot[`example A step 4 1`] = `
   },
 }
 `;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: blah blah blah blah 1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  expressions: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: 1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  expressions: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result:  1`] = `
+{
+  action: 'someFunction(123, "str", true)',
+  expressions: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:
+    Result:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
+    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
+    Result: blah blah blah blah 1`] = `
+{
+  action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: " aa() ; bbb()",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something action: thought: hmmm",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
+{
+  action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
+  expressions: [
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "string",
+          value: "str2",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: tHOUght: I need to do something
+    aCTion  :    someFunction();; someOtherFunction() 1`] = `
+{
+  action: "someFunction();; someOtherFunction()",
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
+    Action: someFunction(); someOtherFunction()
+    Result: blah blah blah blah 1`] = `
+{
+  action: "someFunction(); someOtherFunction()",
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
+    Action: someFunction();
+     someOtherFunction("Result:")
+  Result: blah blah blah blah
+  123123 1`] = `
+{
+  action: 'someFunction();
+     someOtherFunction("Result:")',
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Result:",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah
+  123123",
+  thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); 1`] = `
+{
+  action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+  expressions: [
+    {
+      args: [
+        {
+          args: [
+            {
+              args: [
+              ],
+              name: "now",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: " ",
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+      ],
+      name: "__+__",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "in 5 days",
+            },
+          ],
+          name: "parseRelativeTime",
+          type: "call",
+        },
+        {
+          type: "string",
+          value: "Dinner with Wife",
+        },
+      ],
+      name: "createCalendarEvent",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: "some string"; 123; currentTimeForTimezone('Pacific/Auckland') 1`] = `
+{
+  action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+  expressions: [
+    {
+      type: "string",
+      value: "some string",
+    },
+    {
+      type: "number",
+      value: 123,
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Pacific/Auckland",
+        },
+      ],
+      name: "currentTimeForTimezone",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: multiline strings should work
+Action: editCode("func main() {
+  fmt.Println(\\"Hello World\\")
+}", "go lang", "make it compile"); 1`] = `
+{
+  action: 'editCode("func main() {
+  fmt.Println(\\\\"Hello World\\\\")
+}", "go lang", "make it compile");',
+  expressions: [
+    {
+      args: [
+        {
+          type: "string",
+          value: 'func main() {
+  fmt.Println("Hello World")
+}',
+        },
+        {
+          type: "string",
+          value: "go lang",
+        },
+        {
+          type: "string",
+          value: "make it compile",
+        },
+      ],
+      name: "editCode",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "multiline strings should work",
+}
+`;
+
+snapshot[`parseActionGroup: Thought no colon doesnt work
+Action hahaha 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;
+
+snapshot[`parseActionGroup: Action: action should not come first
+Thought: ha 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":8}: Unable to consume token: 
+Action:'
+`;
+
+snapshot[`parseActionGroup: completely invalid 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;
+
+snapshot[`parseActionGroup: empty string 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;

@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
-import { ModelDeps, run } from "@lib/models.ts";
+import { ModelDeps, run, ModelName } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint, googleSearch } from "@lib/clients.ts";
 import { Input, Result } from "@lib/models/assistShared.ts";
@@ -25,6 +25,7 @@ export type Example = t.TypeOf<typeof Example>;
 const INPUTS: {
   variant?: string;
   prompt: string;
+  targetModel?: ModelName;
   resolvedCommands?: NonNullable<t.TypeOf<typeof Input>["resolvedCommands"]>;
 }[] = [
   { prompt: "hello" },
@@ -52,6 +53,7 @@ const INPUTS: {
   },
   {
     prompt: "help me fix spelling and grammar mistakes",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -60,7 +62,13 @@ const INPUTS: {
     },
   },
   {
+    prompt:
+      "help me fix spelling and grammar mistakes: stp by step, heart to hard, left right left. is we all fall down..",
+    targetModel: "assist-002",
+  },
+  {
     prompt: "edit this function in go lang in order to make it compile",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -73,11 +81,19 @@ const INPUTS: {
     },
   },
   {
+    prompt: `edit this function in go lang in order to make it compile:
+  function doSomething() int {
+    return "55"
+  }`,
+    targetModel: "assist-002",
+  },
+  {
     prompt: "make a calendar event for next tuesday noon, lunch with Bill",
   },
   {
     prompt:
       "there is a function in javascript I don't understand, can help me summarize it?",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -92,41 +108,26 @@ const INPUTS: {
     },
   },
   {
+    prompt: `there is a function in javascript I don't understand, can help me summarize it?
+function something(num) {
+  if (num < 0) return -1;
+  else if (num == 0) return 1;
+  else {
+      return (num * something(num - 1));
+  }
+}`,
+    targetModel: "assist-002",
+  },
+  {
     prompt: "generate code in swift to create a new reminder on iOS",
   },
-  //   {
-  //     prompt:
-  //       "given this list of verbs can you help me add additional verbs that mean the same thing?",
-  //     resolvedCommands: {
-  //       getInput: {
-  //         type: "string",
-  //         value: `
-  //     "edit",
-  //     "change",
-  //     "alter",
-  //     "fix",
-  //     "move",
-  //     "align",
-  //     "reword",
-  //     "re-word",
-  //     "editor",
-  //     "improve",
-  //     "check",
-  //     "revise",
-  //     "modify",
-  //     "adapt",
-  //     "rewrite",
-  //     "re-write",
-  // `,
-  //       },
-  //     },
-  //   },
+  {
+    prompt: "help me order some pizza",
+    targetModel: "assist-002",
+  },
   {
     prompt: "help me write a commit message please",
   },
-
-  // TODO: something like 'highlight the selected string', will it be able to differentiate from
-  // having the request string be in the request?
 ];
 
 export default async function updateExamples(
@@ -171,6 +172,10 @@ export default async function updateExamples(
   let hasChanges = false;
 
   for (const input of INPUTS) {
+    if (input.targetModel != null && input.targetModel !== modelName) {
+      continue;
+    }
+
     const promptWithVariant =
       input.prompt + (input.variant == null ? "" : " - " + input.variant);
     const existing = existingExamples[promptWithVariant];

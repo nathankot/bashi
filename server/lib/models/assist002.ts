@@ -33,7 +33,6 @@ import {
 
 const ActionGroup = t.intersection([
   t.type({
-    thought: t.string,
     action: t.string,
     expressions: t.array(Expr),
   }),
@@ -158,13 +157,13 @@ export async function run(
 
   // Interpreter loop that does the following:
   //
-  // 1. For each pending thought/action, find commands and try to resolve them
+  // 1. For each pending action, find commands and try to resolve them
   //   1a. If the client provided any resolutions, use them
   //   1b. Any commands that can be resolved server side should be
   //   1c. Some commands may need a redirection to the client
   // 2. Any resolutions from the above go into the new prompt
-  // 3. Plugs the prompt into the model to ask for thought/actions to take
-  // 4. Parse the completion into pending thought/actions
+  // 3. Plugs the prompt into the model to ask for actions to take
+  // 4. Parse the completion into pending actions
   // 5. Update state with the current results, exit if the model is sending a response to the user, otherwise goto (1)
 
   try {
@@ -173,7 +172,7 @@ export async function run(
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
-      // 1. For each pending thought/action, find expressions and try to resolve them
+      // 1. For each pending action, find expressions and try to resolve them
       if (pending != null) {
         const actionsSoFar = resolvedActionGroups.length;
         const expressionsSoFar = resolvedActionGroups.reduce(
@@ -376,7 +375,7 @@ export async function run(
       }
       modelCallCount++;
 
-      // 3. Plugs the prompt into the model to ask for thought/actions to take
+      // 3. Plugs the prompt into the model to ask for actions to take
       const messages = makePromptMessages(
         {
           ...clientCommands,
@@ -437,13 +436,12 @@ export async function run(
         }
       }
 
-      // 4. Parse the completion into pending thought/actions
+      // 4. Parse the completion into pending actions
       // 5. Update state with the current results, exit if we have reached a sink,
       //    otherwise goto (1)
       if (!text.toLowerCase().startsWith("action:")) {
         // Unstructured means a normal response that just needs to be sent back.
         pending = {
-          thought: ``,
           action: `sendResponse(<text>)`,
           expressions: [
             {
@@ -462,7 +460,6 @@ export async function run(
         const statementStr = text.substring("action:".length);
         const statements = parseStatements(statementStr);
         pending = {
-          thought: ``,
           action: statementStr,
           expressions: statements,
         };
@@ -539,7 +536,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     filterUnnecessary(
       request +
         " " +
-        resolvedActionGroups.map((g) => `${g.thought} ${g.action} ${g.result}`),
+        resolvedActionGroups.map((g) => `${g.action} ${g.result}`),
       commands
     )
   ).join("\n");
@@ -566,7 +563,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
         return [
           {
             role: "assistant",
-            content: `Thought: ${g.thought}\nAction: ${g.action}`,
+            content: `Action: ${g.action}`,
           },
           {
             role: "system",

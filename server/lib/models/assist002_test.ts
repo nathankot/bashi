@@ -27,7 +27,6 @@ const pendingClientCommandState = () =>
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [],
@@ -68,14 +67,12 @@ const pendingInputTextState = () =>
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [
       {
         action: "someCommand()",
         result: `"blah"`,
-        thought: "I need to call some command",
         expressions: [
           {
             type: "call",
@@ -338,7 +335,6 @@ for (const test of [
           },
         ],
         result: undefined,
-        thought: "some thought",
       },
       request: "some request",
       resolvedActionGroups: [],

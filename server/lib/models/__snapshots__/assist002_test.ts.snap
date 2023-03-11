@@ -72,7 +72,6 @@ snapshot[`all commands resolved on the server 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -97,7 +96,6 @@ snapshot[`all commands resolved on the server 1`] = `
           },
         ],
         result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -219,8 +217,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Thought: 
-Action:  now(); math("pi^2 + 123")',
+    content: 'Action:  now(); math("pi^2 + 123")',
     role: "assistant",
   },
   {
@@ -302,7 +299,6 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -327,7 +323,6 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
           },
         ],
         result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -409,7 +404,6 @@ snapshot[`empty action tries to run the model again 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -418,7 +412,6 @@ snapshot[`empty action tries to run the model again 1`] = `
         expressions: [
         ],
         result: "",
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -499,7 +492,6 @@ snapshot[`command overloads work 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -536,7 +528,6 @@ snapshot[`command overloads work 1`] = `
           },
         ],
         result: '"stringconcat"; 124',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -670,8 +661,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Thought: 
-Action:  "string" + "concat"; 123 + 1',
+    content: 'Action:  "string" + "concat"; 123 + 1',
     role: "assistant",
   },
   {
@@ -754,7 +744,6 @@ snapshot[`infix + operand support 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -913,7 +902,6 @@ createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1076,7 +1064,6 @@ snapshot[`supports model outputs with top level infix call 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1256,7 +1243,6 @@ snapshot[`supports model outputs using template strings 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1430,7 +1416,6 @@ snapshot[`supports model outputs with top level expression 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1457,7 +1442,6 @@ snapshot[`supports model outputs with top level expression 1`] = `
           },
         ],
         result: '"some string"; 123; "2022-12-19T21:41:10+13:00"',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -1561,7 +1545,6 @@ snapshot[`supports assignment 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1624,7 +1607,6 @@ snapshot[`supports assignment 1`] = `
           },
         ],
         result: "void; void; 234",
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -1773,7 +1755,6 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1873,7 +1854,6 @@ snapshot[`client resolved command 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -1957,7 +1937,6 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2052,7 +2031,6 @@ snapshot[`client resolved command - wrong return type 1`] = `
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2147,7 +2125,6 @@ snapshot[`client resolved command - fulfilled 1`] = `
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2264,7 +2241,6 @@ snapshot[`nested calls 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2429,7 +2405,6 @@ snapshot[`request needs more context 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2515,7 +2490,6 @@ snapshot[`request needs more context - still missing 1`] = `
         },
       ],
       result: undefined,
-      thought: "I need to do something",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2530,7 +2504,6 @@ snapshot[`request needs more context - still missing 1`] = `
           },
         ],
         result: '"blah"',
-        thought: "I need to call some command",
       },
     ],
     resolvedCommands: [
@@ -2625,7 +2598,6 @@ snapshot[`request needs more context - fulfilled 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2640,7 +2612,6 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
         ],
         result: '"blah"',
-        thought: "I need to call some command",
       },
       {
         action: 'editText(getInput("the text"), "convert to poem"); now()',
@@ -2673,7 +2644,6 @@ snapshot[`request needs more context - fulfilled 1`] = `
           },
         ],
         result: '"the result of editText()"; "2022-12-19T08:41:10Z"',
-        thought: "I need to do something",
       },
     ],
     resolvedCommands: [
@@ -2783,8 +2753,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: "Thought: I need to call some command
-Action: someCommand()",
+    content: "Action: someCommand()",
     role: "assistant",
   },
   {
@@ -2792,8 +2761,7 @@ Action: someCommand()",
     role: "system",
   },
   {
-    content: 'Thought: I need to do something
-Action: editText(getInput("the text"), "convert to poem"); now()',
+    content: 'Action: editText(getInput("the text"), "convert to poem"); now()',
     role: "assistant",
   },
   {
@@ -2866,7 +2834,6 @@ snapshot[`top level commands are resolved sequentially 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2949,7 +2916,6 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2978,7 +2944,6 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           },
         ],
         result: '"good"; "2022-12-19T03:41:10-05:00"',
-        thought: "some thought",
       },
     ],
     resolvedCommands: [
@@ -3087,7 +3052,6 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -3120,7 +3084,6 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           },
         ],
         result: 'void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -3249,8 +3212,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Thought: 
-Action:  longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+    content: 'Action:  longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
     role: "assistant",
   },
   {
@@ -3436,7 +3398,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -3449,7 +3410,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"hello result"',
-        thought: "",
       },
       {
         action: " result",
@@ -3466,7 +3426,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"hello result"',
-        thought: "",
       },
       {
         action: ' var a = "b"; "should override result within same action"; result',
@@ -3501,7 +3460,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: 'void; "should override result within same action"; "should override result within same action"',
-        thought: "",
       },
       {
         action: " rEsUlt",
@@ -3518,7 +3476,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"should override result within same action"',
-        thought: "",
       },
       {
         action: ' var result = "new result"',
@@ -3539,7 +3496,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: "void",
-        thought: "",
       },
       {
         action: ' "this should not show up twice"',
@@ -3550,7 +3506,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"this should not show up twice"',
-        thought: "",
       },
       {
         action: " result",
@@ -3567,7 +3522,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"new result"',
-        thought: "",
       },
       {
         action: ' "this should show up"',
@@ -3578,7 +3532,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"this should show up"',
-        thought: "",
       },
       {
         action: " reSult",
@@ -3595,7 +3548,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           },
         ],
         result: '"this should show up"',
-        thought: "",
       },
     ],
     resolvedCommands: [
@@ -3775,7 +3727,6 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
           type: "call",
         },
       ],
-      thought: "",
     },
     request: "some request",
     resolvedActionGroups: [
@@ -3794,7 +3745,6 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
           },
         ],
         result: '"123123"',
-        thought: "",
       },
     ],
     resolvedCommands: [

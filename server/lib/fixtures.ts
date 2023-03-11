@@ -102,23 +102,11 @@ export const assist002CommandSet: CommandSet = {
   respond: {
     cost: -100,
     description:
-      "return response for original question/request back to user, the return value is the users response",
+      "send a message to the user, the return value is the users response",
     returnType: "string",
     args: [
       {
         name: "answer",
-        type: "string",
-      },
-    ],
-  },
-  getInput: {
-    cost: -100,
-    description:
-      "get additional input from user, typically text/code used as input into other functions",
-    returnType: "string",
-    args: [
-      {
-        name: "question asking for required information",
         type: "string",
       },
     ],

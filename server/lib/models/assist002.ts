@@ -511,7 +511,7 @@ function makePromptMessages(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -521,11 +521,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -534,11 +535,11 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.`;
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.`;
 
   const commandSet = makeCommandSet(
     filterUnnecessary(
@@ -557,7 +558,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
         if (g.expressions.length === 1) {
           const firstExpr = g.expressions[0]!;
           if (firstExpr.type === "call" && firstExpr.name === RESPOND_COMMAND) {
-            return [
+            let result: ChatCompletionRequestMessage[] = [
               {
                 role: "assistant",
                 content:
@@ -566,6 +567,14 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
                     : "",
               },
             ];
+            if (g.result != null) {
+              result.push({
+                role: "user",
+                content: g.result,
+                name: "User",
+              });
+            }
+            return result;
           }
         }
         return [

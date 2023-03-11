@@ -17,13 +17,16 @@ const pendingClientCommandState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'now(); getInput("what do you want?")',
+      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
       expressions: [
         { type: "call", args: [], name: "now" },
         {
           type: "call",
-          args: [{ type: "string", value: "what do you want?" }],
-          name: "getInput",
+          name: "createCalendarEvent",
+          args: [
+            { type: "string", value: "2022-01-01" },
+            { type: "string", value: "event name" },
+          ],
         },
       ],
       result: undefined,
@@ -42,28 +45,16 @@ const pendingClientCommandState = () =>
     memory: { variables: {}, topLevelResults: [] },
   } satisfies Session["assist002State"]);
 
-const pendingInputTextState = () =>
+const pendingInputState = () =>
   ({
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInput("the text"), "convert to poem"); now()',
+      action: 'respond("some response")',
       expressions: [
         {
           type: "call",
-          args: [
-            {
-              type: "call",
-              name: "getInput",
-              args: [{ type: "string", value: "the text" }],
-            },
-            { type: "string", value: "convert to poem" },
-          ],
-          name: "editText",
-        },
-        {
-          type: "call",
-          args: [],
-          name: "now",
+          args: [{ type: "string", value: "some response" }],
+          name: "respond",
         },
       ],
       result: undefined,
@@ -168,7 +159,7 @@ for (const test of [
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
-      `Action: now(); getInput("not reused because client command")`,
+      `Action: now(); respond("not reused because client command")`,
     ],
     initialState: {
       modelCallCount: 1,
@@ -187,7 +178,7 @@ for (const test of [
             { type: "string", value: "not reused because client command" },
           ],
           id: "someid",
-          name: "getInput",
+          name: "respond",
           returnValue: "this should not be reused",
         },
       ],
@@ -196,7 +187,7 @@ for (const test of [
   {
     description: "client resolved command",
     input: { request: "some request" },
-    openAiResults: [`Action: now(); getInput("what do you want?")`],
+    openAiResults: [`Action: now(); respond("what do you want?")`],
   },
   {
     description: "client resolved command - continue but unresolved",
@@ -218,7 +209,7 @@ for (const test of [
   {
     description: "client resolved command - fulfilled",
     input: {
-      resolvedCommands: { 1: { type: "string", value: "to test you" } },
+      resolvedCommands: { 1: { type: "void" } },
     },
     openAiResults: [`I have finished`],
     snapshotPrompts: true,
@@ -236,14 +227,14 @@ for (const test of [
     description: "request needs more context",
     input: { request: "some request" },
     openAiResults: [
-      `Action: now(); editText(getInput("the text"), "convert to poem"); now()`,
+      `Action: now(); editText(respond("please provide the text"), "convert to poem"); now()`,
     ],
   },
   {
     description: "request needs more context - still missing",
     input: { resolvedCommands: [] },
     openAiResults: [],
-    initialState: pendingInputTextState(),
+    initialState: pendingInputState(),
   },
   {
     description: "request needs more context - wrong type",
@@ -257,7 +248,7 @@ for (const test of [
     },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingInputTextState(),
+    initialState: pendingInputState(),
   },
   {
     description: "request needs more context - fulfilled",
@@ -265,13 +256,13 @@ for (const test of [
       resolvedCommands: {
         "1.0.0": {
           type: "string",
-          value: "some text",
+          value: "some user response",
         },
       },
     },
-    openAiResults: [`the result of editText()`, `I have finished`],
+    openAiResults: [`I have finished`],
     snapshotPrompts: true,
-    initialState: pendingInputTextState(),
+    initialState: pendingInputState(),
   },
   {
     description: "fulfilled but max loops",
@@ -286,7 +277,7 @@ for (const test of [
     openAiResults: [`the result of editText()`],
     snapshotError: true,
     initialState: {
-      ...pendingInputTextState(),
+      ...pendingInputState(),
       modelCallCount: MAX_MODEL_CALLS,
     },
   },
@@ -306,7 +297,7 @@ for (const test of [
     description: "top level commands are resolved sequentially",
     input: { request: "some request" },
     openAiResults: [
-      `Action: getInput("how are you?"); currentTimeForTimezone("America/New_York")`,
+      `Action: respond("how are you?"); currentTimeForTimezone("America/New_York")`,
     ],
   },
   {
@@ -321,11 +312,11 @@ for (const test of [
       modelCallCount: 1,
       pending: {
         action:
-          'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
+          'respond("how are you?"); currentTimeForTimezone("America/New_York")',
         expressions: [
           {
             args: [{ type: "string", value: "how are you?" }],
-            name: "getInput",
+            name: "respond",
             type: "call",
           },
           {

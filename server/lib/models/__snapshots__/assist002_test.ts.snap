@@ -133,7 +133,7 @@ snapshot[`all commands resolved on the server 1`] = `
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -143,11 +143,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -156,15 +157,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -175,7 +175,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -185,11 +185,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -198,15 +199,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -577,7 +577,7 @@ snapshot[`command overloads work 1`] = `
 snapshot[`command overloads work 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -587,11 +587,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -600,15 +601,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -619,7 +619,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -629,11 +629,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -642,15 +643,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -1717,7 +1717,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
             },
           ],
           id: "0.1",
-          name: "getInput",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -1736,7 +1736,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: ' now(); getInput("not reused because client command")',
+      action: ' now(); respond("not reused because client command")',
       expressions: [
         {
           args: [
@@ -1751,7 +1751,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
               value: "not reused because client command",
             },
           ],
-          name: "getInput",
+          name: "respond",
           type: "call",
         },
       ],
@@ -1776,7 +1776,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
           },
         ],
         id: "someid",
-        name: "getInput",
+        name: "respond",
         returnValue: "this should not be reused",
         type: "executed",
       },
@@ -1810,7 +1810,7 @@ snapshot[`client resolved command 1`] = `
             },
           ],
           id: "0.1",
-          name: "getInput",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -1835,7 +1835,7 @@ snapshot[`client resolved command 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: ' now(); getInput("what do you want?")',
+      action: ' now(); respond("what do you want?")',
       expressions: [
         {
           args: [
@@ -1850,7 +1850,7 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          name: "getInput",
+          name: "respond",
           type: "call",
         },
       ],
@@ -1888,11 +1888,15 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
           id: "0.1",
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "parsed",
         },
       ],
@@ -1917,7 +1921,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); getInput("what do you want?")',
+      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
       expressions: [
         {
           args: [
@@ -1929,10 +1933,14 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "call",
         },
       ],
@@ -1982,11 +1990,15 @@ snapshot[`client resolved command - wrong return type 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
           id: "0.1",
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "parsed",
         },
       ],
@@ -2011,7 +2023,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); getInput("what do you want?")',
+      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
       expressions: [
         {
           args: [
@@ -2023,10 +2035,14 @@ snapshot[`client resolved command - wrong return type 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "call",
         },
       ],
@@ -2076,11 +2092,15 @@ snapshot[`client resolved command - fulfilled 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
           id: "0.1",
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "parsed",
         },
       ],
@@ -2105,7 +2125,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'now(); getInput("what do you want?")',
+      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
       expressions: [
         {
           args: [
@@ -2117,10 +2137,14 @@ snapshot[`client resolved command - fulfilled 1`] = `
           args: [
             {
               type: "string",
-              value: "what do you want?",
+              value: "2022-01-01",
+            },
+            {
+              type: "string",
+              value: "event name",
             },
           ],
-          name: "getInput",
+          name: "createCalendarEvent",
           type: "call",
         },
       ],
@@ -2284,7 +2308,7 @@ snapshot[`nested calls 1`] = `
 snapshot[`nested calls 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -2294,11 +2318,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -2307,15 +2332,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -2341,11 +2365,11 @@ snapshot[`request needs more context 1`] = `
           args: [
             {
               type: "string",
-              value: "the text",
+              value: "please provide the text",
             },
           ],
           id: "0.1.0",
-          name: "getInput",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2370,7 +2394,7 @@ snapshot[`request needs more context 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: ' now(); editText(getInput("the text"), "convert to poem"); now()',
+      action: ' now(); editText(respond("please provide the text"), "convert to poem"); now()',
       expressions: [
         {
           args: [
@@ -2384,10 +2408,10 @@ snapshot[`request needs more context 1`] = `
               args: [
                 {
                   type: "string",
-                  value: "the text",
+                  value: "please provide the text",
                 },
               ],
-              name: "getInput",
+              name: "respond",
               type: "call",
             },
             {
@@ -2439,11 +2463,11 @@ snapshot[`request needs more context - still missing 1`] = `
           args: [
             {
               type: "string",
-              value: "the text",
+              value: "some response",
             },
           ],
-          id: "1.0.0",
-          name: "getInput",
+          id: "1.0",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2460,32 +2484,16 @@ snapshot[`request needs more context - still missing 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: 'editText(getInput("the text"), "convert to poem"); now()',
+      action: 'respond("some response")',
       expressions: [
         {
           args: [
             {
-              args: [
-                {
-                  type: "string",
-                  value: "the text",
-                },
-              ],
-              name: "getInput",
-              type: "call",
-            },
-            {
               type: "string",
-              value: "convert to poem",
+              value: "some response",
             },
           ],
-          name: "editText",
-          type: "call",
-        },
-        {
-          args: [
-          ],
-          name: "now",
+          name: "respond",
           type: "call",
         },
       ],
@@ -2523,11 +2531,9 @@ snapshot[`request needs more context - still missing 1`] = `
 }
 `;
 
-snapshot[`request needs more context - wrong type 1`] = `"command getInput expects return type to be string but got number"`;
-
-snapshot[`request needs more context - fulfilled 1`] = `
+snapshot[`request needs more context - wrong type 1`] = `
 {
-  n: 2,
+  n: 0,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -2538,23 +2544,15 @@ snapshot[`request needs more context - fulfilled 1`] = `
           args: [
             {
               type: "string",
-              value: "I have finished",
+              value: "some response",
             },
           ],
-          id: "2.0",
+          id: "1.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
-        {
-          type: "string",
-          value: "the result of editText()",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
       type: "pending_commands",
     },
@@ -2562,42 +2560,25 @@ snapshot[`request needs more context - fulfilled 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        <1 empty item>,
-        {
-          type: "string",
-          value: "the result of editText()",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
-      variables: {
-        result_1_0: {
-          type: "string",
-          value: "the result of editText()",
-        },
-        result_1_1: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-      },
+      variables: {},
     },
-    modelCallCount: 2,
+    modelCallCount: 1,
     pending: {
-      action: "respond(<text>)",
+      action: 'respond("some response")',
       expressions: [
         {
           args: [
             {
               type: "string",
-              value: "I have finished",
+              value: "some response",
             },
           ],
           name: "respond",
           type: "call",
         },
       ],
+      result: undefined,
     },
     request: "some request",
     resolvedActionGroups: [
@@ -2613,37 +2594,86 @@ snapshot[`request needs more context - fulfilled 1`] = `
         ],
         result: '"blah"',
       },
+    ],
+    resolvedCommands: [
       {
-        action: 'editText(getInput("the text"), "convert to poem"); now()',
+        args: [
+        ],
+        id: "0",
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`request needs more context - fulfilled 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "some response",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: {
+      action: 'respond("some response")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "some response",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      ],
+      result: undefined,
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
         expressions: [
           {
             args: [
-              {
-                args: [
-                  {
-                    type: "string",
-                    value: "the text",
-                  },
-                ],
-                name: "getInput",
-                type: "call",
-              },
-              {
-                type: "string",
-                value: "convert to poem",
-              },
             ],
-            name: "editText",
-            type: "call",
-          },
-          {
-            args: [
-            ],
-            name: "now",
+            name: "someCommand",
             type: "call",
           },
         ],
-        result: '"the result of editText()"; "2022-12-19T08:41:10Z"',
+        result: '"blah"',
       },
     ],
     resolvedCommands: [
@@ -2658,51 +2688,6 @@ snapshot[`request needs more context - fulfilled 1`] = `
         },
         type: "executed",
       },
-      {
-        args: [
-          {
-            type: "string",
-            value: "the text",
-          },
-        ],
-        id: "1.0.0",
-        name: "getInput",
-        returnValue: {
-          type: "string",
-          value: "some text",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
-            value: "some text",
-          },
-          {
-            type: "string",
-            value: "convert to poem",
-          },
-        ],
-        id: "1.0",
-        name: "editText",
-        returnValue: {
-          type: "string",
-          value: "the result of editText()",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-        ],
-        id: "1.1",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        type: "executed",
-      },
     ],
   },
 }
@@ -2710,68 +2695,89 @@ snapshot[`request needs more context - fulfilled 1`] = `
 
 snapshot[`request needs more context - fulfilled 2`] = `
 [
-  {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
-
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
-
-Action: exampleAction("arg 1", arg2)
-
-It is possible to assign the result of an action to a variable:
-
-Action: var someVariable = exampleAction("arg 1", arg2)
-
-It is also possible to have multiple sequential statements in a single action:
-
-Action: var a = exampleAction(); exampleAction2(a)
-
-The action arguments are expressions that support the following:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-Below is a minimal example of an action with a complex argument expression using all available features:
-
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
-
-Do not assume any language features exist beyond what is referenced above.
-
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
-
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: "Action: someCommand()",
-    role: "assistant",
-  },
-  {
-    content: 'Result: "blah"',
-    role: "system",
-  },
-  {
-    content: 'Action: editText(getInput("the text"), "convert to poem"); now()',
-    role: "assistant",
-  },
-  {
-    content: 'Result: "the result of editText()"; "2022-12-19T08:41:10Z"',
-    role: "system",
-  },
 ]
 `;
 
-snapshot[`fulfilled but max loops 1`] = `"max iteration count of 10 reached"`;
+snapshot[`fulfilled but max loops 1`] = `
+{
+  n: 0,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "some response",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 10,
+    pending: {
+      action: 'respond("some response")',
+      expressions: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "some response",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      ],
+      result: undefined,
+    },
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "someCommand()",
+        expressions: [
+          {
+            args: [
+            ],
+            name: "someCommand",
+            type: "call",
+          },
+        ],
+        result: '"blah"',
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "someCommand",
+        returnValue: {
+          type: "string",
+          value: "blah",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
 
 snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
@@ -2794,7 +2800,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
             },
           ],
           id: "0.0",
-          name: "getInput",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2811,7 +2817,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: ' getInput("how are you?"); currentTimeForTimezone("America/New_York")',
+      action: ' respond("how are you?"); currentTimeForTimezone("America/New_York")',
       expressions: [
         {
           args: [
@@ -2820,7 +2826,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
               value: "how are you?",
             },
           ],
-          name: "getInput",
+          name: "respond",
           type: "call",
         },
         {
@@ -2920,7 +2926,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     request: "some request",
     resolvedActionGroups: [
       {
-        action: 'getInput("how are you?"); currentTimeForTimezone("America/New_York")',
+        action: 'respond("how are you?"); currentTimeForTimezone("America/New_York")',
         expressions: [
           {
             args: [
@@ -2929,7 +2935,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
                 value: "how are you?",
               },
             ],
-            name: "getInput",
+            name: "respond",
             type: "call",
           },
           {
@@ -2955,7 +2961,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
           },
         ],
         id: "0.0",
-        name: "getInput",
+        name: "respond",
         returnValue: {
           type: "string",
           value: "good",
@@ -3128,7 +3134,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -3138,11 +3144,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -3151,15 +3158,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
@@ -3170,7 +3176,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the question/request cannot be fulfilled. A custom language called Bashi and functions are available to be used in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 
@@ -3180,11 +3186,12 @@ It is possible to assign the result of an action to a variable:
 
 Action: var someVariable = exampleAction("arg 1", arg2)
 
-It is also possible to have multiple sequential statements in a single action:
+It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction(); exampleAction2(a)
+Action: var a = exampleAction()
+Action: exampleAction2(a)
 
-The action arguments are expressions that support the following:
+Arguments to the functions are expressions that support:
 
 * nested function calls
 * string concatenation using +
@@ -3193,15 +3200,14 @@ The action arguments are expressions that support the following:
 
 Below is a minimal example of an action with a complex argument expression using all available features:
 
-Action: exampleAction(b(), c, 123, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
 
 Do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
 \`math("formula (ascii characters only)": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`commandWithNumberArg("some number": number): void\` - some fixture command
 \`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
 \`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',

@@ -31,6 +31,8 @@ import {
   runBuiltinCommand,
 } from "@lib/command.ts";
 
+const RESPOND_COMMAND = "respond";
+
 const ActionGroup = t.intersection([
   t.type({
     action: t.string,
@@ -116,9 +118,15 @@ export async function run(
 
   const clientCommands = configuration.commands;
 
-  if (!("sendResponse" in clientCommands)) {
+  if (!(RESPOND_COMMAND in clientCommands)) {
     throw new HTTPError(
-      `the 'sendResponse' client command must be made available`,
+      `the '${RESPOND_COMMAND}' client command must be made available`,
+      400
+    );
+  }
+  if (clientCommands[RESPOND_COMMAND]!.returnType !== "string") {
+    throw new HTTPError(
+      `the '${RESPOND_COMMAND}' client command must return a string (indicating the users next message)`,
       400
     );
   }
@@ -442,10 +450,10 @@ export async function run(
       if (!text.toLowerCase().startsWith("action:")) {
         // Unstructured means a normal response that just needs to be sent back.
         pending = {
-          action: `sendResponse(<text>)`,
+          action: `${RESPOND_COMMAND}(<text>)`,
           expressions: [
             {
-              name: "sendResponse",
+              name: RESPOND_COMMAND,
               type: "call",
               args: [
                 {
@@ -548,7 +556,7 @@ Known functions are declared. Unknown functions must not be used. Pay attention 
       .map((g): ChatCompletionRequestMessage[] => {
         if (g.expressions.length === 1) {
           const firstExpr = g.expressions[0]!;
-          if (firstExpr.type === "call" && firstExpr.name === "sendResponse") {
+          if (firstExpr.type === "call" && firstExpr.name === RESPOND_COMMAND) {
             return [
               {
                 role: "assistant",
@@ -592,7 +600,7 @@ function makeCommandSet(commands: CommandSet): string[] {
         return aName < bName ? -1 : 1;
       })
       // Prefer the model to send plain messages for responses:
-      .filter(([name]) => name !== "sendResponse")
+      .filter(([name]) => name !== RESPOND_COMMAND)
       .map(([name, c]) => {
         const args = c.args.map(
           (a) => `${a.name.includes(" ") ? `"${a.name}"` : a.name}: ${a.type}`

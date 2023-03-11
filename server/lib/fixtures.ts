@@ -99,10 +99,11 @@ export const assist001CommandSet: CommandSet = {
 };
 
 export const assist002CommandSet: CommandSet = {
-  sendResponse: {
+  respond: {
     cost: -100,
-    description: "return response for original question/request back to user",
-    returnType: "void",
+    description:
+      "return response for original question/request back to user, the return value is the users response",
+    returnType: "string",
     args: [
       {
         name: "answer",

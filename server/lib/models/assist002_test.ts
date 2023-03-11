@@ -124,7 +124,7 @@ for (const test of [
     description: "infix + operand support",
     input: { request: "some request" },
     openAiResults: [
-      `Action: sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
+      `Action: respond("infix " + (currentTimeForTimezone("America/New_York") + " hello"))`,
       `I have finished`,
     ],
   },
@@ -132,7 +132,7 @@ for (const test of [
     description: "supports model outputs with lots of newlines",
     input: { request: "some request" },
     openAiResults: [
-      `Action: \nsendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");`,
+      `Action: \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");`,
     ],
   },
   {

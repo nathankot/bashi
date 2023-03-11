@@ -17,7 +17,7 @@ snapshot[`all commands resolved on the server 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -59,7 +59,7 @@ snapshot[`all commands resolved on the server 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -68,7 +68,7 @@ snapshot[`all commands resolved on the server 1`] = `
               value: "Your request has been fulfilled.",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -244,7 +244,7 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -286,7 +286,7 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -295,7 +295,7 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
               value: "",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -374,7 +374,7 @@ snapshot[`empty action tries to run the model again 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -391,7 +391,7 @@ snapshot[`empty action tries to run the model again 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -400,7 +400,7 @@ snapshot[`empty action tries to run the model again 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -437,7 +437,7 @@ snapshot[`command overloads work 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -479,7 +479,7 @@ snapshot[`command overloads work 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -488,7 +488,7 @@ snapshot[`command overloads work 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -688,7 +688,7 @@ snapshot[`infix + operand support 1`] = `
             },
           ],
           id: "0.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -705,7 +705,7 @@ snapshot[`infix + operand support 1`] = `
     },
     modelCallCount: 1,
     pending: {
-      action: ' sendResponse("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
+      action: ' respond("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
       expressions: [
         {
           args: [
@@ -740,7 +740,7 @@ snapshot[`infix + operand support 1`] = `
               type: "call",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -824,7 +824,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
             },
           ],
           id: "0.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -842,7 +842,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     modelCallCount: 1,
     pending: {
       action: ' 
-sendResponse("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
       expressions: [
         {
@@ -878,7 +878,7 @@ createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
               type: "call",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
         {
@@ -1349,7 +1349,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -1403,7 +1403,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -1412,7 +1412,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -1482,7 +1482,7 @@ snapshot[`supports assignment 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -1532,7 +1532,7 @@ snapshot[`supports assignment 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -1541,7 +1541,7 @@ snapshot[`supports assignment 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -2542,7 +2542,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
             },
           ],
           id: "2.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2585,7 +2585,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -2594,7 +2594,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -2861,7 +2861,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2903,7 +2903,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -2912,7 +2912,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -2999,7 +2999,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             },
           ],
           id: "1.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -3039,7 +3039,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     },
     modelCallCount: 2,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -3048,7 +3048,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],
@@ -3239,7 +3239,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             },
           ],
           id: "9.0",
-          name: "sendResponse",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -3385,7 +3385,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     },
     modelCallCount: 10,
     pending: {
-      action: "sendResponse(<text>)",
+      action: "respond(<text>)",
       expressions: [
         {
           args: [
@@ -3394,7 +3394,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
               value: "I have finished",
             },
           ],
-          name: "sendResponse",
+          name: "respond",
           type: "call",
         },
       ],

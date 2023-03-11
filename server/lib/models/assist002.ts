@@ -1,6 +1,7 @@
 // @deno-types="@/types/gpt-3-encoder.d.ts"
 import * as gptEncoder from "gpt-3-encoder";
 import * as t from "io-ts";
+import * as p from "typescript-parsec";
 
 import {
   ChatCompletionRequestMessage,
@@ -11,7 +12,9 @@ import {
   Input,
   ResultPendingCommands,
   languageBuiltinCommands,
+  getPendingCommandsOrResult,
 } from "./assistShared.ts";
+
 import { ModelDeps } from "./modelDeps.ts";
 import { IS_DEV } from "@lib/constants.ts";
 import { wrap } from "@lib/log.ts";
@@ -33,7 +36,7 @@ import {
 
 const RESPOND_COMMAND = "respond";
 
-const ActionGroup = t.intersection([
+const Action = t.intersection([
   t.type({
     action: t.string,
     expressions: t.array(Expr),
@@ -42,21 +45,88 @@ const ActionGroup = t.intersection([
     result: t.string,
   }),
 ]);
-type ActionGroup = t.TypeOf<typeof ActionGroup>;
+type Action = t.TypeOf<typeof Action>;
+
+enum T {
+  KeywordAction,
+  Char,
+  Newline,
+}
+
+const actionLexer = p.buildLexer([
+  [true, /^\n+( *?)Action( *?):/gi, T.KeywordAction],
+  [true, /^\n/g, T.Newline],
+  [true, /^./g, T.Char],
+]);
+
+const STRING = p.rule<T, string>();
+STRING.setPattern(
+  p.lrec_sc(
+    p.apply(p.alt(p.tok(T.Char), p.tok(T.Newline)), (c) => c.text),
+    p.alt(p.tok(T.Char), p.tok(T.Newline)),
+    (c1, c2) => c1 + c2.text
+  )
+);
+
+const ACTIONS = p.rule<T, Action[]>();
+ACTIONS.setPattern(
+  p.rep_sc(
+    p.apply(
+      p.apply(
+        p.kright(p.tok(T.KeywordAction), p.opt_sc(STRING)),
+        (str) => str?.trim() ?? ""
+      ),
+      (action) => {
+        const expressions = parseStatements(action);
+        return {
+          action,
+          expressions,
+        };
+      }
+    )
+  )
+);
+
+function parseCompletion(completion: string): Action[] {
+  try {
+    const result = ACTIONS.parse(actionLexer.parse(`\n` + completion));
+    if (result.successful === true) {
+      return p.expectSingleResult(p.expectEOF(result));
+    }
+  } catch {}
+  // Unstructured means a normal response that just needs to be sent back.
+  return [
+    {
+      action: `${RESPOND_COMMAND}(<text>)`,
+      expressions: [
+        {
+          name: RESPOND_COMMAND,
+          type: "call",
+          args: [
+            {
+              type: "string",
+              value: completion,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
 
 export const State = t.type({
   request: t.string,
   modelCallCount: t.number,
   resolvedActionGroups: t.array(
     t.intersection([
-      ActionGroup,
+      Action,
       t.type({
         result: t.string,
       }),
     ])
   ),
   resolvedCommands: t.array(CommandExecuted),
-  pending: t.union([t.null, ActionGroup]),
+  pending: t.array(Action),
   memory: Memory,
 });
 export type State = t.TypeOf<typeof State>;
@@ -152,7 +222,7 @@ export async function run(
   };
 
   let modelCallCount = state?.modelCallCount ?? 0;
-  let pending = state?.pending;
+  let pending = state?.pending ?? [];
   let resolvedCommands = state?.resolvedCommands ?? [];
   let resolvedActionGroups = state?.resolvedActionGroups ?? [];
 
@@ -181,13 +251,14 @@ export async function run(
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
       // 1. For each pending action, find expressions and try to resolve them
-      if (pending != null) {
+      if (pending.length > 0) {
+        const pendingAction = pending[0]!;
         const actionsSoFar = resolvedActionGroups.length;
         const expressionsSoFar = resolvedActionGroups.reduce(
           (a, g) => a + g.expressions.length,
           0
         );
-        const currentActionExpressions = pending.expressions;
+        const currentActionExpressions = pendingAction.expressions;
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let pendingCommands: CommandParsed[] = [];
@@ -364,16 +435,18 @@ export async function run(
           resultStrings.push(resultStr);
         }
         const result = resultStrings.join("; ");
-        resolvedActionGroups.push({ ...pending, result });
+        resolvedActionGroups.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
           log("info", `result: ${result}`);
         }
 
-        // Reaching here implies that anything pending has been
-        // dealt with and we are ready for more model output:
-        pending = null;
+        pending.shift();
+        continue commandResolutionLoop;
       }
+
+      // Reaching here implies that anything pending has been
+      // dealt with and we are ready for more model output:
 
       if (modelCallCount >= MAX_MODEL_CALLS) {
         throw new HTTPError(
@@ -447,31 +520,7 @@ export async function run(
       // 4. Parse the completion into pending actions
       // 5. Update state with the current results, exit if we have reached a sink,
       //    otherwise goto (1)
-      if (!text.toLowerCase().startsWith("action:")) {
-        // Unstructured means a normal response that just needs to be sent back.
-        pending = {
-          action: `${RESPOND_COMMAND}(<text>)`,
-          expressions: [
-            {
-              name: RESPOND_COMMAND,
-              type: "call",
-              args: [
-                {
-                  type: "string",
-                  value: text,
-                },
-              ],
-            },
-          ],
-        };
-      } else {
-        const statementStr = text.substring("action:".length);
-        const statements = parseStatements(statementStr);
-        pending = {
-          action: statementStr,
-          expressions: statements,
-        };
-      }
+      pending = [...pending, ...parseCompletion(text)];
     }
   } catch (e) {
     if ("response" in e) {
@@ -619,77 +668,4 @@ function makeCommandSet(commands: CommandSet): string[] {
         }`;
       })
   );
-}
-
-export function getPendingCommandsOrResult(
-  commandId: string,
-  expr: Expr,
-  resolvedCommmands: Record<string, CommandExecuted>
-): { pendingCommands: CommandParsed[] } | { result: Value } {
-  // If we have an terminal value:
-  if (expr.type !== "call") {
-    return { result: expr };
-  }
-
-  // See if its already resolved
-  const maybeAlreadyResolved = resolvedCommmands[commandId];
-  if (maybeAlreadyResolved != null) {
-    if (maybeAlreadyResolved.name != expr.name) {
-      throw new Error(
-        `corruption! expected resolved call to be ${expr.name} ` +
-          `but got ${maybeAlreadyResolved.name}`
-      );
-    }
-    const result = maybeAlreadyResolved.returnValue;
-    return {
-      result,
-    };
-  }
-
-  // Build up a list of nested commands that must be resolved,
-  // or if they are all resolved build up a list of resolved arguments.
-  let pendingCommands: CommandParsed[] = [];
-  let resolvedArguments: Value[] | null = [];
-  for (const [i, arg] of Object.entries(expr.args)) {
-    if (arg.type !== "call") {
-      resolvedArguments?.push(arg);
-      continue;
-    }
-    const argResult = getPendingCommandsOrResult(
-      commandId + "." + i,
-      arg,
-      resolvedCommmands
-    );
-    if ("pendingCommands" in argResult) {
-      pendingCommands = [...pendingCommands, ...argResult.pendingCommands];
-      // if at least 1 arg is still pending, then we don't have resolved arguments:
-      resolvedArguments = null;
-      continue;
-    }
-    resolvedArguments?.push(argResult.result);
-  }
-
-  // If all of the arguments are resolved then this call
-  // becomes pending:
-  if (resolvedArguments != null) {
-    if (resolvedArguments.length !== expr.args.length) {
-      throw new Error(
-        `corruption! for ${expr.name} expected ${expr.args.length} ` +
-          `arguments but got ${resolvedArguments.length}`
-      );
-    }
-    return {
-      pendingCommands: [
-        {
-          type: "parsed",
-          args: resolvedArguments,
-          id: commandId,
-          name: expr.name,
-        },
-      ],
-    };
-  }
-
-  // Otherwise we need to resolve the nested children first:
-  return { pendingCommands };
 }

@@ -58,25 +58,27 @@ snapshot[`all commands resolved on the server 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "Your request has been fulfilled.",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Your request has been fulfilled.",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: ' now(); math("pi^2 + 123")',
+        action: 'now(); math("pi^2 + 123")',
         expressions: [
           {
             args: [
@@ -217,7 +219,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action:  now(); math("pi^2 + 123")',
+    content: 'Action: now(); math("pi^2 + 123")',
     role: "assistant",
   },
   {
@@ -285,25 +287,27 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: ' now(); math("pi^2 + 123")',
+        action: 'now(); math("pi^2 + 123")',
         expressions: [
           {
             args: [
@@ -357,6 +361,179 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
 }
 `;
 
+snapshot[`multiple actions in a single completion 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Your request has been fulfilled.",
+            },
+          ],
+          id: "3.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        result_1_0: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        result_2_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      },
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Your request has been fulfilled.",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActionGroups: [
+      {
+        action: "now()",
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+        result: '"2022-12-19T08:41:10Z"',
+      },
+      {
+        action: 'math("pi^2 + 123")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "pi^2 + 123",
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"132.86960440108936"',
+      },
+      {
+        action: "now()",
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+        result: '"2022-12-19T08:41:10Z"',
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "pi^2 + 123",
+          },
+        ],
+        id: "1.0",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "2.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
 snapshot[`empty action tries to run the model again 1`] = `
 {
   n: 2,
@@ -390,25 +567,27 @@ snapshot[`empty action tries to run the model again 1`] = `
       variables: {},
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: " ",
+        action: "",
         expressions: [
         ],
         result: "",
@@ -478,25 +657,27 @@ snapshot[`command overloads work 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: ' "string" + "concat"; 123 + 1',
+        action: '"string" + "concat"; 123 + 1',
         expressions: [
           {
             args: [
@@ -661,7 +842,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action:  "string" + "concat"; 123 + 1',
+    content: 'Action: "string" + "concat"; 123 + 1',
     role: "assistant",
   },
   {
@@ -704,47 +885,49 @@ snapshot[`infix + operand support 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' respond("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
-      expressions: [
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "infix ",
-                },
-                {
-                  args: [
-                    {
-                      args: [
-                        {
-                          type: "string",
-                          value: "America/New_York",
-                        },
-                      ],
-                      name: "currentTimeForTimezone",
-                      type: "call",
-                    },
-                    {
-                      type: "string",
-                      value: " hello",
-                    },
-                  ],
-                  name: "__+__",
-                  type: "call",
-                },
-              ],
-              name: "__+__",
-              type: "call",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'respond("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
+        expressions: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "infix ",
+                  },
+                  {
+                    args: [
+                      {
+                        args: [
+                          {
+                            type: "string",
+                            value: "America/New_York",
+                          },
+                        ],
+                        name: "currentTimeForTimezone",
+                        type: "call",
+                      },
+                      {
+                        type: "string",
+                        value: " hello",
+                      },
+                    ],
+                    name: "__+__",
+                    type: "call",
+                  },
+                ],
+                name: "__+__",
+                type: "call",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -840,69 +1023,70 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' 
-respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+    pending: [
+      {
+        action: 'respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
-      expressions: [
-        {
-          args: [
-            {
-              args: [
-                {
-                  args: [
-                    {
-                      type: "string",
-                      value: "The time in New York is ",
-                    },
-                    {
-                      args: [
-                        {
-                          type: "string",
-                          value: "America/New_York",
-                        },
-                      ],
-                      name: "currentTimeForTimezone",
-                      type: "call",
-                    },
-                  ],
-                  name: "__+__",
-                  type: "call",
-                },
-                {
-                  type: "string",
-                  value: " and I have created a calendar event for dinner with your wife 5 days from now.",
-                },
-              ],
-              name: "__+__",
-              type: "call",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "5 days from now",
-                },
-              ],
-              name: "parseRelativeTime",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "Dinner with wife",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-    },
+        expressions: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "string",
+                        value: "The time in New York is ",
+                      },
+                      {
+                        args: [
+                          {
+                            type: "string",
+                            value: "America/New_York",
+                          },
+                        ],
+                        name: "currentTimeForTimezone",
+                        type: "call",
+                      },
+                    ],
+                    name: "__+__",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+                  },
+                ],
+                name: "__+__",
+                type: "call",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "5 days from now",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -1010,61 +1194,63 @@ snapshot[`supports model outputs with top level infix call 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: " currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          name: "currentTimeForTimezone",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  args: [
-                    {
-                      args: [
-                        {
-                          type: "string",
-                          value: "in ",
-                        },
-                        {
-                          type: "number",
-                          value: 5,
-                        },
-                      ],
-                      name: "__+__",
-                      type: "call",
-                    },
-                    {
-                      type: "string",
-                      value: " days",
-                    },
-                  ],
-                  name: "__+__",
-                  type: "call",
-                },
-              ],
-              name: "parseRelativeTime",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "Dinner with Wife",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "America/New_York",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        args: [
+                          {
+                            type: "string",
+                            value: "in ",
+                          },
+                          {
+                            type: "number",
+                            value: 5,
+                          },
+                        ],
+                        name: "__+__",
+                        type: "call",
+                      },
+                      {
+                        type: "string",
+                        value: " days",
+                      },
+                    ],
+                    name: "__+__",
+                    type: "call",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with Wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -1187,63 +1373,65 @@ snapshot[`supports model outputs using template strings 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: " now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
-      expressions: [
-        {
-          args: [
-            {
-              args: [
-                {
-                  args: [
-                  ],
-                  name: "now",
-                  type: "call",
-                },
-                {
-                  type: "string",
-                  value: " ",
-                },
-              ],
-              name: "__+__",
-              type: "call",
-            },
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "America/New_York",
-                },
-              ],
-              name: "currentTimeForTimezone",
-              type: "call",
-            },
-          ],
-          name: "__+__",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "in 5 days",
-                },
-              ],
-              name: "parseRelativeTime",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "Dinner with Wife",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+        expressions: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    args: [
+                    ],
+                    name: "now",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: " ",
+                  },
+                ],
+                name: "__+__",
+                type: "call",
+              },
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "America/New_York",
+                  },
+                ],
+                name: "currentTimeForTimezone",
+                type: "call",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "in 5 days",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with Wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -1402,25 +1590,27 @@ snapshot[`supports model outputs with top level expression 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: \` "some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+        action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
         expressions: [
           {
             type: "string",
@@ -1531,25 +1721,27 @@ snapshot[`supports assignment 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: " a = 123; b = 111; a + b",
+        action: "a = 123; b = 111; a + b",
         expressions: [
           {
             args: [
@@ -1735,27 +1927,29 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
       variables: {},
     },
     modelCallCount: 2,
-    pending: {
-      action: ' now(); respond("not reused because client command")',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "not reused because client command",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'now(); respond("not reused because client command")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "not reused because client command",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -1834,27 +2028,29 @@ snapshot[`client resolved command 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' now(); respond("what do you want?")',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "what do you want?",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'now(); respond("what do you want?")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "what do you want?",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -1920,32 +2116,34 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-01-01",
-            },
-            {
-              type: "string",
-              value: "event name",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "2022-01-01",
+              },
+              {
+                type: "string",
+                value: "event name",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2022,32 +2220,34 @@ snapshot[`client resolved command - wrong return type 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-01-01",
-            },
-            {
-              type: "string",
-              value: "event name",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "2022-01-01",
+              },
+              {
+                type: "string",
+                value: "event name",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2124,32 +2324,34 @@ snapshot[`client resolved command - fulfilled 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "2022-01-01",
-            },
-            {
-              type: "string",
-              value: "event name",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "2022-01-01",
+              },
+              {
+                type: "string",
+                value: "event name",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2231,41 +2433,43 @@ snapshot[`nested calls 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          name: "currentTimeForTimezone",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "5 days from now",
-                },
-              ],
-              name: "parseRelativeTime",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "Dinner with Wife",
-            },
-          ],
-          name: "createCalendarEvent",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "America/New_York",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "5 days from now",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with Wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2393,43 +2597,45 @@ snapshot[`request needs more context 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' now(); editText(respond("please provide the text"), "convert to poem"); now()',
-      expressions: [
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              args: [
-                {
-                  type: "string",
-                  value: "please provide the text",
-                },
-              ],
-              name: "respond",
-              type: "call",
-            },
-            {
-              type: "string",
-              value: "convert to poem",
-            },
-          ],
-          name: "editText",
-          type: "call",
-        },
-        {
-          args: [
-          ],
-          name: "now",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'now(); editText(respond("please provide the text"), "convert to poem"); now()',
+        expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "please provide the text",
+                  },
+                ],
+                name: "respond",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "convert to poem",
+              },
+            ],
+            name: "editText",
+            type: "call",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2483,22 +2689,24 @@ snapshot[`request needs more context - still missing 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'respond("some response")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "some response",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'respond("some response")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "some response",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -2564,22 +2772,24 @@ snapshot[`request needs more context - wrong type 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'respond("some response")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "some response",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'respond("some response")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "some response",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -2645,22 +2855,24 @@ snapshot[`request needs more context - fulfilled 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: 'respond("some response")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "some response",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'respond("some response")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "some response",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -2731,22 +2943,24 @@ snapshot[`fulfilled but max loops 1`] = `
       variables: {},
     },
     modelCallCount: 10,
-    pending: {
-      action: 'respond("some response")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "some response",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'respond("some response")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "some response",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -2816,31 +3030,33 @@ snapshot[`top level commands are resolved sequentially 1`] = `
       variables: {},
     },
     modelCallCount: 1,
-    pending: {
-      action: ' respond("how are you?"); currentTimeForTimezone("America/New_York")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "how are you?",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-        {
-          args: [
-            {
-              type: "string",
-              value: "America/New_York",
-            },
-          ],
-          name: "currentTimeForTimezone",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'respond("how are you?"); currentTimeForTimezone("America/New_York")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "how are you?",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "America/New_York",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
     ],
@@ -2908,21 +3124,23 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -3044,25 +3262,27 @@ snapshot[`long results are truncated and stored in variables 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: ' longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+        action: 'longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
         expressions: [
           {
             args: [
@@ -3218,7 +3438,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action:  longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+    content: 'Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
     role: "assistant",
   },
   {
@@ -3390,25 +3610,27 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
     },
     modelCallCount: 10,
-    pending: {
-      action: "respond(<text>)",
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          name: "respond",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: "respond(<text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: ' "hello result"',
+        action: '"hello result"',
         expressions: [
           {
             type: "string",
@@ -3418,7 +3640,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: " result",
+        action: "result",
         expressions: [
           {
             args: [
@@ -3434,7 +3656,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: ' var a = "b"; "should override result within same action"; result',
+        action: 'var a = "b"; "should override result within same action"; result',
         expressions: [
           {
             args: [
@@ -3468,7 +3690,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: 'void; "should override result within same action"; "should override result within same action"',
       },
       {
-        action: " rEsUlt",
+        action: "rEsUlt",
         expressions: [
           {
             args: [
@@ -3484,7 +3706,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"should override result within same action"',
       },
       {
-        action: ' var result = "new result"',
+        action: 'var result = "new result"',
         expressions: [
           {
             args: [
@@ -3504,7 +3726,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: "void",
       },
       {
-        action: ' "this should not show up twice"',
+        action: '"this should not show up twice"',
         expressions: [
           {
             type: "string",
@@ -3514,7 +3736,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should not show up twice"',
       },
       {
-        action: " result",
+        action: "result",
         expressions: [
           {
             args: [
@@ -3530,7 +3752,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"new result"',
       },
       {
-        action: ' "this should show up"',
+        action: '"this should show up"',
         expressions: [
           {
             type: "string",
@@ -3540,7 +3762,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should show up"',
       },
       {
-        action: " reSult",
+        action: "reSult",
         expressions: [
           {
             args: [
@@ -3719,25 +3941,27 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
       },
     },
     modelCallCount: 2,
-    pending: {
-      action: ' commandWithNumberArg("123123.00")',
-      expressions: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "123123.00",
-            },
-          ],
-          name: "commandWithNumberArg",
-          type: "call",
-        },
-      ],
-    },
+    pending: [
+      {
+        action: 'commandWithNumberArg("123123.00")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "123123.00",
+              },
+            ],
+            name: "commandWithNumberArg",
+            type: "call",
+          },
+        ],
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
-        action: " math(123123)",
+        action: "math(123123)",
         expressions: [
           {
             args: [
@@ -3770,80 +3994,6 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
         type: "executed",
       },
     ],
-  },
-}
-`;
-
-snapshot[`example A step 1 1`] = `
-{
-  pendingCommands: [
-    {
-      args: [
-      ],
-      id: "0.0",
-      name: "a",
-      type: "parsed",
-    },
-    {
-      args: [
-      ],
-      id: "0.1.1",
-      name: "c",
-      type: "parsed",
-    },
-  ],
-}
-`;
-
-snapshot[`example A step 2 1`] = `
-{
-  pendingCommands: [
-    {
-      args: [
-        {
-          type: "number",
-          value: 123,
-        },
-        {
-          type: "string",
-          value: "blah",
-        },
-      ],
-      id: "0.1",
-      name: "b",
-      type: "parsed",
-    },
-  ],
-}
-`;
-
-snapshot[`example A step 3 1`] = `
-{
-  pendingCommands: [
-    {
-      args: [
-        {
-          type: "number",
-          value: 123,
-        },
-        {
-          type: "string",
-          value: "ha",
-        },
-      ],
-      id: "0",
-      name: "test",
-      type: "parsed",
-    },
-  ],
-}
-`;
-
-snapshot[`example A step 4 1`] = `
-{
-  result: {
-    type: "number",
-    value: 123,
   },
 }
 `;

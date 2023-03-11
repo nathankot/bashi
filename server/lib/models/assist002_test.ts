@@ -4,33 +4,29 @@ import { ChatCompletionRequestMessage } from "openai";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
-import { CommandExecuted, parseExpression } from "@lib/command.ts";
 
-import {
-  MAX_MODEL_CALLS,
-  Input,
-  run,
-  getPendingCommandsOrResult,
-} from "./assist002.ts";
+import { MAX_MODEL_CALLS, Input, run } from "./assist002.ts";
 
 const pendingClientCommandState = () =>
   ({
     modelCallCount: 1,
-    pending: {
-      action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-      expressions: [
-        { type: "call", args: [], name: "now" },
-        {
-          type: "call",
-          name: "createCalendarEvent",
-          args: [
-            { type: "string", value: "2022-01-01" },
-            { type: "string", value: "event name" },
-          ],
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
+        expressions: [
+          { type: "call", args: [], name: "now" },
+          {
+            type: "call",
+            name: "createCalendarEvent",
+            args: [
+              { type: "string", value: "2022-01-01" },
+              { type: "string", value: "event name" },
+            ],
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [],
     resolvedCommands: [
@@ -48,17 +44,19 @@ const pendingClientCommandState = () =>
 const pendingInputState = () =>
   ({
     modelCallCount: 1,
-    pending: {
-      action: 'respond("some response")',
-      expressions: [
-        {
-          type: "call",
-          args: [{ type: "string", value: "some response" }],
-          name: "respond",
-        },
-      ],
-      result: undefined,
-    },
+    pending: [
+      {
+        action: 'respond("some response")',
+        expressions: [
+          {
+            type: "call",
+            args: [{ type: "string", value: "some response" }],
+            name: "respond",
+          },
+        ],
+        result: undefined,
+      },
+    ],
     request: "some request",
     resolvedActionGroups: [
       {
@@ -99,6 +97,14 @@ for (const test of [
     description: "all commands resolved on the server - empty final response",
     input: { request: "some request" },
     openAiResults: [`Action: now(); math("pi^2 + 123")`, ``],
+  },
+  {
+    description: "multiple actions in a single completion",
+    input: { request: "some request" },
+    openAiResults: [
+      `Action: now()\n action: math("pi^2 + 123")\nAction: now()`,
+      `Your request has been fulfilled.`,
+    ],
   },
   {
     description: "empty action tries to run the model again",
@@ -310,23 +316,25 @@ for (const test of [
     openAiResults: [`I have finished`],
     initialState: {
       modelCallCount: 1,
-      pending: {
-        action:
-          'respond("how are you?"); currentTimeForTimezone("America/New_York")',
-        expressions: [
-          {
-            args: [{ type: "string", value: "how are you?" }],
-            name: "respond",
-            type: "call",
-          },
-          {
-            args: [{ type: "string", value: "America/New_York" }],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
-        ],
-        result: undefined,
-      },
+      pending: [
+        {
+          action:
+            'respond("how are you?"); currentTimeForTimezone("America/New_York")',
+          expressions: [
+            {
+              args: [{ type: "string", value: "how are you?" }],
+              name: "respond",
+              type: "call",
+            },
+            {
+              args: [{ type: "string", value: "America/New_York" }],
+              name: "currentTimeForTimezone",
+              type: "call",
+            },
+          ],
+          result: undefined,
+        },
+      ],
       request: "some request",
       resolvedActionGroups: [],
       resolvedCommands: [],
@@ -457,86 +465,6 @@ for (const test of [
         throw e;
       }
 
-      await assertSnapshot(t, e.message);
-    }
-  });
-}
-
-for (const test of [
-  {
-    description: "example A step 1",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {},
-  },
-  {
-    description: "example A step 2",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0.0": {
-        type: "executed",
-        args: [],
-        id: "0.0",
-        name: "a",
-        returnValue: { type: "number", value: 123 },
-      },
-      "0.1.1": {
-        type: "executed",
-        args: [],
-        id: "0.1.1",
-        name: "c",
-        returnValue: { type: "string", value: "blah" },
-      },
-    } as Record<string, CommandExecuted>,
-  },
-  {
-    description: "example A step 3",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0.0": {
-        type: "executed",
-        args: [],
-        id: "0.0",
-        name: "a",
-        returnValue: { type: "number", value: 123 },
-      },
-      "0.1": {
-        type: "executed",
-        args: [],
-        id: "0.1",
-        name: "b",
-        returnValue: { type: "string", value: "ha" },
-      },
-    } as Record<string, CommandExecuted>,
-  },
-  {
-    description: "example A step 4",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0": {
-        type: "executed",
-        args: [],
-        id: "0",
-        name: "test",
-        returnValue: { type: "number", value: 123 },
-      },
-    } as Record<string, CommandExecuted>,
-  },
-]) {
-  Deno.test(test.description, async (t) => {
-    try {
-      await assertSnapshot(
-        t,
-        getPendingCommandsOrResult(
-          test.commandId,
-          test.call,
-          test.resolvedCommands
-        )
-      );
-    } catch (e) {
       await assertSnapshot(t, e.message);
     }
   });

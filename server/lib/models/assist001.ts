@@ -8,7 +8,13 @@ import { ModelDeps } from "./modelDeps.ts";
 import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
-import { Input, Result, languageBuiltinCommands } from "./assistShared.ts";
+
+import {
+  Input,
+  Result,
+  languageBuiltinCommands,
+  getPendingCommandsOrResult,
+} from "./assistShared.ts";
 
 import {
   Memory,
@@ -36,7 +42,7 @@ const ActionGroup = t.intersection([
 ]);
 type ActionGroup = t.TypeOf<typeof ActionGroup>;
 
-enum T2 {
+enum T {
   KeywordThought,
   KeywordAction,
   KeywordResult,
@@ -46,33 +52,33 @@ enum T2 {
 }
 
 const actionLexer = p.buildLexer([
-  [true, /^\n( *?)Thought( *?):/gi, T2.KeywordThought],
-  [true, /^\n( *?)Action( *?):/gi, T2.KeywordAction],
-  [true, /^\n( *?)Result( *?):/gi, T2.KeywordResult],
-  [true, /^\n/g, T2.Newline],
-  [true, /^./g, T2.Char],
+  [true, /^\n( *?)Thought( *?):/gi, T.KeywordThought],
+  [true, /^\n( *?)Action( *?):/gi, T.KeywordAction],
+  [true, /^\n( *?)Result( *?):/gi, T.KeywordResult],
+  [true, /^\n/g, T.Newline],
+  [true, /^./g, T.Char],
 ]);
 
-const STRING = p.rule<T2, string>();
+const STRING = p.rule<T, string>();
 STRING.setPattern(
   p.lrec_sc(
-    p.apply(p.alt(p.tok(T2.Char), p.tok(T2.Newline)), (c) => c.text),
-    p.alt(p.tok(T2.Char), p.tok(T2.Newline)),
+    p.apply(p.alt(p.tok(T.Char), p.tok(T.Newline)), (c) => c.text),
+    p.alt(p.tok(T.Char), p.tok(T.Newline)),
     (c1, c2) => c1 + c2.text
   )
 );
 
-const ACTION_GROUP = p.rule<T2, ActionGroup>();
+const ACTION_GROUP = p.rule<T, ActionGroup>();
 ACTION_GROUP.setPattern(
   p.apply(
     p.seq(
-      p.apply(p.kright(p.tok(T2.KeywordThought), STRING), (str) => str.trim()),
+      p.apply(p.kright(p.tok(T.KeywordThought), STRING), (str) => str.trim()),
       p.apply(
-        p.kright(p.tok(T2.KeywordAction), p.opt_sc(STRING)),
+        p.kright(p.tok(T.KeywordAction), p.opt_sc(STRING)),
         (str) => str?.trim() ?? ""
       ),
       p.opt_sc(
-        p.apply(p.kright(p.tok(T2.KeywordResult), p.opt_sc(STRING)), (str) => {
+        p.apply(p.kright(p.tok(T.KeywordResult), p.opt_sc(STRING)), (str) => {
           const result = str != null ? str.trim() : "";
           if (result.length === 0) {
             return undefined;
@@ -668,77 +674,4 @@ function makeCommandSet(commands: CommandSet): string[] {
         c.description
       }`;
     });
-}
-
-export function getPendingCommandsOrResult(
-  commandId: string,
-  expr: Expr,
-  resolvedCommmands: Record<string, CommandExecuted>
-): { pendingCommands: CommandParsed[] } | { result: Value } {
-  // If we have an terminal value:
-  if (expr.type !== "call") {
-    return { result: expr };
-  }
-
-  // See if its already resolved
-  const maybeAlreadyResolved = resolvedCommmands[commandId];
-  if (maybeAlreadyResolved != null) {
-    if (maybeAlreadyResolved.name != expr.name) {
-      throw new Error(
-        `corruption! expected resolved call to be ${expr.name} ` +
-          `but got ${maybeAlreadyResolved.name}`
-      );
-    }
-    const result = maybeAlreadyResolved.returnValue;
-    return {
-      result,
-    };
-  }
-
-  // Build up a list of nested commands that must be resolved,
-  // or if they are all resolved build up a list of resolved arguments.
-  let pendingCommands: CommandParsed[] = [];
-  let resolvedArguments: Value[] | null = [];
-  for (const [i, arg] of Object.entries(expr.args)) {
-    if (arg.type !== "call") {
-      resolvedArguments?.push(arg);
-      continue;
-    }
-    const argResult = getPendingCommandsOrResult(
-      commandId + "." + i,
-      arg,
-      resolvedCommmands
-    );
-    if ("pendingCommands" in argResult) {
-      pendingCommands = [...pendingCommands, ...argResult.pendingCommands];
-      // if at least 1 arg is still pending, then we don't have resolved arguments:
-      resolvedArguments = null;
-      continue;
-    }
-    resolvedArguments?.push(argResult.result);
-  }
-
-  // If all of the arguments are resolved then this call
-  // becomes pending:
-  if (resolvedArguments != null) {
-    if (resolvedArguments.length !== expr.args.length) {
-      throw new Error(
-        `corruption! for ${expr.name} expected ${expr.args.length} ` +
-          `arguments but got ${resolvedArguments.length}`
-      );
-    }
-    return {
-      pendingCommands: [
-        {
-          type: "parsed",
-          args: resolvedArguments,
-          id: commandId,
-          name: expr.name,
-        },
-      ],
-    };
-  }
-
-  // Otherwise we need to resolve the nested children first:
-  return { pendingCommands };
 }

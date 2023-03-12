@@ -560,7 +560,7 @@ function makePromptMessages(
   request: string,
   resolvedActionGroups: State["resolvedActionGroups"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below), use these functions/tools to help with fulfilling the request. If the request necessitates a function that does not exist, answer the question directly if expert knowledge is readily available, otherwise let the user know that it cannot be fulfilled.
 
 Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
 

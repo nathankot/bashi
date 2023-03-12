@@ -5,7 +5,7 @@ import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
 
-import { MAX_MODEL_CALLS, Input, run } from "./assist002.ts";
+import { MAX_MODEL_CALLS, Input, run, parseCompletion } from "./assist002.ts";
 
 const pendingClientCommandState = () =>
   ({
@@ -28,7 +28,7 @@ const pendingClientCommandState = () =>
       },
     ],
     request: "some request",
-    resolvedActionGroups: [],
+    resolvedActions: [],
     resolvedCommands: [
       {
         args: [],
@@ -58,7 +58,7 @@ const pendingInputState = () =>
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "someCommand()",
         result: `"blah"`,
@@ -94,9 +94,11 @@ for (const test of [
     snapshotPrompts: true,
   },
   {
-    description: "all commands resolved on the server - empty final response",
+    description:
+      "all commands resolved on the server - empty response tries again",
     input: { request: "some request" },
-    openAiResults: [`Action: now(); math("pi^2 + 123")`, ``],
+    openAiResults: [`Action: now(); math("pi^2 + 123")`, ``, `Finish`],
+    snapshotPrompts: true,
   },
   {
     description: "multiple actions in a single completion",
@@ -107,14 +109,17 @@ for (const test of [
     ],
   },
   {
-    description: "empty action tries to run the model again",
+    description: "non-action lines at the end of a completion",
     input: { request: "some request" },
-    openAiResults: [`Action: `, `I have finished`],
+    openAiResults: [
+      `Action: now()\n action: math("pi^2 + 123")\n\nthisline is not prefixed with action, what will be the behavior?`,
+      `Your request has been fulfilled.`,
+    ],
   },
   {
     description: "command overloads work",
     input: { request: "some request" },
-    openAiResults: [`Action: "string" + "concat"; 123 + 1`, `I have finished`],
+    openAiResults: [`Action: "string" + "concat"; 123 + 1;`, `I have finished`],
     snapshotPrompts: true,
   },
   {
@@ -159,7 +164,7 @@ for (const test of [
   {
     description: "supports assignment",
     input: { request: "some request" },
-    openAiResults: [`Action: a = 123; b = 111; a + b`, `I have finished`],
+    openAiResults: [`Action: a = 123; b = 111; a + b;`, `I have finished`],
   },
   {
     description: "server commands with identical inputs re-use results",
@@ -336,7 +341,7 @@ for (const test of [
         },
       ],
       request: "some request",
-      resolvedActionGroups: [],
+      resolvedActions: [],
       resolvedCommands: [],
     },
   },
@@ -344,7 +349,7 @@ for (const test of [
     description: "long results are truncated and stored in variables",
     input: { request: "some request" },
     openAiResults: [
-      `Action: longVar = "${new Array(500).fill("word").join(" ")}"; longVar`,
+      `Action: longVar = "${new Array(500).fill("word").join(" ")}"; longVar;`,
       `I have finished`,
     ],
     snapshotPrompts: true,
@@ -354,15 +359,15 @@ for (const test of [
       "the 'result' var name is magic and refers to the previous result if not already assigned",
     input: { request: "some request" },
     openAiResults: [
-      `Action: "hello result"`,
-      `Action: result`,
-      `Action: var a = "b"; "should override result within same action"; result`, // assignment returns void which should be ignored
-      `Action: rEsUlt`, // any case
-      `Action: var result = "new result"`, // override
-      `Action: "this should not show up twice"`,
-      `Action: result`, // should be the variable
-      `Action: "this should show up"`,
-      `Action: reSult`, // should be the result
+      `Action: "hello result";`,
+      `Action: result;`,
+      `Action: var a = "b"; "should override result within same action"; result;`, // assignment returns void which should be ignored
+      `Action: rEsUlt;`, // any case
+      `Action: var result = "new result";`, // override
+      `Action: "this should not show up twice";`,
+      `Action: result;`, // should be the variable
+      `Action: "this should show up";`,
+      `Action: reSult;`, // should be the result
       `I have finished`,
     ],
   },
@@ -469,3 +474,25 @@ for (const test of [
     }
   });
 }
+
+Deno.test("complex parseCompletion", async (t) => {
+  await assertSnapshot(
+    t,
+    parseCompletion(
+      `\naction: a(b())
+action: d(\n123\n); g()
+action: c()
+action: c(
+ "action: a()"
+); g(123)
+
+Action: a = 123; b = 111; a + b;
+hello 123
+test test 1111 action: c()
+
+  action: f()
+
+hello`
+    )
+  );
+});

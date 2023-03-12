@@ -151,7 +151,7 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `translate text into target language`,
   args: [
-    { name: "input", type: "string" },
+    { name: "english input", type: "string" },
     { name: "target language full name", type: "string" },
   ],
   run: async (modelDeps, [input, targetLanguage]) => {

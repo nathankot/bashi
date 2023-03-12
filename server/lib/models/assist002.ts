@@ -47,57 +47,80 @@ const Action = t.intersection([
 ]);
 type Action = t.TypeOf<typeof Action>;
 
-enum T {
+export enum T {
   KeywordAction,
   Char,
   Newline,
 }
 
-const actionLexer = p.buildLexer([
-  [true, /^\n+( *?)Action( *?):/gi, T.KeywordAction],
+export const actionLexer = p.buildLexer([
+  [true, /^\n+( *?)Action( ?):/gi, T.KeywordAction],
   [true, /^\n/g, T.Newline],
   [true, /^./g, T.Char],
 ]);
 
-const STRING = p.rule<T, string>();
-STRING.setPattern(
-  p.lrec_sc(
-    p.apply(p.alt(p.tok(T.Char), p.tok(T.Newline)), (c) => c.text),
-    p.alt(p.tok(T.Char), p.tok(T.Newline)),
-    (c1, c2) => c1 + c2.text
-  )
-);
+export function parseCompletion(completion: string): Action[] {
+  const expr = p.apply(
+    p.seq(
+      p.rep(p.alt(p.tok(T.Char), p.tok(T.Newline))),
+      p.alt(p.str(")"), p.str(";"))
+    ),
+    ([xs, y]): { action: string } => ({
+      action: (xs.map((x) => x.text).join("") + y.text).trim(),
+    })
+  );
+  const str = p.apply(p.rep_sc(p.tok(T.Char)), (xs) =>
+    xs
+      .map((x) => x.text)
+      .join("")
+      .trim()
+  );
+  const action = p.kright(p.tok(T.KeywordAction), expr);
+  const list = p.rep_sc(p.alt(action, p.kright(p.tok(T.Newline), str)));
 
-const ACTIONS = p.rule<T, Action[]>();
-ACTIONS.setPattern(
-  p.rep_sc(
-    p.apply(
-      p.apply(
-        p.kright(p.tok(T.KeywordAction), p.opt_sc(STRING)),
-        (str) => str?.trim() ?? ""
-      ),
-      (action) => {
-        const expressions = parseStatements(action);
-        return {
-          action,
-          expressions,
-        };
-      }
+  const result = list.parse(
+    actionLexer.parse(
+      // newline is necessary in order to disambiguate
+      // between Action: at the start of a line vs elsewhere
+      "\n" + completion
     )
-  )
-);
+  );
 
-function parseCompletion(completion: string): Action[] {
-  try {
-    const result = ACTIONS.parse(actionLexer.parse(`\n` + completion));
-    if (result.successful === true) {
-      return p.expectSingleResult(p.expectEOF(result));
+  if (result.successful !== true) {
+    throw result.error;
+  }
+
+  let candidates = result.candidates
+    // Only consider candidates that have consumed to the EOF
+    .filter((c) => c.nextToken == null)
+    // Remove any empty strings
+    .map((c) => c.result.filter((v) => v !== ""));
+
+  if (candidates.length !== 1) {
+    throw new Error(
+      `expect to have 1 candidate after parsing, got ${candidates.length}`
+    );
+  }
+
+  const items = candidates[0]!;
+  let actions: Action[] = [];
+  let strings: string[] = [];
+
+  for (const item of items) {
+    if (typeof item === "string") {
+      strings.push(item);
+    } else {
+      actions.push({
+        action: item.action,
+        expressions: parseStatements(item.action),
+      });
     }
-  } catch {}
-  // Unstructured means a normal response that just needs to be sent back.
-  return [
-    {
-      action: `${RESPOND_COMMAND}(<text>)`,
+  }
+
+  // Strings get joined together and placed as an action at the end.
+  if (strings.length > 0) {
+    actions.push({
+      action: `${RESPOND_COMMAND}(<truncated text>)`,
       expressions: [
         {
           name: RESPOND_COMMAND,
@@ -105,19 +128,21 @@ function parseCompletion(completion: string): Action[] {
           args: [
             {
               type: "string",
-              value: completion,
+              value: strings.join("\n"),
             },
           ],
         },
       ],
-    },
-  ];
+    });
+  }
+
+  return actions;
 }
 
 export const State = t.type({
   request: t.string,
   modelCallCount: t.number,
-  resolvedActionGroups: t.array(
+  resolvedActions: t.array(
     t.intersection([
       Action,
       t.type({
@@ -224,7 +249,7 @@ export async function run(
   let modelCallCount = state?.modelCallCount ?? 0;
   let pending = state?.pending ?? [];
   let resolvedCommands = state?.resolvedCommands ?? [];
-  let resolvedActionGroups = state?.resolvedActionGroups ?? [];
+  let resolvedActions = state?.resolvedActions ?? [];
 
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
@@ -253,8 +278,8 @@ export async function run(
       // 1. For each pending action, find expressions and try to resolve them
       if (pending.length > 0) {
         const pendingAction = pending[0]!;
-        const actionsSoFar = resolvedActionGroups.length;
-        const expressionsSoFar = resolvedActionGroups.reduce(
+        const actionsSoFar = resolvedActions.length;
+        const expressionsSoFar = resolvedActions.reduce(
           (a, g) => a + g.expressions.length,
           0
         );
@@ -435,7 +460,7 @@ export async function run(
           resultStrings.push(resultStr);
         }
         const result = resultStrings.join("; ");
-        resolvedActionGroups.push({ ...pendingAction, result });
+        resolvedActions.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
           log("info", `result: ${result}`);
@@ -463,7 +488,7 @@ export async function run(
           ...builtinCommands,
         },
         request,
-        resolvedActionGroups
+        resolvedActions
       );
 
       const completion = await modelDeps.openai.createChatCompletion(
@@ -548,7 +573,7 @@ export async function run(
         modelCallCount,
         request,
         pending: pending ?? null,
-        resolvedActionGroups,
+        resolvedActions,
         resolvedCommands,
       },
     });
@@ -558,33 +583,39 @@ export async function run(
 function makePromptMessages(
   commands: CommandSet,
   request: string,
-  resolvedActionGroups: State["resolvedActionGroups"]
+  resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below), use these functions/tools to help with fulfilling the request. If the request necessitates a function that does not exist, answer the question directly if expert knowledge is readily available, otherwise let the user know that it cannot be fulfilled.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -592,9 +623,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
 
   const commandSet = makeCommandSet(
     filterUnnecessary(
-      request +
-        " " +
-        resolvedActionGroups.map((g) => `${g.action} ${g.result}`),
+      request + " " + resolvedActions.map((g) => `${g.action} ${g.result}`),
       commands
     )
   ).join("\n");
@@ -602,7 +631,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
   return [
     { role: "system", content: `${header}\n\n${commandSet}` },
     { role: "user", content: request },
-    ...resolvedActionGroups
+    ...resolvedActions
       .map((g): ChatCompletionRequestMessage[] => {
         if (g.expressions.length === 1) {
           const firstExpr = g.expressions[0]!;

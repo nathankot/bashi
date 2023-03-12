@@ -60,7 +60,7 @@ snapshot[`all commands resolved on the server 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -76,7 +76,7 @@ snapshot[`all commands resolved on the server 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: 'now(); math("pi^2 + 123")',
         expressions: [
@@ -135,31 +135,37 @@ snapshot[`all commands resolved on the server 1`] = `
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -177,31 +183,37 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -229,9 +241,9 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
 ]
 `;
 
-snapshot[`all commands resolved on the server - empty final response 1`] = `
+snapshot[`all commands resolved on the server - empty response tries again 1`] = `
 {
-  n: 2,
+  n: 3,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -242,7 +254,7 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
           args: [
             {
               type: "string",
-              value: "",
+              value: "Finish",
             },
           ],
           id: "1.0",
@@ -286,16 +298,16 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
         },
       },
     },
-    modelCallCount: 2,
+    modelCallCount: 3,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
               {
                 type: "string",
-                value: "",
+                value: "Finish",
               },
             ],
             name: "respond",
@@ -305,7 +317,7 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: 'now(); math("pi^2 + 123")',
         expressions: [
@@ -359,6 +371,171 @@ snapshot[`all commands resolved on the server - empty final response 1`] = `
     ],
   },
 }
+`;
+
+snapshot[`all commands resolved on the server - empty response tries again 2`] = `
+[
+  {
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+
+  Action: exampleAction("arg 1", arg2);
+
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
+
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
+
+It is also possible to use multiple actions in sequence:
+
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
+
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
+
+* nested function calls
+* string concatenation using +
+* referencing previously assigned variables
+* string, number and boolean literals
+
+A minimal example of an action with a complex argument using all available expression features:
+
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
+
+Do not assume any language features exist beyond what is referenced above.
+
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+
+  Action: exampleAction("arg 1", arg2);
+
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
+
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
+
+It is also possible to use multiple actions in sequence:
+
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
+
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
+
+* nested function calls
+* string concatenation using +
+* referencing previously assigned variables
+* string, number and boolean literals
+
+A minimal example of an action with a complex argument using all available expression features:
+
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
+
+Do not assume any language features exist beyond what is referenced above.
+
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Action: now(); math("pi^2 + 123")',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    role: "system",
+  },
+  {
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+
+  Action: exampleAction("arg 1", arg2);
+
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
+
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
+
+It is also possible to use multiple actions in sequence:
+
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
+
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
+
+* nested function calls
+* string concatenation using +
+* referencing previously assigned variables
+* string, number and boolean literals
+
+A minimal example of an action with a complex argument using all available expression features:
+
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
+
+Do not assume any language features exist beyond what is referenced above.
+
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+
+\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime
+\`commandWithNumberArg("some number": number): void\` - some fixture command
+\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+    role: "system",
+  },
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'Action: now(); math("pi^2 + 123")',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    role: "system",
+  },
+]
 `;
 
 snapshot[`multiple actions in a single completion 1`] = `
@@ -433,7 +610,7 @@ snapshot[`multiple actions in a single completion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -449,7 +626,7 @@ snapshot[`multiple actions in a single completion 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "now()",
         expressions: [
@@ -534,9 +711,9 @@ snapshot[`multiple actions in a single completion 1`] = `
 }
 `;
 
-snapshot[`empty action tries to run the model again 1`] = `
+snapshot[`non-action lines at the end of a completion 1`] = `
 {
-  n: 2,
+  n: 1,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -547,15 +724,23 @@ snapshot[`empty action tries to run the model again 1`] = `
           args: [
             {
               type: "string",
-              value: "I have finished",
+              value: "thisline is not prefixed with action, what will be the behavior?",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
       ],
       type: "pending_commands",
     },
@@ -563,19 +748,36 @@ snapshot[`empty action tries to run the model again 1`] = `
   state: {
     memory: {
       topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "132.86960440108936",
+        },
       ],
-      variables: {},
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        result_1_0: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+      },
     },
-    modelCallCount: 2,
+    modelCallCount: 1,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
               {
                 type: "string",
-                value: "I have finished",
+                value: "thisline is not prefixed with action, what will be the behavior?",
               },
             ],
             name: "respond",
@@ -585,15 +787,63 @@ snapshot[`empty action tries to run the model again 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
-        action: "",
+        action: "now()",
         expressions: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
         ],
-        result: "",
+        result: '"2022-12-19T08:41:10Z"',
+      },
+      {
+        action: 'math("pi^2 + 123")',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "pi^2 + 123",
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+        ],
+        result: '"132.86960440108936"',
       },
     ],
     resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "pi^2 + 123",
+          },
+        ],
+        id: "1.0",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "132.86960440108936",
+        },
+        type: "executed",
+      },
     ],
   },
 }
@@ -659,7 +909,7 @@ snapshot[`command overloads work 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -675,9 +925,9 @@ snapshot[`command overloads work 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
-        action: '"string" + "concat"; 123 + 1',
+        action: '"string" + "concat"; 123 + 1;',
         expressions: [
           {
             args: [
@@ -758,31 +1008,37 @@ snapshot[`command overloads work 1`] = `
 snapshot[`command overloads work 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -800,31 +1056,37 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -842,7 +1104,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: "string" + "concat"; 123 + 1',
+    content: 'Action: "string" + "concat"; 123 + 1;',
     role: "assistant",
   },
   {
@@ -929,7 +1191,7 @@ snapshot[`infix + operand support 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -1025,8 +1287,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
-createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
+        action: 'respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");',
         expressions: [
           {
             args: [
@@ -1064,31 +1325,26 @@ createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
             name: "respond",
             type: "call",
           },
+        ],
+      },
+      {
+        action: "respond(<truncated text>)",
+        expressions: [
           {
             args: [
               {
-                args: [
-                  {
-                    type: "string",
-                    value: "5 days from now",
-                  },
-                ],
-                name: "parseRelativeTime",
-                type: "call",
-              },
-              {
                 type: "string",
-                value: "Dinner with wife",
+                value: 'createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
               },
             ],
-            name: "createCalendarEvent",
+            name: "respond",
             type: "call",
           },
         ],
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -1252,7 +1508,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -1433,7 +1689,7 @@ snapshot[`supports model outputs using template strings 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -1592,7 +1848,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -1608,7 +1864,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
         expressions: [
@@ -1723,7 +1979,7 @@ snapshot[`supports assignment 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -1739,9 +1995,9 @@ snapshot[`supports assignment 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
-        action: "a = 123; b = 111; a + b",
+        action: "a = 123; b = 111; a + b;",
         expressions: [
           {
             args: [
@@ -1951,7 +2207,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2052,7 +2308,7 @@ snapshot[`client resolved command 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2145,7 +2401,7 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2249,7 +2505,7 @@ snapshot[`client resolved command - wrong return type 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2353,7 +2609,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2471,7 +2727,7 @@ snapshot[`nested calls 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2512,31 +2768,37 @@ snapshot[`nested calls 1`] = `
 snapshot[`nested calls 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -2637,7 +2899,7 @@ snapshot[`request needs more context 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -2708,7 +2970,7 @@ snapshot[`request needs more context - still missing 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "someCommand()",
         expressions: [
@@ -2791,7 +3053,7 @@ snapshot[`request needs more context - wrong type 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "someCommand()",
         expressions: [
@@ -2874,7 +3136,7 @@ snapshot[`request needs more context - fulfilled 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "someCommand()",
         expressions: [
@@ -2962,7 +3224,7 @@ snapshot[`fulfilled but max loops 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "someCommand()",
         expressions: [
@@ -3058,7 +3320,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
     ],
     resolvedCommands: [
     ],
@@ -3126,7 +3388,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -3142,7 +3404,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: 'respond("how are you?"); currentTimeForTimezone("America/New_York")',
         expressions: [
@@ -3264,7 +3526,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -3280,9 +3542,9 @@ snapshot[`long results are truncated and stored in variables 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
-        action: 'longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+        action: 'longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar;',
         expressions: [
           {
             args: [
@@ -3354,31 +3616,37 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -3396,31 +3664,37 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up - be upfront if the request cannot be fulfilled. A custom language called Bashi is available to call functions (documented below) in order to help with this process.
+    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-Your response can either be a normal message, or a message prefixed with Action: in order to run a function. The format for an action is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
 
-Action: exampleAction("arg 1", arg2)
+  Action: exampleAction("arg 1", arg2);
 
-It is possible to assign the result of an action to a variable:
+It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-Action: var someVariable = exampleAction("arg 1", arg2)
+  Action: var a = exampleAction("arg 1", arg2);
+  The result is \${a}
 
 It is also possible to use multiple actions in sequence:
 
-Action: var a = exampleAction()
-Action: exampleAction2(a)
+  Action: var a = exampleAction();
+  Action: exampleAction2(a);
+  Some string response
 
-Arguments to the functions are expressions that support:
+A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+
+  Some string response
+
+Function arguments are expressions that support:
 
 * nested function calls
 * string concatenation using +
 * referencing previously assigned variables
 * string, number and boolean literals
 
-Below is a minimal example of an action with a complex argument expression using all available features:
+A minimal example of an action with a complex argument using all available expression features:
 
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`)
+Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
 
 Do not assume any language features exist beyond what is referenced above.
 
@@ -3438,7 +3712,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar',
+    content: 'Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar;',
     role: "assistant",
   },
   {
@@ -3612,7 +3886,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     modelCallCount: 10,
     pending: [
       {
-        action: "respond(<text>)",
+        action: "respond(<truncated text>)",
         expressions: [
           {
             args: [
@@ -3628,9 +3902,9 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
-        action: '"hello result"',
+        action: '"hello result";',
         expressions: [
           {
             type: "string",
@@ -3640,7 +3914,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: "result",
+        action: "result;",
         expressions: [
           {
             args: [
@@ -3656,7 +3930,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: 'var a = "b"; "should override result within same action"; result',
+        action: 'var a = "b"; "should override result within same action"; result;',
         expressions: [
           {
             args: [
@@ -3690,7 +3964,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: 'void; "should override result within same action"; "should override result within same action"',
       },
       {
-        action: "rEsUlt",
+        action: "rEsUlt;",
         expressions: [
           {
             args: [
@@ -3706,7 +3980,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"should override result within same action"',
       },
       {
-        action: 'var result = "new result"',
+        action: 'var result = "new result";',
         expressions: [
           {
             args: [
@@ -3726,7 +4000,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: "void",
       },
       {
-        action: '"this should not show up twice"',
+        action: '"this should not show up twice";',
         expressions: [
           {
             type: "string",
@@ -3736,7 +4010,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should not show up twice"',
       },
       {
-        action: "result",
+        action: "result;",
         expressions: [
           {
             args: [
@@ -3752,7 +4026,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"new result"',
       },
       {
-        action: '"this should show up"',
+        action: '"this should show up";',
         expressions: [
           {
             type: "string",
@@ -3762,7 +4036,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should show up"',
       },
       {
-        action: "reSult",
+        action: "reSult;",
         expressions: [
           {
             args: [
@@ -3959,7 +4233,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
       },
     ],
     request: "some request",
-    resolvedActionGroups: [
+    resolvedActions: [
       {
         action: "math(123123)",
         expressions: [
@@ -3996,4 +4270,174 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     ],
   },
 }
+`;
+
+snapshot[`complex parseCompletion 1`] = `
+[
+  {
+    action: "a(b())",
+    expressions: [
+      {
+        args: [
+          {
+            args: [
+            ],
+            name: "b",
+            type: "call",
+          },
+        ],
+        name: "a",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "d(
+123
+); g()",
+    expressions: [
+      {
+        args: [
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "d",
+        type: "call",
+      },
+      {
+        args: [
+        ],
+        name: "g",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "c()",
+    expressions: [
+      {
+        args: [
+        ],
+        name: "c",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: 'c(
+ "action: a()"
+); g(123)',
+    expressions: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "action: a()",
+          },
+        ],
+        name: "c",
+        type: "call",
+      },
+      {
+        args: [
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "g",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "a = 123; b = 111; a + b;",
+    expressions: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "__=__",
+        type: "call",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "b",
+          },
+          {
+            type: "number",
+            value: 111,
+          },
+        ],
+        name: "__=__",
+        type: "call",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "b",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "f()",
+    expressions: [
+      {
+        args: [
+        ],
+        name: "f",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "respond(<truncated text>)",
+    expressions: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "hello 123
+test test 1111 action: c()
+hello",
+          },
+        ],
+        name: "respond",
+        type: "call",
+      },
+    ],
+  },
+]
 `;

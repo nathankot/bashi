@@ -54,6 +54,28 @@ snapshot[`parseStatements: someCall() 1`] = `
 ]
 `;
 
+snapshot[`parseStatements: someCall(
+123,
+true
+) 1`] = `
+[
+  {
+    args: [
+      {
+        type: "number",
+        value: 123,
+      },
+      {
+        type: "boolean",
+        value: true,
+      },
+    ],
+    name: "someCall",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseStatements:    someCall()
 
   1`] = `

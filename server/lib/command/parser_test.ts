@@ -5,6 +5,7 @@ for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
   `someFunction();\nsomeOtherFunction(" aa() ; bbb()")`,
   "someCall()",
+  "someCall(\n123,\ntrue\n)",
   "   someCall()\n\n ",
   "someCall('a', 111)",
   "someCall('a \\'ha\\'', 111)",

@@ -215,6 +215,7 @@ FUNC_CALL.setPattern(
           p.opt_sc(p.seq(ANY_SPACE, p.tok(T.Comma), ANY_SPACE))
         )
       ),
+      ANY_SPACE,
       p.tok(T.RParen)
     ),
     ([{ text: name }, , , maybeArgs]) => ({

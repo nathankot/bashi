@@ -65,7 +65,8 @@ export function parseCompletion(completion: string): Action[] {
   const expr = p.apply(
     p.seq(
       p.rep(p.alt(p.tok(T.Char), p.tok(T.Newline))),
-      p.alt(p.str(")"), p.str(";"))
+      p.alt(p.str(")"), p.str(";")),
+      p.rep_sc(p.str(" "))
     ),
     ([xs, y]): { action: string } => ({
       action: (xs.map((x) => x.text).join("") + y.text).trim(),

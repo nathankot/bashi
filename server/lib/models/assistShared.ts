@@ -90,10 +90,10 @@ export const languageBuiltinCommands = {
             { name: "identifier", type: "string" },
             { name: "value", type: t },
           ],
-          returnType: "void",
+          returnType: t,
           run: async (_, [lhs, rhs], memory) => {
             memory.variables[lhs.value] = rhs;
-            return { type: "void" };
+            return rhs;
           },
         })
       ),

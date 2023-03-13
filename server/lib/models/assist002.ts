@@ -597,7 +597,7 @@ function makePromptMessages(
 ): ChatCompletionRequestMessage[] {
   const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
   Action: exampleAction("arg 1", arg2);
 
@@ -612,22 +612,11 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.`;
 

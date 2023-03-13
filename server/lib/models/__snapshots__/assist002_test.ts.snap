@@ -135,15 +135,15 @@ snapshot[`all commands resolved on the server 1`] = `
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -152,30 +152,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -183,15 +172,15 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -200,30 +189,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -376,15 +354,15 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
 snapshot[`all commands resolved on the server - empty response tries again 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -393,30 +371,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -424,15 +391,15 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -441,30 +408,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -480,15 +436,15 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "system",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -497,30 +453,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -1008,15 +953,15 @@ snapshot[`command overloads work 1`] = `
 snapshot[`command overloads work 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -1025,30 +970,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -1056,15 +990,15 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -1073,30 +1007,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -2243,6 +2166,179 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
 }
 `;
 
+snapshot[`calendar event creation in a single completion 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "2022-12-26T12:00:00Z",
+            },
+            {
+              type: "string",
+              value: "Lunch with Bill",
+            },
+          ],
+          id: "1.0",
+          name: "createCalendarEvent",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "void",
+        },
+      ],
+      variables: {
+        nextTuesday: {
+          type: "string",
+          value: "2022-12-26T12:00:00Z",
+        },
+        result_0_0: {
+          type: "void",
+        },
+      },
+    },
+    modelCallCount: 1,
+    pending: [
+      {
+        action: 'createCalendarEvent(nextTuesday, "Lunch with Bill");',
+        expressions: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "nextTuesday",
+                  },
+                ],
+                name: "\$ref",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Lunch with Bill",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "respond(<truncated text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for next Tuesday at 12:00pm in the user's timezone, and then used the \`createCalendarEvent\` function to create a calendar event with the given name.",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: 'var nextTuesday = parseRelativeTime("next Tuesday at 12:00pm");',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "nextTuesday",
+              },
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "next Tuesday at 12:00pm",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "next Tuesday at 12:00pm",
+          },
+        ],
+        id: "0.0.1",
+        name: "parseRelativeTime",
+        returnValue: {
+          type: "string",
+          value: "2022-12-26T12:00:00Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "nextTuesday",
+          },
+          {
+            type: "string",
+            value: "2022-12-26T12:00:00Z",
+          },
+        ],
+        id: "0.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "nextTuesday",
+          },
+        ],
+        id: "1.0.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "2022-12-26T12:00:00Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
 snapshot[`client resolved command 1`] = `
 {
   n: 1,
@@ -2768,15 +2864,15 @@ snapshot[`nested calls 1`] = `
 snapshot[`nested calls 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -2785,30 +2881,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -3616,15 +3701,15 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -3633,30 +3718,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -3664,15 +3738,15 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have visibility of Action sections nor their results. The format is:
+In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
 
-  Action: exampleAction("arg 1", arg2);
+  Action: exampleAction(\\"arg 1\\", arg2);
 
 It is possible to assign the result of an action to a variable, and use it later via string interpolation:
 
-  Action: var a = exampleAction("arg 1", arg2);
+  Action: var a = exampleAction(\\"arg 1\\", arg2);
   The result is \${a}
 
 It is also possible to use multiple actions in sequence:
@@ -3681,30 +3755,19 @@ It is also possible to use multiple actions in sequence:
   Action: exampleAction2(a);
   Some string response
 
-A response can simply be a string without any action sections. Code samples can also be returned in this fashion:
+A response can simply be a string without any action sections. Code samples should be returned in this fashion:
 
   Some string response
 
-Function arguments are expressions that support:
-
-* nested function calls
-* string concatenation using +
-* referencing previously assigned variables
-* string, number and boolean literals
-
-A minimal example of an action with a complex argument using all available expression features:
-
-Action: exampleAction(b(), c, 123 + 1, "d" + \`e \${c}\`);
-
-Do not assume any language features exist beyond what is referenced above.
+Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string',
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
     role: "system",
   },
   {
@@ -4344,7 +4407,7 @@ snapshot[`complex parseCompletion 1`] = `
   {
     action: "d(
 123
-); g()",
+); g();",
     expressions: [
       {
         args: [

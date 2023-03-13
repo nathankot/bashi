@@ -135,37 +135,6 @@ snapshot[`all commands resolved on the server 1`] = `
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
-
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
-
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
-
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
-    role: "system",
-  },
-  {
     content: "some request",
     role: "user",
   },
@@ -349,37 +318,6 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
 
 snapshot[`all commands resolved on the server - empty response tries again 2`] = `
 [
-  {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
-
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
-
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
-
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -942,37 +880,6 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
-
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
-
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
-
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -1851,6 +1758,14 @@ snapshot[`supports assignment 1`] = `
       results: [
         {
           type: "number",
+          value: 123,
+        },
+        {
+          type: "number",
+          value: 111,
+        },
+        {
+          type: "number",
           value: 234,
         },
       ],
@@ -1861,10 +1776,12 @@ snapshot[`supports assignment 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "void",
+          type: "number",
+          value: 123,
         },
         {
-          type: "void",
+          type: "number",
+          value: 111,
         },
         {
           type: "number",
@@ -1881,10 +1798,12 @@ snapshot[`supports assignment 1`] = `
           value: 111,
         },
         result_0_0: {
-          type: "void",
+          type: "number",
+          value: 123,
         },
         result_0_1: {
-          type: "void",
+          type: "number",
+          value: 111,
         },
         result_0_2: {
           type: "number",
@@ -1970,7 +1889,7 @@ snapshot[`supports assignment 1`] = `
             type: "call",
           },
         ],
-        result: "void; void; 234",
+        result: "123; 111; 234",
       },
     ],
     resolvedCommands: [
@@ -1988,7 +1907,8 @@ snapshot[`supports assignment 1`] = `
         id: "0.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "number",
+          value: 123,
         },
         type: "executed",
       },
@@ -2006,7 +1926,8 @@ snapshot[`supports assignment 1`] = `
         id: "0.1",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "number",
+          value: 111,
         },
         type: "executed",
       },
@@ -2274,6 +2195,10 @@ snapshot[`calendar event creation in a single completion 1`] = `
         },
       ],
       results: [
+        {
+          type: "string",
+          value: "2022-12-27T12:00:00Z",
+        },
       ],
       type: "pending_commands",
     },
@@ -2282,7 +2207,8 @@ snapshot[`calendar event creation in a single completion 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "void",
+          type: "string",
+          value: "2022-12-27T12:00:00Z",
         },
       ],
       variables: {
@@ -2291,7 +2217,8 @@ snapshot[`calendar event creation in a single completion 1`] = `
           value: "2022-12-27T12:00:00Z",
         },
         result_0_0: {
-          type: "void",
+          type: "string",
+          value: "2022-12-27T12:00:00Z",
         },
       },
     },
@@ -2358,7 +2285,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
             type: "call",
           },
         ],
-        result: "void",
+        result: '"2022-12-27T12:00:00Z"',
       },
     ],
     resolvedCommands: [
@@ -2376,7 +2303,8 @@ snapshot[`calendar event creation in a single completion 1`] = `
         id: "0.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "2022-12-27T12:00:00Z",
         },
         type: "executed",
       },
@@ -2422,6 +2350,22 @@ snapshot[`multiple assignment in one completion 1`] = `
         },
       ],
       results: [
+        {
+          type: "string",
+          value: "What rooms do you have available?",
+        },
+        {
+          type: "string",
+          value: "french translation",
+        },
+        {
+          type: "string",
+          value: "spanish translation",
+        },
+        {
+          type: "string",
+          value: "japanese translation",
+        },
       ],
       type: "pending_commands",
     },
@@ -2430,16 +2374,20 @@ snapshot[`multiple assignment in one completion 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "void",
+          type: "string",
+          value: "What rooms do you have available?",
         },
         {
-          type: "void",
+          type: "string",
+          value: "french translation",
         },
         {
-          type: "void",
+          type: "string",
+          value: "spanish translation",
         },
         {
-          type: "void",
+          type: "string",
+          value: "japanese translation",
         },
       ],
       variables: {
@@ -2460,16 +2408,20 @@ snapshot[`multiple assignment in one completion 1`] = `
           value: "japanese translation",
         },
         result_0_0: {
-          type: "void",
+          type: "string",
+          value: "What rooms do you have available?",
         },
         result_1_0: {
-          type: "void",
+          type: "string",
+          value: "french translation",
         },
         result_2_0: {
-          type: "void",
+          type: "string",
+          value: "spanish translation",
         },
         result_3_0: {
-          type: "void",
+          type: "string",
+          value: "japanese translation",
         },
       },
     },
@@ -2511,7 +2463,7 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: "void",
+        result: '"What rooms do you have available?"',
       },
       {
         action: 'Action { b = translate(a, "French") }',
@@ -2547,7 +2499,7 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: "void",
+        result: '"french translation"',
       },
       {
         action: 'Action { c = translate(a, "Spanish") }',
@@ -2583,7 +2535,7 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: "void",
+        result: '"spanish translation"',
       },
       {
         action: 'Action { d = translate(a, "Japanese") }',
@@ -2619,7 +2571,7 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: "void",
+        result: '"japanese translation"',
       },
     ],
     resolvedCommands: [
@@ -2637,7 +2589,8 @@ snapshot[`multiple assignment in one completion 1`] = `
         id: "0.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "What rooms do you have available?",
         },
         type: "executed",
       },
@@ -2689,7 +2642,8 @@ snapshot[`multiple assignment in one completion 1`] = `
         id: "1.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "french translation",
         },
         type: "executed",
       },
@@ -2741,7 +2695,8 @@ snapshot[`multiple assignment in one completion 1`] = `
         id: "2.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "spanish translation",
         },
         type: "executed",
       },
@@ -2793,7 +2748,8 @@ snapshot[`multiple assignment in one completion 1`] = `
         id: "3.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "japanese translation",
         },
         type: "executed",
       },
@@ -3326,37 +3282,6 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
-
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
-
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
-
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -4040,6 +3965,10 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           type: "string",
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
+        {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
       ],
       type: "pending_commands",
     },
@@ -4048,7 +3977,8 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "void",
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
         {
           type: "string",
@@ -4061,7 +3991,8 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
         result_0_0: {
-          type: "void",
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
         result_0_1: {
           type: "string",
@@ -4117,7 +4048,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             type: "call",
           },
         ],
-        result: 'void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
       },
     ],
     resolvedCommands: [
@@ -4135,7 +4066,8 @@ snapshot[`long results are truncated and stored in variables 1`] = `
         id: "0.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
         type: "executed",
       },
@@ -4161,37 +4093,6 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
-  {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
-
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
-
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
-
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -4236,7 +4137,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "assistant",
   },
   {
-    content: 'Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
     role: "system",
   },
 ]
@@ -4274,7 +4175,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         {
           type: "string",
-          value: "should override result within same action",
+          value: "b",
         },
         {
           type: "string",
@@ -4283,6 +4184,14 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         {
           type: "string",
           value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "new result",
         },
         {
           type: "string",
@@ -4316,7 +4225,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           value: "hello result",
         },
         {
-          type: "void",
+          type: "string",
+          value: "b",
         },
         {
           type: "string",
@@ -4331,7 +4241,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           value: "should override result within same action",
         },
         {
-          type: "void",
+          type: "string",
+          value: "new result",
         },
         {
           type: "string",
@@ -4368,7 +4279,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           value: "hello result",
         },
         result_2_0: {
-          type: "void",
+          type: "string",
+          value: "b",
         },
         result_2_1: {
           type: "string",
@@ -4383,7 +4295,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           value: "should override result within same action",
         },
         result_4_0: {
-          type: "void",
+          type: "string",
+          value: "new result",
         },
         result_5_0: {
           type: "string",
@@ -4497,7 +4410,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: 'void; "should override result within same action"; "should override result within same action"',
+        result: '"b"; "should override result within same action"; "should override result within same action"',
       },
       {
         action: "Action { rEsUlt; }",
@@ -4533,7 +4446,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: "void",
+        result: '"new result"',
       },
       {
         action: 'Action { "this should not show up twice"; }',
@@ -4618,7 +4531,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         id: "2.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "b",
         },
         type: "executed",
       },
@@ -4666,7 +4580,8 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         id: "4.0",
         name: "__=__",
         returnValue: {
-          type: "void",
+          type: "string",
+          value: "new result",
         },
         type: "executed",
       },

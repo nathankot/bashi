@@ -19,3 +19,4 @@ check:
 
 update-deps:
 	deno cache --check --lock deno.prod.lock --lock-write --reload main.ts cache_imports.ts
+	deno cache --check --lock deno.lock --lock-write --reload main.ts cache_imports.ts dev.ts

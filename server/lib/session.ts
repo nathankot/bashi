@@ -21,6 +21,7 @@ export const Session = t.intersection([
   SessionPublic,
   t.partial({
     assist001State: models["assist-001"].State,
+    assist002State: models["assist-002"].State,
   }),
 ]);
 

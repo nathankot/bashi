@@ -1,10 +1,11 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
-import { parseStatements, parseActionGroup } from "./parser.ts";
+import { parseStatements } from "./parser.ts";
 
 for (const expr of [
   `someFunction(); someOtherFunction(" aa() ; bbb()")`,
   `someFunction();\nsomeOtherFunction(" aa() ; bbb()")`,
   "someCall()",
+  "someCall(\n123,\ntrue\n)",
   "   someCall()\n\n ",
   "someCall('a', 111)",
   "someCall('a \\'ha\\'', 111)",
@@ -64,58 +65,6 @@ for (const expr of [
     (t) => {
       try {
         const result = parseStatements(expr);
-        assertSnapshot(t, result);
-      } catch (e) {
-        assertSnapshot(t, (e as Error).message);
-      }
-    }
-  );
-}
-
-for (const expr of [
-  `Thought: I need to do something
-    Action: someFunction(123, "str", true)
-    Result: blah blah blah blah`,
-  `Thought: I need to do something
-    Action: someFunction(123, "str", true)
-    Result:`,
-  `Thought: I need to do something
-    Action: someFunction(123, "str", true)
-    Result: `,
-  `Thought: Empty actions should be supported
-    Action:
-    Result: `,
-  `Thought: Empty actions should be supported
-    Action: `,
-  `Thought: I need to do something action: thought: hmmm
-    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
-    Result: blah blah blah blah`,
-  `Thought: I need to do something
-    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
-  `tHOUght: I need to do something
-    aCTion  :    someFunction();; someOtherFunction()`,
-  `Thought: I need to do something Action: head fake
-    Action: someFunction(); someOtherFunction()
-    Result: blah blah blah blah`,
-  `Thought: I need to do something Action: head fake
-    Action: someFunction();
-     someOtherFunction("Result:")
-  Result: blah blah blah blah
-  123123`,
-  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
-  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
-  `Thought: multiline strings should work\nAction: editCode("func main() {\n  fmt.Println(\\"Hello World\\")\n}", "go lang", "make it compile");`,
-  // Invalid examples:
-  `Thought no colon doesnt work\nAction hahaha`,
-  `Action: action should not come first\nThought: ha`,
-  `completely invalid`,
-  ``,
-]) {
-  Deno.test(
-    "parseActionGroup: " + (expr === "" ? "empty string" : expr),
-    (t) => {
-      try {
-        const result = parseActionGroup(expr);
         assertSnapshot(t, result);
       } catch (e) {
         assertSnapshot(t, (e as Error).message);

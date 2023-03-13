@@ -14,7 +14,7 @@ const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 const now: BuiltinCommandDefinition<[], "string"> = {
   isBuiltin: true,
   cost: -1000,
-  description: "get current ISO8601 datetime",
+  description: "get current ISO8601 datetime in the user's timezone",
   args: [],
   run: async (deps, []) => ({
     type: "string",
@@ -151,7 +151,7 @@ const translate: BuiltinCommandDefinition<["string", "string"], "string"> = {
   returnType: "string",
   description: `translate text into target language`,
   args: [
-    { name: "input", type: "string" },
+    { name: "english input", type: "string" },
     { name: "target language full name", type: "string" },
   ],
   run: async (modelDeps, [input, targetLanguage]) => {

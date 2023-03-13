@@ -27,7 +27,7 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -44,26 +44,26 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+Thought: ",
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -80,28 +80,28 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
 Thought: I need to do something
-Action: now(); math("pi^2 + 123")
-Result: "2022-12-19T08:41:10Z"; "132.86960440108936"
-Thought: ',
+Action: now(); math(\\"pi^2 + 123\\")
+Result: \\"2022-12-19T08:41:10Z\\"; \\"132.86960440108936\\"
+Thought: ",
 ]
 `;
 
@@ -191,7 +191,7 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -208,26 +208,26 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+Thought: ",
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -244,28 +244,28 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
 Thought: I need to do something
-Action: "string" + "concat"; 123 + 1
-Result: "stringconcat"; 124
-Thought: ',
+Action: \\"string\\" + \\"concat\\"; 123 + 1
+Result: \\"stringconcat\\"; 124
+Thought: ",
 ]
 `;
 
@@ -1586,7 +1586,7 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -1603,25 +1603,25 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
-Thought: ',
+Thought: ",
 ]
 `;
 
@@ -1858,7 +1858,7 @@ some text
 
 The re-written text is:
 ",
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -1875,31 +1875,31 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
 Thought: I need to call some command
 Action: someCommand()
-Result: "blah"
+Result: \\"blah\\"
 Thought: I need to do something
-Action: editText(getInput("the text"), "convert to poem"); now()
-Result: "the result of editText()"; "2022-12-19T08:41:10Z"
-Thought: ',
+Action: editText(getInput(\\"the text\\"), \\"convert to poem\\"); now()
+Result: \\"the result of editText()\\"; \\"2022-12-19T08:41:10Z\\"
+Thought: ",
 ]
 `;
 
@@ -2026,7 +2026,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -2043,26 +2043,26 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
-Thought: ',
-  'Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
+Thought: ",
+  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
 Request: the question or request you must answer
@@ -2079,28 +2079,28 @@ The language used in Action is called Bashi. It is a small subset of javascript 
 * string, number and boolean literals
 
 Below is a minimal example of all available features:
-Action: var c = "c"; a(b(), c, 123, "d" + \`e \${c}\`)
+Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
 
 Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
 
 \`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
 \`finish(): void\` - mark request/question as fulfilled
-\`math("formula (ascii characters only)": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime
-\`getInput("question asking for required information": string): string\` - get additional input from user, typically text/code used as input into other functions
+\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
+\`now(): string\` - get current ISO8601 datetime in the user's timezone
+\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
 \`sendResponse(answer: string): void\` - return response for original question/request back to user
 \`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg("some number": number): void\` - some fixture command
-\`parseRelativeTime("natural language relative time": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation("full description of desired output and its format": string, "input text/code": string): string\` - describe/summarize/extract information from the given string
+\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
+\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
+\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
 Thought: some thought
-Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar
-Result: void; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
-Thought: ',
+Action: longVar = \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word\\"; longVar
+Result: void; \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
+Thought: ",
 ]
 `;
 
@@ -2261,30 +2261,12 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
 }
 `;
 
-snapshot[`example A step 1 1`] = `
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: blah blah blah blah 1`] = `
 {
-  pendingCommands: [
-    {
-      args: [
-      ],
-      id: "0.0",
-      name: "a",
-      type: "parsed",
-    },
-    {
-      args: [
-      ],
-      id: "0.1.1",
-      name: "c",
-      type: "parsed",
-    },
-  ],
-}
-`;
-
-snapshot[`example A step 2 1`] = `
-{
-  pendingCommands: [
+  action: 'someFunction(123, "str", true)',
+  expressions: [
     {
       args: [
         {
@@ -2293,20 +2275,28 @@ snapshot[`example A step 2 1`] = `
         },
         {
           type: "string",
-          value: "blah",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
         },
       ],
-      id: "0.1",
-      name: "b",
-      type: "parsed",
+      name: "someFunction",
+      type: "call",
     },
   ],
+  result: "blah blah blah blah",
+  thought: "I need to do something",
 }
 `;
 
-snapshot[`example A step 3 1`] = `
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: 1`] = `
 {
-  pendingCommands: [
+  action: 'someFunction(123, "str", true)',
+  expressions: [
     {
       args: [
         {
@@ -2315,22 +2305,370 @@ snapshot[`example A step 3 1`] = `
         },
         {
           type: "string",
-          value: "ha",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
         },
       ],
-      id: "0",
-      name: "test",
-      type: "parsed",
+      name: "someFunction",
+      type: "call",
     },
   ],
+  result: undefined,
+  thought: "I need to do something",
 }
 `;
 
-snapshot[`example A step 4 1`] = `
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result:  1`] = `
 {
-  result: {
-    type: "number",
-    value: 123,
-  },
+  action: 'someFunction(123, "str", true)',
+  expressions: [
+    {
+      args: [
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
 }
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:
+    Result:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: Empty actions should be supported
+    Action:  1`] = `
+{
+  action: "",
+  expressions: [
+  ],
+  result: undefined,
+  thought: "Empty actions should be supported",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something action: thought: hmmm
+    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
+    Result: blah blah blah blah 1`] = `
+{
+  action: 'someFunction()  ; someOtherFunction(" aa() ; bbb()")',
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: " aa() ; bbb()",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something action: thought: hmmm",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something
+    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2") 1`] = `
+{
+  action: \`someFunction(true); someOtherFunction(true, 123, 'str', "str2")\`,
+  expressions: [
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "boolean",
+          value: true,
+        },
+        {
+          type: "number",
+          value: 123,
+        },
+        {
+          type: "string",
+          value: "str",
+        },
+        {
+          type: "string",
+          value: "str2",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: tHOUght: I need to do something
+    aCTion  :    someFunction();; someOtherFunction() 1`] = `
+{
+  action: "someFunction();; someOtherFunction()",
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to do something",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
+    Action: someFunction(); someOtherFunction()
+    Result: blah blah blah blah 1`] = `
+{
+  action: "someFunction(); someOtherFunction()",
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah",
+  thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to do something Action: head fake
+    Action: someFunction();
+     someOtherFunction("Result:")
+  Result: blah blah blah blah
+  123123 1`] = `
+{
+  action: 'someFunction();
+     someOtherFunction("Result:")',
+  expressions: [
+    {
+      args: [
+      ],
+      name: "someFunction",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Result:",
+        },
+      ],
+      name: "someOtherFunction",
+      type: "call",
+    },
+  ],
+  result: "blah blah blah blah
+  123123",
+  thought: "I need to do something Action: head fake",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); 1`] = `
+{
+  action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+  expressions: [
+    {
+      args: [
+        {
+          args: [
+            {
+              args: [
+              ],
+              name: "now",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: " ",
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+        {
+          args: [
+            {
+              type: "string",
+              value: "America/New_York",
+            },
+          ],
+          name: "currentTimeForTimezone",
+          type: "call",
+        },
+      ],
+      name: "__+__",
+      type: "call",
+    },
+    {
+      args: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "in 5 days",
+            },
+          ],
+          name: "parseRelativeTime",
+          type: "call",
+        },
+        {
+          type: "string",
+          value: "Dinner with Wife",
+        },
+      ],
+      name: "createCalendarEvent",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: I need to get the current time in New York and create a calendar event 5 days from now
+Action: "some string"; 123; currentTimeForTimezone('Pacific/Auckland') 1`] = `
+{
+  action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+  expressions: [
+    {
+      type: "string",
+      value: "some string",
+    },
+    {
+      type: "number",
+      value: 123,
+    },
+    {
+      args: [
+        {
+          type: "string",
+          value: "Pacific/Auckland",
+        },
+      ],
+      name: "currentTimeForTimezone",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "I need to get the current time in New York and create a calendar event 5 days from now",
+}
+`;
+
+snapshot[`parseActionGroup: Thought: multiline strings should work
+Action: editCode("func main() {
+  fmt.Println(\\"Hello World\\")
+}", "go lang", "make it compile"); 1`] = `
+{
+  action: 'editCode("func main() {
+  fmt.Println(\\\\"Hello World\\\\")
+}", "go lang", "make it compile");',
+  expressions: [
+    {
+      args: [
+        {
+          type: "string",
+          value: 'func main() {
+  fmt.Println("Hello World")
+}',
+        },
+        {
+          type: "string",
+          value: "go lang",
+        },
+        {
+          type: "string",
+          value: "make it compile",
+        },
+      ],
+      name: "editCode",
+      type: "call",
+    },
+  ],
+  result: undefined,
+  thought: "multiline strings should work",
+}
+`;
+
+snapshot[`parseActionGroup: Thought no colon doesnt work
+Action hahaha 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;
+
+snapshot[`parseActionGroup: Action: action should not come first
+Thought: ha 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":8}: Unable to consume token: 
+Action:'
+`;
+
+snapshot[`parseActionGroup: completely invalid 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
+`;
+
+snapshot[`parseActionGroup: empty string 1`] = `
+'{"index":0,"rowBegin":1,"columnBegin":1,"rowEnd":2,"columnEnd":1}: Unable to consume token: 
+'
 `;

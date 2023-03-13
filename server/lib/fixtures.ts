@@ -21,7 +21,7 @@ export const handlerCtx: HandlerContext<{}> = {
   },
 };
 
-export const commandSet: CommandSet = {
+export const assist001CommandSet: CommandSet = {
   sendResponse: {
     cost: -100,
     description: "return response for original question/request back to user",
@@ -98,6 +98,61 @@ export const commandSet: CommandSet = {
   },
 };
 
+export const assist002CommandSet: CommandSet = {
+  respond: {
+    cost: -100,
+    description:
+      "send a message to the user, the return value is the users response",
+    returnType: "string",
+    args: [
+      {
+        name: "answer",
+        type: "string",
+      },
+    ],
+  },
+  createCalendarEvent: {
+    cost: -1000,
+    description: "create a calendar event on a certain date and time",
+    returnType: "void",
+    args: [
+      {
+        name: "iso8601Date",
+        type: "string",
+      },
+      {
+        name: "name",
+        type: "string",
+      },
+    ],
+    triggerTokens: ["calendar", "event"],
+  },
+  createReminder: {
+    cost: -1000,
+    description: "create a reminder on a certain date and time",
+    returnType: "void",
+    args: [
+      {
+        name: "iso8601Date",
+        type: "string",
+      },
+      { name: "name", type: "string" },
+    ],
+    triggerTokens: ["remind", "reminder"],
+  },
+  sendEmail: {
+    cost: 0,
+    returnType: "void",
+    description: `send an email`,
+    args: [
+      { name: "recipient", type: "string" },
+      { name: "subject", type: "string" },
+      { name: "contents", type: "string" },
+    ],
+    triggerTokens: ["email"],
+  },
+};
+
 export const session: Session = {
   expiresAt: new Date(new Date().getTime() + 60000),
   sessionId: "a9fb6273-00ee-4e4c-9918-e87e1157ca31",
@@ -111,7 +166,11 @@ export const session: Session = {
   modelConfigurations: {
     "assist-001": {
       model: "assist-001",
-      commands: commandSet,
+      commands: assist001CommandSet,
+    },
+    "assist-002": {
+      model: "assist-002",
+      commands: assist002CommandSet,
     },
   },
 };

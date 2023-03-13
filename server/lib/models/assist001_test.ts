@@ -3,14 +3,8 @@ import { noop } from "cockatiel";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
-import { CommandExecuted, parseExpression } from "@lib/command.ts";
 
-import {
-  MAX_MODEL_CALLS,
-  Input,
-  run,
-  getPendingCommandsOrResult,
-} from "./assist001.ts";
+import { MAX_MODEL_CALLS, Input, run, parseActionGroup } from "./assist001.ts";
 
 const pendingClientCommandState = () =>
   ({
@@ -465,7 +459,7 @@ Action: finish()`,
         {
           model: "assist-001",
           commands: {
-            ...fixtures.commandSet,
+            ...fixtures.assist001CommandSet,
             commandWithNumberArg: {
               args: [{ type: "number", name: "some number" }],
               description: "some fixture command",
@@ -495,82 +489,54 @@ Action: finish()`,
   });
 }
 
-for (const test of [
-  {
-    description: "example A step 1",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {},
-  },
-  {
-    description: "example A step 2",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0.0": {
-        type: "executed",
-        args: [],
-        id: "0.0",
-        name: "a",
-        returnValue: { type: "number", value: 123 },
-      },
-      "0.1.1": {
-        type: "executed",
-        args: [],
-        id: "0.1.1",
-        name: "c",
-        returnValue: { type: "string", value: "blah" },
-      },
-    } as Record<string, CommandExecuted>,
-  },
-  {
-    description: "example A step 3",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0.0": {
-        type: "executed",
-        args: [],
-        id: "0.0",
-        name: "a",
-        returnValue: { type: "number", value: 123 },
-      },
-      "0.1": {
-        type: "executed",
-        args: [],
-        id: "0.1",
-        name: "b",
-        returnValue: { type: "string", value: "ha" },
-      },
-    } as Record<string, CommandExecuted>,
-  },
-  {
-    description: "example A step 4",
-    commandId: "0",
-    call: parseExpression(`test(a(), b(123, c()))`),
-    resolvedCommands: {
-      "0": {
-        type: "executed",
-        args: [],
-        id: "0",
-        name: "test",
-        returnValue: { type: "number", value: 123 },
-      },
-    } as Record<string, CommandExecuted>,
-  },
+for (const expr of [
+  `Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: blah blah blah blah`,
+  `Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result:`,
+  `Thought: I need to do something
+    Action: someFunction(123, "str", true)
+    Result: `,
+  `Thought: Empty actions should be supported
+    Action:
+    Result: `,
+  `Thought: Empty actions should be supported
+    Action: `,
+  `Thought: I need to do something action: thought: hmmm
+    Action: someFunction()  ; someOtherFunction(" aa() ; bbb()")
+    Result: blah blah blah blah`,
+  `Thought: I need to do something
+    Action: someFunction(true); someOtherFunction(true, 123, 'str', "str2")`,
+  `tHOUght: I need to do something
+    aCTion  :    someFunction();; someOtherFunction()`,
+  `Thought: I need to do something Action: head fake
+    Action: someFunction(); someOtherFunction()
+    Result: blah blah blah blah`,
+  `Thought: I need to do something Action: head fake
+    Action: someFunction();
+     someOtherFunction("Result:")
+  Result: blah blah blah blah
+  123123`,
+  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');`,
+  `Thought: I need to get the current time in New York and create a calendar event 5 days from now\nAction: "some string"; 123; currentTimeForTimezone('Pacific/Auckland')`,
+  `Thought: multiline strings should work\nAction: editCode("func main() {\n  fmt.Println(\\"Hello World\\")\n}", "go lang", "make it compile");`,
+  // Invalid examples:
+  `Thought no colon doesnt work\nAction hahaha`,
+  `Action: action should not come first\nThought: ha`,
+  `completely invalid`,
+  ``,
 ]) {
-  Deno.test(test.description, async (t) => {
-    try {
-      await assertSnapshot(
-        t,
-        getPendingCommandsOrResult(
-          test.commandId,
-          test.call,
-          test.resolvedCommands
-        )
-      );
-    } catch (e) {
-      await assertSnapshot(t, e.message);
+  Deno.test(
+    "parseActionGroup: " + (expr === "" ? "empty string" : expr),
+    (t) => {
+      try {
+        const result = parseActionGroup(expr);
+        assertSnapshot(t, result);
+      } catch (e) {
+        assertSnapshot(t, (e as Error).message);
+      }
     }
-  });
+  );
 }

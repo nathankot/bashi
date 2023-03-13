@@ -1,21 +1,22 @@
 import * as t from "io-ts";
 
 import defaultPolicy from "@lib/faultHandling.ts";
-import { ModelDeps, run, models } from "@lib/models.ts";
+import { ModelDeps, run, ModelName } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
 import { openai, whisperEndpoint, googleSearch } from "@lib/clients.ts";
+import { Input, Result } from "@lib/models/assistShared.ts";
 
 import * as fixtures from "@lib/fixtures.ts";
 
-export const Example = t.intersection([
+const Example = t.intersection([
   t.type({
     updated: t.string,
     dev: t.any,
-    result: models["assist-001"].Output.props.result,
+    result: Result,
     prompt: t.string,
   }),
   t.partial({
-    resolvedCommands: models["assist-001"].Input.props.resolvedCommands,
+    resolvedCommands: Input.props.resolvedCommands,
   }),
 ]);
 
@@ -24,9 +25,8 @@ export type Example = t.TypeOf<typeof Example>;
 const INPUTS: {
   variant?: string;
   prompt: string;
-  resolvedCommands?: NonNullable<
-    t.TypeOf<typeof models["assist-001"]["Input"]>["resolvedCommands"]
-  >;
+  targetModel?: ModelName;
+  resolvedCommands?: NonNullable<t.TypeOf<typeof Input>["resolvedCommands"]>;
 }[] = [
   { prompt: "hello" },
   { prompt: "What is pi squared?" },
@@ -53,6 +53,7 @@ const INPUTS: {
   },
   {
     prompt: "help me fix spelling and grammar mistakes",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -61,7 +62,13 @@ const INPUTS: {
     },
   },
   {
+    prompt:
+      "help me fix spelling and grammar mistakes: stp by step, heart to hard, left right left. is we all fall down..",
+    targetModel: "assist-002",
+  },
+  {
     prompt: "edit this function in go lang in order to make it compile",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -74,11 +81,19 @@ const INPUTS: {
     },
   },
   {
+    prompt: `edit this function in go lang in order to make it compile:
+  function doSomething() int {
+    return "55"
+  }`,
+    targetModel: "assist-002",
+  },
+  {
     prompt: "make a calendar event for next tuesday noon, lunch with Bill",
   },
   {
     prompt:
       "there is a function in javascript I don't understand, can help me summarize it?",
+    targetModel: "assist-001",
     resolvedCommands: {
       getInput: {
         type: "string",
@@ -93,44 +108,32 @@ const INPUTS: {
     },
   },
   {
+    prompt: `there is a function in javascript I don't understand, can help me summarize it?
+function something(num) {
+  if (num < 0) return -1;
+  else if (num == 0) return 1;
+  else {
+      return (num * something(num - 1));
+  }
+}`,
+    targetModel: "assist-002",
+  },
+  {
     prompt: "generate code in swift to create a new reminder on iOS",
   },
-  //   {
-  //     prompt:
-  //       "given this list of verbs can you help me add additional verbs that mean the same thing?",
-  //     resolvedCommands: {
-  //       getInput: {
-  //         type: "string",
-  //         value: `
-  //     "edit",
-  //     "change",
-  //     "alter",
-  //     "fix",
-  //     "move",
-  //     "align",
-  //     "reword",
-  //     "re-word",
-  //     "editor",
-  //     "improve",
-  //     "check",
-  //     "revise",
-  //     "modify",
-  //     "adapt",
-  //     "rewrite",
-  //     "re-write",
-  // `,
-  //       },
-  //     },
-  //   },
+  {
+    prompt: "help me order some pizza",
+    targetModel: "assist-002",
+  },
   {
     prompt: "help me write a commit message please",
   },
-
-  // TODO: something like 'highlight the selected string', will it be able to differentiate from
-  // having the request string be in the request?
 ];
 
-export default async function updateExamples(examplesFile: string) {
+export default async function updateExamples(
+  examplesFile: string,
+  modelName: "assist-001" | "assist-002" = "assist-001"
+) {
   log("info", `reading existing examples file: ${examplesFile}`);
 
   const bs = Deno.readFileSync(examplesFile);
@@ -169,6 +172,10 @@ export default async function updateExamples(examplesFile: string) {
   let hasChanges = false;
 
   for (const input of INPUTS) {
+    if (input.targetModel != null && input.targetModel !== modelName) {
+      continue;
+    }
+
     const promptWithVariant =
       input.prompt + (input.variant == null ? "" : " - " + input.variant);
     const existing = existingExamples[promptWithVariant];
@@ -181,13 +188,11 @@ export default async function updateExamples(examplesFile: string) {
       `found new example, running model with prompt: ${promptWithVariant}`
     );
     try {
-      let resolvedCommands: t.TypeOf<
-        typeof models["assist-001"]["Input"]
-      >["resolvedCommands"] = {};
+      let resolvedCommands: t.TypeOf<typeof Input>["resolvedCommands"] = {};
 
-      let output: t.TypeOf<typeof models["assist-001"]["Output"]> | null = null;
+      let output: { result: Result } | null = null;
       modelLoop: while (true) {
-        output = await run(modelDeps, "assist-001", {
+        output = await run(modelDeps, modelName, {
           request: input.prompt,
           resolvedCommands,
         });

@@ -7,6 +7,7 @@ import { ModelDeps } from "./models/modelDeps.ts";
 // BEGIN section to edit when adding new external models
 
 import * as assist001 from "./models/assist001.ts";
+import * as assist002 from "./models/assist002.ts";
 import * as translate000 from "./models/translate000.ts";
 import * as code000 from "./models/code000.ts";
 import * as whisper000 from "./models/whisper000.ts";
@@ -14,6 +15,7 @@ import * as whisper000 from "./models/whisper000.ts";
 // Note: only externally available models need to be here:
 export const models = {
   "assist-001": assist001,
+  "assist-002": assist002,
   "translate-000": translate000,
   "code-000": code000,
   "whisper-000": whisper000,
@@ -21,6 +23,7 @@ export const models = {
 
 export const Configuration = t.partial({
   "assist-001": assist001.Configuration,
+  "assist-002": assist002.Configuration,
   "translate-000": translate000.Configuration,
   "code-000": code000.Configuration,
   "whisper-000": whisper000.Configuration,
@@ -28,6 +31,7 @@ export const Configuration = t.partial({
 
 export const AllConfiguration = t.union([
   assist001.Configuration,
+  assist002.Configuration,
   translate000.Configuration,
   code000.Configuration,
   whisper000.Configuration,
@@ -36,6 +40,7 @@ export type AllConfiguration = t.TypeOf<typeof AllConfiguration>;
 
 export const AllInput = t.union([
   assist001.Input,
+  assist002.Input,
   translate000.Input,
   code000.Input,
   whisper000.Input,
@@ -44,6 +49,7 @@ export type AllInput = t.TypeOf<typeof AllInput>;
 
 export const AllOutput = t.union([
   assist001.Output,
+  assist002.Output,
   translate000.Output,
   code000.Output,
   whisper000.Output,

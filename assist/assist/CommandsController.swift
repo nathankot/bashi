@@ -10,6 +10,11 @@ import Cocoa
 import BashiClient
 import BashiPlugin
 
+// TODO need to be able to exit the process loop when:
+// * testing and all mocks have been queued
+// * the user finishes a session
+// also should this be renamed to sessions controller?
+
 public actor CommandsController {
 
     public typealias RunModel = (ModelsAssist002Input) async throws -> ModelsAssist002Output
@@ -36,8 +41,7 @@ public actor CommandsController {
             messageFn: { response, type in
                 messages.append(.init(id: messages.count, message: response, type: type))
             },
-            askFn: { question in
-                messages.append(.init(id: messages.count, message: question, type: .modelResponse))
+            askFn: {
                 let response = try await self.state.transitionAndWaitforStateCallback { callback in
                         .NeedsInput(
                         messages: messages,
@@ -71,6 +75,8 @@ public actor CommandsController {
                         throw AppError.Internal("expected all pendingCommands to be unresolved")
                     }
                     let commandName = pendingCommand.name
+                    // TODO custom handling for respond command
+                    
                     guard let commandDef = await pluginsController.lookup(command: commandName) else {
                         throw AppError.CommandNotFound(name: commandName)
                     }
@@ -115,10 +121,10 @@ public actor CommandsController {
     class PluginAPI: BashiPluginAPI {
 
         let messageFn: (String, MessageType) async -> Void
-        let askFn: (String) async throws -> String
+        let askFn: () async throws -> String
 
         init(messageFn: @escaping (String, MessageType) async -> Void,
-            askFn: @escaping (String) async throws -> String) {
+            askFn: @escaping () async throws -> String) {
             self.messageFn = messageFn
             self.askFn = askFn
         }
@@ -131,8 +137,8 @@ public actor CommandsController {
             return await messageFn(message, .sideEffectResult)
         }
 
-        public func ask(question: String) async throws -> String {
-            return try await askFn(question)
+        public func ask() async throws -> String {
+            return try await askFn()
         }
 
         public func storeTextInPasteboard(text: String) async throws {
@@ -157,7 +163,7 @@ public actor CommandsController {
                 try await api.storeTextInPasteboard(text: result)
                 await api.indicateCommandResult(message: "The result has been copied to your clipboard")
             }
-            let response = try await api.ask(question: "what is your response?") // TODO this is unecessary
+            let response = try await api.ask()
             return .init(.string(response))
         },
     ]

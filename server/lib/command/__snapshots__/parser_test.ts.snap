@@ -660,6 +660,90 @@ snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123 
 ]
 `;
 
+snapshot[`parseStatements: const a_aaa = someCall(123 + 44, "abc")
+ a_aaa + 123 1`] = `
+[
+  {
+    args: [
+      {
+        type: "string",
+        value: "a_aaa",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "number",
+                value: 44,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+          {
+            type: "string",
+            value: "abc",
+          },
+        ],
+        name: "someCall",
+        type: "call",
+      },
+    ],
+    name: "__=__",
+    type: "call",
+  },
+  {
+    args: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a_aaa",
+          },
+        ],
+        name: "\$ref",
+        type: "call",
+      },
+      {
+        type: "number",
+        value: 123,
+      },
+    ],
+    name: "__+__",
+    type: "call",
+  },
+]
+`;
+
+snapshot[`parseStatements: someFunction() 
+ someOtherFunction(" aa() 
+ bbb()") 1`] = `
+[
+  {
+    args: [
+    ],
+    name: "someFunction",
+    type: "call",
+  },
+  {
+    args: [
+      {
+        type: "string",
+        value: " aa() 
+ bbb()",
+      },
+    ],
+    name: "someOtherFunction",
+    type: "call",
+  },
+]
+`;
+
 snapshot[`parseStatements: someCall(\`\`) 1`] = `
 [
   {

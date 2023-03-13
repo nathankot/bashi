@@ -30,7 +30,7 @@ export const Expr: t.Type<Expr> = t.recursion("Expr", () =>
   t.union([Call, Value])
 );
 
-enum T {
+export enum T {
   Identifier,
 
   TrueLiteral,
@@ -82,7 +82,7 @@ export const lexer = buildLexer([
   [true, /^\,/g, T.Comma],
   [true, /^;/g, T.SemiColon],
 
-  [true, /^\s+/g, T.Space],
+  [true, /^\s/g, T.Space],
   [true, /^\\./g, T.EscapedChar],
   [true, /^./g, T.Char],
 ]);
@@ -94,7 +94,7 @@ const VALUE = rule<T, Value>();
 const VAR_REF = rule<T, Call>();
 export const TEMPLATE_STRING = rule<T, Expr>();
 
-const EXPR = p.alt(
+export const EXPR = p.alt(
   VALUE,
   TEMPLATE_STRING,
   FUNC_CALL,
@@ -109,8 +109,8 @@ const EXPR_WITHOUT_INFIX_CALL = p.alt(
   PAREN_GROUP,
   VAR_REF
 );
-const STATEMENT = rule<T, Expr>();
-const STATEMENTS = rule<T, Expr[]>();
+export const STATEMENT = rule<T, Expr>();
+export const STATEMENTS = rule<T, Expr[]>();
 
 const ANY_SPACE = p.rep_sc(p.tok(T.Space));
 
@@ -281,16 +281,29 @@ STATEMENT.setPattern(
 STATEMENTS.setPattern(
   p.kleft(
     p.list_sc(
-      p.kmid(ANY_SPACE, STATEMENT, ANY_SPACE),
-      p.seq(
-        ANY_SPACE,
-        p.tok(T.SemiColon),
-        ANY_SPACE,
-        p.rep_sc(p.tok(T.SemiColon)),
-        ANY_SPACE
+      STATEMENT,
+      p.alt(
+        // statements delimited by semicolons:
+        p.seq(
+          ANY_SPACE,
+          p.tok(T.SemiColon),
+          ANY_SPACE,
+          p.rep_sc(p.tok(T.SemiColon)),
+          ANY_SPACE
+        ),
+        // statements delimited by newlines:
+        p.seq(
+          p.rep_sc(p.str(" ")),
+          p.str("\n"),
+          p.rep_sc(p.str(" ")),
+          p.rep_sc(p.str("\n")),
+          p.rep_sc(p.str(" "))
+        )
       )
     ),
-    p.seq(ANY_SPACE, p.rep_sc(p.tok(T.SemiColon)), ANY_SPACE)
+    p.opt_sc(
+      p.seq(ANY_SPACE, p.seq(p.tok(T.SemiColon), p.rep_sc(p.tok(T.SemiColon))))
+    )
   )
 );
 

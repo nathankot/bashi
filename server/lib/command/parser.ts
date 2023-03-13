@@ -59,7 +59,7 @@ enum T {
   Char,
 }
 
-const lexer = buildLexer([
+export const lexer = buildLexer([
   [true, /^'([^'\\]|\\.)*'/g, T.SingleQuoteStringLiteral],
   [true, /^"([^"\\]|\\.)*"/g, T.DoubleQuoteStringLiteral],
   [true, /^[\+\-]?\d+(\.\d+)?/g, T.NumberLiteral],
@@ -90,9 +90,9 @@ const lexer = buildLexer([
 const FUNC_CALL = rule<T, Call>();
 const INFIX_CALL = rule<T, Expr>();
 const PAREN_GROUP = rule<T, Expr>();
-const TEMPLATE_STRING = rule<T, Expr>();
 const VALUE = rule<T, Value>();
 const VAR_REF = rule<T, Call>();
+export const TEMPLATE_STRING = rule<T, Expr>();
 
 const EXPR = p.alt(
   VALUE,

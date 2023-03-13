@@ -368,7 +368,7 @@ for (const test of [
       `Action: result;`, // should be the variable
       `Action: "this should show up";`,
       `Action: reSult;`, // should be the result
-      `I have finished`,
+      "I have finished: ${result}",
     ],
   },
   {
@@ -492,7 +492,7 @@ test test 1111 action: c()
 
   action: f()
 
-hello`
+hello interpolate \${a} \`escaped backquotes\` \\\`, test test {not interpolated} $`
     )
   );
 });

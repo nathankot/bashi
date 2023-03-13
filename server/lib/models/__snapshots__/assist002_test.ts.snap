@@ -3735,7 +3735,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           args: [
             {
               type: "string",
-              value: "I have finished",
+              value: "I have finished: new result",
             },
           ],
           id: "9.0",
@@ -3891,8 +3891,24 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           {
             args: [
               {
-                type: "string",
-                value: "I have finished",
+                args: [
+                  {
+                    type: "string",
+                    value: "I have finished: ",
+                  },
+                  {
+                    args: [
+                      {
+                        type: "string",
+                        value: "result",
+                      },
+                    ],
+                    name: "\$ref",
+                    type: "call",
+                  },
+                ],
+                name: "__+__",
+                type: "call",
               },
             ],
             name: "respond",
@@ -4164,6 +4180,40 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         type: "executed",
       },
+      {
+        args: [
+          {
+            type: "string",
+            value: "result",
+          },
+        ],
+        id: "9.0.0.1",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "new result",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "I have finished: ",
+          },
+          {
+            type: "string",
+            value: "new result",
+          },
+        ],
+        id: "9.0.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "I have finished: new result",
+        },
+        type: "executed",
+      },
     ],
   },
 }
@@ -4431,7 +4481,7 @@ snapshot[`complex parseCompletion 1`] = `
             type: "string",
             value: "hello 123
 test test 1111 action: c()
-hello",
+hello interpolate \${a} \`escaped backquotes\` \\\\\`, test test {not interpolated} \$",
           },
         ],
         name: "respond",

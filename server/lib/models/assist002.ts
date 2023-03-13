@@ -22,6 +22,8 @@ import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 
 import {
+  lexer,
+  TEMPLATE_STRING,
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
@@ -119,18 +121,25 @@ export function parseCompletion(completion: string): Action[] {
 
   // Strings get joined together and placed as an action at the end.
   if (strings.length > 0) {
+    let value = strings.join("\n");
+    let arg: Expr = { type: "string", value };
+    // try to apply string interpolation:
+    try {
+      arg = p.expectSingleResult(
+        p.expectEOF(
+          TEMPLATE_STRING.parse(
+            lexer.parse("`" + value.replace("`", "\\`") + "`")
+          )
+        )
+      );
+    } catch {}
     actions.push({
       action: `${RESPOND_COMMAND}(<truncated text>)`,
       expressions: [
         {
           name: RESPOND_COMMAND,
           type: "call",
-          args: [
-            {
-              type: "string",
-              value: strings.join("\n"),
-            },
-          ],
+          args: [arg],
         },
       ],
     });

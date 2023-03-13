@@ -14,7 +14,7 @@ const LOCAL_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
 const now: BuiltinCommandDefinition<[], "string"> = {
   isBuiltin: true,
   cost: -1000,
-  description: "get current ISO8601 datetime",
+  description: "get current ISO8601 datetime in the user's timezone",
   args: [],
   run: async (deps, []) => ({
     type: "string",

@@ -199,7 +199,7 @@ for (const test of [
     description: "calendar event creation in a single completion",
     input: { request: "some request" },
     openAiResults: [
-      `Action: var nextTuesday = parseRelativeTime("next Tuesday at 12:00pm");
+      `Action: var nextTuesday = "2022-12-27T12:00:00Z";
 Action: createCalendarEvent(nextTuesday, "Lunch with Bill"); \n
 I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for next Tuesday at 12:00pm in the user's timezone, and then used the \`createCalendarEvent\` function to create a calendar event with the given name.
 `,

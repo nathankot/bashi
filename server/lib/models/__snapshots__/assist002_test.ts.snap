@@ -2179,7 +2179,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
           args: [
             {
               type: "string",
-              value: "2022-12-26T12:00:00Z",
+              value: "2022-12-27T12:00:00Z",
             },
             {
               type: "string",
@@ -2206,7 +2206,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
       variables: {
         nextTuesday: {
           type: "string",
-          value: "2022-12-26T12:00:00Z",
+          value: "2022-12-27T12:00:00Z",
         },
         result_0_0: {
           type: "void",
@@ -2259,7 +2259,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'var nextTuesday = parseRelativeTime("next Tuesday at 12:00pm");',
+        action: 'var nextTuesday = "2022-12-27T12:00:00Z";',
         expressions: [
           {
             args: [
@@ -2268,14 +2268,8 @@ snapshot[`calendar event creation in a single completion 1`] = `
                 value: "nextTuesday",
               },
               {
-                args: [
-                  {
-                    type: "string",
-                    value: "next Tuesday at 12:00pm",
-                  },
-                ],
-                name: "parseRelativeTime",
-                type: "call",
+                type: "string",
+                value: "2022-12-27T12:00:00Z",
               },
             ],
             name: "__=__",
@@ -2290,26 +2284,11 @@ snapshot[`calendar event creation in a single completion 1`] = `
         args: [
           {
             type: "string",
-            value: "next Tuesday at 12:00pm",
-          },
-        ],
-        id: "0.0.1",
-        name: "parseRelativeTime",
-        returnValue: {
-          type: "string",
-          value: "2022-12-26T12:00:00Z",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
             value: "nextTuesday",
           },
           {
             type: "string",
-            value: "2022-12-26T12:00:00Z",
+            value: "2022-12-27T12:00:00Z",
           },
         ],
         id: "0.0",
@@ -2330,7 +2309,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
         name: "\$ref",
         returnValue: {
           type: "string",
-          value: "2022-12-26T12:00:00Z",
+          value: "2022-12-27T12:00:00Z",
         },
         type: "executed",
       },

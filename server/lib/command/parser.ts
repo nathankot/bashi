@@ -321,3 +321,56 @@ export function parseStatements(str: string): Expr[] {
     expectEOF(p.kmid(ANY_SPACE, STATEMENTS, ANY_SPACE).parse(lexer.parse(str)))
   );
 }
+
+export function parseInsensitiveString<T>(
+  toMatch: string
+): p.Parser<T, p.Token<T>> {
+  return {
+    parse(token: p.Token<T> | undefined): p.ParserOutput<T, p.Token<T>> {
+      if (
+        token === undefined ||
+        token.text.toLowerCase() !== toMatch.toLowerCase()
+      ) {
+        return {
+          successful: false,
+          error: p.unableToConsumeToken(token),
+        };
+      }
+      return {
+        candidates: [
+          {
+            firstToken: token,
+            nextToken: token.next,
+            result: token,
+          },
+        ],
+        successful: true,
+        error: undefined,
+      };
+    },
+  };
+}
+
+export function parseRegexp<T>(toMatch: RegExp): p.Parser<T, p.Token<T>> {
+  return {
+    parse(token: p.Token<T> | undefined): p.ParserOutput<T, p.Token<T>> {
+      if (token === undefined || !toMatch.test(token.text)) {
+        return {
+          successful: false,
+          error: p.unableToConsumeToken(token),
+        };
+      }
+      return {
+        candidates: [
+          {
+            firstToken: token,
+            nextToken: token.next,
+            result: token,
+          },
+        ],
+        successful: true,
+        error: undefined,
+      };
+    },
+  };
+}

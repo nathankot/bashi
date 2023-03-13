@@ -38,8 +38,7 @@ import {
   STATEMENTS,
   TEMPLATE_STRING,
   lexer,
-  parseInsensitiveString,
-  parseRegexp,
+  parsePredicate,
 } from "@lib/command/parser.ts";
 
 const RESPOND_COMMAND = "respond";
@@ -604,7 +603,7 @@ function makeCommandSet(commands: CommandSet): string[] {
 
 export function parseCompletion(completion: string): Action[] {
   const input = completion.trim();
-  const str = p.apply(p.rep_sc(parseRegexp(/^.*$/)), (xs) =>
+  const str = p.apply(p.rep_sc(parsePredicate((t) => t.text !== "\n")), (xs) =>
     xs
       .map((x) => x.text)
       .join("")
@@ -612,7 +611,11 @@ export function parseCompletion(completion: string): Action[] {
   );
   const action = p.apply(
     p.kmid(
-      p.seq(parseInsensitiveString("action"), p.rep_sc(p.str(" ")), p.str("{")),
+      p.seq(
+        parsePredicate((t) => t.text.toLowerCase() === "action"),
+        p.rep_sc(p.str(" ")),
+        p.str("{")
+      ),
       p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
       p.str("}")
     ),
@@ -647,8 +650,7 @@ export function parseCompletion(completion: string): Action[] {
   let candidates = result.candidates
     // Only consider candidates that have consumed to the EOF
     .filter((c) => c.nextToken == null)
-    // Remove any empty strings
-    .map((c) => c.result.filter((v) => v !== ""));
+    .map((c) => c.result);
 
   if (candidates.length === 0) {
     // TODO: better error:
@@ -681,30 +683,32 @@ export function parseCompletion(completion: string): Action[] {
 
   // Strings get joined together and placed as an action at the end.
   if (strings.length > 0) {
-    let value = strings.join("\n");
-    let arg: Expr = { type: "string", value };
-    // try to apply string interpolation:
-    try {
-      arg = p.expectSingleResult(
-        p.expectEOF(
-          TEMPLATE_STRING.parse(
-            lexer.parse("`" + value.replace("`", "\\`") + "`")
+    let value = strings.join("\n").trim();
+    if (value !== "") {
+      let arg: Expr = { type: "string", value };
+      // try to apply string interpolation:
+      try {
+        arg = p.expectSingleResult(
+          p.expectEOF(
+            TEMPLATE_STRING.parse(
+              lexer.parse("`" + value.replace("`", "\\`") + "`")
+            )
           )
-        )
-      );
-    } catch {
-      // TODO return error so the model can fix itself
+        );
+      } catch {
+        // TODO return error so the model can fix itself
+      }
+      actions.push({
+        action: `${RESPOND_COMMAND}(<truncated text>)`,
+        expressions: [
+          {
+            name: RESPOND_COMMAND,
+            type: "call",
+            args: [arg],
+          },
+        ],
+      });
     }
-    actions.push({
-      action: `${RESPOND_COMMAND}(<truncated text>)`,
-      expressions: [
-        {
-          name: RESPOND_COMMAND,
-          type: "call",
-          args: [arg],
-        },
-      ],
-    });
   }
 
   return actions;

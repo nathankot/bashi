@@ -199,6 +199,31 @@ for (const test of [
     },
   },
   {
+    description: "completion with a complex code sample",
+    input: { request: "some request" },
+    openAiResults: [
+      `The \`mode\` parameter in the JavaScript Fetch API is used to specify the mode of the request. The mode determines how the request will be made and whether it will be restricted by CORS (Cross-Origin Resource Sharing) policy.
+
+The available modes are:
+
+- "cors": This is the default mode. It allows the request to be made across domains, subject to CORS policy restrictions.
+- "no-cors": This mode allows the request to be made, but it does not allow access to the response data. This mode is useful for making requests to third-party APIs that do not support CORS.
+- "same-origin": This mode restricts the request to the same origin as the page making the request. This mode is useful for making requests to the same domain as the page, and it is not subject to CORS policy restrictions.
+- "navigate": This mode is used to navigate to a new page. It is only used by the \`window.fetch()\` method.
+
+Here's an example of how to use the \`mode\` parameter in a fetch request:
+
+\`\`\`
+fetch('https://example.com/data.json', {
+  mode: 'cors'
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+\`\`\``,
+    ],
+  },
+  {
     description: "calendar event creation in a single completion",
     input: { request: "some request" },
     openAiResults: [

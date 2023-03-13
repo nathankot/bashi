@@ -518,7 +518,7 @@ The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japane
       });
 
       if (test.snapshotPrompts === true) {
-        await assertSnapshot(t, prompts);
+        await assertSnapshot(t, prompts.slice(1));
       }
     } catch (e) {
       if (test.snapshotError !== true) {

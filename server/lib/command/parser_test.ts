@@ -31,6 +31,10 @@ for (const expr of [
   `const a_aaa = someCall(123 + 44, "abc")`,
   `const a_aaa = someCall(123 + 44, "abc"); a_aaa + 123`,
 
+  // newline delimiting
+  `const a_aaa = someCall(123 + 44, "abc")\n a_aaa + 123`,
+  `someFunction() \n someOtherFunction(" aa() \n bbb()")`,
+
   // template literals
   "someCall(``)",
   "someCall(`${``}`)",

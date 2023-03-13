@@ -128,6 +128,10 @@ function something(num) {
   {
     prompt: "help me write a commit message please",
   },
+  {
+    prompt:
+      "do you have any suggestions for what I could make for dinner tonight?",
+  },
 ];
 
 export default async function updateExamples(

@@ -22,12 +22,9 @@ import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 
 import {
-  lexer,
-  TEMPLATE_STRING,
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
-  parseStatements,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -35,6 +32,14 @@ import {
   filterUnnecessary,
   runBuiltinCommand,
 } from "@lib/command.ts";
+
+import {
+  T,
+  STATEMENTS,
+  TEMPLATE_STRING,
+  lexer,
+  parsePredicate,
+} from "@lib/command/parser.ts";
 
 const RESPOND_COMMAND = "respond";
 
@@ -48,106 +53,6 @@ const Action = t.intersection([
   }),
 ]);
 type Action = t.TypeOf<typeof Action>;
-
-export enum T {
-  KeywordAction,
-  Char,
-  Newline,
-}
-
-export const actionLexer = p.buildLexer([
-  [true, /^\n+( *?)Action( ?):/gi, T.KeywordAction],
-  [true, /^\n/g, T.Newline],
-  [true, /^./g, T.Char],
-]);
-
-export function parseCompletion(completion: string): Action[] {
-  const expr = p.apply(
-    p.seq(
-      p.rep(p.alt(p.tok(T.Char), p.tok(T.Newline))),
-      p.alt(p.str(")"), p.str(";")),
-      p.rep_sc(p.str(" "))
-    ),
-    ([xs, y]): { action: string } => ({
-      action: (xs.map((x) => x.text).join("") + y.text).trim(),
-    })
-  );
-  const str = p.apply(p.rep_sc(p.tok(T.Char)), (xs) =>
-    xs
-      .map((x) => x.text)
-      .join("")
-      .trim()
-  );
-  const action = p.kright(p.tok(T.KeywordAction), expr);
-  const list = p.rep_sc(p.alt(action, p.kright(p.tok(T.Newline), str)));
-
-  const result = list.parse(
-    actionLexer.parse(
-      // newline is necessary in order to disambiguate
-      // between Action: at the start of a line vs elsewhere
-      "\n" + completion
-    )
-  );
-
-  if (result.successful !== true) {
-    throw result.error;
-  }
-
-  let candidates = result.candidates
-    // Only consider candidates that have consumed to the EOF
-    .filter((c) => c.nextToken == null)
-    // Remove any empty strings
-    .map((c) => c.result.filter((v) => v !== ""));
-
-  if (candidates.length !== 1) {
-    throw new Error(
-      `expect to have 1 candidate after parsing, got ${candidates.length}`
-    );
-  }
-
-  const items = candidates[0]!;
-  let actions: Action[] = [];
-  let strings: string[] = [];
-
-  for (const item of items) {
-    if (typeof item === "string") {
-      strings.push(item);
-    } else {
-      actions.push({
-        action: item.action,
-        expressions: parseStatements(item.action),
-      });
-    }
-  }
-
-  // Strings get joined together and placed as an action at the end.
-  if (strings.length > 0) {
-    let value = strings.join("\n");
-    let arg: Expr = { type: "string", value };
-    // try to apply string interpolation:
-    try {
-      arg = p.expectSingleResult(
-        p.expectEOF(
-          TEMPLATE_STRING.parse(
-            lexer.parse("`" + value.replace("`", "\\`") + "`")
-          )
-        )
-      );
-    } catch {}
-    actions.push({
-      action: `${RESPOND_COMMAND}(<truncated text>)`,
-      expressions: [
-        {
-          name: RESPOND_COMMAND,
-          type: "call",
-          args: [arg],
-        },
-      ],
-    });
-  }
-
-  return actions;
-}
 
 export const State = t.type({
   request: t.string,
@@ -595,28 +500,26 @@ function makePromptMessages(
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction("arg 1", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction("arg 1", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction("arg 1", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction("arg 1", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.`;
 
@@ -657,7 +560,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
         return [
           {
             role: "assistant",
-            content: `Action: ${g.action}`,
+            content: g.action,
           },
           {
             role: "system",
@@ -696,4 +599,117 @@ function makeCommandSet(commands: CommandSet): string[] {
         }`;
       })
   );
+}
+
+export function parseCompletion(completion: string): Action[] {
+  const input = completion.trim();
+  const str = p.apply(p.rep_sc(parsePredicate((t) => t.text !== "\n")), (xs) =>
+    xs
+      .map((x) => x.text)
+      .join("")
+      .trim()
+  );
+  const action = p.apply(
+    p.kmid(
+      p.seq(
+        parsePredicate((t) => t.text.toLowerCase() === "action"),
+        p.rep_sc(p.str(" ")),
+        p.str("{")
+      ),
+      p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
+      p.str("}")
+    ),
+    (expressions, tokenRange): Action => {
+      return {
+        action: p.extractByTokenRange(input, tokenRange[0], tokenRange[1]),
+        expressions,
+      };
+    }
+  );
+  const list = p.list(
+    p.apply(p.amb(p.alt(action, str)), (candidates) => {
+      // Always prefer the action if it parses correctly:
+      for (const c of candidates) {
+        if (typeof c !== "string") return c;
+      }
+      return candidates[0] ?? "";
+    }),
+    p.seq(
+      p.rep_sc(p.str(" ")),
+      p.seq(p.str("\n"), p.rep_sc(p.str("\n"))),
+      p.rep_sc(p.str(" "))
+    )
+  );
+
+  const result = list.parse(lexer.parse(input));
+
+  if (result.successful !== true) {
+    throw result.error;
+  }
+
+  let candidates = result.candidates
+    // Only consider candidates that have consumed to the EOF
+    .filter((c) => c.nextToken == null)
+    .map((c) => c.result);
+
+  if (candidates.length === 0) {
+    // TODO: better error:
+    throw new Error(`expect to have at least 1 candidate after parsing`);
+  }
+
+  // Choose the candidate with the most number of actions:
+  let bestCandidate = candidates[0]!;
+  let bestCandidateActionsCount = bestCandidate.filter(
+    (c) => typeof c !== "string"
+  ).length;
+  for (const c of candidates) {
+    const actionsCount = c.filter((c) => typeof c !== "string").length;
+    if (actionsCount > bestCandidateActionsCount) {
+      bestCandidate = c;
+      bestCandidateActionsCount = actionsCount;
+    }
+  }
+
+  let actions: Action[] = [];
+  let strings: string[] = [];
+
+  for (const item of bestCandidate) {
+    if (typeof item === "string") {
+      strings.push(item);
+    } else {
+      actions.push(item);
+    }
+  }
+
+  // Strings get joined together and placed as an action at the end.
+  if (strings.length > 0) {
+    let value = strings.join("\n").trim();
+    if (value !== "") {
+      let arg: Expr = { type: "string", value };
+      // try to apply string interpolation:
+      try {
+        arg = p.expectSingleResult(
+          p.expectEOF(
+            TEMPLATE_STRING.parse(
+              lexer.parse("`" + value.replace("`", "\\`") + "`")
+            )
+          )
+        );
+      } catch {
+        // TODO return error so the model can fix itself
+      }
+      actions.push({
+        action: `${RESPOND_COMMAND}(<truncated text>)`,
+        expressions: [
+          {
+            name: RESPOND_COMMAND,
+            type: "call",
+            args: [arg],
+          },
+        ],
+      });
+    }
+  }
+
+  return actions;
 }

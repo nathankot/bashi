@@ -78,7 +78,7 @@ snapshot[`all commands resolved on the server 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'now(); math("pi^2 + 123")',
+        action: 'Action { now(); math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -135,28 +135,26 @@ snapshot[`all commands resolved on the server 1`] = `
 snapshot[`all commands resolved on the server 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -172,28 +170,26 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -209,7 +205,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: now(); math("pi^2 + 123")',
+    content: 'Action { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -297,7 +293,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
     request: "some request",
     resolvedActions: [
       {
-        action: 'now(); math("pi^2 + 123")',
+        action: 'Action { now(); math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -354,28 +350,26 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
 snapshot[`all commands resolved on the server - empty response tries again 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -391,28 +385,26 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -428,7 +420,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: now(); math("pi^2 + 123")',
+    content: 'Action { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -436,28 +428,26 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -473,7 +463,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: now(); math("pi^2 + 123")',
+    content: 'Action { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -573,7 +563,7 @@ snapshot[`multiple actions in a single completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "now()",
+        action: "Action { now() }",
         expressions: [
           {
             args: [
@@ -585,7 +575,7 @@ snapshot[`multiple actions in a single completion 1`] = `
         result: '"2022-12-19T08:41:10Z"',
       },
       {
-        action: 'math("pi^2 + 123")',
+        action: 'action { math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -601,7 +591,7 @@ snapshot[`multiple actions in a single completion 1`] = `
         result: '"132.86960440108936"',
       },
       {
-        action: "now()",
+        action: "Action { now() }",
         expressions: [
           {
             args: [
@@ -734,7 +724,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "now()",
+        action: "Action { now() }",
         expressions: [
           {
             args: [
@@ -746,7 +736,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
         result: '"2022-12-19T08:41:10Z"',
       },
       {
-        action: 'math("pi^2 + 123")',
+        action: 'action { math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -872,7 +862,7 @@ snapshot[`command overloads work 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: '"string" + "concat"; 123 + 1;',
+        action: 'Action { "string" + "concat"; 123 + 1; }',
         expressions: [
           {
             args: [
@@ -953,28 +943,26 @@ snapshot[`command overloads work 1`] = `
 snapshot[`command overloads work 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -990,28 +978,26 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -1027,7 +1013,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: "string" + "concat"; 123 + 1;',
+    content: 'Action { "string" + "concat"; 123 + 1; }',
     role: "assistant",
   },
   {
@@ -1072,7 +1058,7 @@ snapshot[`infix + operand support 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("infix " + (currentTimeForTimezone("America/New_York") + " hello"))',
+        action: 'Action { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }',
         expressions: [
           {
             args: [
@@ -1210,7 +1196,9 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");',
+        action: 'Action { 
+respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
+createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }',
         expressions: [
           {
             args: [
@@ -1248,19 +1236,24 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
             name: "respond",
             type: "call",
           },
-        ],
-      },
-      {
-        action: "respond(<truncated text>)",
-        expressions: [
           {
             args: [
               {
+                args: [
+                  {
+                    type: "string",
+                    value: "5 days from now",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
                 type: "string",
-                value: 'createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife");',
+                value: "Dinner with wife",
               },
             ],
-            name: "respond",
+            name: "createCalendarEvent",
             type: "call",
           },
         ],
@@ -1375,7 +1368,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');",
+        action: "Action { currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife'); }",
         expressions: [
           {
             args: [
@@ -1554,7 +1547,7 @@ snapshot[`supports model outputs using template strings 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife');",
+        action: "Action { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }",
         expressions: [
           {
             args: [
@@ -1789,7 +1782,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: \`"some string"; 123; currentTimeForTimezone('Pacific/Auckland')\`,
+        action: \`Action { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }\`,
         expressions: [
           {
             type: "string",
@@ -1920,7 +1913,7 @@ snapshot[`supports assignment 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "a = 123; b = 111; a + b;",
+        action: "Action { a = 123; b = 111; a + b; }",
         expressions: [
           {
             args: [
@@ -2108,7 +2101,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: 'now(); respond("not reused because client command")',
+        action: 'Action { now(); respond("not reused because client command") }',
         expressions: [
           {
             args: [
@@ -2166,6 +2159,95 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
 }
 `;
 
+snapshot[`completion with a complex code sample 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "The \`mode\` parameter in the JavaScript Fetch API is used to specify the mode of the request. The mode determines how the request will be made and whether it will be restricted by CORS (Cross-Origin Resource Sharing) policy.
+The available modes are:
+- \\"cors\\": This is the default mode. It allows the request to be made across domains, subject to CORS policy restrictions.
+- \\"no-cors\\": This mode allows the request to be made, but it does not allow access to the response data. This mode is useful for making requests to third-party APIs that do not support CORS.
+- \\"same-origin\\": This mode restricts the request to the same origin as the page making the request. This mode is useful for making requests to the same domain as the page, and it is not subject to CORS policy restrictions.
+- \\"navigate\\": This mode is used to navigate to a new page. It is only used by the \`window.fetch()\` method.
+Here's an example of how to use the \`mode\` parameter in a fetch request:
+
+\`\`\`
+fetch('https://example.com/data.json', {
+  mode: 'cors'
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
+\`\`\`",
+            },
+          ],
+          id: "0.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 1,
+    pending: [
+      {
+        action: "respond(<truncated text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "The \`mode\` parameter in the JavaScript Fetch API is used to specify the mode of the request. The mode determines how the request will be made and whether it will be restricted by CORS (Cross-Origin Resource Sharing) policy.
+The available modes are:
+- \\"cors\\": This is the default mode. It allows the request to be made across domains, subject to CORS policy restrictions.
+- \\"no-cors\\": This mode allows the request to be made, but it does not allow access to the response data. This mode is useful for making requests to third-party APIs that do not support CORS.
+- \\"same-origin\\": This mode restricts the request to the same origin as the page making the request. This mode is useful for making requests to the same domain as the page, and it is not subject to CORS policy restrictions.
+- \\"navigate\\": This mode is used to navigate to a new page. It is only used by the \`window.fetch()\` method.
+Here's an example of how to use the \`mode\` parameter in a fetch request:
+
+\`\`\`
+fetch('https://example.com/data.json', {
+  mode: 'cors'
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
+\`\`\`",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+    ],
+    resolvedCommands: [
+    ],
+  },
+}
+`;
+
 snapshot[`calendar event creation in a single completion 1`] = `
 {
   n: 1,
@@ -2216,7 +2298,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'createCalendarEvent(nextTuesday, "Lunch with Bill");',
+        action: 'Action { createCalendarEvent(nextTuesday, "Lunch with Bill"); }',
         expressions: [
           {
             args: [
@@ -2259,7 +2341,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'var nextTuesday = "2022-12-27T12:00:00Z";',
+        action: 'Action { var nextTuesday = "2022-12-27T12:00:00Z"; }',
         expressions: [
           {
             args: [
@@ -2318,6 +2400,408 @@ snapshot[`calendar event creation in a single completion 1`] = `
 }
 `;
 
+snapshot[`multiple assignment in one completion 1`] = `
+{
+  n: 4,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: 'The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".',
+            },
+          ],
+          id: "4.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "void",
+        },
+        {
+          type: "void",
+        },
+        {
+          type: "void",
+        },
+        {
+          type: "void",
+        },
+      ],
+      variables: {
+        a: {
+          type: "string",
+          value: "What rooms do you have available?",
+        },
+        b: {
+          type: "string",
+          value: "french translation",
+        },
+        c: {
+          type: "string",
+          value: "spanish translation",
+        },
+        d: {
+          type: "string",
+          value: "japanese translation",
+        },
+        result_0_0: {
+          type: "void",
+        },
+        result_1_0: {
+          type: "void",
+        },
+        result_2_0: {
+          type: "void",
+        },
+        result_3_0: {
+          type: "void",
+        },
+      },
+    },
+    modelCallCount: 1,
+    pending: [
+      {
+        action: "respond(<truncated text>)",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: 'The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".',
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: 'Action { a = "What rooms do you have available?" }',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a",
+              },
+              {
+                type: "string",
+                value: "What rooms do you have available?",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+      },
+      {
+        action: 'Action { b = translate(a, "French") }',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "b",
+              },
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "string",
+                        value: "a",
+                      },
+                    ],
+                    name: "\$ref",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: "French",
+                  },
+                ],
+                name: "translate",
+                type: "call",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+      },
+      {
+        action: 'Action { c = translate(a, "Spanish") }',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "c",
+              },
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "string",
+                        value: "a",
+                      },
+                    ],
+                    name: "\$ref",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: "Spanish",
+                  },
+                ],
+                name: "translate",
+                type: "call",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+      },
+      {
+        action: 'Action { d = translate(a, "Japanese") }',
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "d",
+              },
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "string",
+                        value: "a",
+                      },
+                    ],
+                    name: "\$ref",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: "Japanese",
+                  },
+                ],
+                name: "translate",
+                type: "call",
+              },
+            ],
+            name: "__=__",
+            type: "call",
+          },
+        ],
+        result: "void",
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+          {
+            type: "string",
+            value: "What rooms do you have available?",
+          },
+        ],
+        id: "0.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+        ],
+        id: "1.0.1.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "What rooms do you have available?",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "What rooms do you have available?",
+          },
+          {
+            type: "string",
+            value: "French",
+          },
+        ],
+        id: "1.0.1",
+        name: "translate",
+        returnValue: {
+          type: "string",
+          value: "french translation",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "b",
+          },
+          {
+            type: "string",
+            value: "french translation",
+          },
+        ],
+        id: "1.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+        ],
+        id: "2.0.1.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "What rooms do you have available?",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "What rooms do you have available?",
+          },
+          {
+            type: "string",
+            value: "Spanish",
+          },
+        ],
+        id: "2.0.1",
+        name: "translate",
+        returnValue: {
+          type: "string",
+          value: "spanish translation",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "c",
+          },
+          {
+            type: "string",
+            value: "spanish translation",
+          },
+        ],
+        id: "2.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+        ],
+        id: "3.0.1.0",
+        name: "\$ref",
+        returnValue: {
+          type: "string",
+          value: "What rooms do you have available?",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "What rooms do you have available?",
+          },
+          {
+            type: "string",
+            value: "Japanese",
+          },
+        ],
+        id: "3.0.1",
+        name: "translate",
+        returnValue: {
+          type: "string",
+          value: "japanese translation",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "d",
+          },
+          {
+            type: "string",
+            value: "japanese translation",
+          },
+        ],
+        id: "3.0",
+        name: "__=__",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
 snapshot[`client resolved command 1`] = `
 {
   n: 1,
@@ -2361,7 +2845,7 @@ snapshot[`client resolved command 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'now(); respond("what do you want?")',
+        action: 'Action { now(); respond("what do you want?") }',
         expressions: [
           {
             args: [
@@ -2766,7 +3250,7 @@ snapshot[`nested calls 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife")',
+        action: 'Action { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }',
         expressions: [
           {
             args: [
@@ -2843,28 +3327,26 @@ snapshot[`nested calls 1`] = `
 snapshot[`nested calls 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -2925,7 +3407,7 @@ snapshot[`request needs more context 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'now(); editText(respond("please provide the text"), "convert to poem"); now()',
+        action: 'Action { now(); editText(respond("please provide the text"), "convert to poem"); now() }',
         expressions: [
           {
             args: [
@@ -3358,7 +3840,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("how are you?"); currentTimeForTimezone("America/New_York")',
+        action: 'Action { respond("how are you?"); currentTimeForTimezone("America/New_York") }',
         expressions: [
           {
             args: [
@@ -3608,7 +4090,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar;',
+        action: 'Action { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
         expressions: [
           {
             args: [
@@ -3680,28 +4162,26 @@ snapshot[`long results are truncated and stored in variables 1`] = `
 snapshot[`long results are truncated and stored in variables 2`] = `
 [
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -3717,28 +4197,26 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below), use these functions/tools to help with fulfilling the request, but only use system functions when necessary - always prefer to use expert knowledge directly if it is readily available. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
 
-In order to run a system function your response can include sections prefixed with Action:. The user does not have any concept of what an Action is, nor any visibility of their use and results. The format is:
-
-  Action: exampleAction(\\"arg 1\\", arg2);
-
-It is possible to assign the result of an action to a variable, and use it later via string interpolation:
-
-  Action: var a = exampleAction(\\"arg 1\\", arg2);
-  The result is \${a}
-
-It is also possible to use multiple actions in sequence:
-
-  Action: var a = exampleAction();
-  Action: exampleAction2(a);
-  Some string response
-
-A response can simply be a string without any action sections. Code samples should be returned in this fashion:
+A response is simply a string. Replies, code samples etc should be returned in this fashion:
 
   Some string response
 
-Do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+To run a system function your response can include Action{} blocks. For example:
+
+  Action { exampleAction(\\"arg 1\\", arg2); }
+  I have completed your request ...
+
+Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+
+It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+
+  Action { a = exampleAction(\\"arg 1\\", arg2) }
+  Action { b = exampleAction2(a) }
+  The result is \${b}
+
+Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
 
@@ -3754,7 +4232,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action: longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar;',
+    content: 'Action { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
     role: "assistant",
   },
   {
@@ -3962,7 +4440,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     request: "some request",
     resolvedActions: [
       {
-        action: '"hello result";',
+        action: 'Action { "hello result"; }',
         expressions: [
           {
             type: "string",
@@ -3972,7 +4450,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: "result;",
+        action: "Action { result; }",
         expressions: [
           {
             args: [
@@ -3988,7 +4466,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: 'var a = "b"; "should override result within same action"; result;',
+        action: 'Action { var a = "b"; "should override result within same action"; result; }',
         expressions: [
           {
             args: [
@@ -4022,7 +4500,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: 'void; "should override result within same action"; "should override result within same action"',
       },
       {
-        action: "rEsUlt;",
+        action: "Action { rEsUlt; }",
         expressions: [
           {
             args: [
@@ -4038,7 +4516,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"should override result within same action"',
       },
       {
-        action: 'var result = "new result";',
+        action: 'Action { var result = "new result"; }',
         expressions: [
           {
             args: [
@@ -4058,7 +4536,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: "void",
       },
       {
-        action: '"this should not show up twice";',
+        action: 'Action { "this should not show up twice"; }',
         expressions: [
           {
             type: "string",
@@ -4068,7 +4546,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should not show up twice"',
       },
       {
-        action: "result;",
+        action: "Action { result; }",
         expressions: [
           {
             args: [
@@ -4084,7 +4562,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"new result"',
       },
       {
-        action: '"this should show up";',
+        action: 'Action { "this should show up"; }',
         expressions: [
           {
             type: "string",
@@ -4094,7 +4572,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should show up"',
       },
       {
-        action: "reSult;",
+        action: "Action { reSult; }",
         expressions: [
           {
             args: [
@@ -4309,7 +4787,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: 'commandWithNumberArg("123123.00")',
+        action: 'Action { commandWithNumberArg("123123.00") }',
         expressions: [
           {
             args: [
@@ -4327,7 +4805,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "math(123123)",
+        action: "Action { math(123123) }",
         expressions: [
           {
             args: [
@@ -4367,7 +4845,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
 snapshot[`complex parseCompletion 1`] = `
 [
   {
-    action: "a(b())",
+    action: "ACTION { a(b()) }",
     expressions: [
       {
         args: [
@@ -4384,9 +4862,9 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "d(
+    action: "ACTION{ d(
 123
-); g();",
+); g();}",
     expressions: [
       {
         args: [
@@ -4407,7 +4885,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "c()",
+    action: "ACTION{ c() }",
     expressions: [
       {
         args: [
@@ -4418,15 +4896,17 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: 'c(
- "action: a()"
-); g(123)',
+    action: 'ActiON {
+  c(
+    "ACTION { a() }"
+  ); g(123)
+}',
     expressions: [
       {
         args: [
           {
             type: "string",
-            value: "action: a()",
+            value: "ACTION { a() }",
           },
         ],
         name: "c",
@@ -4445,7 +4925,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "a = 123; b = 111; a + b;",
+    action: "action { a = 123; b = 111; a + b; }",
     expressions: [
       {
         args: [
@@ -4504,7 +4984,70 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "f()",
+    action: "action {
+  a = 123
+  b = 111
+  a + b
+}",
+    expressions: [
+      {
+        args: [
+          {
+            type: "string",
+            value: "a",
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        name: "__=__",
+        type: "call",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "b",
+          },
+          {
+            type: "number",
+            value: 111,
+          },
+        ],
+        name: "__=__",
+        type: "call",
+      },
+      {
+        args: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "a",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "b",
+              },
+            ],
+            name: "\$ref",
+            type: "call",
+          },
+        ],
+        name: "__+__",
+        type: "call",
+      },
+    ],
+  },
+  {
+    action: "ACTION { f() }",
     expressions: [
       {
         args: [
@@ -4522,7 +5065,7 @@ snapshot[`complex parseCompletion 1`] = `
           {
             type: "string",
             value: "hello 123
-test test 1111 action: c()
+test test 1111 ACTION { c() }
 hello interpolate \${a} \`escaped backquotes\` \\\\\`, test test {not interpolated} \$",
           },
         ],

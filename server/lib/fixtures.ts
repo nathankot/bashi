@@ -62,7 +62,7 @@ export const assist001CommandSet: CommandSet = {
     returnType: "void",
     args: [
       {
-        name: "iso8601Date",
+        name: "iso8601Datetime",
         type: "string",
       },
       {
@@ -78,7 +78,7 @@ export const assist001CommandSet: CommandSet = {
     returnType: "void",
     args: [
       {
-        name: "iso8601Date",
+        name: "iso8601Datetime",
         type: "string",
       },
       { name: "name", type: "string" },

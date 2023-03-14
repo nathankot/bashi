@@ -241,10 +241,11 @@ I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for n
 Action { b = translate(a, "French") }
 Action { c = translate(a, "Spanish") }
 Action { d = translate(a, "Japanese") }
-The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".`,
+This string response line is ignored`,
       `french translation`,
       `spanish translation`,
       `japanese translation`,
+      `The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".`,
     ],
   },
   {

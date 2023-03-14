@@ -57,7 +57,7 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
+\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions
 
 Begin!
 
@@ -185,7 +185,7 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
+\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions
 
 Begin!
 
@@ -1783,7 +1783,7 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
+\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions
 
 Begin!
 
@@ -1955,7 +1955,7 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
+\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions
 
 Begin!
 

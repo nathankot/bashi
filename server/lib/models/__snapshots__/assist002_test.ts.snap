@@ -78,7 +78,7 @@ snapshot[`all commands resolved on the server 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { now(); math("pi^2 + 123") }',
+        action: 'Run { now(); math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -145,28 +145,24 @@ Locale: "en-US"',
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+The beginning of your response can include Run{} blocks to run functions. For example:
 
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
+  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
   I have completed your request ...
 
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn(\\"arg 1\\", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
 
 \`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime in the user's timezone
@@ -180,7 +176,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action { now(); math("pi^2 + 123") }',
+    content: 'Run { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -268,7 +264,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { now(); math("pi^2 + 123") }',
+        action: 'Run { now(); math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -335,28 +331,24 @@ Locale: "en-US"',
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+The beginning of your response can include Run{} blocks to run functions. For example:
 
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
+  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
   I have completed your request ...
 
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn(\\"arg 1\\", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
 
 \`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime in the user's timezone
@@ -370,7 +362,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action { now(); math("pi^2 + 123") }',
+    content: 'Run { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -384,28 +376,24 @@ Locale: "en-US"',
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+The beginning of your response can include Run{} blocks to run functions. For example:
 
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
+  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
   I have completed your request ...
 
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn(\\"arg 1\\", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
 
 \`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime in the user's timezone
@@ -419,7 +407,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action { now(); math("pi^2 + 123") }',
+    content: 'Run { now(); math("pi^2 + 123") }',
     role: "assistant",
   },
   {
@@ -519,7 +507,7 @@ snapshot[`multiple actions in a single completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "Action { now() }",
+        action: "Run { now() }",
         expressions: [
           {
             args: [
@@ -531,7 +519,7 @@ snapshot[`multiple actions in a single completion 1`] = `
         result: '"2022-12-19T08:41:10Z"',
       },
       {
-        action: 'action { math("pi^2 + 123") }',
+        action: 'run { math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -547,7 +535,7 @@ snapshot[`multiple actions in a single completion 1`] = `
         result: '"132.86960440108936"',
       },
       {
-        action: "Action { now() }",
+        action: "Run { now() }",
         expressions: [
           {
             args: [
@@ -680,7 +668,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "Action { now() }",
+        action: "Run { now() }",
         expressions: [
           {
             args: [
@@ -692,7 +680,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
         result: '"2022-12-19T08:41:10Z"',
       },
       {
-        action: 'action { math("pi^2 + 123") }',
+        action: 'run { math("pi^2 + 123") }',
         expressions: [
           {
             args: [
@@ -818,7 +806,7 @@ snapshot[`command overloads work 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { "string" + "concat"; 123 + 1; }',
+        action: 'Run { "string" + "concat"; 123 + 1; }',
         expressions: [
           {
             args: [
@@ -909,28 +897,24 @@ Locale: "en-US"',
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+The beginning of your response can include Run{} blocks to run functions. For example:
 
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
+  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
   I have completed your request ...
 
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn(\\"arg 1\\", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
 
 \`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime in the user's timezone
@@ -944,7 +928,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action { "string" + "concat"; 123 + 1; }',
+    content: 'Run { "string" + "concat"; 123 + 1; }',
     role: "assistant",
   },
   {
@@ -989,7 +973,7 @@ snapshot[`infix + operand support 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }',
+        action: 'Run { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }',
         expressions: [
           {
             args: [
@@ -1127,7 +1111,7 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { 
+        action: 'Run { 
 respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }',
         expressions: [
@@ -1299,7 +1283,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "Action { currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife'); }",
+        action: "Run { currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife'); }",
         expressions: [
           {
             args: [
@@ -1478,7 +1462,7 @@ snapshot[`supports model outputs using template strings 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "Action { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }",
+        action: "Run { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }",
         expressions: [
           {
             args: [
@@ -1713,7 +1697,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: \`Action { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }\`,
+        action: \`Run { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }\`,
         expressions: [
           {
             type: "string",
@@ -1856,7 +1840,7 @@ snapshot[`supports assignment 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "Action { a = 123; b = 111; a + b; }",
+        action: "Run { a = 123; b = 111; a + b; }",
         expressions: [
           {
             args: [
@@ -2046,7 +2030,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: 'Action { now(); respond("not reused because client command") }',
+        action: 'Run { now(); respond("not reused because client command") }',
         expressions: [
           {
             args: [
@@ -2249,7 +2233,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { createCalendarEvent(nextTuesday, "Lunch with Bill"); }',
+        action: 'Run { createCalendarEvent(nextTuesday, "Lunch with Bill"); }',
         expressions: [
           {
             args: [
@@ -2277,7 +2261,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { var nextTuesday = "2022-12-27T12:00:00Z"; }',
+        action: 'Run { var nextTuesday = "2022-12-27T12:00:00Z"; }',
         expressions: [
           {
             args: [
@@ -2455,7 +2439,7 @@ snapshot[`multiple assignment in one completion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { a = "What rooms do you have available?" }',
+        action: 'Run { a = "What rooms do you have available?" }',
         expressions: [
           {
             args: [
@@ -2475,7 +2459,7 @@ snapshot[`multiple assignment in one completion 1`] = `
         result: '"What rooms do you have available?"',
       },
       {
-        action: 'Action { b = translate(a, "French") }',
+        action: 'Run { b = translate(a, "French") }',
         expressions: [
           {
             args: [
@@ -2511,7 +2495,7 @@ snapshot[`multiple assignment in one completion 1`] = `
         result: '"french translation"',
       },
       {
-        action: 'Action { c = translate(a, "Spanish") }',
+        action: 'Run { c = translate(a, "Spanish") }',
         expressions: [
           {
             args: [
@@ -2547,7 +2531,7 @@ snapshot[`multiple assignment in one completion 1`] = `
         result: '"spanish translation"',
       },
       {
-        action: 'Action { d = translate(a, "Japanese") }',
+        action: 'Run { d = translate(a, "Japanese") }',
         expressions: [
           {
             args: [
@@ -2810,7 +2794,7 @@ snapshot[`client resolved command 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { now(); respond("what do you want?") }',
+        action: 'Run { now(); respond("what do you want?") }',
         expressions: [
           {
             args: [
@@ -3215,7 +3199,7 @@ snapshot[`nested calls 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }',
+        action: 'Run { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }',
         expressions: [
           {
             args: [
@@ -3341,7 +3325,7 @@ snapshot[`request needs more context 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { now(); editText(respond("please provide the text"), "convert to poem"); now() }',
+        action: 'Run { now(); editText(respond("please provide the text"), "convert to poem"); now() }',
         expressions: [
           {
             args: [
@@ -3774,7 +3758,7 @@ snapshot[`top level commands are resolved sequentially 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'Action { respond("how are you?"); currentTimeForTimezone("America/New_York") }',
+        action: 'Run { respond("how are you?"); currentTimeForTimezone("America/New_York") }',
         expressions: [
           {
             args: [
@@ -4030,7 +4014,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
+        action: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
         expressions: [
           {
             args: [
@@ -4057,7 +4041,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             type: "call",
           },
         ],
-        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_1\`]',
       },
     ],
     resolvedCommands: [
@@ -4113,34 +4097,31 @@ Locale: "en-US"',
     role: "system",
   },
   {
-    content: "Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+    content: "Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+The beginning of your response can include Run{} blocks to run functions. For example:
 
-  Some string response
-
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction(\\"arg 1\\", arg2); }
+  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
   I have completed your request ...
 
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction(\\"arg 1\\", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn(\\"arg 1\\", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any language features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
 
 \`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
 \`now(): string\` - get current ISO8601 datetime in the user's timezone
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions",
+\`runLargeLanguageModel(instructions: string, input: string): string\` - run a LLM on the given string, producing output that satisfies the given instructions
+\`editCode(\\"code to edit\\": string, \\"programming language or 'unknown'\\": string, \\"full description of desired changes or additions\\": string): string\` - edit code using the given requirements",
     role: "system",
   },
   {
@@ -4148,11 +4129,11 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "user",
   },
   {
-    content: 'Action { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
+    content: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
     role: "assistant",
   },
   {
-    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]',
+    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_1\`]',
     role: "system",
   },
 ]
@@ -4368,7 +4349,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     request: "some request",
     resolvedActions: [
       {
-        action: 'Action { "hello result"; }',
+        action: 'Run { "hello result"; }',
         expressions: [
           {
             type: "string",
@@ -4378,7 +4359,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: "Action { result; }",
+        action: "Run { result; }",
         expressions: [
           {
             args: [
@@ -4394,7 +4375,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"hello result"',
       },
       {
-        action: 'Action { var a = "b"; "should override result within same action"; result; }',
+        action: 'Run { var a = "b"; "should override result within same action"; result; }',
         expressions: [
           {
             args: [
@@ -4428,7 +4409,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"b"; "should override result within same action"; "should override result within same action"',
       },
       {
-        action: "Action { rEsUlt; }",
+        action: "Run { rEsUlt; }",
         expressions: [
           {
             args: [
@@ -4444,7 +4425,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"should override result within same action"',
       },
       {
-        action: 'Action { var result = "new result"; }',
+        action: 'Run { var result = "new result"; }',
         expressions: [
           {
             args: [
@@ -4464,7 +4445,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"new result"',
       },
       {
-        action: 'Action { "this should not show up twice"; }',
+        action: 'Run { "this should not show up twice"; }',
         expressions: [
           {
             type: "string",
@@ -4474,7 +4455,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should not show up twice"',
       },
       {
-        action: "Action { result; }",
+        action: "Run { result; }",
         expressions: [
           {
             args: [
@@ -4490,7 +4471,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"new result"',
       },
       {
-        action: 'Action { "this should show up"; }',
+        action: 'Run { "this should show up"; }',
         expressions: [
           {
             type: "string",
@@ -4500,7 +4481,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         result: '"this should show up"',
       },
       {
-        action: "Action { reSult; }",
+        action: "Run { reSult; }",
         expressions: [
           {
             args: [
@@ -4717,7 +4698,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: 'Action { commandWithNumberArg("123123.00") }',
+        action: 'Run { commandWithNumberArg("123123.00") }',
         expressions: [
           {
             args: [
@@ -4735,7 +4716,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     request: "some request",
     resolvedActions: [
       {
-        action: "Action { math(123123) }",
+        action: "Run { math(123123) }",
         expressions: [
           {
             args: [
@@ -4775,7 +4756,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
 snapshot[`complex parseCompletion 1`] = `
 [
   {
-    action: "ACTION { a(b()) }",
+    action: "RUN { a(b()) }",
     expressions: [
       {
         args: [
@@ -4792,7 +4773,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "ACTION{ d(
+    action: "RUN{ d(
 123
 ); g();}",
     expressions: [
@@ -4815,7 +4796,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "ACTION{ c() }",
+    action: "RUN{ c() }",
     expressions: [
       {
         args: [
@@ -4826,9 +4807,9 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: 'ActiON {
+    action: 'RuN {
   c(
-    "ACTION { a() }"
+    "RUN { a() }"
   ); g(123)
 }',
     expressions: [
@@ -4836,7 +4817,7 @@ snapshot[`complex parseCompletion 1`] = `
         args: [
           {
             type: "string",
-            value: "ACTION { a() }",
+            value: "RUN { a() }",
           },
         ],
         name: "c",
@@ -4855,7 +4836,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "action { a = 123; b = 111; a + b; }",
+    action: "run { a = 123; b = 111; a + b; }",
     expressions: [
       {
         args: [
@@ -4914,7 +4895,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "action {
+    action: "run {
   a = 123
   b = 111
   a + b
@@ -4977,7 +4958,7 @@ snapshot[`complex parseCompletion 1`] = `
     ],
   },
   {
-    action: "ACTION { f() }",
+    action: "RUN { f() }",
     expressions: [
       {
         args: [

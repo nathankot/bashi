@@ -88,7 +88,7 @@ for (const test of [
     description: "all commands resolved on the server",
     input: { request: "some request" },
     openAiResults: [
-      `Action { now(); math("pi^2 + 123") }`,
+      `Run { now(); math("pi^2 + 123") }`,
       `Your request has been fulfilled.`,
     ],
     snapshotPrompts: true,
@@ -97,14 +97,14 @@ for (const test of [
     description:
       "all commands resolved on the server - empty response tries again",
     input: { request: "some request" },
-    openAiResults: [`Action { now(); math("pi^2 + 123") }`, ``, `Finish`],
+    openAiResults: [`Run { now(); math("pi^2 + 123") }`, ``, `Finish`],
     snapshotPrompts: true,
   },
   {
     description: "multiple actions in a single completion",
     input: { request: "some request" },
     openAiResults: [
-      `Action { now() }\n action { math("pi^2 + 123") }\nAction { now() }`,
+      `Run { now() }\n run { math("pi^2 + 123") }\nRun { now() }`,
       `Your request has been fulfilled.`,
     ],
   },
@@ -112,24 +112,21 @@ for (const test of [
     description: "non-action lines at the end of a completion",
     input: { request: "some request" },
     openAiResults: [
-      `Action { now() }\n action { math("pi^2 + 123") }\n\nthisline is not prefixed with action, what will be the behavior?`,
+      `Run { now() }\n run { math("pi^2 + 123") }\n\nthisline is not prefixed with action, what will be the behavior?`,
       `Your request has been fulfilled.`,
     ],
   },
   {
     description: "command overloads work",
     input: { request: "some request" },
-    openAiResults: [
-      `Action { "string" + "concat"; 123 + 1; }`,
-      `I have finished`,
-    ],
+    openAiResults: [`Run { "string" + "concat"; 123 + 1; }`, `I have finished`],
     snapshotPrompts: true,
   },
   {
     description: "infix + operand support",
     input: { request: "some request" },
     openAiResults: [
-      `Action { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }`,
+      `Run { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }`,
       `I have finished`,
     ],
   },
@@ -137,14 +134,14 @@ for (const test of [
     description: "supports model outputs with lots of newlines",
     input: { request: "some request" },
     openAiResults: [
-      `Action { \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }`,
+      `Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }`,
     ],
   },
   {
     description: "supports model outputs with top level infix call",
     input: { request: "some request" },
     openAiResults: [
-      "Action { currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife'); }",
+      "Run { currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife'); }",
       `I have finished`,
     ],
   },
@@ -152,7 +149,7 @@ for (const test of [
     description: "supports model outputs using template strings",
     input: { request: "some request" },
     openAiResults: [
-      `Action { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }`,
+      `Run { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }`,
       `I have finished`,
     ],
   },
@@ -160,20 +157,20 @@ for (const test of [
     description: "supports model outputs with top level expression",
     input: { request: "some request" },
     openAiResults: [
-      `Action { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }`,
+      `Run { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }`,
       `I have finished`,
     ],
   },
   {
     description: "supports assignment",
     input: { request: "some request" },
-    openAiResults: [`Action { a = 123; b = 111; a + b; }`, `I have finished`],
+    openAiResults: [`Run { a = 123; b = 111; a + b; }`, `I have finished`],
   },
   {
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
-      `Action { now(); respond("not reused because client command") }`,
+      `Run { now(); respond("not reused because client command") }`,
     ],
     initialState: {
       modelCallCount: 1,
@@ -227,8 +224,8 @@ fetch('https://example.com/data.json', {
     description: "calendar event creation in a single completion",
     input: { request: "some request" },
     openAiResults: [
-      `Action { var nextTuesday = "2022-12-27T12:00:00Z"; }
-Action { createCalendarEvent(nextTuesday, "Lunch with Bill"); } \n
+      `Run { var nextTuesday = "2022-12-27T12:00:00Z"; }
+Run { createCalendarEvent(nextTuesday, "Lunch with Bill"); } \n
 I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for next Tuesday at 12:00pm in the user's timezone, and then used the \`createCalendarEvent\` function to create a calendar event with the given name.
 `,
     ],
@@ -237,10 +234,10 @@ I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for n
     description: "multiple assignment in one completion",
     input: { request: "some request" },
     openAiResults: [
-      `Action { a = "What rooms do you have available?" }
-Action { b = translate(a, "French") }
-Action { c = translate(a, "Spanish") }
-Action { d = translate(a, "Japanese") }
+      `Run { a = "What rooms do you have available?" }
+Run { b = translate(a, "French") }
+Run { c = translate(a, "Spanish") }
+Run { d = translate(a, "Japanese") }
 This string response line is ignored`,
       `french translation`,
       `spanish translation`,
@@ -251,7 +248,7 @@ This string response line is ignored`,
   {
     description: "client resolved command",
     input: { request: "some request" },
-    openAiResults: [`Action { now(); respond("what do you want?") }`],
+    openAiResults: [`Run { now(); respond("what do you want?") }`],
   },
   {
     description: "client resolved command - continue but unresolved",
@@ -283,7 +280,7 @@ This string response line is ignored`,
     description: "nested calls",
     input: { request: "some request" },
     openAiResults: [
-      `Action { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }`,
+      `Run { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }`,
     ],
     snapshotPrompts: true,
   },
@@ -291,7 +288,7 @@ This string response line is ignored`,
     description: "request needs more context",
     input: { request: "some request" },
     openAiResults: [
-      `Action { now(); editText(respond("please provide the text"), "convert to poem"); now() }`,
+      `Run { now(); editText(respond("please provide the text"), "convert to poem"); now() }`,
     ],
   },
   {
@@ -348,20 +345,20 @@ This string response line is ignored`,
   {
     description: "wrong arg type",
     input: { request: "some request" },
-    openAiResults: [`Action { now(); math(true) }`],
+    openAiResults: [`Run { now(); math(true) }`],
     snapshotError: true,
   },
   {
     description: "wrong arg count",
     input: { request: "some request" },
-    openAiResults: [`Action { now(); math() }`],
+    openAiResults: [`Run { now(); math() }`],
     snapshotError: true,
   },
   {
     description: "top level commands are resolved sequentially",
     input: { request: "some request" },
     openAiResults: [
-      `Action { respond("how are you?"); currentTimeForTimezone("America/New_York") }`,
+      `Run { respond("how are you?"); currentTimeForTimezone("America/New_York") }`,
     ],
   },
   {
@@ -402,9 +399,7 @@ This string response line is ignored`,
     description: "long results are truncated and stored in variables",
     input: { request: "some request" },
     openAiResults: [
-      `Action { longVar = "${new Array(500)
-        .fill("word")
-        .join(" ")}"; longVar; }`,
+      `Run { longVar = "${new Array(500).fill("word").join(" ")}"; longVar; }`,
       `I have finished`,
     ],
     snapshotPrompts: true,
@@ -414,15 +409,15 @@ This string response line is ignored`,
       "the 'result' var name is magic and refers to the previous result if not already assigned",
     input: { request: "some request" },
     openAiResults: [
-      `Action { "hello result"; }`,
-      `Action { result; }`,
-      `Action { var a = "b"; "should override result within same action"; result; }`, // assignment returns void which should be ignored
-      `Action { rEsUlt; }`, // any case
-      `Action { var result = "new result"; }`, // override
-      `Action { "this should not show up twice"; }`,
-      `Action { result; }`, // should be the variable
-      `Action { "this should show up"; }`,
-      `Action { reSult; }`, // should be the result
+      `Run { "hello result"; }`,
+      `Run { result; }`,
+      `Run { var a = "b"; "should override result within same action"; result; }`, // assignment returns void which should be ignored
+      `Run { rEsUlt; }`, // any case
+      `Run { var result = "new result"; }`, // override
+      `Run { "this should not show up twice"; }`,
+      `Run { result; }`, // should be the variable
+      `Run { "this should show up"; }`,
+      `Run { reSult; }`, // should be the result
       "I have finished: ${result}",
     ],
   },
@@ -430,8 +425,8 @@ This string response line is ignored`,
     description: "string to number and vice versa implicit conversion",
     input: { request: "some request" },
     openAiResults: [
-      `Action { math(123123) }`,
-      `Action { commandWithNumberArg("123123.00") }`,
+      `Run { math(123123) }`,
+      `Run { commandWithNumberArg("123123.00") }`,
       `I have finished`,
     ],
   },
@@ -535,26 +530,26 @@ Deno.test("complex parseCompletion", async (t) => {
   await assertSnapshot(
     t,
     parseCompletion(
-      `\nACTION { a(b()) }
-ACTION{ d(\n123\n); g();}
+      `\nRUN { a(b()) }
+RUN{ d(\n123\n); g();}
 
-ACTION{ c() }
-ActiON {
+RUN{ c() }
+RuN {
   c(
-    "ACTION { a() }"
+    "RUN { a() }"
   ); g(123)
 }
 
-action { a = 123; b = 111; a + b; }
-action {
+run { a = 123; b = 111; a + b; }
+run {
   a = 123
   b = 111
   a + b
 }
 hello 123
-test test 1111 ACTION { c() }
+test test 1111 RUN { c() }
 
-    ACTION { f() }
+    RUN { f() }
 
 hello interpolate \${a} \`escaped backquotes\` \\\`, test test {not interpolated} $`
     )

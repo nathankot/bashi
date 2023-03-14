@@ -1,6 +1,7 @@
 import { noop } from "cockatiel";
 import { ChatCompletionRequestMessage } from "openai";
 
+import { fail } from "std/testing/asserts.ts";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
@@ -261,11 +262,21 @@ This string response line is ignored`,
   {
     description: "client resolved command - wrong return type",
     input: {
-      resolvedCommands: { 1: { type: "number", value: 123 } },
+      resolvedCommands: {
+        "1.0.0": {
+          type: "boolean",
+          value: true,
+        },
+      },
     },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingClientCommandState(),
+    initialState: {
+      ...pendingInputState(),
+      pending: [
+        { action: "blah", expressions: [{ type: "call", name: "now" }] },
+      ],
+    },
   },
   {
     description: "client resolved command - fulfilled",
@@ -298,20 +309,6 @@ This string response line is ignored`,
     initialState: pendingInputState(),
   },
   {
-    description: "request needs more context - wrong type",
-    input: {
-      resolvedCommands: {
-        "1.0.0": {
-          type: "number",
-          value: 123,
-        },
-      },
-    },
-    openAiResults: [],
-    snapshotError: true,
-    initialState: pendingInputState(),
-  },
-  {
     description: "request needs more context - fulfilled",
     input: {
       resolvedCommands: {
@@ -326,7 +323,7 @@ This string response line is ignored`,
     initialState: pendingInputState(),
   },
   {
-    description: "fulfilled but max loops",
+    description: "fulfilled but max model calls",
     input: {
       resolvedCommands: {
         "1.0.0": {
@@ -339,6 +336,9 @@ This string response line is ignored`,
     snapshotError: true,
     initialState: {
       ...pendingInputState(),
+      pending: [
+        { action: "blah", expressions: [{ type: "call", name: "now" }] },
+      ],
       modelCallCount: MAX_MODEL_CALLS,
     },
   },
@@ -478,6 +478,7 @@ This string response line is ignored`,
       },
     };
 
+    let didError = false;
     try {
       const output = await run(
         {
@@ -517,11 +518,16 @@ This string response line is ignored`,
         await assertSnapshot(t, prompts.slice(2));
       }
     } catch (e) {
+      didError = true;
       if (test.snapshotError !== true) {
         throw e;
       }
 
       await assertSnapshot(t, e.message);
+    }
+
+    if (test.snapshotError === true && !didError) {
+      fail("expected an error to be thrown");
     }
   });
 }

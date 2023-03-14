@@ -504,12 +504,12 @@ function makePromptMessages(
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Act as an AI assistant and fulfill the question/request as best you can. Do not make things up. Run{} blocks are available to call functions (documented below). Use these functions/tools to help with fulfilling the request, but always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled using a combination of existing knowledge and Run{} blocks then let the user know why, do not make things up.
+  const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
-The beginning of your response can include Run{} blocks to run functions. For example:
+Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
 
   Run { exampleFunction("arg 1", arg2, 123, true); }
-  I have completed your request ...
+  I have completed your request
 
 Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
@@ -519,7 +519,7 @@ It is possible to assign the result of a function to a variable, and use it late
   Run { b = exampleFn2(a) }
   The answer to your question is \${b}
 
-Use functions sparingly and do not assume any language features exist beyond what is referenced above.
+Use functions sparingly and do not assume any other features exist beyond what is referenced above.
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.`;
 

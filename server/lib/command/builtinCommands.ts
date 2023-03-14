@@ -63,8 +63,8 @@ const currentTimeForTimezone: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: -1000,
   returnType: "string",
-  description: `get ISO8601 datetime for the given timezone`,
-  args: [{ name: "tz database timezone", type: "string" }],
+  description: `get the current time in the given timezone in ISO8601 datetime format`,
+  args: [{ name: "tz database timezone name", type: "string" }],
   triggerTokens: ["time", "hour", "clock"],
   run: async ({ log, session, now }, [timeZone]) => {
     return {
@@ -97,28 +97,26 @@ const topWebsitesForQuery: BuiltinCommandDefinition<["string"], "string"> = {
   triggerTokens: ["search", "google", "find"],
 };
 
-const extractInformation: BuiltinCommandDefinition<
+const runLargeLanguageModel: BuiltinCommandDefinition<
   ["string", "string"],
   "string"
 > = {
   isBuiltin: true,
   cost: 100,
   returnType: "string",
-  description: "describe/summarize/extract information from the given string",
+  description:
+    "run a LLM on the given string, producing output that satisfies the given instructions",
   args: [
-    {
-      name: "full description of desired output and its format",
-      type: "string",
-    },
-    { name: "input text/code", type: "string" },
+    { name: "instructions", type: "string" },
+    { name: "input", type: "string" },
   ],
-  run: async (modelDeps, [desc, input]) => {
+  run: async (modelDeps, [instructions, input]) => {
     const output = await runPassthrough(
       modelDeps,
       { model: "passthrough-openai-000" },
       {
         openAiModel: "text-davinci-003",
-        request: `Condense/summarize/extract information from text that follows. The output should satisfy the requirement:\n${desc.value}\n\nThe text is:\n${input.value}\n\nResult:\n"`,
+        request: `${instructions.value}\n\nThe input text is:\n${input.value}\n\nResult:\n"`,
       }
     );
     return {
@@ -385,7 +383,7 @@ export const builtinCommands = {
   writeCommitMessage,
   translate,
   parseRelativeTime,
-  extractInformation,
+  runLargeLanguageModel,
   topWebsitesForQuery,
 };
 

@@ -168,6 +168,14 @@ for (const test of [
     openAiResults: [`Run { a = 123; b = 111; a + b; }`, `I have finished`],
   },
   {
+    description: "malformed command should fail rather than return as string",
+    snapshotError: true,
+    input: { request: "some request" },
+    openAiResults: [
+      'Run { \n  let nextTuesday = new Date();\n  nextTuesday.setDate(nextTuesday.getDate() + (2 + 7 - nextTuesday.getDay()) % 7);\n  nextTuesday.setHours(12, 0, 0, 0);\n  createCalendarEvent(nextTuesday.toISOString(), "Lunch with Bill");\n}\nI have created a calendar event for next Tuesday at noon for lunch with Bill.',
+    ],
+  },
+  {
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [

@@ -1,6 +1,7 @@
 import { noop } from "cockatiel";
 import { ChatCompletionRequestMessage } from "openai";
 
+import { fail } from "std/testing/asserts.ts";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import * as fixtures from "@lib/fixtures.ts";
 import { Session } from "@lib/session.ts";
@@ -167,6 +168,20 @@ for (const test of [
     openAiResults: [`Run { a = 123; b = 111; a + b; }`, `I have finished`],
   },
   {
+    description: "malformed command should fail rather than return as string",
+    snapshotError: true,
+    input: { request: "some request" },
+    openAiResults: [
+      'Run { \n  let nextTuesday = new Date();\n  nextTuesday.setDate(nextTuesday.getDate() + (2 + 7 - nextTuesday.getDay()) % 7);\n  nextTuesday.setHours(12, 0, 0, 0);\n  createCalendarEvent(nextTuesday.toISOString(), "Lunch with Bill");\n}\nI have created a calendar event for next Tuesday at noon for lunch with Bill.',
+    ],
+  },
+  {
+    description: "malformed command should fail rather than return as string 2",
+    snapshotError: true,
+    input: { request: "some request" },
+    openAiResults: ["Run{!#notanactual.block}"],
+  },
+  {
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
@@ -261,11 +276,21 @@ This string response line is ignored`,
   {
     description: "client resolved command - wrong return type",
     input: {
-      resolvedCommands: { 1: { type: "number", value: 123 } },
+      resolvedCommands: {
+        "1.0.0": {
+          type: "boolean",
+          value: true,
+        },
+      },
     },
     openAiResults: [],
     snapshotError: true,
-    initialState: pendingClientCommandState(),
+    initialState: {
+      ...pendingInputState(),
+      pending: [
+        { action: "blah", expressions: [{ type: "call", name: "now" }] },
+      ],
+    },
   },
   {
     description: "client resolved command - fulfilled",
@@ -298,20 +323,6 @@ This string response line is ignored`,
     initialState: pendingInputState(),
   },
   {
-    description: "request needs more context - wrong type",
-    input: {
-      resolvedCommands: {
-        "1.0.0": {
-          type: "number",
-          value: 123,
-        },
-      },
-    },
-    openAiResults: [],
-    snapshotError: true,
-    initialState: pendingInputState(),
-  },
-  {
     description: "request needs more context - fulfilled",
     input: {
       resolvedCommands: {
@@ -326,7 +337,7 @@ This string response line is ignored`,
     initialState: pendingInputState(),
   },
   {
-    description: "fulfilled but max loops",
+    description: "fulfilled but max model calls",
     input: {
       resolvedCommands: {
         "1.0.0": {
@@ -339,6 +350,9 @@ This string response line is ignored`,
     snapshotError: true,
     initialState: {
       ...pendingInputState(),
+      pending: [
+        { action: "blah", expressions: [{ type: "call", name: "now" }] },
+      ],
       modelCallCount: MAX_MODEL_CALLS,
     },
   },
@@ -478,6 +492,7 @@ This string response line is ignored`,
       },
     };
 
+    let didError = false;
     try {
       const output = await run(
         {
@@ -517,11 +532,16 @@ This string response line is ignored`,
         await assertSnapshot(t, prompts.slice(2));
       }
     } catch (e) {
+      didError = true;
       if (test.snapshotError !== true) {
         throw e;
       }
 
       await assertSnapshot(t, e.message);
+    }
+
+    if (test.snapshotError === true && !didError) {
+      fail("expected an error to be thrown");
     }
   });
 }

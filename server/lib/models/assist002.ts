@@ -691,6 +691,12 @@ export function parseCompletion(completion: string): Action[] {
     }
   }
 
+  // Always process actions first and ignore string responses.
+  // This gives the model more to work with (action results)
+  if (actions.length > 0) {
+    return actions;
+  }
+
   // Strings get joined together and placed as an action at the end.
   if (strings.length > 0) {
     let value = strings.join("\n").trim();

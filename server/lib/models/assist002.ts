@@ -33,6 +33,8 @@ import {
   runBuiltinCommand,
 } from "@lib/command.ts";
 
+import { Session } from "@lib/session.ts";
+
 import {
   T,
   STATEMENTS,
@@ -367,7 +369,7 @@ export async function run(
             if (toksLength > 300) {
               resultStr =
                 resultStr.substring(0, 300 * 4) +
-                " [... truncated: full value stored in var `" +
+                " [... truncated: full value available in variable `" +
                 varName +
                 "`]";
             }
@@ -398,6 +400,7 @@ export async function run(
 
       // 3. Plugs the prompt into the model to ask for actions to take
       const messages = makePromptMessages(
+        session,
         {
           ...clientCommands,
           ...builtinCommands,
@@ -496,32 +499,29 @@ export async function run(
 }
 
 function makePromptMessages(
+  session: Session,
   commands: CommandSet,
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Fulfill the question/request as best you can as if you were an AI assistant. Do not make things up. A custom language called Bashi is available to call system functions (documented below). When needed, use these functions/tools to help with fulfilling the request. But always prefer responding directly if the knowledge/answer is readily available and accurate. If the question/request cannot be fulfilled, let the user know why, do not make things up.
+  const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
-A response is simply a string. Replies, code samples etc should be returned in this fashion:
+Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
 
-  Some string response
+  Run { exampleFunction("arg 1", arg2, 123, true); }
+  I have completed your request
 
-To run a system function your response can include Action{} blocks. For example:
-
-  Action { exampleAction("arg 1", arg2); }
-  I have completed your request ...
-
-Note that the user does not have any concept of what an Action is, nor any visibility of their use and results.
+Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
-  Action { a = exampleAction("arg 1", arg2) }
-  Action { b = exampleAction2(a) }
-  The result is \${b}
+  Run { a = exampleFn("arg 1", arg2) }
+  Run { b = exampleFn2(a) }
+  The answer to your question is \${b}
 
-Remember, use functions sparingly and do not assume any language features exist beyond what is referenced above. Notably, Bashi is a functional language - objects, methods, properties are not supported.
+Use functions sparingly and do not assume any other features exist beyond what is referenced above.
 
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list below.`;
+Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.`;
 
   const commandSet = makeCommandSet(
     filterUnnecessary(
@@ -531,6 +531,12 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
   ).join("\n");
 
   return [
+    {
+      role: "system",
+      content: `User information:
+Timezone: ${JSON.stringify(session.configuration.timezoneName)}
+Locale: ${JSON.stringify(session.configuration.locale)}`,
+    },
     { role: "system", content: `${header}\n\n${commandSet}` },
     { role: "user", content: request },
     ...resolvedActions
@@ -612,7 +618,7 @@ export function parseCompletion(completion: string): Action[] {
   const action = p.apply(
     p.kmid(
       p.seq(
-        parsePredicate((t) => t.text.toLowerCase() === "action"),
+        parsePredicate((t) => t.text.toLowerCase() === "run"),
         p.rep_sc(p.str(" ")),
         p.str("{")
       ),
@@ -679,6 +685,12 @@ export function parseCompletion(completion: string): Action[] {
     } else {
       actions.push(item);
     }
+  }
+
+  // Always process actions first and ignore string responses.
+  // This gives the model more to work with (action results)
+  if (actions.length > 0) {
+    return actions;
   }
 
   // Strings get joined together and placed as an action at the end.

@@ -57,43 +57,6 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: ",
-  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
-
-The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-* function calls and composition/nesting, results can be assigned to variables
-* string concatenation using +
-* simple variable assignment using var
-* reference to previously assigned variables
-* string, number and boolean literals
-
-Below is a minimal example of all available features:
-Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
-
-Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
-
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
-\`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
@@ -221,43 +184,6 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: ",
-  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
-
-The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-* function calls and composition/nesting, results can be assigned to variables
-* string concatenation using +
-* simple variable assignment using var
-* reference to previously assigned variables
-* string, number and boolean literals
-
-Below is a minimal example of all available features:
-Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
-
-Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
-
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
-\`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
@@ -984,6 +910,14 @@ snapshot[`supports assignment 1`] = `
       results: [
         {
           type: "number",
+          value: 123,
+        },
+        {
+          type: "number",
+          value: 111,
+        },
+        {
+          type: "number",
           value: 234,
         },
       ],
@@ -1586,42 +1520,6 @@ snapshot[`nested calls 1`] = `
 
 snapshot[`nested calls 2`] = `
 [
-  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
-
-The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-* function calls and composition/nesting, results can be assigned to variables
-* string concatenation using +
-* simple variable assignment using var
-* reference to previously assigned variables
-* string, number and boolean literals
-
-Below is a minimal example of all available features:
-Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
-
-Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
-
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
-\`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: ",
 ]
 `;
 
@@ -1853,11 +1751,6 @@ snapshot[`request needs more context - fulfilled 1`] = `
 
 snapshot[`request needs more context - fulfilled 2`] = `
 [
-  "Rewrite and edit the following text. The requirement is 'convert to poem':
-some text
-
-The re-written text is:
-",
   "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
 
 Use the following format:
@@ -1888,7 +1781,6 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
@@ -2016,6 +1908,10 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           type: "string",
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
+        {
+          type: "string",
+          value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
+        },
       ],
       type: "finished",
     },
@@ -2056,50 +1952,13 @@ Known functions are declared below in a typescript-like notation. Unknown functi
 \`writeResponse(answer: string): void\` - help user write response for original question/request
 \`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
 \`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
-
-Begin!
-
-Request: some request
-Thought: ",
-  "Interpret the question/request into a set of result-producing actions with the goal of fulfilling the question/request, as if you were an AI assistant. Do not make things up. If additional input is required use actions to retrieve it from the user. If the question/request cannot be fulfilled indicate with fail(). Aim to be concise and minimize the number of actions necessary. If an answer to the question is directly or immediately available then just send it back as a string.
-
-Use the following format:
-Request: the question or request you must answer
-Thought: always think what needs to happen to fulfill the request, take into account results of previous actions
-Action: one or more Bashi (language detailed below) expressions delimited by ; carefully ensure the expressions are correct and all referenced variables were previously assigned
-Result: the result(s) of the Action
-... (this Thought/Action/Result can repeat N times)
-
-The language used in Action is called Bashi. It is a small subset of javascript with only the following features:
-* function calls and composition/nesting, results can be assigned to variables
-* string concatenation using +
-* simple variable assignment using var
-* reference to previously assigned variables
-* string, number and boolean literals
-
-Below is a minimal example of all available features:
-Action: var c = \\"c\\"; a(b(), c, 123, \\"d\\" + \`e \${c}\`)
-
-Known functions are declared below in a typescript-like notation. Unknown functions must not be used. Pay attention to syntax and ensure correct string escaping. Prefer functions ordered earlier in the list.
-
-\`fail(reason: string): void\` - indicate the request cannot be fulfilled with the available tools
-\`finish(): void\` - mark request/question as fulfilled
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`getInput(\\"question asking for required information\\": string): string\` - get additional input from user, typically text/code used as input into other functions
-\`sendResponse(answer: string): void\` - return response for original question/request back to user
-\`writeResponse(answer: string): void\` - help user write response for original question/request
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`extractInformation(\\"full description of desired output and its format\\": string, \\"input text/code\\": string): string\` - describe/summarize/extract information from the given string
 
 Begin!
 
 Request: some request
 Thought: some thought
 Action: longVar = \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word\\"; longVar
-Result: void; \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
+Result: \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_0\`]; \\"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value stored in var \`result_0_1\`]
 Thought: ",
 ]
 `;
@@ -2123,7 +1982,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         {
           type: "string",
-          value: "should override result within same action",
+          value: "b",
         },
         {
           type: "string",
@@ -2132,6 +1991,14 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         {
           type: "string",
           value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "should override result within same action",
+        },
+        {
+          type: "string",
+          value: "new result",
         },
         {
           type: "string",

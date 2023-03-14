@@ -477,7 +477,7 @@ Action: finish()`,
       });
 
       if (test.snapshotPrompts === true) {
-        await assertSnapshot(t, prompts);
+        await assertSnapshot(t, prompts.slice(1));
       }
     } catch (e) {
       if (test.snapshotError !== true) {

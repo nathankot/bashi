@@ -97,35 +97,6 @@ const topWebsitesForQuery: BuiltinCommandDefinition<["string"], "string"> = {
   triggerTokens: ["search", "google", "find"],
 };
 
-const runLargeLanguageModel: BuiltinCommandDefinition<
-  ["string", "string"],
-  "string"
-> = {
-  isBuiltin: true,
-  cost: 100,
-  returnType: "string",
-  description:
-    "run a LLM on the given string, producing output that satisfies the given instructions",
-  args: [
-    { name: "instructions", type: "string" },
-    { name: "input", type: "string" },
-  ],
-  run: async (modelDeps, [instructions, input]) => {
-    const output = await runPassthrough(
-      modelDeps,
-      { model: "passthrough-openai-000" },
-      {
-        openAiModel: "text-davinci-003",
-        request: `${instructions.value}\n\nThe input text is:\n${input.value}\n\nResult:\n"`,
-      }
-    );
-    return {
-      type: "string",
-      value: output.result,
-    };
-  },
-};
-
 const math: BuiltinCommandDefinition<["string"], "string"> = {
   isBuiltin: true,
   cost: -1000,
@@ -383,7 +354,6 @@ export const builtinCommands = {
   writeCommitMessage,
   translate,
   parseRelativeTime,
-  runLargeLanguageModel,
   topWebsitesForQuery,
 };
 

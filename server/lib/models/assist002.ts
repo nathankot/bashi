@@ -33,6 +33,8 @@ import {
   runBuiltinCommand,
 } from "@lib/command.ts";
 
+import { Session } from "@lib/session.ts";
+
 import {
   T,
   STATEMENTS,
@@ -398,6 +400,7 @@ export async function run(
 
       // 3. Plugs the prompt into the model to ask for actions to take
       const messages = makePromptMessages(
+        session,
         {
           ...clientCommands,
           ...builtinCommands,
@@ -496,6 +499,7 @@ export async function run(
 }
 
 function makePromptMessages(
+  session: Session,
   commands: CommandSet,
   request: string,
   resolvedActions: State["resolvedActions"]
@@ -531,6 +535,12 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
   ).join("\n");
 
   return [
+    {
+      role: "system",
+      content: `User information:
+Timezone: ${JSON.stringify(session.configuration.timezoneName)}
+Locale: ${JSON.stringify(session.configuration.locale)}`,
+    },
     { role: "system", content: `${header}\n\n${commandSet}` },
     { role: "user", content: request },
     ...resolvedActions

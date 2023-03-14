@@ -44,6 +44,7 @@ import {
 } from "@lib/command/parser.ts";
 
 const RESPOND_COMMAND = "respond";
+const BLOCK_PREFIX = "run";
 
 const Action = t.intersection([
   t.type({
@@ -609,16 +610,18 @@ function makeCommandSet(commands: CommandSet): string[] {
 
 export function parseCompletion(completion: string): Action[] {
   const input = completion.trim();
-  const str = p.apply(p.rep_sc(parsePredicate((t) => t.text !== "\n")), (xs) =>
-    xs
-      .map((x) => x.text)
-      .join("")
-      .trim()
+  const str: p.Parser<T, string> = p.apply(
+    p.rep_sc(parsePredicate((t) => t.text !== "\n")),
+    (xs) =>
+      xs
+        .map((x) => x.text)
+        .join("")
+        .trim()
   );
-  const action = p.apply(
+  const action: p.Parser<T, Action> = p.apply(
     p.kmid(
       p.seq(
-        parsePredicate((t) => t.text.toLowerCase() === "run"),
+        parsePredicate((t) => t.text.toLowerCase() === BLOCK_PREFIX),
         p.rep_sc(p.str(" ")),
         p.str("{")
       ),
@@ -633,13 +636,20 @@ export function parseCompletion(completion: string): Action[] {
     }
   );
   const list = p.list(
-    p.apply(p.amb(p.alt(action, str)), (candidates) => {
-      // Always prefer the action if it parses correctly:
-      for (const c of candidates) {
-        if (typeof c !== "string") return c;
-      }
-      return candidates[0] ?? "";
-    }),
+    {
+      parse(token: p.Token<T> | undefined): p.ParserOutput<T, string | Action> {
+        // First try to parse as an action.
+        const r = action.parse(token);
+        // Return the result if:
+        // * the action is successful
+        // * the action errors, but it has an action block prefix
+        if (r.successful) return r;
+        const errorIndex = (r.error.pos?.index ?? 0) - (token?.pos?.index ?? 0);
+        if (errorIndex >= `${BLOCK_PREFIX}{`.length) return r;
+        // Lastly just parse it as a string:
+        return str.parse(token);
+      },
+    },
     p.seq(
       p.rep_sc(p.str(" ")),
       p.seq(p.str("\n"), p.rep_sc(p.str("\n"))),

@@ -176,6 +176,12 @@ for (const test of [
     ],
   },
   {
+    description: "malformed command should fail rather than return as string 2",
+    snapshotError: true,
+    input: { request: "some request" },
+    openAiResults: ["Run{!#notanactual.block}"],
+  },
+  {
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [

@@ -1989,6 +1989,10 @@ snapshot[`supports assignment 1`] = `
 }
 `;
 
+snapshot[`malformed command should fail rather than return as string 1`] = `"Unable to consume token: Date"`;
+
+snapshot[`malformed command should fail rather than return as string 2 1`] = `"Unable to consume token: !"`;
+
 snapshot[`server commands with identical inputs re-use results 1`] = `
 {
   n: 1,

@@ -369,7 +369,7 @@ export async function run(
             if (toksLength > 300) {
               resultStr =
                 resultStr.substring(0, 300 * 4) +
-                " [... truncated: full value stored in var `" +
+                " [... truncated: full value available in variable `" +
                 varName +
                 "`]";
             }

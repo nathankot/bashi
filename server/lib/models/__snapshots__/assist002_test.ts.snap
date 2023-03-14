@@ -60,7 +60,7 @@ snapshot[`all commands resolved on the server 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "Your request has been fulfilled.",
         expressions: [
           {
             args: [
@@ -73,6 +73,7 @@ snapshot[`all commands resolved on the server 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -245,7 +246,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
     modelCallCount: 3,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "Finish",
         expressions: [
           {
             args: [
@@ -258,6 +259,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -486,7 +488,7 @@ snapshot[`multiple actions in a single completion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "Your request has been fulfilled.",
         expressions: [
           {
             args: [
@@ -499,6 +501,7 @@ snapshot[`multiple actions in a single completion 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -647,7 +650,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "Your request has been fulfilled.",
         expressions: [
           {
             args: [
@@ -660,6 +663,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -785,7 +789,7 @@ snapshot[`command overloads work 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished",
         expressions: [
           {
             args: [
@@ -798,6 +802,7 @@ snapshot[`command overloads work 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -1675,7 +1680,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished",
         expressions: [
           {
             args: [
@@ -1688,6 +1693,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -1818,7 +1824,7 @@ snapshot[`supports assignment 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished",
         expressions: [
           {
             args: [
@@ -1831,6 +1837,7 @@ snapshot[`supports assignment 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -2138,7 +2145,22 @@ fetch('https://example.com/data.json', {
     modelCallCount: 1,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "The \`mode\` parameter in the JavaScript Fetch API is used to specify the mode of the request. The mode determines how the request will be made and whether it will be restricted by CORS (Cross-Origin Resource Sharing) policy.
+The available modes are:
+- \\"cors\\": This is the default mode. It allows the request to be made across domains, subject to CORS policy restrictions.
+- \\"no-cors\\": This mode allows the request to be made, but it does not allow access to the response data. This mode is useful for making requests to third-party APIs that do not support CORS.
+- \\"same-origin\\": This mode restricts the request to the same origin as the page making the request. This mode is useful for making requests to the same domain as the page, and it is not subject to CORS policy restrictions.
+- \\"navigate\\": This mode is used to navigate to a new page. It is only used by the \`window.fetch()\` method.
+Here's an example of how to use the \`mode\` parameter in a fetch request:
+
+\`\`\`
+fetch('https://example.com/data.json', {
+  mode: 'cors'
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
+\`\`\`",
         expressions: [
           {
             args: [
@@ -2166,6 +2188,7 @@ fetch('https://example.com/data.json', {
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -2421,7 +2444,7 @@ snapshot[`multiple assignment in one completion 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: 'The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".',
         expressions: [
           {
             args: [
@@ -2434,6 +2457,7 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -2939,11 +2963,11 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
 }
 `;
 
-snapshot[`client resolved command - wrong return type 1`] = `"Cannot convert undefined or null to object"`;
+snapshot[`client resolved command - wrong return type 1`] = `"command createCalendarEvent expects return type to be void but got boolean"`;
 
 snapshot[`client resolved command - fulfilled 1`] = `
 {
-  n: 0,
+  n: 1,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -2954,15 +2978,11 @@ snapshot[`client resolved command - fulfilled 1`] = `
           args: [
             {
               type: "string",
-              value: "2022-01-01",
-            },
-            {
-              type: "string",
-              value: "event name",
+              value: "I have finished",
             },
           ],
-          id: "0.1",
-          name: "createCalendarEvent",
+          id: "1.0",
+          name: "respond",
           type: "parsed",
         },
       ],
@@ -2982,11 +3002,41 @@ snapshot[`client resolved command - fulfilled 1`] = `
           type: "string",
           value: "2022-12-19T08:41:10.000Z",
         },
+        {
+          type: "void",
+        },
       ],
-      variables: {},
+      variables: {
+        result_0_0: {
+          type: "string",
+          value: "2022-12-19T08:41:10.000Z",
+        },
+        result_0_1: {
+          type: "void",
+        },
+      },
     },
-    modelCallCount: 1,
+    modelCallCount: 2,
     pending: [
+      {
+        action: "I have finished",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "I have finished",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        isRespond: true,
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
       {
         action: 'now(); createCalendarEvent("2022-01-01", "event name")',
         expressions: [
@@ -3011,11 +3061,8 @@ snapshot[`client resolved command - fulfilled 1`] = `
             type: "call",
           },
         ],
-        result: undefined,
+        result: '"2022-12-19T08:41:10.000Z"; void',
       },
-    ],
-    request: "some request",
-    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -3040,6 +3087,24 @@ snapshot[`client resolved command - fulfilled 1`] = `
         },
         type: "executed",
       },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2022-01-01",
+          },
+          {
+            type: "string",
+            value: "event name",
+          },
+        ],
+        id: "0.1",
+        name: "createCalendarEvent",
+        returnValue: {
+          type: "void",
+        },
+        type: "executed",
+      },
     ],
   },
 }
@@ -3047,6 +3112,18 @@ snapshot[`client resolved command - fulfilled 1`] = `
 
 snapshot[`client resolved command - fulfilled 2`] = `
 [
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: 'now(); createCalendarEvent("2022-01-01", "event name")',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10.000Z"; void',
+    role: "system",
+  },
 ]
 `;
 
@@ -3280,7 +3357,7 @@ snapshot[`request needs more context 1`] = `
 }
 `;
 
-snapshot[`request needs more context - still missing 1`] = `
+snapshot[`awaiting response - still missing 1`] = `
 {
   n: 0,
   output: {
@@ -3315,7 +3392,7 @@ snapshot[`request needs more context - still missing 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("some response")',
+        action: "some response",
         expressions: [
           {
             args: [
@@ -3328,6 +3405,7 @@ snapshot[`request needs more context - still missing 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
         result: undefined,
       },
     ],
@@ -3363,9 +3441,9 @@ snapshot[`request needs more context - still missing 1`] = `
 }
 `;
 
-snapshot[`request needs more context - fulfilled 1`] = `
+snapshot[`awaiting response - fulfilled 1`] = `
 {
-  n: 0,
+  n: 1,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -3376,15 +3454,19 @@ snapshot[`request needs more context - fulfilled 1`] = `
           args: [
             {
               type: "string",
-              value: "some response",
+              value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
+        {
+          type: "string",
+          value: "some user response",
+        },
       ],
       type: "pending_commands",
     },
@@ -3392,26 +3474,36 @@ snapshot[`request needs more context - fulfilled 1`] = `
   state: {
     memory: {
       topLevelResults: [
+        <1 empty item>,
+        {
+          type: "string",
+          value: "some user response",
+        },
       ],
-      variables: {},
+      variables: {
+        result_1_0: {
+          type: "string",
+          value: "some user response",
+        },
+      },
     },
-    modelCallCount: 1,
+    modelCallCount: 2,
     pending: [
       {
-        action: 'respond("some response")',
+        action: "I have finished",
         expressions: [
           {
             args: [
               {
                 type: "string",
-                value: "some response",
+                value: "I have finished",
               },
             ],
             name: "respond",
             type: "call",
           },
         ],
-        result: undefined,
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -3428,6 +3520,23 @@ snapshot[`request needs more context - fulfilled 1`] = `
         ],
         result: '"blah"',
       },
+      {
+        action: "some response",
+        expressions: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "some response",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+        isRespond: true,
+        result: '"some user response"',
+      },
     ],
     resolvedCommands: [
       {
@@ -3441,17 +3550,53 @@ snapshot[`request needs more context - fulfilled 1`] = `
         },
         type: "executed",
       },
+      {
+        args: [
+          {
+            type: "string",
+            value: "some response",
+          },
+        ],
+        id: "1.0",
+        name: "respond",
+        returnValue: {
+          type: "string",
+          value: "some user response",
+        },
+        type: "executed",
+      },
     ],
   },
 }
 `;
 
-snapshot[`request needs more context - fulfilled 2`] = `
+snapshot[`awaiting response - fulfilled 2`] = `
 [
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "someCommand()",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "blah"',
+    role: "system",
+  },
+  {
+    content: "some response",
+    role: "assistant",
+  },
+  {
+    content: "some user response",
+    name: "User",
+    role: "user",
+  },
 ]
 `;
 
-snapshot[`fulfilled but max model calls 1`] = `"Cannot convert undefined or null to object"`;
+snapshot[`max model calls 1`] = `"max iteration count of 10 reached"`;
 
 snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
 
@@ -3586,7 +3731,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished",
         expressions: [
           {
             args: [
@@ -3599,6 +3744,7 @@ snapshot[`top level commands are resolved sequentially 2 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -3730,7 +3876,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     modelCallCount: 2,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished",
         expressions: [
           {
             args: [
@@ -3743,6 +3889,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",
@@ -4048,7 +4195,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     modelCallCount: 10,
     pending: [
       {
-        action: "respond(<truncated text>)",
+        action: "I have finished: \${result}",
         expressions: [
           {
             args: [
@@ -4077,6 +4224,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
+        isRespond: true,
       },
     ],
     request: "some request",

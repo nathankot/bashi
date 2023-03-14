@@ -53,6 +53,7 @@ const Action = t.intersection([
   }),
   t.partial({
     result: t.string,
+    isRespond: t.boolean,
   }),
 ]);
 type Action = t.TypeOf<typeof Action>;
@@ -542,37 +543,21 @@ Locale: ${JSON.stringify(session.configuration.locale)}`,
     { role: "user", content: request },
     ...resolvedActions
       .map((g): ChatCompletionRequestMessage[] => {
-        if (g.expressions.length === 1) {
-          const firstExpr = g.expressions[0]!;
-          if (firstExpr.type === "call" && firstExpr.name === RESPOND_COMMAND) {
-            let result: ChatCompletionRequestMessage[] = [
-              {
-                role: "assistant",
-                content:
-                  firstExpr.args[0]?.type === "string"
-                    ? firstExpr.args[0]!.value
-                    : "",
-              },
-            ];
-            if (g.result != null) {
-              result.push({
-                role: "user",
-                content: g.result,
-                name: "User",
-              });
-            }
-            return result;
-          }
-        }
         return [
           {
             role: "assistant",
             content: g.action,
           },
-          {
-            role: "system",
-            content: `Result: ${g.result}`,
-          },
+          g.isRespond === true
+            ? {
+                role: "user",
+                content: JSON.parse(g.result) as string,
+                name: "User",
+              }
+            : {
+                role: "system",
+                content: `Result: ${g.result}`,
+              },
         ];
       })
       .reduce((a, messages) => [...a, ...messages], []),
@@ -721,7 +706,8 @@ export function parseCompletion(completion: string): Action[] {
         // TODO return error so the model can fix itself
       }
       actions.push({
-        action: `${RESPOND_COMMAND}(<truncated text>)`,
+        action: value,
+        isRespond: true,
         expressions: [
           {
             name: RESPOND_COMMAND,

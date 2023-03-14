@@ -47,7 +47,8 @@ const pendingInputState = () =>
     modelCallCount: 1,
     pending: [
       {
-        action: 'respond("some response")',
+        action: "some response",
+        isRespond: true,
         expressions: [
           {
             type: "call",
@@ -277,7 +278,7 @@ This string response line is ignored`,
     description: "client resolved command - wrong return type",
     input: {
       resolvedCommands: {
-        "1.0.0": {
+        "0.1": {
           type: "boolean",
           value: true,
         },
@@ -285,17 +286,12 @@ This string response line is ignored`,
     },
     openAiResults: [],
     snapshotError: true,
-    initialState: {
-      ...pendingInputState(),
-      pending: [
-        { action: "blah", expressions: [{ type: "call", name: "now" }] },
-      ],
-    },
+    initialState: pendingClientCommandState(),
   },
   {
     description: "client resolved command - fulfilled",
     input: {
-      resolvedCommands: { 1: { type: "void" } },
+      resolvedCommands: { "0.1": { type: "void" } },
     },
     openAiResults: [`I have finished`],
     snapshotPrompts: true,
@@ -317,16 +313,16 @@ This string response line is ignored`,
     ],
   },
   {
-    description: "request needs more context - still missing",
+    description: "awaiting response - still missing",
     input: { resolvedCommands: [] },
     openAiResults: [],
     initialState: pendingInputState(),
   },
   {
-    description: "request needs more context - fulfilled",
+    description: "awaiting response - fulfilled",
     input: {
       resolvedCommands: {
-        "1.0.0": {
+        "1.0": {
           type: "string",
           value: "some user response",
         },
@@ -337,21 +333,24 @@ This string response line is ignored`,
     initialState: pendingInputState(),
   },
   {
-    description: "fulfilled but max model calls",
+    description: "max model calls",
     input: {
       resolvedCommands: {
-        "1.0.0": {
+        "1.0": {
           type: "string",
-          value: `some text`,
+          value: `some date`,
         },
       },
     },
-    openAiResults: [`the result of editText()`],
+    openAiResults: [`should not reach this`],
     snapshotError: true,
     initialState: {
       ...pendingInputState(),
       pending: [
-        { action: "blah", expressions: [{ type: "call", name: "now" }] },
+        {
+          action: "blah",
+          expressions: [{ type: "call", name: "now", args: [] }],
+        },
       ],
       modelCallCount: MAX_MODEL_CALLS,
     },

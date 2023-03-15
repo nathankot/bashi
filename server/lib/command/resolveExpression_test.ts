@@ -1,7 +1,7 @@
 import { assertSnapshot } from "std/testing/snapshot.ts";
 
 import { CommandExecuted, parseExpression } from "@lib/command.ts";
-import { getPendingCommandsOrResult } from "./assistShared.ts";
+import { resolveExpression } from "./resolveExpression.ts";
 
 for (const test of [
   {
@@ -71,11 +71,7 @@ for (const test of [
     try {
       await assertSnapshot(
         t,
-        getPendingCommandsOrResult(
-          test.commandId,
-          test.call,
-          test.resolvedCommands
-        )
+        resolveExpression(test.commandId, test.call, test.resolvedCommands)
       );
     } catch (e) {
       await assertSnapshot(t, e.message);

@@ -445,7 +445,7 @@ This string response line is ignored`,
 
     const openAiClient = {
       createChatCompletion(opts: { messages: ChatCompletionRequestMessage[] }) {
-        prompts = [...prompts, ...opts.messages];
+        prompts = [...opts.messages.slice(2)];
         const text = (test.openAiResults ?? [])[n];
         if (text == null) {
           throw new Error(`openai mock on index ${n} not available`);
@@ -511,7 +511,7 @@ This string response line is ignored`,
       });
 
       if (test.snapshotPrompts === true) {
-        await assertSnapshot(t, prompts.slice(2));
+        await assertSnapshot(t, prompts);
       }
     } catch (e) {
       didError = true;

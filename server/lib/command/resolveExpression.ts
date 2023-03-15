@@ -22,9 +22,9 @@ export function resolveExpression(
       );
     }
     const result = maybeAlreadyResolved.returnValue;
-    return {
-      result,
-    };
+    if (result.type !== "error") {
+      return { result };
+    }
   }
 
   // Build up a list of nested commands that must be resolved,
@@ -32,6 +32,10 @@ export function resolveExpression(
   let pendingCommands: CommandParsed[] = [];
   let resolvedArguments: Value[] | null = [];
   for (const [i, arg] of Object.entries(expr.args)) {
+    // Bubble up any errors that have been encountered:
+    if (arg.type === "error") {
+      return { result: arg };
+    }
     if (arg.type !== "call") {
       resolvedArguments?.push(arg);
       continue;

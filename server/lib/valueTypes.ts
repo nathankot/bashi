@@ -52,7 +52,7 @@ export type ValueForType<T extends ValueType> = Value & { type: T };
 export function valueToString(value: Value): string {
   switch (value.type) {
     case "error":
-      return "error";
+      return "error: " + value.message;
     case "void":
       return "void";
     case "boolean":

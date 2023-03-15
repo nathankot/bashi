@@ -292,14 +292,16 @@ export async function run(
                 ? null
                 : input.resolvedCommands[pendingCommand.id.toString()];
             if (maybeClientResolution) {
-              if (clientCommandDef.returnType !== maybeClientResolution.type) {
+              if (
+                maybeClientResolution.type !== "error" &&
+                clientCommandDef.returnType !== maybeClientResolution.type
+              ) {
                 throw new HTTPError(
                   `command ${commandName} expects return type to be ` +
                     `${clientCommandDef.returnType} but got ${maybeClientResolution.type}`,
                   400
                 );
               }
-
               resolvedCommands.push({
                 ...pendingCommand,
                 type: "executed",
@@ -729,9 +731,11 @@ function renderActionResult(
         "`]";
     }
   } catch {}
+
   return {
     result: resultStr,
     storeActionResultInMemory: (memory) => {
+      if (result.type === "error") return;
       if (memory.variables[varName] != null) return;
       memory.variables[varName] = result;
     },

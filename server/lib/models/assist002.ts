@@ -208,24 +208,26 @@ export async function run(
   const topLevelResults = (): Value[] =>
     memory.topLevelResults.filter((r) => r.type !== "void");
 
-  // Interpreter loop:
-  //
-  // 1. While there are pending actions (Run{} blocks or string responses):
-  //   1.1. Parse the action statements (each statement is a top level expression)
-  //   1.2. While there are unresolved action statements:
-  //     1.2.1. Is the statement fully resolved?
-  //       Yes: store the result
-  //       No: queue the commands (functions) that need to be resolved and break to 1.3
-  //   1.3. While there are pending commands:
-  //     1.3.1. If the command can be resolved on the server, execute and store the result
-  //     1.3.2. If the command must be resolved on the client, check has the command resolution already been provided?
-  //       Yes: store the result
-  //       No: return the command to the client. On callback we will start from 1.
-  //   1.4. Store the result of the fully resolved action
-  //   1.5. If there are no more pending actions, break to 2.
-  // 2. Ask model for more actions and goto 1.
   try {
     let loopNumber = 0;
+    // 1. (interpreterLoop) While there are pending actions (Run{} blocks or string responses):
+    //   1.1. Parse the action statements (each statement is a top level expression)
+    //   1.2. (currentActionStatementLoop) While there are unresolved action statements:
+    //     1.2.1. Is the statement fully resolved?
+    //       Yes: store the result
+    //       No: queue the commands (functions) that need to be resolved and break to 1.3
+    //   1.3. (currentActionCommandLoop) While there are pending commands:
+    //     1.3.1. If the command can be resolved on the server, execute and store the result
+    //     1.3.2. If the command must be resolved on the client, check has the command resolution already been provided?
+    //       Yes: store the result
+    //       No: return the command to the client. On callback we will start from 1.
+    //     1.3.3 [catch] handle command resolution errors by resolving the action as an error, goto 1
+    //   1.4. Store the result of the fully resolved action
+    //   1.5. If there are no more pending actions, break to 2.
+    //   1.6. Ask model for a new completion
+    //     2.1. parse the completion into a list of new actions and add them to the pending actions list
+    //     2.2. [catch] handle comletion parse errors by resolving the action as an error, goto 1
+    //     2.2. goto 1.
     interpreterLoop: while (true) {
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
@@ -243,7 +245,7 @@ export async function run(
         // to handle each top level call in sequence.
         let currentActionPendingCommands: CommandParsed[] = [];
         let currentActionTopLevelResults: Value[] = [];
-        currentActionExprLoop: for (const [
+        currentActionStatementLoop: for (const [
           i,
           expr,
         ] of currentActionStatements.entries()) {
@@ -262,7 +264,7 @@ export async function run(
               pendingCommandsOrResult.pendingCommands;
             // Break here so that the client is able to handle this top level
             // call, before handling the next one.
-            break currentActionExprLoop;
+            break currentActionStatementLoop;
           }
         }
 

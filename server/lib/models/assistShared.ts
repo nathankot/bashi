@@ -29,10 +29,7 @@ export function getPendingCommandsOrResult(
   commandId: string,
   expr: Expr,
   resolvedCommmands: Record<string, CommandExecuted>
-):
-  | { pendingCommands: CommandParsed[] }
-  | { result: Value }
-  | { error: string } {
+): { pendingCommands: CommandParsed[] } | { result: Value } {
   // If we have an terminal value:
   if (expr.type !== "call") {
     return { result: expr };
@@ -41,13 +38,6 @@ export function getPendingCommandsOrResult(
   // See if its already resolved
   const maybeAlreadyResolved = resolvedCommmands[commandId];
   if (maybeAlreadyResolved != null) {
-    if ("error" in maybeAlreadyResolved) {
-      return {
-        error:
-          `the function '${maybeAlreadyResolved.name}' failed with error: ` +
-          maybeAlreadyResolved.error,
-      };
-    }
     if (maybeAlreadyResolved.name != expr.name) {
       throw new Error(
         `corruption! expected resolved call to be ${expr.name} ` +
@@ -74,9 +64,6 @@ export function getPendingCommandsOrResult(
       arg,
       resolvedCommmands
     );
-    if ("error" in argResult) {
-      return argResult;
-    }
     if ("pendingCommands" in argResult) {
       pendingCommands = [...pendingCommands, ...argResult.pendingCommands];
       // if at least 1 arg is still pending, then we don't have resolved arguments:

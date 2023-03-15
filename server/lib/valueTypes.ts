@@ -12,6 +12,9 @@ export type BooleanType = t.TypeOf<typeof BooleanType>;
 export const VoidType = t.literal("void");
 export type VoidType = t.TypeOf<typeof VoidType>;
 
+export const ErrorType = t.literal("error");
+export type ErrorType = t.TypeOf<typeof ErrorType>;
+
 export const ValueType = t.union([
   StringType,
   NumberType,
@@ -32,11 +35,15 @@ export type BooleanValue = t.TypeOf<typeof BooleanValue>;
 export const VoidValue = t.type({ type: VoidType });
 export type VoidValue = t.TypeOf<typeof VoidValue>;
 
+export const ErrorValue = t.type({ type: ErrorType, message: t.string });
+export type ErrorValue = t.TypeOf<typeof ErrorValue>;
+
 export const Value = t.union([
   StringValue,
   NumberValue,
   BooleanValue,
   VoidValue,
+  ErrorValue,
 ]);
 export type Value = t.TypeOf<typeof Value>;
 
@@ -44,6 +51,8 @@ export type ValueForType<T extends ValueType> = Value & { type: T };
 
 export function valueToString(value: Value): string {
   switch (value.type) {
+    case "error":
+      return "error";
     case "void":
       return "void";
     case "boolean":

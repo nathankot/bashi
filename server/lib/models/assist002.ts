@@ -39,7 +39,7 @@ import { Session } from "@lib/session.ts";
 
 import {
   T,
-  STATEMENTS,
+  STATEMENT,
   TEMPLATE_STRING,
   lexer,
   parsePredicate,
@@ -78,13 +78,11 @@ const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
 const Action = t.intersection([
   t.type({
     action: t.string,
-    statements: t.array(Expr),
+    statement: Expr,
   }),
   t.partial({
     result: t.string,
     isRespond: t.boolean,
-    // TODO support this:
-    error: t.string,
   }),
 ]);
 type Action = t.TypeOf<typeof Action>;
@@ -211,9 +209,8 @@ export async function run(
   try {
     let loopNumber = 0;
     // 1. (interpreterLoop) While there are pending actions (Run{} blocks or string responses):
-    //   1.1. Parse the action statements (each statement is a top level expression)
-    //   1.2. (currentActionStatementLoop) While there are unresolved action statements:
-    //     1.2.1. Is the statement fully resolved?
+    //   1.1. Parse the action statement/expression
+    //     1.2 Is the statement fully resolved?
     //       Yes: store the result
     //       No: queue the commands (functions) that need to be resolved and break to 1.3
     //   1.3. (currentActionCommandLoop) While there are pending commands:
@@ -236,36 +233,23 @@ export async function run(
       if (pendingActions.length > 0) {
         const pendingAction = pendingActions[0]!;
         const resolvedActionsCount = resolvedActions.length;
-        const resolvedActionsStatementsCount = resolvedActions.reduce(
-          (a, g) => a + g.statements.length,
-          0
-        );
-        const currentActionStatements = pendingAction.statements;
+        const currentActionExpr = pendingAction.statement;
+        let currentActionResult: Value | null = null;
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let currentActionPendingCommands: CommandParsed[] = [];
-        let currentActionTopLevelResults: Value[] = [];
-        currentActionStatementLoop: for (const [
-          i,
-          expr,
-        ] of currentActionStatements.entries()) {
-          const pendingCommandsOrResult = getPendingCommandsOrResult(
-            `${resolvedActionsCount}.${i}`,
-            expr,
-            resolvedCommandsDict()
-          );
-          if ("result" in pendingCommandsOrResult) {
-            currentActionTopLevelResults.push(pendingCommandsOrResult.result);
-            // Update top level results in memory:
-            memory.topLevelResults[resolvedActionsStatementsCount + i] =
-              pendingCommandsOrResult.result;
-          } else if ("pendingCommands" in pendingCommandsOrResult) {
-            currentActionPendingCommands =
-              pendingCommandsOrResult.pendingCommands;
-            // Break here so that the client is able to handle this top level
-            // call, before handling the next one.
-            break currentActionStatementLoop;
-          }
+        const pendingCommandsOrResult = getPendingCommandsOrResult(
+          `${resolvedActionsCount}`,
+          currentActionExpr,
+          resolvedCommandsDict()
+        );
+        if ("result" in pendingCommandsOrResult) {
+          currentActionResult = pendingCommandsOrResult.result;
+          // Update top level results in memory:
+          memory.topLevelResults[resolvedActionsCount] = currentActionResult;
+        } else if ("pendingCommands" in pendingCommandsOrResult) {
+          currentActionPendingCommands =
+            pendingCommandsOrResult.pendingCommands;
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
@@ -304,7 +288,6 @@ export async function run(
               memory
             );
             resolvedCommands.push(resolved);
-
             continue currentActionCommandLoop;
           } else if (clientCommandDef != null) {
             const maybeClientResolution =
@@ -319,6 +302,7 @@ export async function run(
                   400
                 );
               }
+
               resolvedCommands.push({
                 ...pendingCommand,
                 type: "executed",
@@ -343,19 +327,16 @@ export async function run(
           };
         }
 
-        // Go through the loop again if we have not resolved statements in the
-        // current action.
-        if (
-          currentActionTopLevelResults.length !== currentActionStatements.length
-        ) {
+        // Go through the loop again if we have not resolved the current action.
+        if (currentActionResult == null) {
           continue interpreterLoop;
         }
 
-        const { result, storeActionResultVarsInMemory } = processActionResults(
+        const { result, storeActionResultInMemory } = renderActionResult(
           resolvedActionsCount,
-          currentActionTopLevelResults
+          currentActionResult
         );
-        storeActionResultVarsInMemory(memory);
+        storeActionResultInMemory(memory);
         resolvedActions.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
@@ -457,7 +438,7 @@ function makePromptMessages(
 ): ChatCompletionRequestMessage[] {
   const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
+Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
 
   Run { exampleFunction("arg 1", arg2, 123, true); }
   I have completed your request
@@ -559,13 +540,13 @@ export function parseCompletion(completion: string): Action[] {
         p.rep_sc(p.str(" ")),
         p.str("{")
       ),
-      p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
+      p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENT, p.rep_sc(p.tok(T.Space))),
       p.str("}")
     ),
-    (statements, tokenRange): Action => {
+    (statement, tokenRange): Action => {
       return {
         action: p.extractByTokenRange(input, tokenRange[0], tokenRange[1]),
-        statements,
+        statement,
       };
     }
   );
@@ -657,13 +638,11 @@ export function parseCompletion(completion: string): Action[] {
       actions.push({
         action: value,
         isRespond: true,
-        statements: [
-          {
-            name: RESPOND_COMMAND,
-            type: "call",
-            args: [arg],
-          },
-        ],
+        statement: {
+          name: RESPOND_COMMAND,
+          type: "call",
+          args: [arg],
+        },
       });
     }
   }
@@ -734,38 +713,30 @@ function tryReuseResolvedCommand(
   return null;
 }
 
-function processActionResults(
+function renderActionResult(
   actionIndex: number,
-  results: Value[]
+  result: Value
 ): {
   result: string;
-  storeActionResultVarsInMemory: (m: Memory) => void;
+  storeActionResultInMemory: (m: Memory) => void;
 } {
-  let resultMemory: Record<string, Value> = {};
-  let resultStrings = [];
-  for (const [i, result] of results.entries()) {
-    const varName = `result_${actionIndex}_${i}`;
-    resultMemory[varName] = result;
-    let resultStr = valueToString(result);
-    try {
-      const toksLength = gptEncoder.encode(resultStr).length;
-      if (toksLength > 300) {
-        resultStr =
-          resultStr.substring(0, 300 * 4) +
-          " [... truncated: full value available in variable `" +
-          varName +
-          "`]";
-      }
-    } catch {}
-    resultStrings.push(resultStr);
-  }
+  const varName = `result_${actionIndex}`;
+  let resultStr = valueToString(result);
+  try {
+    const toksLength = gptEncoder.encode(resultStr).length;
+    if (toksLength > 300) {
+      resultStr =
+        resultStr.substring(0, 300 * 4) +
+        " [... truncated: full value available in variable `" +
+        varName +
+        "`]";
+    }
+  } catch {}
   return {
-    result: resultStrings.join("; "),
-    storeActionResultVarsInMemory: (memory) => {
-      for (const [varName, result] of Object.entries(resultMemory)) {
-        if (memory.variables[varName] != null) continue;
-        memory.variables[varName] = result;
-      }
+    result: resultStr,
+    storeActionResultInMemory: (memory) => {
+      if (memory.variables[varName] != null) return;
+      memory.variables[varName] = result;
     },
   };
 }

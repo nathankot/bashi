@@ -71,8 +71,7 @@ export async function runBuiltinCommand(
       id: command.id,
       args: command.args,
       name: command.name,
-      returnValue: { type: "void" },
-      error: e.message,
+      returnValue: { type: "error", message: e.message },
     };
   }
 }

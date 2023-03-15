@@ -443,6 +443,16 @@ This string response line is ignored`,
       `I have finished`,
     ],
   },
+
+  // Error handling
+  //
+  // TODO action block syntax error
+  // TODO builtin command error
+  // TODO client command error
+  // TODO non existent function
+  // TODO bad function argument type
+  // TODO bad function argument count
+  // TODO error action block invalidates all upcoming blocks
 ] as {
   description: string;
   openAiResults?: string[];

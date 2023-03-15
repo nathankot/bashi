@@ -35,33 +35,44 @@ export async function runBuiltinCommand(
   command: CommandParsed,
   memory: Memory
 ): Promise<CommandExecuted> {
-  const isOverloaded = "overloads" in definition;
-  const defsToTry =
-    "overloads" in definition ? definition.overloads : [definition];
+  try {
+    const isOverloaded = "overloads" in definition;
+    const defsToTry =
+      "overloads" in definition ? definition.overloads : [definition];
 
-  const args = [...command.args];
+    const args = [...command.args];
 
-  for (const definition of defsToTry) {
-    if (!checkArgumentsValid(definition, args)) {
-      continue;
+    for (const definition of defsToTry) {
+      if (!checkArgumentsValid(definition, args)) {
+        continue;
+      }
+      const returnValue = await definition.run(deps, args, memory);
+      return {
+        type: "executed",
+        returnValue,
+        id: command.id,
+        args: command.args,
+        name: command.name,
+      };
     }
-    const returnValue = await definition.run(deps, args, memory);
+
+    if (!isOverloaded) {
+      throw new Error(`arguments are invalid`);
+    }
+
+    throw new Error(
+      `no overload found for: ${command.name}(${command.args
+        .map((a) => a.type)
+        .join(", ")})`
+    );
+  } catch (e) {
     return {
       type: "executed",
-      returnValue,
       id: command.id,
       args: command.args,
       name: command.name,
+      returnValue: { type: "void" },
+      error: e.message,
     };
   }
-
-  if (!isOverloaded) {
-    throw new Error(`arguments are invalid`);
-  }
-
-  throw new Error(
-    `no overload found for: ${command.name}(${command.args
-      .map((a) => a.type)
-      .join(", ")})`
-  );
 }

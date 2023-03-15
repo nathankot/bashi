@@ -67,13 +67,18 @@ export const CommandParsed = t.type({
 });
 export type CommandParsed = t.TypeOf<typeof CommandParsed>;
 
-export const CommandExecuted = t.type({
-  id: t.string,
-  type: t.literal("executed"),
-  name: t.string,
-  args: t.array(Value),
-  returnValue: Value,
-});
+export const CommandExecuted = t.intersection([
+  t.type({
+    id: t.string,
+    type: t.literal("executed"),
+    name: t.string,
+    args: t.array(Value),
+    returnValue: Value,
+  }),
+  t.partial({
+    error: t.string, // takes precedence over returnValue
+  }),
+]);
 export type CommandExecuted = t.TypeOf<typeof CommandExecuted>;
 
 export const Command = t.union([CommandParsed, CommandExecuted]);

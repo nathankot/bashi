@@ -54,6 +54,8 @@ const Action = t.intersection([
   t.partial({
     result: t.string,
     isRespond: t.boolean,
+    // TODO support this:
+    error: t.string,
   }),
 ]);
 type Action = t.TypeOf<typeof Action>;

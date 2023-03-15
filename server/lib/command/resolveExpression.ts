@@ -22,9 +22,7 @@ export function resolveExpression(
       );
     }
     const result = maybeAlreadyResolved.returnValue;
-    if (result.type !== "error") {
-      return { result };
-    }
+    return { result };
   }
 
   // Build up a list of nested commands that must be resolved,

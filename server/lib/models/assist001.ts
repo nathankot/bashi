@@ -277,7 +277,11 @@ export async function run(
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
-            currentActionTopLevelResults.push(pendingCommandsOrResult.result);
+            const result = pendingCommandsOrResult.result;
+            if (result.type === "error") {
+              throw new Error(result.message);
+            }
+            currentActionTopLevelResults.push(result);
             // Update top level results in memory:
             memory.topLevelResults[expressionsSoFar + i] =
               pendingCommandsOrResult.result;

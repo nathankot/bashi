@@ -9,7 +9,7 @@ import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 
-import { Input, Result, getPendingCommandsOrResult } from "./assistShared.ts";
+import { Input, Result } from "./assistShared.ts";
 
 import {
   Memory,
@@ -19,6 +19,7 @@ import {
   CommandSet,
   CommandParsed,
   CommandExecuted,
+  resolveExpression,
   builtinCommands,
   languageCommands,
   filterUnnecessary,
@@ -270,7 +271,7 @@ export async function run(
         let pendingCommands: CommandParsed[] = [];
         let currentActionTopLevelResults: Value[] = [];
         for (const [i, expr] of currentActionExpressions.entries()) {
-          const pendingCommandsOrResult = getPendingCommandsOrResult(
+          const pendingCommandsOrResult = resolveExpression(
             `${actionsSoFar}.${i}`,
             expr,
             resolvedCommandsDict()

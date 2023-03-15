@@ -9,11 +9,7 @@ import {
   ChatCompletionResponseMessage,
 } from "openai";
 
-import {
-  Input,
-  ResultPendingCommands,
-  getPendingCommandsOrResult,
-} from "./assistShared.ts";
+import { Input, ResultPendingCommands } from "./assistShared.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
 import { IS_DEV } from "@lib/constants.ts";
@@ -29,6 +25,7 @@ import {
   CommandSet,
   CommandParsed,
   CommandExecuted,
+  resolveExpression,
   builtinCommands,
   languageCommands,
   filterUnnecessary,
@@ -238,7 +235,7 @@ export async function run(
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let currentActionPendingCommands: CommandParsed[] = [];
-        const pendingCommandsOrResult = getPendingCommandsOrResult(
+        const pendingCommandsOrResult = resolveExpression(
           `${resolvedActionsCount}`,
           currentActionExpr,
           resolvedCommandsDict()

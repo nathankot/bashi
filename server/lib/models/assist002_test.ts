@@ -13,23 +13,26 @@ const pendingClientCommandState = () =>
     modelCallCount: 1,
     pending: [
       {
-        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-        statements: [
-          { type: "call", args: [], name: "now" },
-          {
-            type: "call",
-            name: "createCalendarEvent",
-            args: [
-              { type: "string", value: "2022-01-01" },
-              { type: "string", value: "event name" },
-            ],
-          },
-        ],
+        action: 'createCalendarEvent("2022-01-01", "event name")',
+        statement: {
+          type: "call",
+          name: "createCalendarEvent",
+          args: [
+            { type: "string", value: "2022-01-01" },
+            { type: "string", value: "event name" },
+          ],
+        },
         result: undefined,
       },
     ],
     request: "some request",
-    resolvedActions: [],
+    resolvedActions: [
+      {
+        action: "now()",
+        statement: { type: "call", args: [], name: "now" },
+        result: "2022-12-19T08:41:10.000Z",
+      },
+    ],
     resolvedCommands: [
       {
         args: [],
@@ -49,13 +52,11 @@ const pendingInputState = () =>
       {
         action: "some response",
         isRespond: true,
-        statements: [
-          {
-            type: "call",
-            args: [{ type: "string", value: "some response" }],
-            name: "respond",
-          },
-        ],
+        statement: {
+          type: "call",
+          args: [{ type: "string", value: "some response" }],
+          name: "respond",
+        },
         result: undefined,
       },
     ],
@@ -64,13 +65,11 @@ const pendingInputState = () =>
       {
         action: "someCommand()",
         result: `"blah"`,
-        statements: [
-          {
-            type: "call",
-            args: [],
-            name: "someCommand",
-          },
-        ],
+        statement: {
+          type: "call",
+          args: [],
+          name: "someCommand",
+        },
       },
     ],
     resolvedCommands: [
@@ -90,7 +89,8 @@ for (const test of [
     description: "all commands resolved on the server",
     input: { request: "some request" },
     openAiResults: [
-      `Run { now(); math("pi^2 + 123") }`,
+      `Run { now() }
+       Run { math("pi^2 + 123") }`,
       `Your request has been fulfilled.`,
     ],
     snapshotPrompts: true,
@@ -99,7 +99,7 @@ for (const test of [
     description:
       "all commands resolved on the server - empty response tries again",
     input: { request: "some request" },
-    openAiResults: [`Run { now(); math("pi^2 + 123") }`, ``, `Finish`],
+    openAiResults: [`Run { math("pi^2 + 123") }`, ``, `Finish`],
     snapshotPrompts: true,
   },
   {
@@ -121,7 +121,10 @@ for (const test of [
   {
     description: "command overloads work",
     input: { request: "some request" },
-    openAiResults: [`Run { "string" + "concat"; 123 + 1; }`, `I have finished`],
+    openAiResults: [
+      `Run {  123 + 1; }\nRun { "string" + "concat";}`,
+      `I have finished`,
+    ],
     snapshotPrompts: true,
   },
   {
@@ -136,14 +139,15 @@ for (const test of [
     description: "supports model outputs with lots of newlines",
     input: { request: "some request" },
     openAiResults: [
-      `Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");\ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }`,
+      `Run { \ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }
+Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now."); }`,
     ],
   },
   {
     description: "supports model outputs with top level infix call",
     input: { request: "some request" },
     openAiResults: [
-      "Run { currentTimeForTimezone(`America/${`New_York`}`); createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife'); }",
+      "Run { currentTimeForTimezone(`America/${`New_York`}`);  }\nRun { createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife');}",
       `I have finished`,
     ],
   },
@@ -151,7 +155,8 @@ for (const test of [
     description: "supports model outputs using template strings",
     input: { request: "some request" },
     openAiResults: [
-      `Run { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }`,
+      `Run { now() + ' ' + currentTimeForTimezone('America/New_York'); }
+Run {  createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }`,
       `I have finished`,
     ],
   },
@@ -159,14 +164,20 @@ for (const test of [
     description: "supports model outputs with top level expression",
     input: { request: "some request" },
     openAiResults: [
-      `Run { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }`,
+      `Run { "some string"; }
+Run { 123 }`,
       `I have finished`,
     ],
   },
   {
     description: "supports assignment",
     input: { request: "some request" },
-    openAiResults: [`Run { a = 123; b = 111; a + b; }`, `I have finished`],
+    openAiResults: [
+      `Run { a = 123; }
+Run { b = 111; }
+Run { a + b; }`,
+      `I have finished`,
+    ],
   },
   {
     description: "malformed command should fail rather than return as string",
@@ -186,7 +197,8 @@ for (const test of [
     description: "server commands with identical inputs re-use results",
     input: { resolvedCommands: [] },
     openAiResults: [
-      `Run { now(); respond("not reused because client command") }`,
+      `Run { now();  }
+Run { respond("not reused because client command") }`,
     ],
     initialState: {
       modelCallCount: 1,
@@ -197,7 +209,7 @@ for (const test of [
           args: [],
           id: "someid",
           name: "now",
-          returnValue: "0000-00-00T00:00:00Z",
+          returnValue: { type: "string", value: "0000-00-00T00:00:00Z" },
         },
         {
           type: "executed",
@@ -206,7 +218,7 @@ for (const test of [
           ],
           id: "someid",
           name: "respond",
-          returnValue: "this should not be reused",
+          returnValue: { type: "string", value: "this should not be reused" },
         },
       ],
     },
@@ -264,7 +276,7 @@ This string response line is ignored`,
   {
     description: "client resolved command",
     input: { request: "some request" },
-    openAiResults: [`Run { now(); respond("what do you want?") }`],
+    openAiResults: [`Run { respond("what do you want?") }`],
   },
   {
     description: "client resolved command - continue but unresolved",
@@ -278,7 +290,7 @@ This string response line is ignored`,
     description: "client resolved command - wrong return type",
     input: {
       resolvedCommands: {
-        "0.1": {
+        "1": {
           type: "boolean",
           value: true,
         },
@@ -291,7 +303,7 @@ This string response line is ignored`,
   {
     description: "client resolved command - fulfilled",
     input: {
-      resolvedCommands: { "0.1": { type: "void" } },
+      resolvedCommands: { "1": { type: "void" } },
     },
     openAiResults: [`I have finished`],
     snapshotPrompts: true,
@@ -301,7 +313,7 @@ This string response line is ignored`,
     description: "nested calls",
     input: { request: "some request" },
     openAiResults: [
-      `Run { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }`,
+      `Run { createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }`,
     ],
     snapshotPrompts: true,
   },
@@ -309,7 +321,7 @@ This string response line is ignored`,
     description: "request needs more context",
     input: { request: "some request" },
     openAiResults: [
-      `Run { now(); editText(respond("please provide the text"), "convert to poem"); now() }`,
+      `Run { editText(respond("please provide the text"), "convert to poem") }`,
     ],
   },
   {
@@ -322,7 +334,7 @@ This string response line is ignored`,
     description: "awaiting response - fulfilled",
     input: {
       resolvedCommands: {
-        "1.0": {
+        "1": {
           type: "string",
           value: "some user response",
         },
@@ -336,7 +348,7 @@ This string response line is ignored`,
     description: "max model calls",
     input: {
       resolvedCommands: {
-        "1.0": {
+        "1": {
           type: "string",
           value: `some date`,
         },
@@ -349,7 +361,7 @@ This string response line is ignored`,
       pending: [
         {
           action: "blah",
-          statements: [{ type: "call", name: "now", args: [] }],
+          statement: { type: "call", name: "now", args: [] },
         },
       ],
       modelCallCount: MAX_MODEL_CALLS,
@@ -368,51 +380,11 @@ This string response line is ignored`,
     snapshotError: true,
   },
   {
-    description: "top level commands are resolved sequentially",
-    input: { request: "some request" },
-    openAiResults: [
-      `Run { respond("how are you?"); currentTimeForTimezone("America/New_York") }`,
-    ],
-  },
-  {
-    description: "top level commands are resolved sequentially 2",
-    input: {
-      resolvedCommands: {
-        "0.0": { type: "string", value: "good" },
-      },
-    },
-    openAiResults: [`I have finished`],
-    initialState: {
-      modelCallCount: 1,
-      pending: [
-        {
-          action:
-            'respond("how are you?"); currentTimeForTimezone("America/New_York")',
-          statements: [
-            {
-              args: [{ type: "string", value: "how are you?" }],
-              name: "respond",
-              type: "call",
-            },
-            {
-              args: [{ type: "string", value: "America/New_York" }],
-              name: "currentTimeForTimezone",
-              type: "call",
-            },
-          ],
-          result: undefined,
-        },
-      ],
-      request: "some request",
-      resolvedActions: [],
-      resolvedCommands: [],
-    },
-  },
-  {
     description: "long results are truncated and stored in variables",
     input: { request: "some request" },
     openAiResults: [
-      `Run { longVar = "${new Array(500).fill("word").join(" ")}"; longVar; }`,
+      `Run { longVar = "${new Array(500).fill("word").join(" ")}" }`,
+      `Run { longVar; }`,
       `I have finished`,
     ],
     snapshotPrompts: true,
@@ -424,7 +396,7 @@ This string response line is ignored`,
     openAiResults: [
       `Run { "hello result"; }`,
       `Run { result; }`,
-      `Run { var a = "b"; "should override result within same action"; result; }`, // assignment returns void which should be ignored
+      `Run { var a = "b" }`,
       `Run { rEsUlt; }`, // any case
       `Run { var result = "new result"; }`, // override
       `Run { "this should not show up twice"; }`,
@@ -452,6 +424,7 @@ This string response line is ignored`,
   // TODO non existent function
   // TODO bad function argument type
   // TODO bad function argument count
+  // TODO nested error bubbles up
   // TODO error action block invalidates all upcoming blocks
 ] as {
   description: string;
@@ -560,20 +533,18 @@ Deno.test("complex parseCompletion", async (t) => {
     t,
     parseCompletion(
       `\nRUN { a(b()) }
-RUN{ d(\n123\n); g();}
+RUN{ d(\n123\n) }
 
 RUN{ c() }
 RuN {
   c(
     "RUN { a() }"
-  ); g(123)
+  )
 }
 
-run { a = 123; b = 111; a + b; }
+run { a = 123 }
 run {
   a = 123
-  b = 111
-  a + b
 }
 hello 123
 test test 1111 RUN { c() }

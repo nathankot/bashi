@@ -196,6 +196,7 @@ export async function run(
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
+
       // 1. For each pending action, find expressions and try to resolve them
       if (pending.length > 0) {
         const pendingAction = pending[0]!;
@@ -207,9 +208,12 @@ export async function run(
         const currentActionExpressions = pendingAction.expressions;
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
-        let pendingCommands: CommandParsed[] = [];
+        let currentActionPendingCommands: CommandParsed[] = [];
         let currentActionTopLevelResults: Value[] = [];
-        for (const [i, expr] of currentActionExpressions.entries()) {
+        currentActionExprLoop: for (const [
+          i,
+          expr,
+        ] of currentActionExpressions.entries()) {
           const pendingCommandsOrResult = getPendingCommandsOrResult(
             `${actionsSoFar}.${i}`,
             expr,
@@ -221,15 +225,16 @@ export async function run(
             memory.topLevelResults[expressionsSoFar + i] =
               pendingCommandsOrResult.result;
           } else if ("pendingCommands" in pendingCommandsOrResult) {
-            pendingCommands = pendingCommandsOrResult.pendingCommands;
+            currentActionPendingCommands =
+              pendingCommandsOrResult.pendingCommands;
             // Break here so that the client is able to handle this top level
             // call, before handling the next one.
-            break;
+            break currentActionExprLoop;
           }
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
-        pendingCommandLoop: for (const pendingCommand of pendingCommands) {
+        currentActionCommandLoop: for (const pendingCommand of currentActionPendingCommands) {
           const commandName = pendingCommand.name;
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
@@ -304,7 +309,7 @@ export async function run(
                   ...resolved,
                   id: pendingCommand.id,
                 });
-                continue pendingCommandLoop;
+                continue currentActionCommandLoop;
               }
             }
 
@@ -315,7 +320,8 @@ export async function run(
               memory
             );
             resolvedCommands.push(resolved);
-            continue pendingCommandLoop;
+
+            continue currentActionCommandLoop;
           } else if (clientCommandDef != null) {
             //   1a. If the client provided any resolutions, use them
             const maybeClientResolution =
@@ -335,7 +341,7 @@ export async function run(
                 type: "executed",
                 returnValue: maybeClientResolution,
               });
-              continue pendingCommandLoop;
+              continue currentActionCommandLoop;
             }
             commandsToSendToClient.push(pendingCommand);
           }

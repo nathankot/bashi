@@ -9,12 +9,7 @@ import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 
-import {
-  Input,
-  Result,
-  languageBuiltinCommands,
-  getPendingCommandsOrResult,
-} from "./assistShared.ts";
+import { Input, Result, getPendingCommandsOrResult } from "./assistShared.ts";
 
 import {
   Memory,
@@ -25,6 +20,7 @@ import {
   CommandParsed,
   CommandExecuted,
   builtinCommands,
+  languageCommands,
   filterUnnecessary,
   parseStatements,
   runBuiltinCommand,
@@ -180,7 +176,7 @@ const privateBuiltinCommands = {
 const serverCommands = {
   ...builtinCommands,
   ...privateBuiltinCommands,
-  ...languageBuiltinCommands,
+  ...languageCommands,
 } as Record<
   string,
   | AnyBuiltinCommandDefinition
@@ -344,7 +340,7 @@ export async function run(
             // run with identical arguments, then re-use the return value.
             for (const resolved of resolvedCommands) {
               if (
-                !(resolved.name in languageBuiltinCommands) &&
+                !(resolved.name in languageCommands) &&
                 resolved.name === pendingCommand.name &&
                 resolved.args.every((arg, i) => {
                   const pendingArg = pendingCommand.args[i];

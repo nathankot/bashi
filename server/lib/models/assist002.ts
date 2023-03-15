@@ -12,7 +12,6 @@ import {
 import {
   Input,
   ResultPendingCommands,
-  languageBuiltinCommands,
   getPendingCommandsOrResult,
 } from "./assistShared.ts";
 
@@ -31,6 +30,7 @@ import {
   CommandParsed,
   CommandExecuted,
   builtinCommands,
+  languageCommands,
   filterUnnecessary,
   runBuiltinCommand,
 } from "@lib/command.ts";
@@ -138,7 +138,7 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 const serverCommands = {
   ...builtinCommands,
-  ...languageBuiltinCommands,
+  ...languageCommands,
 } as Record<
   string,
   | AnyBuiltinCommandDefinition
@@ -705,7 +705,7 @@ function tryReuseResolvedCommand(
   pendingCommand: CommandParsed
 ): CommandExecuted | null {
   for (const resolved of resolvedCommands) {
-    if (resolved.name in languageBuiltinCommands) continue;
+    if (resolved.name in languageCommands) continue;
     if (resolved.name !== pendingCommand.name) continue;
     if (
       resolved.args.every((arg, i) => {

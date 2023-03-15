@@ -4,6 +4,7 @@ import * as t from "io-ts";
 import * as p from "typescript-parsec";
 
 import {
+  CreateChatCompletionRequest,
   ChatCompletionRequestMessage,
   ChatCompletionResponseMessage,
 } from "openai";
@@ -25,6 +26,7 @@ import {
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
+  CommandDefinition,
   CommandSet,
   CommandParsed,
   CommandExecuted,
@@ -45,6 +47,34 @@ import {
 
 const RESPOND_COMMAND = "respond";
 const BLOCK_PREFIX = "run";
+
+const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
+  model: "gpt-3.5-turbo",
+  temperature: 0.3,
+  logit_bias: {
+    8818: -10, // `function`
+    22446: -100, // `().`
+    14804: -100, // `=>`
+    5218: -100, // ` =>`
+    21737: -10, // `[]`
+    58: -10, // `[`
+    60: -10, // `]`
+    685: -10, // ` [`
+    2361: -10, // ` ]`
+    14692: -10, // `["`
+    8973: -10, // `"]`
+    1391: -10, // ` {`
+    1782: -10, // ` }`
+    90: -10, // `{`
+    92: -10, // `}`
+    1640: -1, // `for` - try reduce tendency of the model to use for loops
+    11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
+    7785: 1, // `var`
+    32165: 1, // `fail`
+    15643: 1, // `finish`
+    7220: 1, // `user`
+  },
+};
 
 const Action = t.intersection([
   t.type({
@@ -234,7 +264,7 @@ export async function run(
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
-        currentActionCommandLoop: for (const pendingCommand of currentActionPendingCommands) {
+        currentActionCommandLoop: for (let pendingCommand of currentActionPendingCommands) {
           const commandName = pendingCommand.name;
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
@@ -243,74 +273,25 @@ export async function run(
           }
 
           // For commands that are not overloaded, try type coercion,
-          // the following is supported:
-          //
-          // number -> string
-          // number -> boolean
-          // string -> number
-          const notOverloadedCommand =
-            serverCommandDef != null && "overloads" in serverCommandDef
-              ? null
-              : serverCommandDef ?? clientCommandDef;
-          if (notOverloadedCommand != null) {
-            for (const [i, argDef] of notOverloadedCommand.args.entries()) {
-              const a = pendingCommand.args[i];
-              if (a == null) break;
-              if (a.type === argDef.type) continue;
-              if (a.type === "number" && argDef.type === "string") {
-                pendingCommand.args[i] = {
-                  type: "string",
-                  value: `${a.value}`,
-                };
-              }
-              if (a.type === "number" && argDef.type === "boolean") {
-                pendingCommand.args[i] = {
-                  type: "boolean",
-                  value: a.value === 1,
-                };
-              }
-              if (a.type === "string" && argDef.type === "number") {
-                const parsed = parseInt(a.value, 10);
-                if (!isNaN(parsed)) {
-                  pendingCommand.args[i] = { type: "number", value: parsed };
-                }
-              }
-            }
-          }
+          pendingCommand = tryTypeCoercion(
+            (serverCommandDef != null && !("overloads" in serverCommandDef)
+              ? serverCommandDef
+              : clientCommandDef) ?? null,
+            pendingCommand
+          );
 
           if (serverCommandDef != null) {
             // 1b. Any commands that can be resolved server side should be
 
             // If the command is not a language command and was already previously
             // run with identical arguments, then re-use the return value.
-            for (const resolved of resolvedCommands) {
-              if (
-                !(resolved.name in languageBuiltinCommands) &&
-                resolved.name === pendingCommand.name &&
-                resolved.args.every((arg, i) => {
-                  const pendingArg = pendingCommand.args[i];
-                  if (pendingArg == null) {
-                    return false;
-                  }
-                  if (pendingArg.type !== arg.type) {
-                    return false;
-                  }
-                  if (
-                    "value" in pendingArg &&
-                    "value" in arg &&
-                    pendingArg.value !== arg.value
-                  ) {
-                    return false;
-                  }
-                  return true;
-                })
-              ) {
-                resolvedCommands.push({
-                  ...resolved,
-                  id: pendingCommand.id,
-                });
-                continue currentActionCommandLoop;
-              }
+            const reused = tryReuseResolvedCommand(
+              resolvedCommands,
+              pendingCommand
+            );
+            if (reused != null) {
+              resolvedCommands.push(reused);
+              continue currentActionCommandLoop;
             }
 
             const resolved = await runBuiltinCommand(
@@ -422,33 +403,9 @@ export async function run(
       const completion = await modelDeps.openai.createChatCompletion(
         {
           messages,
-          model: "gpt-3.5-turbo",
           // TODO return error if completion tokens has reached this limit
           max_tokens: session.configuration.maxResponseTokens,
-          temperature: 0.3,
-          logit_bias: {
-            8818: -10, // `function`
-            22446: -100, // `().`
-            14804: -100, // `=>`
-            5218: -100, // ` =>`
-            21737: -10, // `[]`
-            58: -10, // `[`
-            60: -10, // `]`
-            685: -10, // ` [`
-            2361: -10, // ` ]`
-            14692: -10, // `["`
-            8973: -10, // `"]`
-            1391: -10, // ` {`
-            1782: -10, // ` }`
-            90: -10, // `{`
-            92: -10, // `}`
-            1640: -1, // `for` - try reduce tendency of the model to use for loops
-            11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
-            7785: 1, // `var`
-            32165: 1, // `fail`
-            15643: 1, // `finish`
-            7220: 1, // `user`
-          },
+          ...COMPLETION_OPTIONS,
         },
         {
           signal: modelDeps.signal,
@@ -728,4 +685,67 @@ export function parseCompletion(completion: string): Action[] {
   }
 
   return actions;
+}
+
+function tryTypeCoercion(
+  commandDef: Pick<CommandDefinition, "args"> | null,
+  pendingCommand: CommandParsed
+): CommandParsed {
+  // the following is supported:
+  //
+  // number -> string
+  // number -> boolean
+  // string -> number
+  if (commandDef == null) return pendingCommand;
+  let args = [...pendingCommand.args];
+  for (const [i, argDef] of commandDef.args.entries()) {
+    const a = args[i];
+    if (a == null) break;
+    if (a.type === argDef.type) continue;
+    if (a.type === "number" && argDef.type === "string") {
+      args[i] = { type: "string", value: `${a.value}` };
+    }
+    if (a.type === "number" && argDef.type === "boolean") {
+      args[i] = { type: "boolean", value: a.value === 1 };
+    }
+    if (a.type === "string" && argDef.type === "number") {
+      const parsed = parseInt(a.value, 10);
+      if (!isNaN(parsed)) {
+        args[i] = { type: "number", value: parsed };
+      }
+    }
+  }
+  return { ...pendingCommand, args };
+}
+
+function tryReuseResolvedCommand(
+  resolvedCommands: CommandExecuted[],
+  pendingCommand: CommandParsed
+): CommandExecuted | null {
+  for (const resolved of resolvedCommands) {
+    if (resolved.name in languageBuiltinCommands) continue;
+    if (resolved.name !== pendingCommand.name) continue;
+    if (
+      resolved.args.every((arg, i) => {
+        const pendingArg = pendingCommand.args[i];
+        if (pendingArg == null) {
+          return false;
+        }
+        if (pendingArg.type !== arg.type) {
+          return false;
+        }
+        if (
+          "value" in pendingArg &&
+          "value" in arg &&
+          pendingArg.value !== arg.value
+        ) {
+          return false;
+        }
+        return true;
+      })
+    ) {
+      return { ...resolved, id: pendingCommand.id };
+    }
+  }
+  return null;
 }

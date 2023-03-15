@@ -47,7 +47,6 @@ import {
 
 const RESPOND_COMMAND = "respond";
 const BLOCK_PREFIX = "run";
-
 const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
   model: "gpt-3.5-turbo",
   temperature: 0.3,
@@ -79,7 +78,7 @@ const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
 const Action = t.intersection([
   t.type({
     action: t.string,
-    expressions: t.array(Expr),
+    statements: t.array(Expr),
   }),
   t.partial({
     result: t.string,
@@ -198,7 +197,7 @@ export async function run(
   };
 
   let modelCallCount = state?.modelCallCount ?? 0;
-  let pending = state?.pending ?? [];
+  let pendingActions = state?.pending ?? [];
   let resolvedCommands = state?.resolvedCommands ?? [];
   let resolvedActions = state?.resolvedActions ?? [];
 
@@ -209,33 +208,37 @@ export async function run(
   const topLevelResults = (): Value[] =>
     memory.topLevelResults.filter((r) => r.type !== "void");
 
-  // Interpreter loop that does the following:
+  // Interpreter loop:
   //
-  // 1. For each pending action, find commands and try to resolve them
-  //   1a. If the client provided any resolutions, use them
-  //   1b. Any commands that can be resolved server side should be
-  //   1c. Some commands may need a redirection to the client
-  // 2. Any resolutions from the above go into the new prompt
-  // 3. Plugs the prompt into the model to ask for actions to take
-  // 4. Parse the completion into pending actions
-  // 5. Update state with the current results, exit if the model is sending a response to the user, otherwise goto (1)
-
+  // 1. While there are pending actions (Run{} blocks or string responses):
+  //   1.1. Parse the action statements (each statement is a top level expression)
+  //   1.2. While there are unresolved action statements:
+  //     1.2.1. Is the statement fully resolved?
+  //       Yes: store the result
+  //       No: queue the commands (functions) that need to be resolved and break to 1.3
+  //   1.3. While there are pending commands:
+  //     1.3.1. If the command can be resolved on the server, execute and store the result
+  //     1.3.2. If the command must be resolved on the client, check has the command resolution already been provided?
+  //       Yes: store the result
+  //       No: return the command to the client. On callback we will start from 1.
+  //   1.4. Store the result of the fully resolved action
+  //   1.5. If there are no more pending actions, break to 2.
+  // 2. Ask model for more actions and goto 1.
   try {
     let loopNumber = 0;
-    commandResolutionLoop: while (true) {
+    interpreterLoop: while (true) {
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
 
-      // 1. For each pending action, find expressions and try to resolve them
-      if (pending.length > 0) {
-        const pendingAction = pending[0]!;
-        const actionsSoFar = resolvedActions.length;
-        const expressionsSoFar = resolvedActions.reduce(
-          (a, g) => a + g.expressions.length,
+      if (pendingActions.length > 0) {
+        const pendingAction = pendingActions[0]!;
+        const resolvedActionsCount = resolvedActions.length;
+        const resolvedActionsStatementsCount = resolvedActions.reduce(
+          (a, g) => a + g.statements.length,
           0
         );
-        const currentActionExpressions = pendingAction.expressions;
+        const currentActionStatements = pendingAction.statements;
         // Get the first top level call that is still pending, we want
         // to handle each top level call in sequence.
         let currentActionPendingCommands: CommandParsed[] = [];
@@ -243,16 +246,16 @@ export async function run(
         currentActionExprLoop: for (const [
           i,
           expr,
-        ] of currentActionExpressions.entries()) {
+        ] of currentActionStatements.entries()) {
           const pendingCommandsOrResult = getPendingCommandsOrResult(
-            `${actionsSoFar}.${i}`,
+            `${resolvedActionsCount}.${i}`,
             expr,
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
             currentActionTopLevelResults.push(pendingCommandsOrResult.result);
             // Update top level results in memory:
-            memory.topLevelResults[expressionsSoFar + i] =
+            memory.topLevelResults[resolvedActionsStatementsCount + i] =
               pendingCommandsOrResult.result;
           } else if ("pendingCommands" in pendingCommandsOrResult) {
             currentActionPendingCommands =
@@ -281,8 +284,6 @@ export async function run(
           );
 
           if (serverCommandDef != null) {
-            // 1b. Any commands that can be resolved server side should be
-
             // If the command is not a language command and was already previously
             // run with identical arguments, then re-use the return value.
             const reused = tryReuseResolvedCommand(
@@ -304,7 +305,6 @@ export async function run(
 
             continue currentActionCommandLoop;
           } else if (clientCommandDef != null) {
-            //   1a. If the client provided any resolutions, use them
             const maybeClientResolution =
               input.resolvedCommands == null
                 ? null
@@ -327,7 +327,7 @@ export async function run(
             commandsToSendToClient.push(pendingCommand);
           }
         }
-        //   1c. Some commands may need a redirection to the client
+
         if (commandsToSendToClient.length > 0) {
           return {
             model: "assist-002",
@@ -341,41 +341,27 @@ export async function run(
           };
         }
 
-        // Go through the loop again if we have not resolved all top-level commands:
+        // Go through the loop again if we have not resolved statements in the
+        // current action.
         if (
-          currentActionTopLevelResults.length !==
-          currentActionExpressions.length
+          currentActionTopLevelResults.length !== currentActionStatements.length
         ) {
-          continue commandResolutionLoop;
+          continue interpreterLoop;
         }
 
-        // 2. Any resolutions from the above go into the new prompt
-        let resultStrings = [];
-        for (const [i, result] of currentActionTopLevelResults.entries()) {
-          const varName = `result_${actionsSoFar}_${i}`;
-          memory.variables[varName] = result;
-          let resultStr = valueToString(result);
-          try {
-            const toksLength = gptEncoder.encode(resultStr).length;
-            if (toksLength > 300) {
-              resultStr =
-                resultStr.substring(0, 300 * 4) +
-                " [... truncated: full value available in variable `" +
-                varName +
-                "`]";
-            }
-          } catch {}
-          resultStrings.push(resultStr);
-        }
-        const result = resultStrings.join("; ");
+        const { result, storeActionResultVarsInMemory } = processActionResults(
+          resolvedActionsCount,
+          currentActionTopLevelResults
+        );
+        storeActionResultVarsInMemory(memory);
         resolvedActions.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
           log("info", `result: ${result}`);
         }
 
-        pending.shift();
-        continue commandResolutionLoop;
+        pendingActions.shift();
+        continue interpreterLoop;
       }
 
       // Reaching here implies that anything pending has been
@@ -389,7 +375,6 @@ export async function run(
       }
       modelCallCount++;
 
-      // 3. Plugs the prompt into the model to ask for actions to take
       const messages = makePromptMessages(
         session,
         {
@@ -427,10 +412,7 @@ export async function run(
         }
       }
 
-      // 4. Parse the completion into pending actions
-      // 5. Update state with the current results, exit if we have reached a sink,
-      //    otherwise goto (1)
-      pending = [...pending, ...parseCompletion(text)];
+      pendingActions = [...pendingActions, ...parseCompletion(text)];
     }
   } catch (e) {
     if ("response" in e) {
@@ -457,7 +439,7 @@ export async function run(
         memory,
         modelCallCount,
         request,
-        pending: pending ?? null,
+        pending: pendingActions ?? null,
         resolvedActions,
         resolvedCommands,
       },
@@ -578,10 +560,10 @@ export function parseCompletion(completion: string): Action[] {
       p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
       p.str("}")
     ),
-    (expressions, tokenRange): Action => {
+    (statements, tokenRange): Action => {
       return {
         action: p.extractByTokenRange(input, tokenRange[0], tokenRange[1]),
-        expressions,
+        statements,
       };
     }
   );
@@ -673,7 +655,7 @@ export function parseCompletion(completion: string): Action[] {
       actions.push({
         action: value,
         isRespond: true,
-        expressions: [
+        statements: [
           {
             name: RESPOND_COMMAND,
             type: "call",
@@ -748,4 +730,40 @@ function tryReuseResolvedCommand(
     }
   }
   return null;
+}
+
+function processActionResults(
+  actionIndex: number,
+  results: Value[]
+): {
+  result: string;
+  storeActionResultVarsInMemory: (m: Memory) => void;
+} {
+  let resultMemory: Record<string, Value> = {};
+  let resultStrings = [];
+  for (const [i, result] of results.entries()) {
+    const varName = `result_${actionIndex}_${i}`;
+    resultMemory[varName] = result;
+    let resultStr = valueToString(result);
+    try {
+      const toksLength = gptEncoder.encode(resultStr).length;
+      if (toksLength > 300) {
+        resultStr =
+          resultStr.substring(0, 300 * 4) +
+          " [... truncated: full value available in variable `" +
+          varName +
+          "`]";
+      }
+    } catch {}
+    resultStrings.push(resultStr);
+  }
+  return {
+    result: resultStrings.join("; "),
+    storeActionResultVarsInMemory: (memory) => {
+      for (const [varName, result] of Object.entries(resultMemory)) {
+        if (memory.variables[varName] != null) continue;
+        memory.variables[varName] = result;
+      }
+    },
+  };
 }

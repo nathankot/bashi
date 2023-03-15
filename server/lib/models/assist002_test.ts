@@ -14,7 +14,7 @@ const pendingClientCommandState = () =>
     pending: [
       {
         action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-        expressions: [
+        statements: [
           { type: "call", args: [], name: "now" },
           {
             type: "call",
@@ -49,7 +49,7 @@ const pendingInputState = () =>
       {
         action: "some response",
         isRespond: true,
-        expressions: [
+        statements: [
           {
             type: "call",
             args: [{ type: "string", value: "some response" }],
@@ -64,7 +64,7 @@ const pendingInputState = () =>
       {
         action: "someCommand()",
         result: `"blah"`,
-        expressions: [
+        statements: [
           {
             type: "call",
             args: [],
@@ -349,7 +349,7 @@ This string response line is ignored`,
       pending: [
         {
           action: "blah",
-          expressions: [{ type: "call", name: "now", args: [] }],
+          statements: [{ type: "call", name: "now", args: [] }],
         },
       ],
       modelCallCount: MAX_MODEL_CALLS,
@@ -388,7 +388,7 @@ This string response line is ignored`,
         {
           action:
             'respond("how are you?"); currentTimeForTimezone("America/New_York")',
-          expressions: [
+          statements: [
             {
               args: [{ type: "string", value: "how are you?" }],
               name: "respond",

@@ -539,7 +539,15 @@ export function parseCompletion(completion: string): Action[] {
         p.rep_sc(p.str(" ")),
         p.str("{")
       ),
-      p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENT, p.rep_sc(p.tok(T.Space))),
+      p.kmid(
+        p.rep_sc(p.tok(T.Space)),
+        STATEMENT,
+        p.seq(
+          p.rep_sc(p.tok(T.Space)),
+          p.opt_sc(p.str(";")),
+          p.rep_sc(p.tok(T.Space))
+        )
+      ),
       p.str("}")
     ),
     (statement, tokenRange): Action => {

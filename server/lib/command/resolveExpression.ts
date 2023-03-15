@@ -58,10 +58,14 @@ export function resolveExpression(
   // becomes pending:
   if (resolvedArguments != null) {
     if (resolvedArguments.length !== expr.args.length) {
-      throw new Error(
-        `corruption! for ${expr.name} expected ${expr.args.length} ` +
-          `arguments but got ${resolvedArguments.length}`
-      );
+      return {
+        result: {
+          type: "error",
+          message:
+            `${expr.name} expected ${expr.args.length} ` +
+            `arguments but received ${resolvedArguments.length}`,
+        },
+      };
     }
     return {
       pendingCommands: [

@@ -16,7 +16,7 @@ snapshot[`all commands resolved on the server 1`] = `
               value: "Your request has been fulfilled.",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
@@ -46,22 +46,14 @@ snapshot[`all commands resolved on the server 1`] = `
           value: "132.86960440108936",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        result_0_1: {
-          type: "string",
-          value: "132.86960440108936",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "Your request has been fulfilled.",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -73,20 +65,26 @@ snapshot[`all commands resolved on the server 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: 'Run { now(); math("pi^2 + 123") }',
-        expressions: [
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
           {
             args: [
             ],
             name: "now",
             type: "call",
           },
+        ],
+      },
+      {
+        action: 'Run { math("pi^2 + 123") }',
+        result: 'Result: "132.86960440108936"',
+        statements: [
           {
             args: [
               {
@@ -98,7 +96,6 @@ snapshot[`all commands resolved on the server 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
       },
     ],
     resolvedCommands: [
@@ -120,7 +117,7 @@ snapshot[`all commands resolved on the server 1`] = `
             value: "pi^2 + 123",
           },
         ],
-        id: "0.1",
+        id: "1.0",
         name: "math",
         returnValue: {
           type: "string",
@@ -140,47 +137,19 @@ snapshot[`all commands resolved on the server 2`] = `
     role: "user",
   },
   {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { now(); math("pi^2 + 123") }',
+    content: "Run { now() }",
     role: "assistant",
   },
   {
-    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+  {
+    content: 'Run { math("pi^2 + 123") }',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "132.86960440108936"',
     role: "system",
   },
 ]
@@ -210,10 +179,6 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
       results: [
         {
           type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        {
-          type: "string",
           value: "132.86960440108936",
         },
       ],
@@ -225,29 +190,17 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
       topLevelResults: [
         {
           type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        {
-          type: "string",
           value: "132.86960440108936",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        result_0_1: {
-          type: "string",
-          value: "132.86960440108936",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 3,
     pending: [
       {
         action: "Finish",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -259,20 +212,14 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: 'Run { now(); math("pi^2 + 123") }',
-        expressions: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
+        action: 'Run { math("pi^2 + 123") }',
+        result: 'Result: "132.86960440108936"',
+        statements: [
           {
             args: [
               {
@@ -284,21 +231,9 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10Z"; "132.86960440108936"',
       },
     ],
     resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0.0",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        type: "executed",
-      },
       {
         args: [
           {
@@ -306,7 +241,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
             value: "pi^2 + 123",
           },
         ],
-        id: "0.1",
+        id: "0.0",
         name: "math",
         returnValue: {
           type: "string",
@@ -326,91 +261,11 @@ snapshot[`all commands resolved on the server - empty response tries again 2`] =
     role: "user",
   },
   {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { now(); math("pi^2 + 123") }',
+    content: 'Run { math("pi^2 + 123") }',
     role: "assistant",
   },
   {
-    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
-    role: "system",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { now(); math("pi^2 + 123") }',
-    role: "assistant",
-  },
-  {
-    content: 'Result: "2022-12-19T08:41:10Z"; "132.86960440108936"',
+    content: 'Result: "132.86960440108936"',
     role: "system",
   },
 ]
@@ -470,26 +325,14 @@ snapshot[`multiple actions in a single completion 1`] = `
           value: "2022-12-19T08:41:10Z",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        result_1_0: {
-          type: "string",
-          value: "132.86960440108936",
-        },
-        result_2_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "Your request has been fulfilled.",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -501,14 +344,14 @@ snapshot[`multiple actions in a single completion 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: "Run { now() }",
-        expressions: [
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
           {
             args: [
             ],
@@ -516,11 +359,11 @@ snapshot[`multiple actions in a single completion 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10Z"',
       },
       {
         action: 'run { math("pi^2 + 123") }',
-        expressions: [
+        result: 'Result: "132.86960440108936"',
+        statements: [
           {
             args: [
               {
@@ -532,11 +375,11 @@ snapshot[`multiple actions in a single completion 1`] = `
             type: "call",
           },
         ],
-        result: '"132.86960440108936"',
       },
       {
         action: "Run { now() }",
-        expressions: [
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
           {
             args: [
             ],
@@ -544,7 +387,6 @@ snapshot[`multiple actions in a single completion 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10Z"',
       },
     ],
     resolvedCommands: [
@@ -578,6 +420,182 @@ snapshot[`multiple actions in a single completion 1`] = `
         args: [
         ],
         id: "2.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`multiple functions in a single run block 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Your request has been fulfilled.",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "4",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          type: "string",
+          value: "4",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Your request has been fulfilled.",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Your request has been fulfilled.",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { now(); now(); math('2^2')
+
+now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"; Result: "2022-12-19T08:41:10Z"; Result: "4"; Result: "2022-12-19T08:41:10Z"',
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "string",
+                value: "2^2",
+              },
+            ],
+            name: "math",
+            type: "call",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.3",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "2^2",
+          },
+        ],
+        id: "0.2",
+        name: "math",
+        returnValue: {
+          type: "string",
+          value: "4",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.1",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "0.0",
         name: "now",
         returnValue: {
           type: "string",
@@ -636,22 +654,14 @@ snapshot[`non-action lines at the end of a completion 1`] = `
           value: "132.86960440108936",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        result_1_0: {
-          type: "string",
-          value: "132.86960440108936",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "Your request has been fulfilled.",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -663,14 +673,14 @@ snapshot[`non-action lines at the end of a completion 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: "Run { now() }",
-        expressions: [
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
           {
             args: [
             ],
@@ -678,11 +688,11 @@ snapshot[`non-action lines at the end of a completion 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10Z"',
       },
       {
         action: 'run { math("pi^2 + 123") }',
-        expressions: [
+        result: 'Result: "132.86960440108936"',
+        statements: [
           {
             args: [
               {
@@ -694,7 +704,6 @@ snapshot[`non-action lines at the end of a completion 1`] = `
             type: "call",
           },
         ],
-        result: '"132.86960440108936"',
       },
     ],
     resolvedCommands: [
@@ -745,19 +754,19 @@ snapshot[`command overloads work 1`] = `
               value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
         {
-          type: "string",
-          value: "stringconcat",
-        },
-        {
           type: "number",
           value: 124,
+        },
+        {
+          type: "string",
+          value: "stringconcat",
         },
       ],
       type: "pending_commands",
@@ -767,30 +776,22 @@ snapshot[`command overloads work 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "string",
-          value: "stringconcat",
+          type: "number",
+          value: 124,
         },
         {
-          type: "number",
-          value: 124,
-        },
-      ],
-      variables: {
-        result_0_0: {
           type: "string",
           value: "stringconcat",
         },
-        result_0_1: {
-          type: "number",
-          value: 124,
-        },
-      },
+      ],
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -802,28 +803,14 @@ snapshot[`command overloads work 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: 'Run { "string" + "concat"; 123 + 1; }',
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "string",
-              },
-              {
-                type: "string",
-                value: "concat",
-              },
-            ],
-            name: "__+__",
-            type: "call",
-          },
+        action: "Run {  123 + 1; }",
+        result: "Result: 124",
+        statements: [
           {
             args: [
               {
@@ -839,29 +826,29 @@ snapshot[`command overloads work 1`] = `
             type: "call",
           },
         ],
-        result: '"stringconcat"; 124',
+      },
+      {
+        action: 'Run { "string" + "concat";}',
+        result: 'Result: "stringconcat"',
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "string",
+              },
+              {
+                type: "string",
+                value: "concat",
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+        ],
       },
     ],
     resolvedCommands: [
-      {
-        args: [
-          {
-            type: "string",
-            value: "string",
-          },
-          {
-            type: "string",
-            value: "concat",
-          },
-        ],
-        id: "0.0",
-        name: "__+__",
-        returnValue: {
-          type: "string",
-          value: "stringconcat",
-        },
-        type: "executed",
-      },
       {
         args: [
           {
@@ -873,11 +860,30 @@ snapshot[`command overloads work 1`] = `
             value: 1,
           },
         ],
-        id: "0.1",
+        id: "0.0",
         name: "__+__",
         returnValue: {
           type: "number",
           value: 124,
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "string",
+            value: "string",
+          },
+          {
+            type: "string",
+            value: "concat",
+          },
+        ],
+        id: "1.0",
+        name: "__+__",
+        returnValue: {
+          type: "string",
+          value: "stringconcat",
         },
         type: "executed",
       },
@@ -893,47 +899,19 @@ snapshot[`command overloads work 2`] = `
     role: "user",
   },
   {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { "string" + "concat"; 123 + 1; }',
+    content: "Run {  123 + 1; }",
     role: "assistant",
   },
   {
-    content: 'Result: "stringconcat"; 124',
+    content: "Result: 124",
+    role: "system",
+  },
+  {
+    content: 'Run { "string" + "concat";}',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "stringconcat"',
     role: "system",
   },
 ]
@@ -975,7 +953,7 @@ snapshot[`infix + operand support 1`] = `
     pending: [
       {
         action: 'Run { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }',
-        expressions: [
+        statements: [
           {
             args: [
               {
@@ -1090,11 +1068,15 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
           args: [
             {
               type: "string",
-              value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+              value: "2022-12-24T08:41:10Z",
+            },
+            {
+              type: "string",
+              value: "Dinner with wife",
             },
           ],
           id: "0.0",
-          name: "respond",
+          name: "createCalendarEvent",
           type: "parsed",
         },
       ],
@@ -1113,9 +1095,34 @@ snapshot[`supports model outputs with lots of newlines 1`] = `
     pending: [
       {
         action: 'Run { 
-respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now.");
 createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }',
-        expressions: [
+        statements: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "5 days from now",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: 'Run { 
+respond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now."); }',
+        statements: [
           {
             args: [
               {
@@ -1152,26 +1159,6 @@ createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }
             name: "respond",
             type: "call",
           },
-          {
-            args: [
-              {
-                args: [
-                  {
-                    type: "string",
-                    value: "5 days from now",
-                  },
-                ],
-                name: "parseRelativeTime",
-                type: "call",
-              },
-              {
-                type: "string",
-                value: "Dinner with wife",
-              },
-            ],
-            name: "createCalendarEvent",
-            type: "call",
-          },
         ],
       },
     ],
@@ -1183,52 +1170,14 @@ createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }
         args: [
           {
             type: "string",
-            value: "America/New_York",
-          },
-        ],
-        id: "0.0.0.0.1",
-        name: "currentTimeForTimezone",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
-            value: "The time in New York is ",
-          },
-          {
-            type: "string",
-            value: "2022-12-19T03:41:10-05:00",
-          },
-        ],
-        id: "0.0.0.0",
-        name: "__+__",
-        returnValue: {
-          type: "string",
-          value: "The time in New York is 2022-12-19T03:41:10-05:00",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
-            value: "The time in New York is 2022-12-19T03:41:10-05:00",
-          },
-          {
-            type: "string",
-            value: " and I have created a calendar event for dinner with your wife 5 days from now.",
+            value: "5 days from now",
           },
         ],
         id: "0.0.0",
-        name: "__+__",
+        name: "parseRelativeTime",
         returnValue: {
           type: "string",
-          value: "The time in New York is 2022-12-19T03:41:10-05:00 and I have created a calendar event for dinner with your wife 5 days from now.",
+          value: "2022-12-24T08:41:10Z",
         },
         type: "executed",
       },
@@ -1257,7 +1206,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
               value: "Dinner with Wife",
             },
           ],
-          id: "0.1",
+          id: "1.0",
           name: "createCalendarEvent",
           type: "parsed",
         },
@@ -1284,18 +1233,8 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "Run { currentTimeForTimezone(\`America/\${\`New_York\`}\`); createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife'); }",
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "America/New_York",
-              },
-            ],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
+        action: "Run { createCalendarEvent(parseRelativeTime(\`in \${5} days\`), 'Dinner with Wife');}",
+        statements: [
           {
             args: [
               {
@@ -1341,6 +1280,22 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     ],
     request: "some request",
     resolvedActions: [
+      {
+        action: "Run { currentTimeForTimezone(\`America/\${\`New_York\`}\`);  }",
+        result: 'Result: "2022-12-19T03:41:10-05:00"',
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "America/New_York",
+              },
+            ],
+            name: "currentTimeForTimezone",
+            type: "call",
+          },
+        ],
+      },
     ],
     resolvedCommands: [
       {
@@ -1369,7 +1324,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
             value: 5,
           },
         ],
-        id: "0.1.0.0.0",
+        id: "1.0.0.0.0",
         name: "__+__",
         returnValue: {
           type: "string",
@@ -1388,7 +1343,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
             value: " days",
           },
         ],
-        id: "0.1.0.0",
+        id: "1.0.0.0",
         name: "__+__",
         returnValue: {
           type: "string",
@@ -1403,7 +1358,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
             value: "in 5 days",
           },
         ],
-        id: "0.1.0",
+        id: "1.0.0",
         name: "parseRelativeTime",
         returnValue: {
           type: "string",
@@ -1436,7 +1391,7 @@ snapshot[`supports model outputs using template strings 1`] = `
               value: "Dinner with Wife",
             },
           ],
-          id: "0.1",
+          id: "1.0",
           name: "createCalendarEvent",
           type: "parsed",
         },
@@ -1463,8 +1418,37 @@ snapshot[`supports model outputs using template strings 1`] = `
     modelCallCount: 1,
     pending: [
       {
-        action: "Run { now() + ' ' + currentTimeForTimezone('America/New_York'); createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }",
-        expressions: [
+        action: "Run {  createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }",
+        statements: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    type: "string",
+                    value: "in 5 days",
+                  },
+                ],
+                name: "parseRelativeTime",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "Dinner with Wife",
+              },
+            ],
+            name: "createCalendarEvent",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { now() + ' ' + currentTimeForTimezone('America/New_York'); }",
+        result: 'Result: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00"',
+        statements: [
           {
             args: [
               {
@@ -1497,31 +1481,8 @@ snapshot[`supports model outputs using template strings 1`] = `
             name: "__+__",
             type: "call",
           },
-          {
-            args: [
-              {
-                args: [
-                  {
-                    type: "string",
-                    value: "in 5 days",
-                  },
-                ],
-                name: "parseRelativeTime",
-                type: "call",
-              },
-              {
-                type: "string",
-                value: "Dinner with Wife",
-              },
-            ],
-            name: "createCalendarEvent",
-            type: "call",
-          },
         ],
       },
-    ],
-    request: "some request",
-    resolvedActions: [
     ],
     resolvedCommands: [
       {
@@ -1595,7 +1556,7 @@ snapshot[`supports model outputs using template strings 1`] = `
             value: "in 5 days",
           },
         ],
-        id: "0.1.0",
+        id: "1.0.0",
         name: "parseRelativeTime",
         returnValue: {
           type: "string",
@@ -1624,7 +1585,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
               value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
@@ -1637,10 +1598,6 @@ snapshot[`supports model outputs with top level expression 1`] = `
         {
           type: "number",
           value: 123,
-        },
-        {
-          type: "string",
-          value: "2022-12-19T21:41:10+13:00",
         },
       ],
       type: "pending_commands",
@@ -1657,31 +1614,15 @@ snapshot[`supports model outputs with top level expression 1`] = `
           type: "number",
           value: 123,
         },
-        {
-          type: "string",
-          value: "2022-12-19T21:41:10+13:00",
-        },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "some string",
-        },
-        result_0_1: {
-          type: "number",
-          value: 123,
-        },
-        result_0_2: {
-          type: "string",
-          value: "2022-12-19T21:41:10+13:00",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -1693,52 +1634,32 @@ snapshot[`supports model outputs with top level expression 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: \`Run { "some string"; 123; currentTimeForTimezone('Pacific/Auckland') }\`,
-        expressions: [
+        action: 'Run { "some string"; }',
+        result: 'Result: "some string"',
+        statements: [
           {
             type: "string",
             value: "some string",
           },
+        ],
+      },
+      {
+        action: "Run { 123 }",
+        result: "Result: 123",
+        statements: [
           {
             type: "number",
             value: 123,
           },
-          {
-            args: [
-              {
-                type: "string",
-                value: "Pacific/Auckland",
-              },
-            ],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
         ],
-        result: '"some string"; 123; "2022-12-19T21:41:10+13:00"',
       },
     ],
     resolvedCommands: [
-      {
-        args: [
-          {
-            type: "string",
-            value: "Pacific/Auckland",
-          },
-        ],
-        id: "0.2",
-        name: "currentTimeForTimezone",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T21:41:10+13:00",
-        },
-        type: "executed",
-      },
     ],
   },
 }
@@ -1760,7 +1681,7 @@ snapshot[`supports assignment 1`] = `
               value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "3.0",
           name: "respond",
           type: "parsed",
         },
@@ -1807,25 +1728,14 @@ snapshot[`supports assignment 1`] = `
           type: "number",
           value: 111,
         },
-        result_0_0: {
-          type: "number",
-          value: 123,
-        },
-        result_0_1: {
-          type: "number",
-          value: 111,
-        },
-        result_0_2: {
-          type: "number",
-          value: 234,
-        },
       },
     },
     modelCallCount: 2,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -1837,14 +1747,14 @@ snapshot[`supports assignment 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: "Run { a = 123; b = 111; a + b; }",
-        expressions: [
+        action: "Run { a = 123; }",
+        result: "Result: 123",
+        statements: [
           {
             args: [
               {
@@ -1859,6 +1769,12 @@ snapshot[`supports assignment 1`] = `
             name: "__=__",
             type: "call",
           },
+        ],
+      },
+      {
+        action: "Run { b = 111; }",
+        result: "Result: 111",
+        statements: [
           {
             args: [
               {
@@ -1873,6 +1789,12 @@ snapshot[`supports assignment 1`] = `
             name: "__=__",
             type: "call",
           },
+        ],
+      },
+      {
+        action: "Run { a + b; }",
+        result: "Result: 234",
+        statements: [
           {
             args: [
               {
@@ -1900,7 +1822,6 @@ snapshot[`supports assignment 1`] = `
             type: "call",
           },
         ],
-        result: "123; 111; 234",
       },
     ],
     resolvedCommands: [
@@ -1934,7 +1855,7 @@ snapshot[`supports assignment 1`] = `
             value: 111,
           },
         ],
-        id: "0.1",
+        id: "1.0",
         name: "__=__",
         returnValue: {
           type: "number",
@@ -1949,7 +1870,7 @@ snapshot[`supports assignment 1`] = `
             value: "a",
           },
         ],
-        id: "0.2.0",
+        id: "2.0.0",
         name: "\$ref",
         returnValue: {
           type: "number",
@@ -1964,7 +1885,7 @@ snapshot[`supports assignment 1`] = `
             value: "b",
           },
         ],
-        id: "0.2.1",
+        id: "2.0.1",
         name: "\$ref",
         returnValue: {
           type: "number",
@@ -1983,7 +1904,7 @@ snapshot[`supports assignment 1`] = `
             value: 111,
           },
         ],
-        id: "0.2",
+        id: "2.0",
         name: "__+__",
         returnValue: {
           type: "number",
@@ -1996,9 +1917,9 @@ snapshot[`supports assignment 1`] = `
 }
 `;
 
-snapshot[`malformed command should fail rather than return as string 1`] = `"Unable to consume token: Date"`;
+snapshot[`malformed command should fail rather than return as string 1`] = `"openai mock on index 1 not available"`;
 
-snapshot[`malformed command should fail rather than return as string 2 1`] = `"Unable to consume token: !"`;
+snapshot[`malformed command should fail rather than return as string 2 1`] = `"openai mock on index 1 not available"`;
 
 snapshot[`server commands with identical inputs re-use results 1`] = `
 {
@@ -2016,13 +1937,16 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
               value: "not reused because client command",
             },
           ],
-          id: "0.1",
+          id: "1.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
-        "0000-00-00T00:00:00Z",
+        {
+          type: "string",
+          value: "0000-00-00T00:00:00Z",
+        },
       ],
       type: "pending_commands",
     },
@@ -2030,21 +1954,18 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        "0000-00-00T00:00:00Z",
+        {
+          type: "string",
+          value: "0000-00-00T00:00:00Z",
+        },
       ],
       variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
-        action: 'Run { now(); respond("not reused because client command") }',
-        expressions: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
+        action: 'Run { respond("not reused because client command") }',
+        statements: [
           {
             args: [
               {
@@ -2060,6 +1981,18 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     ],
     request: "some request",
     resolvedActions: [
+      {
+        action: "Run { now();  }",
+        result: 'Result: "0000-00-00T00:00:00Z"',
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
     ],
     resolvedCommands: [
       {
@@ -2067,7 +2000,10 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
         ],
         id: "someid",
         name: "now",
-        returnValue: "0000-00-00T00:00:00Z",
+        returnValue: {
+          type: "string",
+          value: "0000-00-00T00:00:00Z",
+        },
         type: "executed",
       },
       {
@@ -2079,7 +2015,10 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
         ],
         id: "someid",
         name: "respond",
-        returnValue: "this should not be reused",
+        returnValue: {
+          type: "string",
+          value: "this should not be reused",
+        },
         type: "executed",
       },
       {
@@ -2087,7 +2026,10 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
         ],
         id: "0.0",
         name: "now",
-        returnValue: "0000-00-00T00:00:00Z",
+        returnValue: {
+          type: "string",
+          value: "0000-00-00T00:00:00Z",
+        },
         type: "executed",
       },
     ],
@@ -2161,7 +2103,8 @@ fetch('https://example.com/data.json', {
 .then(data => console.log(data))
 .catch(error => console.error(error));
 \`\`\`",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -2188,7 +2131,6 @@ fetch('https://example.com/data.json', {
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
@@ -2247,17 +2189,13 @@ snapshot[`calendar event creation in a single completion 1`] = `
           type: "string",
           value: "2022-12-27T12:00:00Z",
         },
-        result_0_0: {
-          type: "string",
-          value: "2022-12-27T12:00:00Z",
-        },
       },
     },
     modelCallCount: 1,
     pending: [
       {
         action: 'Run { createCalendarEvent(nextTuesday, "Lunch with Bill"); }',
-        expressions: [
+        statements: [
           {
             args: [
               {
@@ -2285,7 +2223,8 @@ snapshot[`calendar event creation in a single completion 1`] = `
     resolvedActions: [
       {
         action: 'Run { var nextTuesday = "2022-12-27T12:00:00Z"; }',
-        expressions: [
+        result: 'Result: "2022-12-27T12:00:00Z"',
+        statements: [
           {
             args: [
               {
@@ -2301,7 +2240,6 @@ snapshot[`calendar event creation in a single completion 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-27T12:00:00Z"',
       },
     ],
     resolvedCommands: [
@@ -2423,29 +2361,14 @@ snapshot[`multiple assignment in one completion 1`] = `
           type: "string",
           value: "japanese translation",
         },
-        result_0_0: {
-          type: "string",
-          value: "What rooms do you have available?",
-        },
-        result_1_0: {
-          type: "string",
-          value: "french translation",
-        },
-        result_2_0: {
-          type: "string",
-          value: "spanish translation",
-        },
-        result_3_0: {
-          type: "string",
-          value: "japanese translation",
-        },
       },
     },
     modelCallCount: 2,
     pending: [
       {
         action: 'The available rooms in French are "\${b}", in Spanish are "\${c}", and in Japanese are "\${d}".',
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -2457,14 +2380,14 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: 'Run { a = "What rooms do you have available?" }',
-        expressions: [
+        result: 'Result: "What rooms do you have available?"',
+        statements: [
           {
             args: [
               {
@@ -2480,11 +2403,11 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: '"What rooms do you have available?"',
       },
       {
         action: 'Run { b = translate(a, "French") }',
-        expressions: [
+        result: 'Result: "french translation"',
+        statements: [
           {
             args: [
               {
@@ -2516,11 +2439,11 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: '"french translation"',
       },
       {
         action: 'Run { c = translate(a, "Spanish") }',
-        expressions: [
+        result: 'Result: "spanish translation"',
+        statements: [
           {
             args: [
               {
@@ -2552,11 +2475,11 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: '"spanish translation"',
       },
       {
         action: 'Run { d = translate(a, "Japanese") }',
-        expressions: [
+        result: 'Result: "japanese translation"',
+        statements: [
           {
             args: [
               {
@@ -2588,7 +2511,6 @@ snapshot[`multiple assignment in one completion 1`] = `
             type: "call",
           },
         ],
-        result: '"japanese translation"',
       },
     ],
     resolvedCommands: [
@@ -2791,16 +2713,12 @@ snapshot[`client resolved command 1`] = `
               value: "what do you want?",
             },
           ],
-          id: "0.1",
+          id: "0.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
       type: "pending_commands",
     },
@@ -2808,24 +2726,14 @@ snapshot[`client resolved command 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
       variables: {},
     },
     modelCallCount: 1,
     pending: [
       {
-        action: 'Run { now(); respond("what do you want?") }',
-        expressions: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
+        action: 'Run { respond("what do you want?") }',
+        statements: [
           {
             args: [
               {
@@ -2843,17 +2751,6 @@ snapshot[`client resolved command 1`] = `
     resolvedActions: [
     ],
     resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0.0",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        type: "executed",
-      },
     ],
   },
 }
@@ -2879,16 +2776,12 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
               value: "event name",
             },
           ],
-          id: "0.1",
+          id: "1.0",
           name: "createCalendarEvent",
           type: "parsed",
         },
       ],
       results: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
       ],
       type: "pending_commands",
     },
@@ -2896,24 +2789,15 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
       ],
       variables: {},
     },
     modelCallCount: 1,
     pending: [
       {
-        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-        expressions: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
+        action: 'createCalendarEvent("2022-01-01", "event name")',
+        result: undefined,
+        statements: [
           {
             args: [
               {
@@ -2929,24 +2813,24 @@ snapshot[`client resolved command - continue but unresolved 1`] = `
             type: "call",
           },
         ],
-        result: undefined,
       },
     ],
     request: "some request",
     resolvedActions: [
+      {
+        action: "now()",
+        result: "2022-12-19T08:41:10.000Z",
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
     ],
     resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
-        type: "executed",
-      },
       {
         args: [
         ],
@@ -2981,15 +2865,14 @@ snapshot[`client resolved command - fulfilled 1`] = `
               value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
         {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
+          type: "void",
         },
       ],
       type: "pending_commands",
@@ -2999,28 +2882,17 @@ snapshot[`client resolved command - fulfilled 1`] = `
     memory: {
       topLevelResults: [
         {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
-        {
           type: "void",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
-        result_0_1: {
-          type: "void",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -3032,20 +2904,26 @@ snapshot[`client resolved command - fulfilled 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: 'now(); createCalendarEvent("2022-01-01", "event name")',
-        expressions: [
+        action: "now()",
+        result: "2022-12-19T08:41:10.000Z",
+        statements: [
           {
             args: [
             ],
             name: "now",
             type: "call",
           },
+        ],
+      },
+      {
+        action: 'createCalendarEvent("2022-01-01", "event name")',
+        result: "Result: void",
+        statements: [
           {
             args: [
               {
@@ -3061,21 +2939,9 @@ snapshot[`client resolved command - fulfilled 1`] = `
             type: "call",
           },
         ],
-        result: '"2022-12-19T08:41:10.000Z"; void',
       },
     ],
     resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10.000Z",
-        },
-        type: "executed",
-      },
       {
         args: [
         ],
@@ -3098,7 +2964,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
             value: "event name",
           },
         ],
-        id: "0.1",
+        id: "1.0",
         name: "createCalendarEvent",
         returnValue: {
           type: "void",
@@ -3117,11 +2983,19 @@ snapshot[`client resolved command - fulfilled 2`] = `
     role: "user",
   },
   {
-    content: 'now(); createCalendarEvent("2022-01-01", "event name")',
+    content: "now()",
     role: "assistant",
   },
   {
-    content: 'Result: "2022-12-19T08:41:10.000Z"; void',
+    content: "2022-12-19T08:41:10.000Z",
+    role: "system",
+  },
+  {
+    content: 'createCalendarEvent("2022-01-01", "event name")',
+    role: "assistant",
+  },
+  {
+    content: "Result: void",
     role: "system",
   },
 ]
@@ -3147,16 +3021,12 @@ snapshot[`nested calls 1`] = `
               value: "Dinner with Wife",
             },
           ],
-          id: "0.1",
+          id: "0.0",
           name: "createCalendarEvent",
           type: "parsed",
         },
       ],
       results: [
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
       ],
       type: "pending_commands",
     },
@@ -3164,28 +3034,14 @@ snapshot[`nested calls 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
       ],
       variables: {},
     },
     modelCallCount: 1,
     pending: [
       {
-        action: 'Run { currentTimeForTimezone("America/New_York"); createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }',
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "America/New_York",
-              },
-            ],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
+        action: 'Run { createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }',
+        statements: [
           {
             args: [
               {
@@ -3217,25 +3073,10 @@ snapshot[`nested calls 1`] = `
         args: [
           {
             type: "string",
-            value: "America/New_York",
-          },
-        ],
-        id: "0.0",
-        name: "currentTimeForTimezone",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
             value: "5 days from now",
           },
         ],
-        id: "0.1.0",
+        id: "0.0.0",
         name: "parseRelativeTime",
         returnValue: {
           type: "string",
@@ -3273,16 +3114,12 @@ snapshot[`request needs more context 1`] = `
               value: "please provide the text",
             },
           ],
-          id: "0.1.0",
+          id: "0.0.0",
           name: "respond",
           type: "parsed",
         },
       ],
       results: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
       type: "pending_commands",
     },
@@ -3290,24 +3127,14 @@ snapshot[`request needs more context 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
       ],
       variables: {},
     },
     modelCallCount: 1,
     pending: [
       {
-        action: 'Run { now(); editText(respond("please provide the text"), "convert to poem"); now() }',
-        expressions: [
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
+        action: 'Run { editText(respond("please provide the text"), "convert to poem") }',
+        statements: [
           {
             args: [
               {
@@ -3328,12 +3155,6 @@ snapshot[`request needs more context 1`] = `
             name: "editText",
             type: "call",
           },
-          {
-            args: [
-            ],
-            name: "now",
-            type: "call",
-          },
         ],
       },
     ],
@@ -3341,17 +3162,6 @@ snapshot[`request needs more context 1`] = `
     resolvedActions: [
     ],
     resolvedCommands: [
-      {
-        args: [
-        ],
-        id: "0.0",
-        name: "now",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T08:41:10Z",
-        },
-        type: "executed",
-      },
     ],
   },
 }
@@ -3393,7 +3203,9 @@ snapshot[`awaiting response - still missing 1`] = `
     pending: [
       {
         action: "some response",
-        expressions: [
+        isRespond: true,
+        result: undefined,
+        statements: [
           {
             args: [
               {
@@ -3405,15 +3217,14 @@ snapshot[`awaiting response - still missing 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
-        result: undefined,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: "someCommand()",
-        expressions: [
+        result: '"blah"',
+        statements: [
           {
             args: [
             ],
@@ -3421,14 +3232,13 @@ snapshot[`awaiting response - still missing 1`] = `
             type: "call",
           },
         ],
-        result: '"blah"',
       },
     ],
     resolvedCommands: [
       {
         args: [
         ],
-        id: "0",
+        id: "0.0",
         name: "someCommand",
         returnValue: {
           type: "string",
@@ -3474,24 +3284,19 @@ snapshot[`awaiting response - fulfilled 1`] = `
   state: {
     memory: {
       topLevelResults: [
-        <1 empty item>,
         {
           type: "string",
           value: "some user response",
         },
       ],
-      variables: {
-        result_1_0: {
-          type: "string",
-          value: "some user response",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -3503,14 +3308,14 @@ snapshot[`awaiting response - fulfilled 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: "someCommand()",
-        expressions: [
+        result: '"blah"',
+        statements: [
           {
             args: [
             ],
@@ -3518,11 +3323,12 @@ snapshot[`awaiting response - fulfilled 1`] = `
             type: "call",
           },
         ],
-        result: '"blah"',
       },
       {
         action: "some response",
-        expressions: [
+        isRespond: true,
+        result: "some user response",
+        statements: [
           {
             args: [
               {
@@ -3534,15 +3340,13 @@ snapshot[`awaiting response - fulfilled 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
-        result: '"some user response"',
       },
     ],
     resolvedCommands: [
       {
         args: [
         ],
-        id: "0",
+        id: "0.0",
         name: "someCommand",
         returnValue: {
           type: "string",
@@ -3581,7 +3385,7 @@ snapshot[`awaiting response - fulfilled 2`] = `
     role: "assistant",
   },
   {
-    content: 'Result: "blah"',
+    content: '"blah"',
     role: "system",
   },
   {
@@ -3598,223 +3402,13 @@ snapshot[`awaiting response - fulfilled 2`] = `
 
 snapshot[`max model calls 1`] = `"max iteration count of 10 reached"`;
 
-snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
+snapshot[`wrong arg type 1`] = `"openai mock on index 1 not available"`;
 
-snapshot[`wrong arg count 1`] = `"arguments are invalid"`;
-
-snapshot[`top level commands are resolved sequentially 1`] = `
-{
-  n: 1,
-  output: {
-    dev: undefined,
-    model: "assist-002",
-    request: "some request",
-    result: {
-      pendingCommands: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "how are you?",
-            },
-          ],
-          id: "0.0",
-          name: "respond",
-          type: "parsed",
-        },
-      ],
-      results: [
-      ],
-      type: "pending_commands",
-    },
-  },
-  state: {
-    memory: {
-      topLevelResults: [
-      ],
-      variables: {},
-    },
-    modelCallCount: 1,
-    pending: [
-      {
-        action: 'Run { respond("how are you?"); currentTimeForTimezone("America/New_York") }',
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "how are you?",
-              },
-            ],
-            name: "respond",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "America/New_York",
-              },
-            ],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
-        ],
-      },
-    ],
-    request: "some request",
-    resolvedActions: [
-    ],
-    resolvedCommands: [
-    ],
-  },
-}
-`;
-
-snapshot[`top level commands are resolved sequentially 2 1`] = `
-{
-  n: 1,
-  output: {
-    dev: undefined,
-    model: "assist-002",
-    request: "some request",
-    result: {
-      pendingCommands: [
-        {
-          args: [
-            {
-              type: "string",
-              value: "I have finished",
-            },
-          ],
-          id: "1.0",
-          name: "respond",
-          type: "parsed",
-        },
-      ],
-      results: [
-        {
-          type: "string",
-          value: "good",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-      ],
-      type: "pending_commands",
-    },
-  },
-  state: {
-    memory: {
-      topLevelResults: [
-        {
-          type: "string",
-          value: "good",
-        },
-        {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-      ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "good",
-        },
-        result_0_1: {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-      },
-    },
-    modelCallCount: 2,
-    pending: [
-      {
-        action: "I have finished",
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "I have finished",
-              },
-            ],
-            name: "respond",
-            type: "call",
-          },
-        ],
-        isRespond: true,
-      },
-    ],
-    request: "some request",
-    resolvedActions: [
-      {
-        action: 'respond("how are you?"); currentTimeForTimezone("America/New_York")',
-        expressions: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "how are you?",
-              },
-            ],
-            name: "respond",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "America/New_York",
-              },
-            ],
-            name: "currentTimeForTimezone",
-            type: "call",
-          },
-        ],
-        result: '"good"; "2022-12-19T03:41:10-05:00"',
-      },
-    ],
-    resolvedCommands: [
-      {
-        args: [
-          {
-            type: "string",
-            value: "how are you?",
-          },
-        ],
-        id: "0.0",
-        name: "respond",
-        returnValue: {
-          type: "string",
-          value: "good",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
-            value: "America/New_York",
-          },
-        ],
-        id: "0.1",
-        name: "currentTimeForTimezone",
-        returnValue: {
-          type: "string",
-          value: "2022-12-19T03:41:10-05:00",
-        },
-        type: "executed",
-      },
-    ],
-  },
-}
-`;
+snapshot[`wrong arg count 1`] = `"openai mock on index 1 not available"`;
 
 snapshot[`long results are truncated and stored in variables 1`] = `
 {
-  n: 2,
+  n: 3,
   output: {
     dev: undefined,
     model: "assist-002",
@@ -3828,7 +3422,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
               value: "I have finished",
             },
           ],
-          id: "1.0",
+          id: "2.0",
           name: "respond",
           type: "parsed",
         },
@@ -3867,17 +3461,18 @@ snapshot[`long results are truncated and stored in variables 1`] = `
           type: "string",
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
-        result_0_1: {
+        result_1_0: {
           type: "string",
           value: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word",
         },
       },
     },
-    modelCallCount: 2,
+    modelCallCount: 3,
     pending: [
       {
         action: "I have finished",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -3889,14 +3484,14 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
-        action: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
-        expressions: [
+        action: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word" }',
+        result: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_0_0\`]',
+        statements: [
           {
             args: [
               {
@@ -3911,6 +3506,12 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             name: "__=__",
             type: "call",
           },
+        ],
+      },
+      {
+        action: "Run { longVar; }",
+        result: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_1_0\`]',
+        statements: [
           {
             args: [
               {
@@ -3922,7 +3523,6 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             type: "call",
           },
         ],
-        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_1\`]',
       },
     ],
     resolvedCommands: [
@@ -3952,7 +3552,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
             value: "longVar",
           },
         ],
-        id: "0.1",
+        id: "1.0",
         name: "\$ref",
         returnValue: {
           type: "string",
@@ -3972,48 +3572,19 @@ snapshot[`long results are truncated and stored in variables 2`] = `
     role: "user",
   },
   {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`editCode(\\"code to edit\\": string, \\"programming language or 'unknown'\\": string, \\"full description of desired changes or additions\\": string): string\` - edit code using the given requirements",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"; longVar; }',
+    content: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word" }',
     role: "assistant",
   },
   {
-    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_0\`]; "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0_1\`]',
+    content: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_0_0\`]',
+    role: "system",
+  },
+  {
+    content: "Run { longVar; }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_1_0\`]',
     role: "system",
   },
 ]
@@ -4055,15 +3626,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         {
           type: "string",
-          value: "should override result within same action",
-        },
-        {
-          type: "string",
-          value: "should override result within same action",
-        },
-        {
-          type: "string",
-          value: "should override result within same action",
+          value: "b",
         },
         {
           type: "string",
@@ -4106,15 +3669,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         },
         {
           type: "string",
-          value: "should override result within same action",
-        },
-        {
-          type: "string",
-          value: "should override result within same action",
-        },
-        {
-          type: "string",
-          value: "should override result within same action",
+          value: "b",
         },
         {
           type: "string",
@@ -4146,57 +3701,14 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
           type: "string",
           value: "new result",
         },
-        result_0_0: {
-          type: "string",
-          value: "hello result",
-        },
-        result_1_0: {
-          type: "string",
-          value: "hello result",
-        },
-        result_2_0: {
-          type: "string",
-          value: "b",
-        },
-        result_2_1: {
-          type: "string",
-          value: "should override result within same action",
-        },
-        result_2_2: {
-          type: "string",
-          value: "should override result within same action",
-        },
-        result_3_0: {
-          type: "string",
-          value: "should override result within same action",
-        },
-        result_4_0: {
-          type: "string",
-          value: "new result",
-        },
-        result_5_0: {
-          type: "string",
-          value: "this should not show up twice",
-        },
-        result_6_0: {
-          type: "string",
-          value: "new result",
-        },
-        result_7_0: {
-          type: "string",
-          value: "this should show up",
-        },
-        result_8_0: {
-          type: "string",
-          value: "this should show up",
-        },
       },
     },
     modelCallCount: 10,
     pending: [
       {
         action: "I have finished: \${result}",
-        expressions: [
+        isRespond: true,
+        statements: [
           {
             args: [
               {
@@ -4224,24 +3736,24 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        isRespond: true,
       },
     ],
     request: "some request",
     resolvedActions: [
       {
         action: 'Run { "hello result"; }',
-        expressions: [
+        result: 'Result: "hello result"',
+        statements: [
           {
             type: "string",
             value: "hello result",
           },
         ],
-        result: '"hello result"',
       },
       {
         action: "Run { result; }",
-        expressions: [
+        result: 'Result: "hello result"',
+        statements: [
           {
             args: [
               {
@@ -4253,11 +3765,11 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: '"hello result"',
       },
       {
-        action: 'Run { var a = "b"; "should override result within same action"; result; }',
-        expressions: [
+        action: 'Run { var a = "b" }',
+        result: 'Result: "b"',
+        statements: [
           {
             args: [
               {
@@ -4272,26 +3784,12 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             name: "__=__",
             type: "call",
           },
-          {
-            type: "string",
-            value: "should override result within same action",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "result",
-              },
-            ],
-            name: "\$ref",
-            type: "call",
-          },
         ],
-        result: '"b"; "should override result within same action"; "should override result within same action"',
       },
       {
         action: "Run { rEsUlt; }",
-        expressions: [
+        result: 'Result: "b"',
+        statements: [
           {
             args: [
               {
@@ -4303,11 +3801,11 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: '"should override result within same action"',
       },
       {
         action: 'Run { var result = "new result"; }',
-        expressions: [
+        result: 'Result: "new result"',
+        statements: [
           {
             args: [
               {
@@ -4323,21 +3821,21 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: '"new result"',
       },
       {
         action: 'Run { "this should not show up twice"; }',
-        expressions: [
+        result: 'Result: "this should not show up twice"',
+        statements: [
           {
             type: "string",
             value: "this should not show up twice",
           },
         ],
-        result: '"this should not show up twice"',
       },
       {
         action: "Run { result; }",
-        expressions: [
+        result: 'Result: "new result"',
+        statements: [
           {
             args: [
               {
@@ -4349,21 +3847,21 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: '"new result"',
       },
       {
         action: 'Run { "this should show up"; }',
-        expressions: [
+        result: 'Result: "this should show up"',
+        statements: [
           {
             type: "string",
             value: "this should show up",
           },
         ],
-        result: '"this should show up"',
       },
       {
         action: "Run { reSult; }",
-        expressions: [
+        result: 'Result: "this should show up"',
+        statements: [
           {
             args: [
               {
@@ -4375,7 +3873,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
             type: "call",
           },
         ],
-        result: '"this should show up"',
       },
     ],
     resolvedCommands: [
@@ -4417,21 +3914,6 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         args: [
           {
             type: "string",
-            value: "result",
-          },
-        ],
-        id: "2.2",
-        name: "\$ref",
-        returnValue: {
-          type: "string",
-          value: "should override result within same action",
-        },
-        type: "executed",
-      },
-      {
-        args: [
-          {
-            type: "string",
             value: "rEsUlt",
           },
         ],
@@ -4439,7 +3921,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
         name: "\$ref",
         returnValue: {
           type: "string",
-          value: "should override result within same action",
+          value: "b",
         },
         type: "executed",
       },
@@ -4569,18 +4051,13 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
           value: "123123",
         },
       ],
-      variables: {
-        result_0_0: {
-          type: "string",
-          value: "123123",
-        },
-      },
+      variables: {},
     },
     modelCallCount: 2,
     pending: [
       {
         action: 'Run { commandWithNumberArg("123123.00") }',
-        expressions: [
+        statements: [
           {
             args: [
               {
@@ -4598,7 +4075,8 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     resolvedActions: [
       {
         action: "Run { math(123123) }",
-        expressions: [
+        result: 'Result: "123123"',
+        statements: [
           {
             args: [
               {
@@ -4610,7 +4088,6 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
             type: "call",
           },
         ],
-        result: '"123123"',
       },
     ],
     resolvedCommands: [
@@ -4634,11 +4111,1123 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
 }
 `;
 
+snapshot[`recoverable error - function does not exist 1`] = `
+{
+  n: 3,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "2.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 3,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { doesnotexist(123, true) }",
+        result: "Error: the function 'doesnotexist' is unknown",
+        statements: [
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "boolean",
+                value: true,
+              },
+            ],
+            name: "doesnotexist",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "1.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - function does not exist 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { doesnotexist(123, true) }",
+    role: "assistant",
+  },
+  {
+    content: "Error: the function 'doesnotexist' is unknown",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - bad argument count, type 1`] = `
+{
+  n: 4,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "3.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 4,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { translate() }",
+        result: "Error: function 'translate' expects arguments of type (string, string) but got ()",
+        statements: [
+          {
+            args: [
+            ],
+            name: "translate",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "Run { translate(true, 123) }",
+        result: "Error: function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+        statements: [
+          {
+            args: [
+              {
+                type: "boolean",
+                value: true,
+              },
+              {
+                type: "number",
+                value: 123,
+              },
+            ],
+            name: "translate",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "translate",
+        returnValue: {
+          message: "function 'translate' expects arguments of type (string, string) but got ()",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "1.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+          {
+            type: "string",
+            value: "123",
+          },
+        ],
+        id: "2.0",
+        name: "translate",
+        returnValue: {
+          message: "function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - bad argument count, type 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { translate() }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'translate' expects arguments of type (string, string) but got ()",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+  {
+    content: "Run { translate(true, 123) }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - nested errors get bubbled up 1`] = `
+{
+  n: 4,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "3.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 4,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { editText(translate(math(true), 'blah'), 'blah') }",
+        result: "Error: function 'math' expects arguments of type (string) but got (boolean)",
+        statements: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "boolean",
+                        value: true,
+                      },
+                    ],
+                    name: "math",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: "blah",
+                  },
+                ],
+                name: "translate",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "blah",
+              },
+            ],
+            name: "editText",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "Run { editText(translate(unknownCommand(true), 'blah'), 'blah') }",
+        result: "Error: the function 'unknownCommand' is unknown",
+        statements: [
+          {
+            args: [
+              {
+                args: [
+                  {
+                    args: [
+                      {
+                        type: "boolean",
+                        value: true,
+                      },
+                    ],
+                    name: "unknownCommand",
+                    type: "call",
+                  },
+                  {
+                    type: "string",
+                    value: "blah",
+                  },
+                ],
+                name: "translate",
+                type: "call",
+              },
+              {
+                type: "string",
+                value: "blah",
+              },
+            ],
+            name: "editText",
+            type: "call",
+          },
+        ],
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+        ],
+        id: "0.0.0.0",
+        name: "math",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            message: "function 'math' expects arguments of type (string) but got (boolean)",
+            type: "error",
+          },
+          {
+            type: "string",
+            value: "blah",
+          },
+        ],
+        id: "0.0.0",
+        name: "translate",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            message: "function 'math' expects arguments of type (string) but got (boolean)",
+            type: "error",
+          },
+          {
+            type: "string",
+            value: "blah",
+          },
+        ],
+        id: "0.0",
+        name: "editText",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "2.0",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - nested errors get bubbled up 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { editText(translate(math(true), 'blah'), 'blah') }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'math' expects arguments of type (string) but got (boolean)",
+    role: "system",
+  },
+  {
+    content: "Run { editText(translate(unknownCommand(true), 'blah'), 'blah') }",
+    role: "assistant",
+  },
+  {
+    content: "Error: the function 'unknownCommand' is unknown",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - action block syntax error 1`] = `
+{
+  n: 6,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "5.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 6,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { not a valid run block }",
+        result: "Error: Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+        statements: [
+          {
+            message: "Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+            type: "error",
+          },
+        ],
+      },
+      {
+        action: "Run { ;;; }
+blahblah",
+        result: "Error: Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+        statements: [
+          {
+            message: "Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+            type: "error",
+          },
+        ],
+      },
+      {
+        action: "Run { now() }
+Run { error.on.second.line }",
+        result: "Error: Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+        statements: [
+          {
+            message: "Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+            type: "error",
+          },
+        ],
+      },
+      {
+        action: "
+
+
+Run { properties.doNotExist }",
+        result: "Error: Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+        statements: [
+          {
+            message: "Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+            type: "error",
+          },
+        ],
+      },
+      {
+        action: "Run { methods.doNotExist() }",
+        result: "Error: Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+        statements: [
+          {
+            message: "Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+            type: "error",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - action block syntax error 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { not a valid run block }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+    role: "system",
+  },
+  {
+    content: "Run { ;;; }
+blahblah",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+    role: "system",
+  },
+  {
+    content: "Run { now() }
+Run { error.on.second.line }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+    role: "system",
+  },
+  {
+    content: "
+
+
+Run { properties.doNotExist }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+    role: "system",
+  },
+  {
+    content: "Run { methods.doNotExist() }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - no overload found 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { true + 123 }",
+        result: "Error: no overload found for: __+__(boolean, number)",
+        statements: [
+          {
+            args: [
+              {
+                type: "boolean",
+                value: true,
+              },
+              {
+                type: "number",
+                value: 123,
+              },
+            ],
+            name: "__+__",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        id: "0.0",
+        name: "__+__",
+        returnValue: {
+          message: "no overload found for: __+__(boolean, number)",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - no overload found 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { true + 123 }",
+    role: "assistant",
+  },
+  {
+    content: "Error: no overload found for: __+__(boolean, number)",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - error on the last statement 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { now(); now(); doesnotexist(123, true) }",
+        result: "Error: the function 'doesnotexist' is unknown",
+        statements: [
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+            ],
+            name: "now",
+            type: "call",
+          },
+          {
+            args: [
+              {
+                type: "number",
+                value: 123,
+              },
+              {
+                type: "boolean",
+                value: true,
+              },
+            ],
+            name: "doesnotexist",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - error on the last statement 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { now(); now(); doesnotexist(123, true) }",
+    role: "assistant",
+  },
+  {
+    content: "Error: the function 'doesnotexist' is unknown",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - client command results in error 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "1.0",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statements: [
+          {
+            args: [
+              {
+                type: "string",
+                value: "Complete",
+              },
+            ],
+            name: "respond",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "mockCommand()",
+        result: "Error: a mock error",
+        statements: [
+          {
+            args: [
+            ],
+            name: "mockCommand",
+            type: "call",
+          },
+        ],
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0.0",
+        name: "mockCommand",
+        returnValue: {
+          message: "a mock error",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - client command results in error 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "mockCommand()",
+    role: "assistant",
+  },
+  {
+    content: "Error: a mock error",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`error - client command sends back wrong return type 1`] = `"command mockCommand expects return type to be string but got void"`;
+
 snapshot[`complex parseCompletion 1`] = `
 [
   {
     action: "RUN { a(b()) }",
-    expressions: [
+    statements: [
       {
         args: [
           {
@@ -4656,8 +5245,8 @@ snapshot[`complex parseCompletion 1`] = `
   {
     action: "RUN{ d(
 123
-); g();}",
-    expressions: [
+) }",
+    statements: [
       {
         args: [
           {
@@ -4668,17 +5257,11 @@ snapshot[`complex parseCompletion 1`] = `
         name: "d",
         type: "call",
       },
-      {
-        args: [
-        ],
-        name: "g",
-        type: "call",
-      },
     ],
   },
   {
     action: "RUN{ c() }",
-    expressions: [
+    statements: [
       {
         args: [
         ],
@@ -4691,9 +5274,9 @@ snapshot[`complex parseCompletion 1`] = `
     action: 'RuN {
   c(
     "RUN { a() }"
-  ); g(123)
+  )
 }',
-    expressions: [
+    statements: [
       {
         args: [
           {
@@ -4704,21 +5287,11 @@ snapshot[`complex parseCompletion 1`] = `
         name: "c",
         type: "call",
       },
-      {
-        args: [
-          {
-            type: "number",
-            value: 123,
-          },
-        ],
-        name: "g",
-        type: "call",
-      },
     ],
   },
   {
-    action: "run { a = 123; b = 111; a + b; }",
-    expressions: [
+    action: "run { a = 123 }",
+    statements: [
       {
         args: [
           {
@@ -4731,46 +5304,6 @@ snapshot[`complex parseCompletion 1`] = `
           },
         ],
         name: "__=__",
-        type: "call",
-      },
-      {
-        args: [
-          {
-            type: "string",
-            value: "b",
-          },
-          {
-            type: "number",
-            value: 111,
-          },
-        ],
-        name: "__=__",
-        type: "call",
-      },
-      {
-        args: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "a",
-              },
-            ],
-            name: "\$ref",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "b",
-              },
-            ],
-            name: "\$ref",
-            type: "call",
-          },
-        ],
-        name: "__+__",
         type: "call",
       },
     ],
@@ -4778,10 +5311,8 @@ snapshot[`complex parseCompletion 1`] = `
   {
     action: "run {
   a = 123
-  b = 111
-  a + b
 }",
-    expressions: [
+    statements: [
       {
         args: [
           {
@@ -4796,51 +5327,11 @@ snapshot[`complex parseCompletion 1`] = `
         name: "__=__",
         type: "call",
       },
-      {
-        args: [
-          {
-            type: "string",
-            value: "b",
-          },
-          {
-            type: "number",
-            value: 111,
-          },
-        ],
-        name: "__=__",
-        type: "call",
-      },
-      {
-        args: [
-          {
-            args: [
-              {
-                type: "string",
-                value: "a",
-              },
-            ],
-            name: "\$ref",
-            type: "call",
-          },
-          {
-            args: [
-              {
-                type: "string",
-                value: "b",
-              },
-            ],
-            name: "\$ref",
-            type: "call",
-          },
-        ],
-        name: "__+__",
-        type: "call",
-      },
     ],
   },
   {
     action: "RUN { f() }",
-    expressions: [
+    statements: [
       {
         args: [
         ],

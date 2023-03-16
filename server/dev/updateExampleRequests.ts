@@ -188,10 +188,7 @@ export default async function updateExamples(
       newExamples.push(existing);
       continue;
     }
-    log(
-      "info",
-      `found new example, running model with prompt: ${promptWithVariant}`
-    );
+    log("info", `running example: ${promptWithVariant}`);
     try {
       let resolvedCommands: t.TypeOf<typeof Input>["resolvedCommands"] = {};
 
@@ -224,7 +221,6 @@ export default async function updateExamples(
         break;
       }
 
-      log("info", `got result for: ${promptWithVariant}`);
       hasChanges = true;
       newExamples.push({
         updated: new Date().toISOString(),

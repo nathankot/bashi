@@ -4,16 +4,12 @@ import * as t from "io-ts";
 import * as p from "typescript-parsec";
 
 import {
+  CreateChatCompletionRequest,
   ChatCompletionRequestMessage,
   ChatCompletionResponseMessage,
 } from "openai";
 
-import {
-  Input,
-  ResultPendingCommands,
-  languageBuiltinCommands,
-  getPendingCommandsOrResult,
-} from "./assistShared.ts";
+import { Input, ResultPendingCommands } from "./assistShared.ts";
 
 import { ModelDeps } from "./modelDeps.ts";
 import { IS_DEV } from "@lib/constants.ts";
@@ -25,10 +21,13 @@ import {
   Memory,
   Expr,
   AnyBuiltinCommandDefinition,
+  CommandDefinition,
   CommandSet,
   CommandParsed,
   CommandExecuted,
+  resolveExpression,
   builtinCommands,
+  languageCommands,
   filterUnnecessary,
   runBuiltinCommand,
 } from "@lib/command.ts";
@@ -45,11 +44,38 @@ import {
 
 const RESPOND_COMMAND = "respond";
 const BLOCK_PREFIX = "run";
+const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
+  model: "gpt-3.5-turbo",
+  temperature: 0.3,
+  logit_bias: {
+    8818: -10, // `function`
+    22446: -100, // `().`
+    14804: -100, // `=>`
+    5218: -100, // ` =>`
+    21737: -10, // `[]`
+    58: -10, // `[`
+    60: -10, // `]`
+    685: -10, // ` [`
+    2361: -10, // ` ]`
+    14692: -10, // `["`
+    8973: -10, // `"]`
+    1391: -10, // ` {`
+    1782: -10, // ` }`
+    90: -10, // `{`
+    92: -10, // `}`
+    1640: -1, // `for` - try reduce tendency of the model to use for loops
+    11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
+    7785: 1, // `var`
+    32165: 1, // `fail`
+    15643: 1, // `finish`
+    7220: 1, // `user`
+  },
+};
 
 const Action = t.intersection([
   t.type({
     action: t.string,
-    expressions: t.array(Expr),
+    statements: t.array(Expr),
   }),
   t.partial({
     result: t.string,
@@ -107,7 +133,7 @@ export const defaultConfiguration: Partial<Configuration> = {
 
 const serverCommands = {
   ...builtinCommands,
-  ...languageBuiltinCommands,
+  ...languageCommands,
 } as Record<
   string,
   | AnyBuiltinCommandDefinition
@@ -161,149 +187,102 @@ export async function run(
 
   // Key pieces of state:
   let memory: Memory = {
-    variables: { ...state?.memory?.variables },
     topLevelResults: [...(state?.memory?.topLevelResults ?? [])],
+    variables: { ...state?.memory?.variables },
   };
 
   let modelCallCount = state?.modelCallCount ?? 0;
-  let pending = state?.pending ?? [];
+  let pendingActions = state?.pending ?? [];
   let resolvedCommands = state?.resolvedCommands ?? [];
   let resolvedActions = state?.resolvedActions ?? [];
 
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
-  // todo: the following missing value literal expressions:
-  const topLevelResults = (): Value[] =>
-    memory.topLevelResults.filter((r) => r.type !== "void");
-
-  // Interpreter loop that does the following:
-  //
-  // 1. For each pending action, find commands and try to resolve them
-  //   1a. If the client provided any resolutions, use them
-  //   1b. Any commands that can be resolved server side should be
-  //   1c. Some commands may need a redirection to the client
-  // 2. Any resolutions from the above go into the new prompt
-  // 3. Plugs the prompt into the model to ask for actions to take
-  // 4. Parse the completion into pending actions
-  // 5. Update state with the current results, exit if the model is sending a response to the user, otherwise goto (1)
-
   try {
     let loopNumber = 0;
-    commandResolutionLoop: while (true) {
+    // 1. (interpreterLoop) While there are pending actions (Run{} blocks or string responses):
+    //   1.1. Parse the action statement/expression
+    //     1.1.1 (statementLoop) For each statement in the action
+    //       1.1.2 Is the statement fully resolved?
+    //         Yes: store the result
+    //         No: queue the commands (functions) that need to be resolved for the current statement and break to 1.2
+    //   1.2. (currentActionCommandLoop) While there are pending commands:
+    //     1.2.1. If the command can be resolved on the server, execute and store the result
+    //     1.2.2. If the command must be resolved on the client, check has the command resolution already been provided?
+    //       Yes: store the result
+    //       No: return the command to the client. On callback we will start from 1.
+    //     1.2.3 [catch] handle command resolution errors by resolving the action as an error, goto 1
+    //   1.3. Store the result of the fully resolved action
+    //   1.4. If there are no more pending actions, break to 2.
+    //   1.5. Ask model for a new completion
+    //     1.5.1. parse the completion into a list of new actions and add them to the pending actions list
+    //     1.5.2. [catch] handle comletion parse errors by resolving the action as an error, goto 1
+    //     1.5.3. goto 1.
+    interpreterLoop: while (true) {
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
       loopNumber++;
-      // 1. For each pending action, find expressions and try to resolve them
-      if (pending.length > 0) {
-        const pendingAction = pending[0]!;
-        const actionsSoFar = resolvedActions.length;
-        const expressionsSoFar = resolvedActions.reduce(
-          (a, g) => a + g.expressions.length,
-          0
-        );
-        const currentActionExpressions = pendingAction.expressions;
-        // Get the first top level call that is still pending, we want
-        // to handle each top level call in sequence.
-        let pendingCommands: CommandParsed[] = [];
-        let currentActionTopLevelResults: Value[] = [];
-        for (const [i, expr] of currentActionExpressions.entries()) {
-          const pendingCommandsOrResult = getPendingCommandsOrResult(
-            `${actionsSoFar}.${i}`,
-            expr,
+
+      if (pendingActions.length > 0) {
+        const pendingAction = pendingActions[0]!;
+        const resolvedActionsCount = resolvedActions.length;
+        let currentActionPendingCommands: CommandParsed[] = [];
+        let currentActionResults: Value[] = [];
+        statementLoop: for (const [
+          currentStatementIndex,
+          currentStatement,
+        ] of pendingAction.statements.entries()) {
+          const pendingCommandsOrResult = resolveExpression(
+            `${resolvedActionsCount}.${currentStatementIndex}`,
+            currentStatement,
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
-            currentActionTopLevelResults.push(pendingCommandsOrResult.result);
-            // Update top level results in memory:
-            memory.topLevelResults[expressionsSoFar + i] =
-              pendingCommandsOrResult.result;
+            currentActionResults.push(pendingCommandsOrResult.result);
+            if (pendingCommandsOrResult.result.type === "error") {
+              // If we got an error, dequeue all upcoming actions
+              pendingActions = pendingActions.slice(0, 1);
+            }
           } else if ("pendingCommands" in pendingCommandsOrResult) {
-            pendingCommands = pendingCommandsOrResult.pendingCommands;
-            // Break here so that the client is able to handle this top level
-            // call, before handling the next one.
-            break;
+            currentActionPendingCommands =
+              pendingCommandsOrResult.pendingCommands;
           }
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
-        pendingCommandLoop: for (const pendingCommand of pendingCommands) {
+        currentActionCommandLoop: for (let pendingCommand of currentActionPendingCommands) {
           const commandName = pendingCommand.name;
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
           if (clientCommandDef == null && serverCommandDef == null) {
-            throw new Error(`the command ${commandName} is unknown`);
+            currentActionResults = [
+              {
+                type: "error",
+                message: `the function '${commandName}' is unknown`,
+              },
+            ];
+            break currentActionCommandLoop;
           }
 
           // For commands that are not overloaded, try type coercion,
-          // the following is supported:
-          //
-          // number -> string
-          // number -> boolean
-          // string -> number
-          const notOverloadedCommand =
-            serverCommandDef != null && "overloads" in serverCommandDef
-              ? null
-              : serverCommandDef ?? clientCommandDef;
-          if (notOverloadedCommand != null) {
-            for (const [i, argDef] of notOverloadedCommand.args.entries()) {
-              const a = pendingCommand.args[i];
-              if (a == null) break;
-              if (a.type === argDef.type) continue;
-              if (a.type === "number" && argDef.type === "string") {
-                pendingCommand.args[i] = {
-                  type: "string",
-                  value: `${a.value}`,
-                };
-              }
-              if (a.type === "number" && argDef.type === "boolean") {
-                pendingCommand.args[i] = {
-                  type: "boolean",
-                  value: a.value === 1,
-                };
-              }
-              if (a.type === "string" && argDef.type === "number") {
-                const parsed = parseInt(a.value, 10);
-                if (!isNaN(parsed)) {
-                  pendingCommand.args[i] = { type: "number", value: parsed };
-                }
-              }
-            }
-          }
+          pendingCommand = tryTypeCoercion(
+            (serverCommandDef != null && !("overloads" in serverCommandDef)
+              ? serverCommandDef
+              : clientCommandDef) ?? null,
+            pendingCommand
+          );
 
           if (serverCommandDef != null) {
-            // 1b. Any commands that can be resolved server side should be
-
             // If the command is not a language command and was already previously
             // run with identical arguments, then re-use the return value.
-            for (const resolved of resolvedCommands) {
-              if (
-                !(resolved.name in languageBuiltinCommands) &&
-                resolved.name === pendingCommand.name &&
-                resolved.args.every((arg, i) => {
-                  const pendingArg = pendingCommand.args[i];
-                  if (pendingArg == null) {
-                    return false;
-                  }
-                  if (pendingArg.type !== arg.type) {
-                    return false;
-                  }
-                  if (
-                    "value" in pendingArg &&
-                    "value" in arg &&
-                    pendingArg.value !== arg.value
-                  ) {
-                    return false;
-                  }
-                  return true;
-                })
-              ) {
-                resolvedCommands.push({
-                  ...resolved,
-                  id: pendingCommand.id,
-                });
-                continue pendingCommandLoop;
-              }
+            const reused = tryReuseResolvedCommand(
+              resolvedCommands,
+              pendingCommand
+            );
+            if (reused != null) {
+              resolvedCommands.push(reused);
+              continue currentActionCommandLoop;
             }
 
             const resolved = await runBuiltinCommand(
@@ -313,15 +292,17 @@ export async function run(
               memory
             );
             resolvedCommands.push(resolved);
-            continue pendingCommandLoop;
+            continue currentActionCommandLoop;
           } else if (clientCommandDef != null) {
-            //   1a. If the client provided any resolutions, use them
             const maybeClientResolution =
               input.resolvedCommands == null
                 ? null
                 : input.resolvedCommands[pendingCommand.id.toString()];
             if (maybeClientResolution) {
-              if (clientCommandDef.returnType !== maybeClientResolution.type) {
+              if (
+                maybeClientResolution.type !== "error" &&
+                clientCommandDef.returnType !== maybeClientResolution.type
+              ) {
                 throw new HTTPError(
                   `command ${commandName} expects return type to be ` +
                     `${clientCommandDef.returnType} but got ${maybeClientResolution.type}`,
@@ -333,12 +314,12 @@ export async function run(
                 type: "executed",
                 returnValue: maybeClientResolution,
               });
-              continue pendingCommandLoop;
+              continue currentActionCommandLoop;
             }
             commandsToSendToClient.push(pendingCommand);
           }
         }
-        //   1c. Some commands may need a redirection to the client
+
         if (commandsToSendToClient.length > 0) {
           return {
             model: "assist-002",
@@ -346,47 +327,40 @@ export async function run(
             result: {
               type: "pending_commands",
               pendingCommands: commandsToSendToClient,
-              results: topLevelResults(),
+              results: [...memory.topLevelResults],
             },
             dev,
           };
         }
 
-        // Go through the loop again if we have not resolved all top-level commands:
+        // Go through the loop again if we have not resolved the current action.
         if (
-          currentActionTopLevelResults.length !==
-          currentActionExpressions.length
+          currentActionResults.length < pendingAction.statements.length &&
+          // Stop processing if we hit an error
+          currentActionResults[currentActionResults.length - 1]?.type !==
+            "error"
         ) {
-          continue commandResolutionLoop;
+          continue interpreterLoop;
         }
 
-        // 2. Any resolutions from the above go into the new prompt
-        let resultStrings = [];
-        for (const [i, result] of currentActionTopLevelResults.entries()) {
-          const varName = `result_${actionsSoFar}_${i}`;
-          memory.variables[varName] = result;
-          let resultStr = valueToString(result);
-          try {
-            const toksLength = gptEncoder.encode(resultStr).length;
-            if (toksLength > 300) {
-              resultStr =
-                resultStr.substring(0, 300 * 4) +
-                " [... truncated: full value available in variable `" +
-                varName +
-                "`]";
-            }
-          } catch {}
-          resultStrings.push(resultStr);
-        }
-        const result = resultStrings.join("; ");
+        const { result, storeLongStringsInMemory } = renderActionResults(
+          resolvedActionsCount,
+          currentActionResults,
+          pendingAction.isRespond ?? false
+        );
+        memory.topLevelResults = [
+          ...(memory.topLevelResults ?? []),
+          ...currentActionResults.filter((r) => r.type !== "error"),
+        ];
+        storeLongStringsInMemory(memory);
         resolvedActions.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
           log("info", `result: ${result}`);
         }
 
-        pending.shift();
-        continue commandResolutionLoop;
+        pendingActions.shift();
+        continue interpreterLoop;
       }
 
       // Reaching here implies that anything pending has been
@@ -400,7 +374,6 @@ export async function run(
       }
       modelCallCount++;
 
-      // 3. Plugs the prompt into the model to ask for actions to take
       const messages = makePromptMessages(
         session,
         {
@@ -414,33 +387,9 @@ export async function run(
       const completion = await modelDeps.openai.createChatCompletion(
         {
           messages,
-          model: "gpt-3.5-turbo",
           // TODO return error if completion tokens has reached this limit
           max_tokens: session.configuration.maxResponseTokens,
-          temperature: 0.3,
-          logit_bias: {
-            8818: -10, // `function`
-            22446: -100, // `().`
-            14804: -100, // `=>`
-            5218: -100, // ` =>`
-            21737: -10, // `[]`
-            58: -10, // `[`
-            60: -10, // `]`
-            685: -10, // ` [`
-            2361: -10, // ` ]`
-            14692: -10, // `["`
-            8973: -10, // `"]`
-            1391: -10, // ` {`
-            1782: -10, // ` }`
-            90: -10, // `{`
-            92: -10, // `}`
-            1640: -1, // `for` - try reduce tendency of the model to use for loops
-            11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
-            7785: 1, // `var`
-            32165: 1, // `fail`
-            15643: 1, // `finish`
-            7220: 1, // `user`
-          },
+          ...COMPLETION_OPTIONS,
         },
         {
           signal: modelDeps.signal,
@@ -461,11 +410,35 @@ export async function run(
           dev.messages.push(responseMessage);
         }
       }
-
-      // 4. Parse the completion into pending actions
-      // 5. Update state with the current results, exit if we have reached a sink,
-      //    otherwise goto (1)
-      pending = [...pending, ...parseCompletion(text)];
+      try {
+        pendingActions = [...pendingActions, ...parseCompletion(text)];
+      } catch (e) {
+        if ("pos" in e) {
+          const parseError = e as p.ParseError;
+          const pos = parseError.pos;
+          let message = parseError.message;
+          if (pos != null) {
+            message =
+              `Encountered error when parsing on row:${pos.rowBegin} col:${pos.columnBegin}` +
+              "\n\n" +
+              `${pos.rowBegin}`.padStart(3, " ") +
+              ` | ` +
+              (text.split("\n").at(pos.rowBegin - 1) ?? "") +
+              "\n" +
+              " ".repeat(3 + 3 + pos.columnBegin - 1) +
+              `^ ${message}`;
+          }
+          pendingActions = [
+            ...pendingActions,
+            {
+              action: text,
+              statements: [{ type: "error", message }],
+            },
+          ];
+          continue interpreterLoop;
+        }
+        throw e;
+      }
     }
   } catch (e) {
     if ("response" in e) {
@@ -492,7 +465,7 @@ export async function run(
         memory,
         modelCallCount,
         request,
-        pending: pending ?? null,
+        pending: pendingActions ?? null,
         resolvedActions,
         resolvedCommands,
       },
@@ -506,22 +479,28 @@ function makePromptMessages(
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
+  const header = `Act as an AI assistant operating from the users computer and fulfill the request as best you can. Do not make things up. You may use functions (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. For example:
+Functions must be placed inside Run{} blocks to be called. They must be included in the beginning before your plain language response to the user. For example:
 
   Run { exampleFunction("arg 1", arg2, 123, true); }
   I have completed your request
 
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
+Note that Run{} blocks and their results are not visible to the user. Furthermore the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+It is possible to run multiple functions by using multiple run blocks. You can also assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
   Run { a = exampleFn("arg 1", arg2) }
   Run { b = exampleFn2(a) }
   The answer to your question is \${b}
 
 Use functions sparingly and do not assume any other features exist beyond what is referenced above.
+The language used inside Run{} blocks is custom and very limited. DO NOT attempt to use another programming language.
+
+Below is a simple, exhaustive demonstration of the features available to the language used inside Run{} blocks:
+
+  Run { a = "a"; x = "string" + a }
+  Run { y = fn(123, true, false, fn2(\`\${x} interpolation\`)) }
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.`;
 
@@ -551,12 +530,12 @@ Locale: ${JSON.stringify(session.configuration.locale)}`,
           g.isRespond === true
             ? {
                 role: "user",
-                content: JSON.parse(g.result) as string,
+                content: g.result,
                 name: "User",
               }
             : {
                 role: "system",
-                content: `Result: ${g.result}`,
+                content: g.result,
               },
         ];
       })
@@ -613,10 +592,10 @@ export function parseCompletion(completion: string): Action[] {
       p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
       p.str("}")
     ),
-    (expressions, tokenRange): Action => {
+    (statements, tokenRange): Action => {
       return {
         action: p.extractByTokenRange(input, tokenRange[0], tokenRange[1]),
-        expressions,
+        statements,
       };
     }
   );
@@ -648,33 +627,28 @@ export function parseCompletion(completion: string): Action[] {
     throw result.error;
   }
 
-  let candidates = result.candidates
-    // Only consider candidates that have consumed to the EOF
-    .filter((c) => c.nextToken == null)
-    .map((c) => c.result);
-
-  if (candidates.length === 0) {
-    // TODO: better error:
-    throw new Error(`expect to have at least 1 candidate after parsing`);
-  }
-
   // Choose the candidate with the most number of actions:
-  let bestCandidate = candidates[0]!;
-  let bestCandidateActionsCount = bestCandidate.filter(
-    (c) => typeof c !== "string"
-  ).length;
-  for (const c of candidates) {
-    const actionsCount = c.filter((c) => typeof c !== "string").length;
+  let bestCandidate: null | typeof result.candidates[number] = null;
+  let bestCandidateActionsCount = -1;
+  for (const c of result.candidates) {
+    // Skip any candidates that did not parse to EOF:
+    if (c.nextToken != null) continue;
+    const actionsCount = c.result.filter((c) => typeof c !== "string").length;
     if (actionsCount > bestCandidateActionsCount) {
       bestCandidate = c;
       bestCandidateActionsCount = actionsCount;
     }
   }
 
+  // If we didn't manage to find a candidate, then return error:
+  if (bestCandidate == null) {
+    throw result.error;
+  }
+
   let actions: Action[] = [];
   let strings: string[] = [];
 
-  for (const item of bestCandidate) {
+  for (const item of bestCandidate.result) {
     if (typeof item === "string") {
       strings.push(item);
     } else {
@@ -708,7 +682,7 @@ export function parseCompletion(completion: string): Action[] {
       actions.push({
         action: value,
         isRespond: true,
-        expressions: [
+        statements: [
           {
             name: RESPOND_COMMAND,
             type: "call",
@@ -720,4 +694,123 @@ export function parseCompletion(completion: string): Action[] {
   }
 
   return actions;
+}
+
+function tryTypeCoercion(
+  commandDef: Pick<CommandDefinition, "args"> | null,
+  pendingCommand: CommandParsed
+): CommandParsed {
+  // the following is supported:
+  //
+  // number -> string
+  // number -> boolean
+  // string -> number
+  if (commandDef == null) return pendingCommand;
+  let args = [...pendingCommand.args];
+  for (const [i, argDef] of commandDef.args.entries()) {
+    const a = args[i];
+    if (a == null) break;
+    if (a.type === argDef.type) continue;
+    if (a.type === "number" && argDef.type === "string") {
+      args[i] = { type: "string", value: `${a.value}` };
+    }
+    if (a.type === "number" && argDef.type === "boolean") {
+      args[i] = { type: "boolean", value: a.value === 1 };
+    }
+    if (a.type === "string" && argDef.type === "number") {
+      const parsed = parseInt(a.value, 10);
+      if (!isNaN(parsed)) {
+        args[i] = { type: "number", value: parsed };
+      }
+    }
+  }
+  return { ...pendingCommand, args };
+}
+
+function tryReuseResolvedCommand(
+  resolvedCommands: CommandExecuted[],
+  pendingCommand: CommandParsed
+): CommandExecuted | null {
+  for (const resolved of resolvedCommands) {
+    if (resolved.name in languageCommands) continue;
+    if (resolved.name !== pendingCommand.name) continue;
+    if (
+      resolved.args.length === pendingCommand.args.length &&
+      resolved.args.every((arg, i) => {
+        const pendingArg = pendingCommand.args[i];
+        if (pendingArg == null) {
+          return false;
+        }
+        if (pendingArg.type !== arg.type) {
+          return false;
+        }
+        if (
+          "value" in pendingArg &&
+          "value" in arg &&
+          pendingArg.value !== arg.value
+        ) {
+          return false;
+        }
+        return true;
+      })
+    ) {
+      return { ...resolved, id: pendingCommand.id };
+    }
+  }
+  return null;
+}
+
+function renderActionResults(
+  actionIndex: number,
+  results: Value[],
+  isRespond: boolean
+): {
+  result: string;
+  storeLongStringsInMemory: (m: Memory) => void;
+} {
+  let resultStrs: string[] = [];
+  let longStrings: Record<string, Value> = {};
+
+  for (const [i, result] of results.entries()) {
+    // Short circuit and return errors if any:
+    if (result.type === "error") {
+      return {
+        result: `Error: ${result.message}`,
+        storeLongStringsInMemory: () => {},
+      };
+    }
+
+    let resultStr =
+      isRespond && result.type === "string"
+        ? result.value
+        : `Result: ${valueToString(result)}`;
+
+    if (
+      !isRespond &&
+      result.type === "string" &&
+      gptEncoder.encode(result.value).length > 300
+    ) {
+      const varName = `result_${actionIndex}_${i}`;
+      longStrings[varName] = result;
+      resultStr =
+        `Result: ` +
+        resultStr.substring(0, 300 * 4) +
+        " [... truncated: full value available in variable `" +
+        varName +
+        "`]";
+    }
+
+    resultStrs.push(resultStr);
+  }
+
+  return {
+    result: resultStrs.join("; "),
+    storeLongStringsInMemory: (memory) => {
+      for (const [varName, result] of Object.entries(longStrings)) {
+        if (result.type === "error") return;
+        if (memory.variables[varName] != null) return;
+        memory.variables[varName] = result;
+      }
+    },
+  };
 }

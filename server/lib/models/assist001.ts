@@ -9,12 +9,7 @@ import { wrap } from "@lib/log.ts";
 import { HTTPError } from "@lib/errors.ts";
 import { Value, valueToString } from "@lib/valueTypes.ts";
 
-import {
-  Input,
-  Result,
-  languageBuiltinCommands,
-  getPendingCommandsOrResult,
-} from "./assistShared.ts";
+import { Input, Result } from "./assistShared.ts";
 
 import {
   Memory,
@@ -24,7 +19,9 @@ import {
   CommandSet,
   CommandParsed,
   CommandExecuted,
+  resolveExpression,
   builtinCommands,
+  languageCommands,
   filterUnnecessary,
   parseStatements,
   runBuiltinCommand,
@@ -180,7 +177,7 @@ const privateBuiltinCommands = {
 const serverCommands = {
   ...builtinCommands,
   ...privateBuiltinCommands,
-  ...languageBuiltinCommands,
+  ...languageCommands,
 } as Record<
   string,
   | AnyBuiltinCommandDefinition
@@ -274,13 +271,17 @@ export async function run(
         let pendingCommands: CommandParsed[] = [];
         let currentActionTopLevelResults: Value[] = [];
         for (const [i, expr] of currentActionExpressions.entries()) {
-          const pendingCommandsOrResult = getPendingCommandsOrResult(
+          const pendingCommandsOrResult = resolveExpression(
             `${actionsSoFar}.${i}`,
             expr,
             resolvedCommandsDict()
           );
           if ("result" in pendingCommandsOrResult) {
-            currentActionTopLevelResults.push(pendingCommandsOrResult.result);
+            const result = pendingCommandsOrResult.result;
+            if (result.type === "error") {
+              throw new Error(result.message);
+            }
+            currentActionTopLevelResults.push(result);
             // Update top level results in memory:
             memory.topLevelResults[expressionsSoFar + i] =
               pendingCommandsOrResult.result;
@@ -344,7 +345,7 @@ export async function run(
             // run with identical arguments, then re-use the return value.
             for (const resolved of resolvedCommands) {
               if (
-                !(resolved.name in languageBuiltinCommands) &&
+                !(resolved.name in languageCommands) &&
                 resolved.name === pendingCommand.name &&
                 resolved.args.every((arg, i) => {
                   const pendingArg = pendingCommand.args[i];

@@ -16,6 +16,7 @@ import {
   NumberValue,
   BooleanValue,
   VoidValue,
+  ErrorValue,
   Value,
   ValueType,
 } from "@lib/valueTypes.ts";
@@ -348,6 +349,8 @@ namedJSONSchemaObjects["#/components/schemas/BooleanValue"] =
   toJSONSchema(BooleanValue);
 namedJSONSchemaObjects["#/components/schemas/VoidValue"] =
   toJSONSchema(VoidValue);
+namedJSONSchemaObjects["#/components/schemas/ErrorValue"] =
+  toJSONSchema(ErrorValue);
 namedJSONSchemaObjects["#/components/schemas/Value"] = toJSONSchema(Value);
 namedJSONSchemaObjects["#/components/schemas/ValueType"] =
   toJSONSchema(ValueType);

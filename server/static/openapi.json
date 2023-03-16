@@ -440,6 +440,24 @@
           }
         }
       },
+      "ErrorValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "error"
+            ],
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
       "Value": {
         "oneOf": [
           {
@@ -453,6 +471,9 @@
           },
           {
             "$ref": "#/components/schemas/VoidValue"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorValue"
           }
         ],
         "discriminator": {
@@ -461,7 +482,8 @@
             "string": "#/components/schemas/StringValue",
             "number": "#/components/schemas/NumberValue",
             "boolean": "#/components/schemas/BooleanValue",
-            "void": "#/components/schemas/VoidValue"
+            "void": "#/components/schemas/VoidValue",
+            "error": "#/components/schemas/ErrorValue"
           }
         }
       },

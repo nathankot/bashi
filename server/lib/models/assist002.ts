@@ -471,22 +471,28 @@ function makePromptMessages(
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
+  const header = `Act as an AI assistant and fulfill the request as best you can. Do not make things up. You may use functions (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
+Functions must be placed inside Run{} blocks to be called. They must be included in the beginning before your plain language response to the user. For example:
 
   Run { exampleFunction("arg 1", arg2, 123, true); }
   I have completed your request
 
 Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
+It is possible to run multiple functions by using multiple run blocks. You can also assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
   Run { a = exampleFn("arg 1", arg2) }
   Run { b = exampleFn2(a) }
   The answer to your question is \${b}
 
 Use functions sparingly and do not assume any other features exist beyond what is referenced above.
+The language used inside Run{} blocks is custom and very limited. DO NOT attempt to use another programming language.
+
+Below is a simple, exhaustive demonstration of the features available to the language used inside Run{} blocks:
+
+  Run { x = "string" }
+  Run { y = fn(123, true, false, fn2(\`\${x} interpolation\`)) }
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.`;
 

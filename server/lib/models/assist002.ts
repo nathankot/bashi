@@ -402,8 +402,35 @@ export async function run(
           dev.messages.push(responseMessage);
         }
       }
-
-      pendingActions = [...pendingActions, ...parseCompletion(text)];
+      try {
+        pendingActions = [...pendingActions, ...parseCompletion(text)];
+      } catch (e) {
+        if ("pos" in e) {
+          const parseError = e as p.ParseError;
+          const pos = parseError.pos;
+          let message = parseError.message;
+          if (pos != null) {
+            message =
+              `Encountered error when parsing on row:${pos.rowBegin} col:${pos.columnBegin}` +
+              "\n\n" +
+              `${pos.rowBegin}`.padStart(3, " ") +
+              ` | ` +
+              (text.split("\n").at(pos.rowBegin - 1) ?? "") +
+              "\n" +
+              " ".repeat(3 + 3 + pos.columnBegin - 1) +
+              `^ ${message}`;
+          }
+          pendingActions = [
+            ...pendingActions,
+            {
+              action: text,
+              statement: { type: "error", message },
+            },
+          ];
+          continue interpreterLoop;
+        }
+        throw e;
+      }
     }
   } catch (e) {
     if ("response" in e) {
@@ -594,33 +621,28 @@ export function parseCompletion(completion: string): Action[] {
     throw result.error;
   }
 
-  let candidates = result.candidates
-    // Only consider candidates that have consumed to the EOF
-    .filter((c) => c.nextToken == null)
-    .map((c) => c.result);
-
-  if (candidates.length === 0) {
-    // TODO: better error:
-    throw new Error(`expect to have at least 1 candidate after parsing`);
-  }
-
   // Choose the candidate with the most number of actions:
-  let bestCandidate = candidates[0]!;
-  let bestCandidateActionsCount = bestCandidate.filter(
-    (c) => typeof c !== "string"
-  ).length;
-  for (const c of candidates) {
-    const actionsCount = c.filter((c) => typeof c !== "string").length;
+  let bestCandidate: null | typeof result.candidates[number] = null;
+  let bestCandidateActionsCount = -1;
+  for (const c of result.candidates) {
+    // Skip any candidates that did not parse to EOF:
+    if (c.nextToken != null) continue;
+    const actionsCount = c.result.filter((c) => typeof c !== "string").length;
     if (actionsCount > bestCandidateActionsCount) {
       bestCandidate = c;
       bestCandidateActionsCount = actionsCount;
     }
   }
 
+  // If we didn't manage to find a candidate, then return error:
+  if (bestCandidate == null) {
+    throw result.error;
+  }
+
   let actions: Action[] = [];
   let strings: string[] = [];
 
-  for (const item of bestCandidate) {
+  for (const item of bestCandidate.result) {
     if (typeof item === "string") {
       strings.push(item);
     } else {

@@ -36,34 +36,44 @@ export async function runBuiltinCommand(
   memory: Memory
 ): Promise<CommandExecuted> {
   try {
+    const commandArgs: Value[] = [...command.args];
     const isOverloaded = "overloads" in definition;
     const defsToTry =
       "overloads" in definition ? definition.overloads : [definition];
 
-    const args = [...command.args];
+    const receivedArgsDescription = `(${commandArgs
+      .map((a) => a.type)
+      .join(", ")})`;
+
+    if (defsToTry.length === 0) {
+      throw new Error(`no overloads found for ${command.name}`);
+    }
 
     for (const definition of defsToTry) {
-      if (!checkArgumentsValid(definition, args)) {
+      if (!checkArgumentsValid(definition, commandArgs)) {
+        // Throw immediately if this is not an overloaded function:
+        if (!isOverloaded) {
+          const expectedArgsDescription = `(${definition.args
+            .map((a) => a.type)
+            .join(", ")})`;
+          throw new Error(
+            `function '${command.name}' expects arguments of type ` +
+              `${expectedArgsDescription} ` +
+              `but got ${receivedArgsDescription}`
+          );
+        }
         continue;
       }
-      const returnValue = await definition.run(deps, args, memory);
+      const returnValue = await definition.run(deps, commandArgs, memory);
       return {
+        ...command,
         type: "executed",
         returnValue,
-        id: command.id,
-        args: command.args,
-        name: command.name,
       };
     }
 
-    if (!isOverloaded) {
-      throw new Error(`arguments are invalid`);
-    }
-
     throw new Error(
-      `no overload found for: ${command.name}(${command.args
-        .map((a) => a.type)
-        .join(", ")})`
+      `no overload found for: ${command.name}${receivedArgsDescription}`
     );
   } catch (e) {
     return {

@@ -36,7 +36,7 @@ import { Session } from "@lib/session.ts";
 
 import {
   T,
-  STATEMENT,
+  STATEMENTS,
   TEMPLATE_STRING,
   lexer,
   parsePredicate,
@@ -75,7 +75,7 @@ const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
 const Action = t.intersection([
   t.type({
     action: t.string,
-    statement: Expr,
+    statements: t.array(Expr),
   }),
   t.partial({
     result: t.string,
@@ -187,8 +187,8 @@ export async function run(
 
   // Key pieces of state:
   let memory: Memory = {
-    variables: { ...state?.memory?.variables },
     topLevelResults: [...(state?.memory?.topLevelResults ?? [])],
+    variables: { ...state?.memory?.variables },
   };
 
   let modelCallCount = state?.modelCallCount ?? 0;
@@ -199,29 +199,26 @@ export async function run(
   const resolvedCommandsDict = (): Record<string, CommandExecuted> =>
     resolvedCommands.reduce((a, e) => ({ ...a, [e.id]: e }), {});
 
-  // todo: the following missing value literal expressions:
-  const topLevelResults = (): Value[] =>
-    memory.topLevelResults.filter((r) => r.type !== "void");
-
   try {
     let loopNumber = 0;
     // 1. (interpreterLoop) While there are pending actions (Run{} blocks or string responses):
     //   1.1. Parse the action statement/expression
-    //     1.2 Is the statement fully resolved?
-    //       Yes: store the result
-    //       No: queue the commands (functions) that need to be resolved and break to 1.3
-    //   1.3. (currentActionCommandLoop) While there are pending commands:
-    //     1.3.1. If the command can be resolved on the server, execute and store the result
-    //     1.3.2. If the command must be resolved on the client, check has the command resolution already been provided?
+    //     1.1.1 (statementLoop) For each statement in the action
+    //       1.1.2 Is the statement fully resolved?
+    //         Yes: store the result
+    //         No: queue the commands (functions) that need to be resolved for the current statement and break to 1.2
+    //   1.2. (currentActionCommandLoop) While there are pending commands:
+    //     1.2.1. If the command can be resolved on the server, execute and store the result
+    //     1.2.2. If the command must be resolved on the client, check has the command resolution already been provided?
     //       Yes: store the result
     //       No: return the command to the client. On callback we will start from 1.
-    //     1.3.3 [catch] handle command resolution errors by resolving the action as an error, goto 1
-    //   1.4. Store the result of the fully resolved action
-    //   1.5. If there are no more pending actions, break to 2.
-    //   1.6. Ask model for a new completion
-    //     2.1. parse the completion into a list of new actions and add them to the pending actions list
-    //     2.2. [catch] handle comletion parse errors by resolving the action as an error, goto 1
-    //     2.2. goto 1.
+    //     1.2.3 [catch] handle command resolution errors by resolving the action as an error, goto 1
+    //   1.3. Store the result of the fully resolved action
+    //   1.4. If there are no more pending actions, break to 2.
+    //   1.5. Ask model for a new completion
+    //     1.5.1. parse the completion into a list of new actions and add them to the pending actions list
+    //     1.5.2. [catch] handle comletion parse errors by resolving the action as an error, goto 1
+    //     1.5.3. goto 1.
     interpreterLoop: while (true) {
       if (loopNumber >= MAX_LOOPS)
         throw new Error(`max loops of ${MAX_LOOPS} reached`);
@@ -230,27 +227,27 @@ export async function run(
       if (pendingActions.length > 0) {
         const pendingAction = pendingActions[0]!;
         const resolvedActionsCount = resolvedActions.length;
-        const currentActionExpr = pendingAction.statement;
-        let currentActionResult: Value | null = null;
-        // Get the first top level call that is still pending, we want
-        // to handle each top level call in sequence.
         let currentActionPendingCommands: CommandParsed[] = [];
-        const pendingCommandsOrResult = resolveExpression(
-          `${resolvedActionsCount}`,
-          currentActionExpr,
-          resolvedCommandsDict()
-        );
-        if ("result" in pendingCommandsOrResult) {
-          currentActionResult = pendingCommandsOrResult.result;
-          // Update top level results in memory:
-          memory.topLevelResults[resolvedActionsCount] = currentActionResult;
-          if (currentActionResult.type === "error") {
-            // If we got an error, dequeue all upcoming actions
-            pendingActions = pendingActions.slice(0, 1);
+        let currentActionResults: Value[] = [];
+        statementLoop: for (const [
+          currentStatementIndex,
+          currentStatement,
+        ] of pendingAction.statements.entries()) {
+          const pendingCommandsOrResult = resolveExpression(
+            `${resolvedActionsCount}.${currentStatementIndex}`,
+            currentStatement,
+            resolvedCommandsDict()
+          );
+          if ("result" in pendingCommandsOrResult) {
+            currentActionResults.push(pendingCommandsOrResult.result);
+            if (pendingCommandsOrResult.result.type === "error") {
+              // If we got an error, dequeue all upcoming actions
+              pendingActions = pendingActions.slice(0, 1);
+            }
+          } else if ("pendingCommands" in pendingCommandsOrResult) {
+            currentActionPendingCommands =
+              pendingCommandsOrResult.pendingCommands;
           }
-        } else if ("pendingCommands" in pendingCommandsOrResult) {
-          currentActionPendingCommands =
-            pendingCommandsOrResult.pendingCommands;
         }
 
         let commandsToSendToClient: CommandParsed[] = [];
@@ -259,10 +256,12 @@ export async function run(
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
           if (clientCommandDef == null && serverCommandDef == null) {
-            currentActionResult = {
-              type: "error",
-              message: `the function '${commandName}' is unknown`,
-            };
+            currentActionResults = [
+              {
+                type: "error",
+                message: `the function '${commandName}' is unknown`,
+              },
+            ];
             break currentActionCommandLoop;
           }
 
@@ -328,23 +327,32 @@ export async function run(
             result: {
               type: "pending_commands",
               pendingCommands: commandsToSendToClient,
-              results: topLevelResults(),
+              results: [...memory.topLevelResults],
             },
             dev,
           };
         }
 
         // Go through the loop again if we have not resolved the current action.
-        if (currentActionResult == null) {
+        if (
+          currentActionResults.length < pendingAction.statements.length &&
+          // Stop processing if we hit an error
+          currentActionResults[currentActionResults.length - 1]?.type !==
+            "error"
+        ) {
           continue interpreterLoop;
         }
 
-        const { result, storeActionResultInMemory } = renderActionResult(
+        const { result, storeLongStringsInMemory } = renderActionResults(
           resolvedActionsCount,
-          currentActionResult,
+          currentActionResults,
           pendingAction.isRespond ?? false
         );
-        storeActionResultInMemory(memory);
+        memory.topLevelResults = [
+          ...(memory.topLevelResults ?? []),
+          ...currentActionResults.filter((r) => r.type !== "error"),
+        ];
+        storeLongStringsInMemory(memory);
         resolvedActions.push({ ...pendingAction, result });
         dev?.results.push(result);
         if (IS_DEV()) {
@@ -424,7 +432,7 @@ export async function run(
             ...pendingActions,
             {
               action: text,
-              statement: { type: "error", message },
+              statements: [{ type: "error", message }],
             },
           ];
           continue interpreterLoop;
@@ -471,14 +479,14 @@ function makePromptMessages(
   request: string,
   resolvedActions: State["resolvedActions"]
 ): ChatCompletionRequestMessage[] {
-  const header = `Act as an AI assistant operating from the user's computer and fulfill the request as best you can. Do not make things up. You may use functions (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
+  const header = `Act as an AI assistant operating from the users computer and fulfill the request as best you can. Do not make things up. You may use functions (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
 
 Functions must be placed inside Run{} blocks to be called. They must be included in the beginning before your plain language response to the user. For example:
 
   Run { exampleFunction("arg 1", arg2, 123, true); }
   I have completed your request
 
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
+Note that Run{} blocks and their results are not visible to the user. Furthermore the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
 
 It is possible to run multiple functions by using multiple run blocks. You can also assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
 
@@ -491,7 +499,7 @@ The language used inside Run{} blocks is custom and very limited. DO NOT attempt
 
 Below is a simple, exhaustive demonstration of the features available to the language used inside Run{} blocks:
 
-  Run { x = "string" }
+  Run { a = "a"; x = "string" + a }
   Run { y = fn(123, true, false, fn2(\`\${x} interpolation\`)) }
 
 Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.`;
@@ -581,21 +589,13 @@ export function parseCompletion(completion: string): Action[] {
         p.rep_sc(p.str(" ")),
         p.str("{")
       ),
-      p.kmid(
-        p.rep_sc(p.tok(T.Space)),
-        STATEMENT,
-        p.seq(
-          p.rep_sc(p.tok(T.Space)),
-          p.opt_sc(p.str(";")),
-          p.rep_sc(p.tok(T.Space))
-        )
-      ),
+      p.kmid(p.rep_sc(p.tok(T.Space)), STATEMENTS, p.rep_sc(p.tok(T.Space))),
       p.str("}")
     ),
-    (statement, tokenRange): Action => {
+    (statements, tokenRange): Action => {
       return {
         action: p.extractByTokenRange(input, tokenRange[0], tokenRange[1]),
-        statement,
+        statements,
       };
     }
   );
@@ -682,11 +682,13 @@ export function parseCompletion(completion: string): Action[] {
       actions.push({
         action: value,
         isRespond: true,
-        statement: {
-          name: RESPOND_COMMAND,
-          type: "call",
-          args: [arg],
-        },
+        statements: [
+          {
+            name: RESPOND_COMMAND,
+            type: "call",
+            args: [arg],
+          },
+        ],
       });
     }
   }
@@ -758,41 +760,57 @@ function tryReuseResolvedCommand(
   return null;
 }
 
-function renderActionResult(
+function renderActionResults(
   actionIndex: number,
-  result: Value,
+  results: Value[],
   isRespond: boolean
 ): {
   result: string;
-  storeActionResultInMemory: (m: Memory) => void;
+  storeLongStringsInMemory: (m: Memory) => void;
 } {
-  const varName = `result_${actionIndex}`;
-  let resultStr =
-    result.type === "error"
-      ? `Error: ${result.message}`
-      : isRespond && result.type === "string"
-      ? result.value
-      : `Result: ${valueToString(result)}`;
+  let resultStrs: string[] = [];
+  let longStrings: Record<string, Value> = {};
 
-  if (
-    !isRespond &&
-    result.type === "string" &&
-    gptEncoder.encode(result.value).length > 300
-  ) {
-    resultStr =
-      `Result: ` +
-      resultStr.substring(0, 300 * 4) +
-      " [... truncated: full value available in variable `" +
-      varName +
-      "`]";
+  for (const [i, result] of results.entries()) {
+    // Short circuit and return errors if any:
+    if (result.type === "error") {
+      return {
+        result: `Error: ${result.message}`,
+        storeLongStringsInMemory: () => {},
+      };
+    }
+
+    let resultStr =
+      isRespond && result.type === "string"
+        ? result.value
+        : `Result: ${valueToString(result)}`;
+
+    if (
+      !isRespond &&
+      result.type === "string" &&
+      gptEncoder.encode(result.value).length > 300
+    ) {
+      const varName = `result_${actionIndex}_${i}`;
+      longStrings[varName] = result;
+      resultStr =
+        `Result: ` +
+        resultStr.substring(0, 300 * 4) +
+        " [... truncated: full value available in variable `" +
+        varName +
+        "`]";
+    }
+
+    resultStrs.push(resultStr);
   }
 
   return {
-    result: resultStr,
-    storeActionResultInMemory: (memory) => {
-      if (result.type === "error") return;
-      if (memory.variables[varName] != null) return;
-      memory.variables[varName] = result;
+    result: resultStrs.join("; "),
+    storeLongStringsInMemory: (memory) => {
+      for (const [varName, result] of Object.entries(longStrings)) {
+        if (result.type === "error") return;
+        if (memory.variables[varName] != null) return;
+        memory.variables[varName] = result;
+      }
     },
   };
 }

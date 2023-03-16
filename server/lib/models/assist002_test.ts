@@ -14,14 +14,16 @@ const pendingClientCommandState = () =>
     pending: [
       {
         action: 'createCalendarEvent("2022-01-01", "event name")',
-        statement: {
-          type: "call",
-          name: "createCalendarEvent",
-          args: [
-            { type: "string", value: "2022-01-01" },
-            { type: "string", value: "event name" },
-          ],
-        },
+        statements: [
+          {
+            type: "call",
+            name: "createCalendarEvent",
+            args: [
+              { type: "string", value: "2022-01-01" },
+              { type: "string", value: "event name" },
+            ],
+          },
+        ],
         result: undefined,
       },
     ],
@@ -29,14 +31,14 @@ const pendingClientCommandState = () =>
     resolvedActions: [
       {
         action: "now()",
-        statement: { type: "call", args: [], name: "now" },
+        statements: [{ type: "call", args: [], name: "now" }],
         result: "2022-12-19T08:41:10.000Z",
       },
     ],
     resolvedCommands: [
       {
         args: [],
-        id: "0",
+        id: "0.0",
         name: "now",
         returnValue: { type: "string", value: "2022-12-19T08:41:10.000Z" },
         type: "executed",
@@ -52,11 +54,13 @@ const pendingInputState = () =>
       {
         action: "some response",
         isRespond: true,
-        statement: {
-          type: "call",
-          args: [{ type: "string", value: "some response" }],
-          name: "respond",
-        },
+        statements: [
+          {
+            type: "call",
+            args: [{ type: "string", value: "some response" }],
+            name: "respond",
+          },
+        ],
         result: undefined,
       },
     ],
@@ -65,18 +69,20 @@ const pendingInputState = () =>
       {
         action: "someCommand()",
         result: `"blah"`,
-        statement: {
-          type: "call",
-          args: [],
-          name: "someCommand",
-        },
+        statements: [
+          {
+            type: "call",
+            args: [],
+            name: "someCommand",
+          },
+        ],
       },
     ],
     resolvedCommands: [
       {
         type: "executed",
         args: [],
-        id: "0",
+        id: "0.0",
         name: "someCommand",
         returnValue: { type: "string", value: "blah" },
       },
@@ -104,6 +110,13 @@ for (const test of [
     description: "multiple actions in a single completion",
     openAiResults: [
       `Run { now() }\n run { math("pi^2 + 123") }\nRun { now() }`,
+      `Your request has been fulfilled.`,
+    ],
+  },
+  {
+    description: "multiple functions in a single run block",
+    openAiResults: [
+      `Run { now(); now(); math('2^2')\n\nnow() }`,
       `Your request has been fulfilled.`,
     ],
   },
@@ -273,7 +286,7 @@ This string response line is ignored`,
     description: "client resolved command - wrong return type",
     input: {
       resolvedCommands: {
-        "1": {
+        "1.0": {
           type: "boolean",
           value: true,
         },
@@ -286,7 +299,7 @@ This string response line is ignored`,
   {
     description: "client resolved command - fulfilled",
     input: {
-      resolvedCommands: { "1": { type: "void" } },
+      resolvedCommands: { "1.0": { type: "void" } },
     },
     openAiResults: [`I have finished`],
     snapshotPrompts: true,
@@ -315,7 +328,7 @@ This string response line is ignored`,
     description: "awaiting response - fulfilled",
     input: {
       resolvedCommands: {
-        "1": {
+        "1.0": {
           type: "string",
           value: "some user response",
         },
@@ -329,7 +342,7 @@ This string response line is ignored`,
     description: "max model calls",
     input: {
       resolvedCommands: {
-        "1": {
+        "1.0": {
           type: "string",
           value: `some date`,
         },
@@ -342,7 +355,7 @@ This string response line is ignored`,
       pending: [
         {
           action: "blah",
-          statement: { type: "call", name: "now", args: [] },
+          statements: [{ type: "call", name: "now", args: [] }],
         },
       ],
       modelCallCount: MAX_MODEL_CALLS,
@@ -393,7 +406,6 @@ This string response line is ignored`,
   },
 
   // Error handling
-  //
   {
     description: "recoverable error - function does not exist",
     openAiResults: [
@@ -442,12 +454,20 @@ Run { translate('', '') }`, // second action gets ignored
     snapshotPrompts: true,
   },
   {
+    description: "recoverable error - error on the last statement",
+    openAiResults: [
+      `Run { now(); now(); doesnotexist(123, true) }`,
+      `Complete`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
     description: "recoverable error - client command results in error",
     openAiResults: ["Complete"],
     snapshotPrompts: true,
     input: {
       resolvedCommands: {
-        "0": {
+        "0.0": {
           type: "error",
           message: "a mock error",
         },
@@ -458,11 +478,13 @@ Run { translate('', '') }`, // second action gets ignored
       pending: [
         {
           action: "mockCommand()",
-          statement: {
-            type: "call",
-            name: "mockCommand",
-            args: [],
-          },
+          statements: [
+            {
+              type: "call",
+              name: "mockCommand",
+              args: [],
+            },
+          ],
           result: undefined,
         },
       ],
@@ -478,7 +500,7 @@ Run { translate('', '') }`, // second action gets ignored
     snapshotError: true, // This should throw because it is not recoverable
     input: {
       resolvedCommands: {
-        "0": { type: "void" },
+        "0.0": { type: "void" },
       },
     },
     initialState: {
@@ -486,11 +508,13 @@ Run { translate('', '') }`, // second action gets ignored
       pending: [
         {
           action: "mockCommand()",
-          statement: {
-            type: "call",
-            name: "mockCommand",
-            args: [],
-          },
+          statements: [
+            {
+              type: "call",
+              name: "mockCommand",
+              args: [],
+            },
+          ],
           result: undefined,
         },
       ],

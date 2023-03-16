@@ -41,6 +41,16 @@ export async function runBuiltinCommand(
     const defsToTry =
       "overloads" in definition ? definition.overloads : [definition];
 
+    // Short circuit if any args contain an error:
+    for (const arg of commandArgs) {
+      if (arg.type === "error")
+        return {
+          ...command,
+          type: "executed",
+          returnValue: arg,
+        };
+    }
+
     const receivedArgsDescription = `(${commandArgs
       .map((a) => a.type)
       .join(", ")})`;

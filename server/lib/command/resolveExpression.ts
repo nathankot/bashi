@@ -17,7 +17,8 @@ export function resolveExpression(
   if (maybeAlreadyResolved != null) {
     if (maybeAlreadyResolved.name != expr.name) {
       throw new Error(
-        `corruption! expected resolved call to be ${expr.name} ` +
+        `internal expression resolution error:` +
+          ` expected resolved call to be ${expr.name} ` +
           `but got ${maybeAlreadyResolved.name}`
       );
     }
@@ -30,10 +31,6 @@ export function resolveExpression(
   let pendingCommands: CommandParsed[] = [];
   let resolvedArguments: Value[] | null = [];
   for (const [i, arg] of Object.entries(expr.args)) {
-    // Bubble up any errors that have been encountered:
-    if (arg.type === "error") {
-      return { result: arg };
-    }
     if (arg.type !== "call") {
       resolvedArguments?.push(arg);
       continue;
@@ -56,14 +53,11 @@ export function resolveExpression(
   // becomes pending:
   if (resolvedArguments != null) {
     if (resolvedArguments.length !== expr.args.length) {
-      return {
-        result: {
-          type: "error",
-          message:
-            `${expr.name} expected ${expr.args.length} ` +
-            `arguments but received ${resolvedArguments.length}`,
-        },
-      };
+      throw new Error(
+        `internal expression resolution error: ` +
+          `${expr.name} expected ${expr.args.length} ` +
+          `arguments but received ${resolvedArguments.length}`
+      );
     }
     return {
       pendingCommands: [

@@ -259,7 +259,11 @@ export async function run(
           const clientCommandDef = clientCommands[commandName];
           const serverCommandDef = serverCommands[commandName];
           if (clientCommandDef == null && serverCommandDef == null) {
-            throw new Error(`the command ${commandName} is unknown`);
+            currentActionResult = {
+              type: "error",
+              message: `the function '${commandName}' is unknown`,
+            };
+            break currentActionCommandLoop;
           }
 
           // For commands that are not overloaded, try type coercion,

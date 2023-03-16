@@ -696,6 +696,7 @@ function tryReuseResolvedCommand(
     if (resolved.name in languageCommands) continue;
     if (resolved.name !== pendingCommand.name) continue;
     if (
+      resolved.args.length === pendingCommand.args.length &&
       resolved.args.every((arg, i) => {
         const pendingArg = pendingCommand.args[i];
         if (pendingArg == null) {

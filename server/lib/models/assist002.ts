@@ -59,10 +59,6 @@ const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
     2361: -10, // ` ]`
     14692: -10, // `["`
     8973: -10, // `"]`
-    1391: -10, // ` {`
-    1782: -10, // ` }`
-    90: -10, // `{`
-    92: -10, // `}`
     1640: -1, // `for` - try reduce tendency of the model to use for loops
     11018: -1, // `math` - the LLM has a tendency to throw arbitrary expressions in here
     7785: 1, // `var`

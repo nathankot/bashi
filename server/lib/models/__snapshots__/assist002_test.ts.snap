@@ -78,7 +78,7 @@ snapshot[`all commands resolved on the server 1`] = `
     resolvedActions: [
       {
         action: "Run { now() }",
-        result: '"2022-12-19T08:41:10Z"',
+        result: 'Result: "2022-12-19T08:41:10Z"',
         statement: {
           args: [
           ],
@@ -88,7 +88,7 @@ snapshot[`all commands resolved on the server 1`] = `
       },
       {
         action: 'Run { math("pi^2 + 123") }',
-        result: '"132.86960440108936"',
+        result: 'Result: "132.86960440108936"',
         statement: {
           args: [
             {
@@ -135,42 +135,6 @@ snapshot[`all commands resolved on the server 1`] = `
 
 snapshot[`all commands resolved on the server 2`] = `
 [
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -260,7 +224,7 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
     resolvedActions: [
       {
         action: 'Run { math("pi^2 + 123") }',
-        result: '"132.86960440108936"',
+        result: 'Result: "132.86960440108936"',
         statement: {
           args: [
             {
@@ -296,86 +260,6 @@ snapshot[`all commands resolved on the server - empty response tries again 1`] =
 
 snapshot[`all commands resolved on the server - empty response tries again 2`] = `
 [
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { math("pi^2 + 123") }',
-    role: "assistant",
-  },
-  {
-    content: 'Result: "132.86960440108936"',
-    role: "system",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -481,7 +365,7 @@ snapshot[`multiple actions in a single completion 1`] = `
     resolvedActions: [
       {
         action: "Run { now() }",
-        result: '"2022-12-19T08:41:10Z"',
+        result: 'Result: "2022-12-19T08:41:10Z"',
         statement: {
           args: [
           ],
@@ -491,7 +375,7 @@ snapshot[`multiple actions in a single completion 1`] = `
       },
       {
         action: 'run { math("pi^2 + 123") }',
-        result: '"132.86960440108936"',
+        result: 'Result: "132.86960440108936"',
         statement: {
           args: [
             {
@@ -505,7 +389,7 @@ snapshot[`multiple actions in a single completion 1`] = `
       },
       {
         action: "Run { now() }",
-        result: '"2022-12-19T08:41:10Z"',
+        result: 'Result: "2022-12-19T08:41:10Z"',
         statement: {
           args: [
           ],
@@ -635,7 +519,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
     resolvedActions: [
       {
         action: "Run { now() }",
-        result: '"2022-12-19T08:41:10Z"',
+        result: 'Result: "2022-12-19T08:41:10Z"',
         statement: {
           args: [
           ],
@@ -645,7 +529,7 @@ snapshot[`non-action lines at the end of a completion 1`] = `
       },
       {
         action: 'run { math("pi^2 + 123") }',
-        result: '"132.86960440108936"',
+        result: 'Result: "132.86960440108936"',
         statement: {
           args: [
             {
@@ -768,7 +652,7 @@ snapshot[`command overloads work 1`] = `
     resolvedActions: [
       {
         action: "Run {  123 + 1; }",
-        result: "124",
+        result: "Result: 124",
         statement: {
           args: [
             {
@@ -786,7 +670,7 @@ snapshot[`command overloads work 1`] = `
       },
       {
         action: 'Run { "string" + "concat";}',
-        result: '"stringconcat"',
+        result: 'Result: "stringconcat"',
         statement: {
           args: [
             {
@@ -849,42 +733,6 @@ snapshot[`command overloads work 1`] = `
 
 snapshot[`command overloads work 2`] = `
 [
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language",
-    role: "system",
-  },
   {
     content: "some request",
     role: "user",
@@ -1270,7 +1118,7 @@ snapshot[`supports model outputs with top level infix call 1`] = `
     resolvedActions: [
       {
         action: "Run { currentTimeForTimezone(\`America/\${\`New_York\`}\`);  }",
-        result: '"2022-12-19T03:41:10-05:00"',
+        result: 'Result: "2022-12-19T03:41:10-05:00"',
         statement: {
           args: [
             {
@@ -1436,7 +1284,7 @@ snapshot[`supports model outputs using template strings 1`] = `
     resolvedActions: [
       {
         action: "Run { now() + ' ' + currentTimeForTimezone('America/New_York'); }",
-        result: '"2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00"',
+        result: 'Result: "2022-12-19T08:41:10Z 2022-12-19T03:41:10-05:00"',
         statement: {
           args: [
             {
@@ -1634,7 +1482,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
     resolvedActions: [
       {
         action: 'Run { "some string"; }',
-        result: '"some string"',
+        result: 'Result: "some string"',
         statement: {
           type: "string",
           value: "some string",
@@ -1642,7 +1490,7 @@ snapshot[`supports model outputs with top level expression 1`] = `
       },
       {
         action: "Run { 123 }",
-        result: "123",
+        result: "Result: 123",
         statement: {
           type: "number",
           value: 123,
@@ -1753,7 +1601,7 @@ snapshot[`supports assignment 1`] = `
     resolvedActions: [
       {
         action: "Run { a = 123; }",
-        result: "123",
+        result: "Result: 123",
         statement: {
           args: [
             {
@@ -1771,7 +1619,7 @@ snapshot[`supports assignment 1`] = `
       },
       {
         action: "Run { b = 111; }",
-        result: "111",
+        result: "Result: 111",
         statement: {
           args: [
             {
@@ -1789,7 +1637,7 @@ snapshot[`supports assignment 1`] = `
       },
       {
         action: "Run { a + b; }",
-        result: "234",
+        result: "Result: 234",
         statement: {
           args: [
             {
@@ -1911,9 +1759,9 @@ snapshot[`supports assignment 1`] = `
 }
 `;
 
-snapshot[`malformed command should fail rather than return as string 1`] = `"Unable to consume token: Date"`;
+snapshot[`malformed command should fail rather than return as string 1`] = `"openai mock on index 1 not available"`;
 
-snapshot[`malformed command should fail rather than return as string 2 1`] = `"Unable to consume token: !"`;
+snapshot[`malformed command should fail rather than return as string 2 1`] = `"openai mock on index 1 not available"`;
 
 snapshot[`server commands with identical inputs re-use results 1`] = `
 {
@@ -1980,7 +1828,7 @@ snapshot[`server commands with identical inputs re-use results 1`] = `
     resolvedActions: [
       {
         action: "Run { now();  }",
-        result: '"0000-00-00T00:00:00Z"',
+        result: 'Result: "0000-00-00T00:00:00Z"',
         statement: {
           args: [
           ],
@@ -2218,7 +2066,7 @@ snapshot[`calendar event creation in a single completion 1`] = `
     resolvedActions: [
       {
         action: 'Run { var nextTuesday = "2022-12-27T12:00:00Z"; }',
-        result: '"2022-12-27T12:00:00Z"',
+        result: 'Result: "2022-12-27T12:00:00Z"',
         statement: {
           args: [
             {
@@ -2393,7 +2241,7 @@ snapshot[`multiple assignment in one completion 1`] = `
     resolvedActions: [
       {
         action: 'Run { a = "What rooms do you have available?" }',
-        result: '"What rooms do you have available?"',
+        result: 'Result: "What rooms do you have available?"',
         statement: {
           args: [
             {
@@ -2411,7 +2259,7 @@ snapshot[`multiple assignment in one completion 1`] = `
       },
       {
         action: 'Run { b = translate(a, "French") }',
-        result: '"french translation"',
+        result: 'Result: "french translation"',
         statement: {
           args: [
             {
@@ -2445,7 +2293,7 @@ snapshot[`multiple assignment in one completion 1`] = `
       },
       {
         action: 'Run { c = translate(a, "Spanish") }',
-        result: '"spanish translation"',
+        result: 'Result: "spanish translation"',
         statement: {
           args: [
             {
@@ -2479,7 +2327,7 @@ snapshot[`multiple assignment in one completion 1`] = `
       },
       {
         action: 'Run { d = translate(a, "Japanese") }',
-        result: '"japanese translation"',
+        result: 'Result: "japanese translation"',
         statement: {
           args: [
             {
@@ -2913,7 +2761,7 @@ snapshot[`client resolved command - fulfilled 1`] = `
       },
       {
         action: 'createCalendarEvent("2022-01-01", "event name")',
-        result: "void",
+        result: "Result: void",
         statement: {
           args: [
             {
@@ -2976,7 +2824,7 @@ snapshot[`client resolved command - fulfilled 2`] = `
     role: "assistant",
   },
   {
-    content: "Result: 2022-12-19T08:41:10.000Z",
+    content: "2022-12-19T08:41:10.000Z",
     role: "system",
   },
   {
@@ -3310,7 +3158,7 @@ snapshot[`awaiting response - fulfilled 1`] = `
       {
         action: "some response",
         isRespond: true,
-        result: '"some user response"',
+        result: "some user response",
         statement: {
           args: [
             {
@@ -3366,7 +3214,7 @@ snapshot[`awaiting response - fulfilled 2`] = `
     role: "assistant",
   },
   {
-    content: 'Result: "blah"',
+    content: '"blah"',
     role: "system",
   },
   {
@@ -3383,9 +3231,9 @@ snapshot[`awaiting response - fulfilled 2`] = `
 
 snapshot[`max model calls 1`] = `"max iteration count of 10 reached"`;
 
-snapshot[`wrong arg type 1`] = `"Unable to consume token: math"`;
+snapshot[`wrong arg type 1`] = `"openai mock on index 1 not available"`;
 
-snapshot[`wrong arg count 1`] = `"Unable to consume token: math"`;
+snapshot[`wrong arg count 1`] = `"openai mock on index 1 not available"`;
 
 snapshot[`long results are truncated and stored in variables 1`] = `
 {
@@ -3469,7 +3317,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
     resolvedActions: [
       {
         action: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word" }',
-        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0\`]',
+        result: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_0\`]',
         statement: {
           args: [
             {
@@ -3487,7 +3335,7 @@ snapshot[`long results are truncated and stored in variables 1`] = `
       },
       {
         action: "Run { longVar; }",
-        result: '"word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_1\`]',
+        result: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_1\`]',
         statement: {
           args: [
             {
@@ -3547,93 +3395,11 @@ snapshot[`long results are truncated and stored in variables 2`] = `
     role: "user",
   },
   {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`editCode(\\"code to edit\\": string, \\"programming language or 'unknown'\\": string, \\"full description of desired changes or additions\\": string): string\` - edit code using the given requirements",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
     content: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word" }',
     role: "assistant",
   },
   {
-    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0\`]',
-    role: "system",
-  },
-  {
-    content: 'User information:
-Timezone: "UTC"
-Locale: "en-US"',
-    role: "system",
-  },
-  {
-    content: "Act as an AI assistant and fulfill the request as best you can. Do not make things up. Use functions/tools (documented below) to help with this, but always prefer responding directly if knowledge is readily available and accurate. If the request cannot be fulfilled using a combination of existing knowledge and functions then let the user know why, do not make things up.
-
-Run{} blocks must be used to call functions. They must be included in the beginning before your response to the user which should be in plain language. Run blocks must only include a single statement. For example:
-
-  Run { exampleFunction(\\"arg 1\\", arg2, 123, true); }
-  I have completed your request
-
-Note that Run{} blocks and their results are not visible to the user. In addition, the user is unable to call functions themselves. So do not assume that the user knows about functions or Run{} blocks.
-
-It is possible to assign the result of a function to a variable, and use it later via string interpolation or as inputs into other functions:
-
-  Run { a = exampleFn(\\"arg 1\\", arg2) }
-  Run { b = exampleFn2(a) }
-  The answer to your question is \${b}
-
-Use functions sparingly and do not assume any other features exist beyond what is referenced above.
-
-Known functions are declared below. Unknown functions MUST NOT be used. Pay attention to syntax and ensure correct string escaping. Prefer using functions ordered earlier in the list.
-
-\`math(\\"formula (ascii characters only)\\": string): string\` - get the result of a math formula
-\`now(): string\` - get current ISO8601 datetime in the user's timezone
-\`commandWithNumberArg(\\"some number\\": number): void\` - some fixture command
-\`parseRelativeTime(\\"natural language relative time\\": string): string\` - get ISO8601 datetime relative to now from natural language
-\`editCode(\\"code to edit\\": string, \\"programming language or 'unknown'\\": string, \\"full description of desired changes or additions\\": string): string\` - edit code using the given requirements",
-    role: "system",
-  },
-  {
-    content: "some request",
-    role: "user",
-  },
-  {
-    content: 'Run { longVar = "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word" }',
-    role: "assistant",
-  },
-  {
-    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_0\`]',
+    content: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_0\`]',
     role: "system",
   },
   {
@@ -3641,7 +3407,7 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
     role: "assistant",
   },
   {
-    content: 'Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word [... truncated: full value available in variable \`result_1\`]',
+    content: 'Result: Result: "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word w [... truncated: full value available in variable \`result_1\`]',
     role: "system",
   },
 ]
@@ -3833,7 +3599,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
     resolvedActions: [
       {
         action: 'Run { "hello result"; }',
-        result: '"hello result"',
+        result: 'Result: "hello result"',
         statement: {
           type: "string",
           value: "hello result",
@@ -3841,7 +3607,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: "Run { result; }",
-        result: '"hello result"',
+        result: 'Result: "hello result"',
         statement: {
           args: [
             {
@@ -3855,7 +3621,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: 'Run { var a = "b" }',
-        result: '"b"',
+        result: 'Result: "b"',
         statement: {
           args: [
             {
@@ -3873,7 +3639,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: "Run { rEsUlt; }",
-        result: '"b"',
+        result: 'Result: "b"',
         statement: {
           args: [
             {
@@ -3887,7 +3653,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: 'Run { var result = "new result"; }',
-        result: '"new result"',
+        result: 'Result: "new result"',
         statement: {
           args: [
             {
@@ -3905,7 +3671,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: 'Run { "this should not show up twice"; }',
-        result: '"this should not show up twice"',
+        result: 'Result: "this should not show up twice"',
         statement: {
           type: "string",
           value: "this should not show up twice",
@@ -3913,7 +3679,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: "Run { result; }",
-        result: '"new result"',
+        result: 'Result: "new result"',
         statement: {
           args: [
             {
@@ -3927,7 +3693,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: 'Run { "this should show up"; }',
-        result: '"this should show up"',
+        result: 'Result: "this should show up"',
         statement: {
           type: "string",
           value: "this should show up",
@@ -3935,7 +3701,7 @@ snapshot[`the 'result' var name is magic and refers to the previous result if no
       },
       {
         action: "Run { reSult; }",
-        result: '"this should show up"',
+        result: 'Result: "this should show up"',
         statement: {
           args: [
             {
@@ -4151,7 +3917,7 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
     resolvedActions: [
       {
         action: "Run { math(123123) }",
-        result: '"123123"',
+        result: 'Result: "123123"',
         statement: {
           args: [
             {
@@ -4184,6 +3950,1094 @@ snapshot[`string to number and vice versa implicit conversion 1`] = `
   },
 }
 `;
+
+snapshot[`recoverable error - function does not exist 1`] = `
+{
+  n: 3,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "2",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        <1 empty item>,
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {
+        result_1: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      },
+    },
+    modelCallCount: 3,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { doesnotexist(123, true) }",
+        result: "Error: the function 'doesnotexist' is unknown",
+        statement: {
+          args: [
+            {
+              type: "number",
+              value: 123,
+            },
+            {
+              type: "boolean",
+              value: true,
+            },
+          ],
+          name: "doesnotexist",
+          type: "call",
+        },
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statement: {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "1",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - function does not exist 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { doesnotexist(123, true) }",
+    role: "assistant",
+  },
+  {
+    content: "Error: the function 'doesnotexist' is unknown",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - bad argument count, type 1`] = `
+{
+  n: 4,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "3",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          message: "function 'translate' expects arguments of type (string, string) but got ()",
+          type: "error",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          message: "function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+          type: "error",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          message: "function 'translate' expects arguments of type (string, string) but got ()",
+          type: "error",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        {
+          message: "function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+          type: "error",
+        },
+      ],
+      variables: {
+        result_1: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      },
+    },
+    modelCallCount: 4,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { translate() }",
+        result: "Error: function 'translate' expects arguments of type (string, string) but got ()",
+        statement: {
+          args: [
+          ],
+          name: "translate",
+          type: "call",
+        },
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statement: {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+      },
+      {
+        action: "Run { translate(true, 123) }",
+        result: "Error: function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+        statement: {
+          args: [
+            {
+              type: "boolean",
+              value: true,
+            },
+            {
+              type: "number",
+              value: 123,
+            },
+          ],
+          name: "translate",
+          type: "call",
+        },
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "translate",
+        returnValue: {
+          message: "function 'translate' expects arguments of type (string, string) but got ()",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "1",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+          {
+            type: "string",
+            value: "123",
+          },
+        ],
+        id: "2",
+        name: "translate",
+        returnValue: {
+          message: "function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - bad argument count, type 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { translate() }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'translate' expects arguments of type (string, string) but got ()",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+  {
+    content: "Run { translate(true, 123) }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'translate' expects arguments of type (string, string) but got (boolean, string)",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - nested errors get bubbled up 1`] = `
+{
+  n: 4,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "3",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        <1 empty item>,
+        {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      ],
+      variables: {
+        result_2: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+      },
+    },
+    modelCallCount: 4,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { editText(translate(math(true), 'blah'), 'blah') }",
+        result: "Error: function 'math' expects arguments of type (string) but got (boolean)",
+        statement: {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      type: "boolean",
+                      value: true,
+                    },
+                  ],
+                  name: "math",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: "blah",
+                },
+              ],
+              name: "translate",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "blah",
+            },
+          ],
+          name: "editText",
+          type: "call",
+        },
+      },
+      {
+        action: "Run { editText(translate(unknownCommand(true), 'blah'), 'blah') }",
+        result: "Error: the function 'unknownCommand' is unknown",
+        statement: {
+          args: [
+            {
+              args: [
+                {
+                  args: [
+                    {
+                      type: "boolean",
+                      value: true,
+                    },
+                  ],
+                  name: "unknownCommand",
+                  type: "call",
+                },
+                {
+                  type: "string",
+                  value: "blah",
+                },
+              ],
+              name: "translate",
+              type: "call",
+            },
+            {
+              type: "string",
+              value: "blah",
+            },
+          ],
+          name: "editText",
+          type: "call",
+        },
+      },
+      {
+        action: "Run { now() }",
+        result: 'Result: "2022-12-19T08:41:10Z"',
+        statement: {
+          args: [
+          ],
+          name: "now",
+          type: "call",
+        },
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+        ],
+        id: "0.0.0",
+        name: "math",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            message: "function 'math' expects arguments of type (string) but got (boolean)",
+            type: "error",
+          },
+          {
+            type: "string",
+            value: "blah",
+          },
+        ],
+        id: "0.0",
+        name: "translate",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+          {
+            message: "function 'math' expects arguments of type (string) but got (boolean)",
+            type: "error",
+          },
+          {
+            type: "string",
+            value: "blah",
+          },
+        ],
+        id: "0",
+        name: "editText",
+        returnValue: {
+          message: "function 'math' expects arguments of type (string) but got (boolean)",
+          type: "error",
+        },
+        type: "executed",
+      },
+      {
+        args: [
+        ],
+        id: "2",
+        name: "now",
+        returnValue: {
+          type: "string",
+          value: "2022-12-19T08:41:10Z",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - nested errors get bubbled up 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { editText(translate(math(true), 'blah'), 'blah') }",
+    role: "assistant",
+  },
+  {
+    content: "Error: function 'math' expects arguments of type (string) but got (boolean)",
+    role: "system",
+  },
+  {
+    content: "Run { editText(translate(unknownCommand(true), 'blah'), 'blah') }",
+    role: "assistant",
+  },
+  {
+    content: "Error: the function 'unknownCommand' is unknown",
+    role: "system",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - action block syntax error 1`] = `
+{
+  n: 6,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "5",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          message: "Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+          type: "error",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          message: "Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+          type: "error",
+        },
+        {
+          message: "Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+          type: "error",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 6,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { not a valid run block }",
+        result: "Error: Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+        statement: {
+          message: "Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+          type: "error",
+        },
+      },
+      {
+        action: "Run { ;;; }
+blahblah",
+        result: "Error: Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+        statement: {
+          message: "Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+          type: "error",
+        },
+      },
+      {
+        action: "Run { now() }
+Run { error.on.second.line }",
+        result: "Error: Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+        statement: {
+          message: "Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+          type: "error",
+        },
+      },
+      {
+        action: "
+
+
+Run { properties.doNotExist }",
+        result: "Error: Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+        statement: {
+          message: "Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+          type: "error",
+        },
+      },
+      {
+        action: "Run { methods.doNotExist() }",
+        result: "Error: Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+        statement: {
+          message: "Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+          type: "error",
+        },
+      },
+    ],
+    resolvedCommands: [
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - action block syntax error 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { not a valid run block }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:11
+
+  1 | Run { not a valid run block }
+                ^ Unable to consume token: a",
+    role: "system",
+  },
+  {
+    content: "Run { ;;; }
+blahblah",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:7
+
+  1 | Run { ;;; }
+            ^ Unable to consume token: ;",
+    role: "system",
+  },
+  {
+    content: "Run { now() }
+Run { error.on.second.line }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:2 col:12
+
+  2 | Run { error.on.second.line }
+                 ^ Unable to consume token: .",
+    role: "system",
+  },
+  {
+    content: "
+
+
+Run { properties.doNotExist }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:17
+
+  1 | 
+                      ^ Unable to consume token: .",
+    role: "system",
+  },
+  {
+    content: "Run { methods.doNotExist() }",
+    role: "assistant",
+  },
+  {
+    content: "Error: Encountered error when parsing on row:1 col:14
+
+  1 | Run { methods.doNotExist() }
+                   ^ Unable to consume token: .",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - no overload found 1`] = `
+{
+  n: 2,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "1",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          message: "no overload found for: __+__(boolean, number)",
+          type: "error",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          message: "no overload found for: __+__(boolean, number)",
+          type: "error",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "Run { true + 123 }",
+        result: "Error: no overload found for: __+__(boolean, number)",
+        statement: {
+          args: [
+            {
+              type: "boolean",
+              value: true,
+            },
+            {
+              type: "number",
+              value: 123,
+            },
+          ],
+          name: "__+__",
+          type: "call",
+        },
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+          {
+            type: "boolean",
+            value: true,
+          },
+          {
+            type: "number",
+            value: 123,
+          },
+        ],
+        id: "0",
+        name: "__+__",
+        returnValue: {
+          message: "no overload found for: __+__(boolean, number)",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - no overload found 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { true + 123 }",
+    role: "assistant",
+  },
+  {
+    content: "Error: no overload found for: __+__(boolean, number)",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`recoverable error - client command results in error 1`] = `
+{
+  n: 1,
+  output: {
+    dev: undefined,
+    model: "assist-002",
+    request: "some request",
+    result: {
+      pendingCommands: [
+        {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          id: "1",
+          name: "respond",
+          type: "parsed",
+        },
+      ],
+      results: [
+        {
+          message: "a mock error",
+          type: "error",
+        },
+      ],
+      type: "pending_commands",
+    },
+  },
+  state: {
+    memory: {
+      topLevelResults: [
+        {
+          message: "a mock error",
+          type: "error",
+        },
+      ],
+      variables: {},
+    },
+    modelCallCount: 2,
+    pending: [
+      {
+        action: "Complete",
+        isRespond: true,
+        statement: {
+          args: [
+            {
+              type: "string",
+              value: "Complete",
+            },
+          ],
+          name: "respond",
+          type: "call",
+        },
+      },
+    ],
+    request: "some request",
+    resolvedActions: [
+      {
+        action: "mockCommand()",
+        result: "Error: a mock error",
+        statement: {
+          args: [
+          ],
+          name: "mockCommand",
+          type: "call",
+        },
+      },
+    ],
+    resolvedCommands: [
+      {
+        args: [
+        ],
+        id: "0",
+        name: "mockCommand",
+        returnValue: {
+          message: "a mock error",
+          type: "error",
+        },
+        type: "executed",
+      },
+    ],
+  },
+}
+`;
+
+snapshot[`recoverable error - client command results in error 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "mockCommand()",
+    role: "assistant",
+  },
+  {
+    content: "Error: a mock error",
+    role: "system",
+  },
+]
+`;
+
+snapshot[`error - client command sends back wrong return type 1`] = `"command mockCommand expects return type to be string but got void"`;
 
 snapshot[`complex parseCompletion 1`] = `
 [

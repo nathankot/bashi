@@ -1797,9 +1797,9 @@ Thought: ",
 
 snapshot[`fulfilled but max loops 1`] = `"max iteration count of 10 reached"`;
 
-snapshot[`wrong arg type 1`] = `"arguments are invalid"`;
+snapshot[`wrong arg type 1`] = `"function 'math' expects arguments of type (string) but got (boolean)"`;
 
-snapshot[`wrong arg count 1`] = `"arguments are invalid"`;
+snapshot[`wrong arg count 1`] = `"function 'math' expects arguments of type (string) but got ()"`;
 
 snapshot[`top level commands are resolved sequentially 1`] = `
 {

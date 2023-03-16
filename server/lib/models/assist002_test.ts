@@ -87,7 +87,6 @@ const pendingInputState = () =>
 for (const test of [
   {
     description: "all commands resolved on the server",
-    input: { request: "some request" },
     openAiResults: [
       `Run { now() }
        Run { math("pi^2 + 123") }`,
@@ -98,13 +97,11 @@ for (const test of [
   {
     description:
       "all commands resolved on the server - empty response tries again",
-    input: { request: "some request" },
     openAiResults: [`Run { math("pi^2 + 123") }`, ``, `Finish`],
     snapshotPrompts: true,
   },
   {
     description: "multiple actions in a single completion",
-    input: { request: "some request" },
     openAiResults: [
       `Run { now() }\n run { math("pi^2 + 123") }\nRun { now() }`,
       `Your request has been fulfilled.`,
@@ -112,7 +109,6 @@ for (const test of [
   },
   {
     description: "non-action lines at the end of a completion",
-    input: { request: "some request" },
     openAiResults: [
       `Run { now() }\n run { math("pi^2 + 123") }\n\nthisline is not prefixed with action, what will be the behavior?`,
       `Your request has been fulfilled.`,
@@ -120,7 +116,6 @@ for (const test of [
   },
   {
     description: "command overloads work",
-    input: { request: "some request" },
     openAiResults: [
       `Run {  123 + 1; }\nRun { "string" + "concat";}`,
       `I have finished`,
@@ -129,7 +124,6 @@ for (const test of [
   },
   {
     description: "infix + operand support",
-    input: { request: "some request" },
     openAiResults: [
       `Run { respond("infix " + (currentTimeForTimezone("America/New_York") + " hello")) }`,
       `I have finished`,
@@ -137,7 +131,6 @@ for (const test of [
   },
   {
     description: "supports model outputs with lots of newlines",
-    input: { request: "some request" },
     openAiResults: [
       `Run { \ncreateCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with wife"); }
 Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New_York") + " and I have created a calendar event for dinner with your wife 5 days from now."); }`,
@@ -145,7 +138,6 @@ Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New
   },
   {
     description: "supports model outputs with top level infix call",
-    input: { request: "some request" },
     openAiResults: [
       "Run { currentTimeForTimezone(`America/${`New_York`}`);  }\nRun { createCalendarEvent(parseRelativeTime(`in ${5} days`), 'Dinner with Wife');}",
       `I have finished`,
@@ -153,7 +145,6 @@ Run { \nrespond("The time in New York is " + currentTimeForTimezone("America/New
   },
   {
     description: "supports model outputs using template strings",
-    input: { request: "some request" },
     openAiResults: [
       `Run { now() + ' ' + currentTimeForTimezone('America/New_York'); }
 Run {  createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); }`,
@@ -162,7 +153,6 @@ Run {  createCalendarEvent(parseRelativeTime('in 5 days'), 'Dinner with Wife'); 
   },
   {
     description: "supports model outputs with top level expression",
-    input: { request: "some request" },
     openAiResults: [
       `Run { "some string"; }
 Run { 123 }`,
@@ -171,7 +161,6 @@ Run { 123 }`,
   },
   {
     description: "supports assignment",
-    input: { request: "some request" },
     openAiResults: [
       `Run { a = 123; }
 Run { b = 111; }
@@ -182,7 +171,6 @@ Run { a + b; }`,
   {
     description: "malformed command should fail rather than return as string",
     snapshotError: true,
-    input: { request: "some request" },
     openAiResults: [
       'Run { \n  let nextTuesday = new Date();\n  nextTuesday.setDate(nextTuesday.getDate() + (2 + 7 - nextTuesday.getDay()) % 7);\n  nextTuesday.setHours(12, 0, 0, 0);\n  createCalendarEvent(nextTuesday.toISOString(), "Lunch with Bill");\n}\nI have created a calendar event for next Tuesday at noon for lunch with Bill.',
     ],
@@ -190,7 +178,6 @@ Run { a + b; }`,
   {
     description: "malformed command should fail rather than return as string 2",
     snapshotError: true,
-    input: { request: "some request" },
     openAiResults: ["Run{!#notanactual.block}"],
   },
   {
@@ -225,7 +212,6 @@ Run { respond("not reused because client command") }`,
   },
   {
     description: "completion with a complex code sample",
-    input: { request: "some request" },
     openAiResults: [
       `The \`mode\` parameter in the JavaScript Fetch API is used to specify the mode of the request. The mode determines how the request will be made and whether it will be restricted by CORS (Cross-Origin Resource Sharing) policy.
 
@@ -250,7 +236,6 @@ fetch('https://example.com/data.json', {
   },
   {
     description: "calendar event creation in a single completion",
-    input: { request: "some request" },
     openAiResults: [
       `Run { var nextTuesday = "2022-12-27T12:00:00Z"; }
 Run { createCalendarEvent(nextTuesday, "Lunch with Bill"); } \n
@@ -260,7 +245,6 @@ I have used the \`parseRelativeTime\` function to get the ISO8601 datetime for n
   },
   {
     description: "multiple assignment in one completion",
-    input: { request: "some request" },
     openAiResults: [
       `Run { a = "What rooms do you have available?" }
 Run { b = translate(a, "French") }
@@ -275,7 +259,6 @@ This string response line is ignored`,
   },
   {
     description: "client resolved command",
-    input: { request: "some request" },
     openAiResults: [`Run { respond("what do you want?") }`],
   },
   {
@@ -311,7 +294,6 @@ This string response line is ignored`,
   },
   {
     description: "nested calls",
-    input: { request: "some request" },
     openAiResults: [
       `Run { createCalendarEvent(parseRelativeTime("5 days from now"), "Dinner with Wife") }`,
     ],
@@ -319,7 +301,6 @@ This string response line is ignored`,
   },
   {
     description: "request needs more context",
-    input: { request: "some request" },
     openAiResults: [
       `Run { editText(respond("please provide the text"), "convert to poem") }`,
     ],
@@ -369,19 +350,16 @@ This string response line is ignored`,
   },
   {
     description: "wrong arg type",
-    input: { request: "some request" },
     openAiResults: [`Run { now(); math(true) }`],
     snapshotError: true,
   },
   {
     description: "wrong arg count",
-    input: { request: "some request" },
     openAiResults: [`Run { now(); math() }`],
     snapshotError: true,
   },
   {
     description: "long results are truncated and stored in variables",
-    input: { request: "some request" },
     openAiResults: [
       `Run { longVar = "${new Array(500).fill("word").join(" ")}" }`,
       `Run { longVar; }`,
@@ -392,7 +370,6 @@ This string response line is ignored`,
   {
     description:
       "the 'result' var name is magic and refers to the previous result if not already assigned",
-    input: { request: "some request" },
     openAiResults: [
       `Run { "hello result"; }`,
       `Run { result; }`,
@@ -408,7 +385,6 @@ This string response line is ignored`,
   },
   {
     description: "string to number and vice versa implicit conversion",
-    input: { request: "some request" },
     openAiResults: [
       `Run { math(123123) }`,
       `Run { commandWithNumberArg("123123.00") }`,
@@ -430,7 +406,7 @@ This string response line is ignored`,
   description: string;
   openAiResults?: string[];
   only?: boolean;
-  input: Input;
+  input?: Input;
   initialState?: NonNullable<Session["assist002State"]>;
   snapshotPrompts?: true;
   snapshotError?: true;
@@ -501,7 +477,7 @@ This string response line is ignored`,
             },
           },
         },
-        test.input
+        test.input ?? { request: "some request" }
       );
 
       await assertSnapshot(t, {

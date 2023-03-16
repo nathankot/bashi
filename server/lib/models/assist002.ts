@@ -337,7 +337,8 @@ export async function run(
 
         const { result, storeActionResultInMemory } = renderActionResult(
           resolvedActionsCount,
-          currentActionResult
+          currentActionResult,
+          pendingAction.isRespond ?? false
         );
         storeActionResultInMemory(memory);
         resolvedActions.push({ ...pendingAction, result });
@@ -484,12 +485,12 @@ Locale: ${JSON.stringify(session.configuration.locale)}`,
           g.isRespond === true
             ? {
                 role: "user",
-                content: JSON.parse(g.result) as string,
+                content: g.result,
                 name: "User",
               }
             : {
                 role: "system",
-                content: `Result: ${g.result}`,
+                content: g.result,
               },
         ];
       })
@@ -727,23 +728,32 @@ function tryReuseResolvedCommand(
 
 function renderActionResult(
   actionIndex: number,
-  result: Value
+  result: Value,
+  isRespond: boolean
 ): {
   result: string;
   storeActionResultInMemory: (m: Memory) => void;
 } {
   const varName = `result_${actionIndex}`;
-  let resultStr = valueToString(result);
-  try {
-    const toksLength = gptEncoder.encode(resultStr).length;
-    if (toksLength > 300) {
-      resultStr =
-        resultStr.substring(0, 300 * 4) +
-        " [... truncated: full value available in variable `" +
-        varName +
-        "`]";
-    }
-  } catch {}
+  let resultStr =
+    result.type === "error"
+      ? `Error: ${result.message}`
+      : isRespond && result.type === "string"
+      ? result.value
+      : `Result: ${valueToString(result)}`;
+
+  if (
+    !isRespond &&
+    result.type === "string" &&
+    gptEncoder.encode(result.value).length > 300
+  ) {
+    resultStr =
+      `Result: ` +
+      resultStr.substring(0, 300 * 4) +
+      " [... truncated: full value available in variable `" +
+      varName +
+      "`]";
+  }
 
   return {
     result: resultStr,

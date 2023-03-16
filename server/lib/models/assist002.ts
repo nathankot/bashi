@@ -244,6 +244,10 @@ export async function run(
           currentActionResult = pendingCommandsOrResult.result;
           // Update top level results in memory:
           memory.topLevelResults[resolvedActionsCount] = currentActionResult;
+          if (currentActionResult.type === "error") {
+            // If we got an error, dequeue all upcoming actions
+            pendingActions = pendingActions.slice(0, 1);
+          }
         } else if ("pendingCommands" in pendingCommandsOrResult) {
           currentActionPendingCommands =
             pendingCommandsOrResult.pendingCommands;

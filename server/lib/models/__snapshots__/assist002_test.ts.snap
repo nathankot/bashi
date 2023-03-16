@@ -738,6 +738,31 @@ snapshot[`non-action lines at the end of a completion 1`] = `
 }
 `;
 
+snapshot[`non-action lines at the end of a completion 2`] = `
+[
+  {
+    content: "some request",
+    role: "user",
+  },
+  {
+    content: "Run { now() }",
+    role: "assistant",
+  },
+  {
+    content: 'Result: "2022-12-19T08:41:10Z"',
+    role: "system",
+  },
+  {
+    content: 'run { math("pi^2 + 123") }',
+    role: "assistant",
+  },
+  {
+    content: 'Result: "132.86960440108936"',
+    role: "system",
+  },
+]
+`;
+
 snapshot[`command overloads work 1`] = `
 {
   n: 2,

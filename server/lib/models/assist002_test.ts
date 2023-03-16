@@ -126,6 +126,7 @@ for (const test of [
       `Run { now() }\n run { math("pi^2 + 123") }\n\nthisline is not prefixed with action, what will be the behavior?`,
       `Your request has been fulfilled.`,
     ],
+    snapshotPrompts: true,
   },
   {
     description: "command overloads work",

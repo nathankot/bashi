@@ -394,14 +394,112 @@ This string response line is ignored`,
 
   // Error handling
   //
-  // TODO action block syntax error
-  // TODO builtin command error
-  // TODO client command error
-  // TODO non existent function
-  // TODO bad function argument type
-  // TODO bad function argument count
-  // TODO nested error bubbles up
-  // TODO error action block invalidates all upcoming blocks
+  {
+    description: "recoverable error - function does not exist",
+    openAiResults: [
+      `Run { doesnotexist(123, true) }`,
+      `Run { now() }`,
+      `Complete`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
+    description: "recoverable error - bad argument count, type",
+    openAiResults: [
+      `Run { translate() }
+Run { translate('', '') }`, // second action gets ignored
+      `Run { now() }`,
+      `Run { translate(true, 123) }`,
+      `Complete`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
+    description: "recoverable error - nested errors get bubbled up",
+    openAiResults: [
+      `Run { editText(translate(math(true), 'blah'), 'blah') }`,
+      `Run { editText(translate(unknownCommand(true), 'blah'), 'blah') }`,
+      `Run { now() }`,
+      `Complete`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
+    description: "recoverable error - action block syntax error",
+    openAiResults: [
+      `Run { not a valid run block }`,
+      `Run { ;;; }\nblahblah`,
+      `Run { now() }\nRun { error.on.second.line }`,
+      `\n\n\nRun { properties.doNotExist }`,
+      `Run { methods.doNotExist() }`,
+      `Complete`,
+    ],
+    snapshotPrompts: true,
+  },
+  {
+    description: "recoverable error - no overload found",
+    openAiResults: [`Run { true + 123 }`, `Complete`],
+    snapshotPrompts: true,
+  },
+  {
+    description: "recoverable error - client command results in error",
+    openAiResults: ["Complete"],
+    snapshotPrompts: true,
+    input: {
+      resolvedCommands: {
+        "0": {
+          type: "error",
+          message: "a mock error",
+        },
+      },
+    },
+    initialState: {
+      modelCallCount: 1,
+      pending: [
+        {
+          action: "mockCommand()",
+          statement: {
+            type: "call",
+            name: "mockCommand",
+            args: [],
+          },
+          result: undefined,
+        },
+      ],
+      request: "some request",
+      resolvedActions: [],
+      resolvedCommands: [],
+      memory: { variables: {}, topLevelResults: [] },
+    },
+  },
+  {
+    description: "error - client command sends back wrong return type",
+    openAiResults: ["Complete"],
+    snapshotError: true, // This should throw because it is not recoverable
+    input: {
+      resolvedCommands: {
+        "0": { type: "void" },
+      },
+    },
+    initialState: {
+      modelCallCount: 1,
+      pending: [
+        {
+          action: "mockCommand()",
+          statement: {
+            type: "call",
+            name: "mockCommand",
+            args: [],
+          },
+          result: undefined,
+        },
+      ],
+      request: "some request",
+      resolvedActions: [],
+      resolvedCommands: [],
+      memory: { variables: {}, topLevelResults: [] },
+    },
+  },
 ] as {
   description: string;
   openAiResults?: string[];
@@ -474,6 +572,11 @@ This string response line is ignored`,
               args: [{ type: "number", name: "some number" }],
               description: "some fixture command",
               returnType: "void",
+            },
+            mockCommand: {
+              args: [],
+              description: "a mock client command",
+              returnType: "string",
             },
           },
         },

@@ -781,6 +781,13 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/CommandDefinition"
             }
+          },
+          "openaiModel": {
+            "enum": [
+              "gpt-4",
+              "gpt-3.5-turbo"
+            ],
+            "type": "string"
           }
         }
       },

@@ -44,8 +44,10 @@ import {
 
 const RESPOND_COMMAND = "respond";
 const BLOCK_PREFIX = "run";
-const COMPLETION_OPTIONS: Omit<CreateChatCompletionRequest, "messages"> = {
-  model: "gpt-3.5-turbo",
+const COMPLETION_OPTIONS: Omit<
+  CreateChatCompletionRequest,
+  "messages" | "model"
+> = {
   temperature: 0.3,
   logit_bias: {
     8818: -10, // `function`
@@ -103,10 +105,18 @@ export const MAX_MODEL_CALLS = 10;
 export const Name = t.literal("assist-002");
 export type Name = t.TypeOf<typeof Name>;
 
-export const Configuration = t.type({
-  model: Name,
-  commands: CommandSet,
-});
+export const Configuration = t.intersection([
+  t.type({
+    model: Name,
+    commands: CommandSet,
+  }),
+  t.partial({
+    openaiModel: t.keyof({
+      "gpt-4": null,
+      "gpt-3.5-turbo": null,
+    }),
+  }),
+]);
 export type Configuration = t.TypeOf<typeof Configuration>;
 
 export { Input };
@@ -385,6 +395,7 @@ export async function run(
           messages,
           // TODO return error if completion tokens has reached this limit
           max_tokens: session.configuration.maxResponseTokens,
+          model: configuration.openaiModel ?? "gpt-3.5-turbo",
           ...COMPLETION_OPTIONS,
         },
         {

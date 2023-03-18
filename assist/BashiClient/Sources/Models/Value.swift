@@ -10,6 +10,7 @@ public enum Value: Codable, Equatable {
     case numberValue(NumberValue)
     case booleanValue(BooleanValue)
     case voidValue(VoidValue)
+    case errorValue(ErrorValue)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
@@ -17,6 +18,8 @@ public enum Value: Codable, Equatable {
         switch discriminator {
         case "boolean":
             self = .booleanValue(try BooleanValue(from: decoder))
+        case "error":
+            self = .errorValue(try ErrorValue(from: decoder))
         case "number":
             self = .numberValue(try NumberValue(from: decoder))
         case "string":
@@ -38,6 +41,8 @@ public enum Value: Codable, Equatable {
         case .booleanValue(let content):
             try container.encode(content)
         case .voidValue(let content):
+            try container.encode(content)
+        case .errorValue(let content):
             try container.encode(content)
         }
     }

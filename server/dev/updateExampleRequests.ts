@@ -1,5 +1,6 @@
 import * as t from "io-ts";
 
+import { Session } from "@lib/session.ts";
 import defaultPolicy from "@lib/faultHandling.ts";
 import { ModelDeps, run, ModelName } from "@lib/models.ts";
 import { log } from "@lib/log.ts";
@@ -137,7 +138,8 @@ function something(num) {
 
 export default async function updateExamples(
   examplesFile: string,
-  modelName: "assist-001" | "assist-002" = "assist-001"
+  modelName: "assist-001" | "assist-002" = "assist-001",
+  modelConfigurations?: Partial<Session["modelConfigurations"]>
 ) {
   log("info", `reading existing examples file: ${examplesFile}`);
 
@@ -165,12 +167,18 @@ export default async function updateExamples(
     log,
     faultHandlingPolicy: defaultPolicy,
     now: () => fixtures.now,
-    session: fixtures.session,
     googleSearch,
     openai,
     whisperEndpoint,
     signal: abortController.signal,
     setUpdatedSession: () => {},
+    session: {
+      ...fixtures.session,
+      modelConfigurations: {
+        ...fixtures.session.modelConfigurations,
+        ...modelConfigurations,
+      },
+    },
   };
 
   const newExamples: Example[] = [];

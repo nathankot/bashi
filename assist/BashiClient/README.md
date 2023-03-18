@@ -157,9 +157,13 @@ To add support for a specific asynchronous library, just add an extension on `AP
 - **CommandExecuted**
 - **CommandParsed**
 - **ErrorType**
+- **ErrorValue**
 - **ModelsAssist001Configuration**
 - **ModelsAssist001Input**
 - **ModelsAssist001Output**
+- **ModelsAssist002Configuration**
+- **ModelsAssist002Input**
+- **ModelsAssist002Output**
 - **ModelsCode000Configuration**
 - **ModelsCode000Input**
 - **ModelsCode000Output**
@@ -179,6 +183,7 @@ To add support for a specific asynchronous library, just add an extension on `AP
 ## Requests
 
 - **BashiClient.PostSessionAssist001**: POST `/session/requests/assist-001`
+- **BashiClient.PostSessionAssist002**: POST `/session/requests/assist-002`
 - **BashiClient.PostSessionCode000**: POST `/session/requests/code-000`
 - **BashiClient.PostSessionTranslate000**: POST `/session/requests/translate-000`
 - **BashiClient.PostSessionWhisper000**: POST `/session/requests/whisper-000`

@@ -70,14 +70,17 @@ public class BashiSession: APIModel {
 
         public var assist001: ModelsAssist001Configuration?
 
+        public var assist002: ModelsAssist002Configuration?
+
         public var code000: ModelsCode000Configuration?
 
         public var translate000: ModelsTranslate000Configuration?
 
         public var whisper000: ModelsWhisper000Configuration?
 
-        public init(assist001: ModelsAssist001Configuration? = nil, code000: ModelsCode000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
+        public init(assist001: ModelsAssist001Configuration? = nil, assist002: ModelsAssist002Configuration? = nil, code000: ModelsCode000Configuration? = nil, translate000: ModelsTranslate000Configuration? = nil, whisper000: ModelsWhisper000Configuration? = nil) {
             self.assist001 = assist001
+            self.assist002 = assist002
             self.code000 = code000
             self.translate000 = translate000
             self.whisper000 = whisper000
@@ -87,6 +90,7 @@ public class BashiSession: APIModel {
             let container = try decoder.container(keyedBy: StringCodingKey.self)
 
             assist001 = try container.decodeIfPresent("assist-001")
+            assist002 = try container.decodeIfPresent("assist-002")
             code000 = try container.decodeIfPresent("code-000")
             translate000 = try container.decodeIfPresent("translate-000")
             whisper000 = try container.decodeIfPresent("whisper-000")
@@ -96,6 +100,7 @@ public class BashiSession: APIModel {
             var container = encoder.container(keyedBy: StringCodingKey.self)
 
             try container.encodeIfPresent(assist001, forKey: "assist-001")
+            try container.encodeIfPresent(assist002, forKey: "assist-002")
             try container.encodeIfPresent(code000, forKey: "code-000")
             try container.encodeIfPresent(translate000, forKey: "translate-000")
             try container.encodeIfPresent(whisper000, forKey: "whisper-000")
@@ -104,6 +109,7 @@ public class BashiSession: APIModel {
         public func isEqual(to object: Any?) -> Bool {
           guard let object = object as? ModelConfigurations else { return false }
           guard self.assist001 == object.assist001 else { return false }
+          guard self.assist002 == object.assist002 else { return false }
           guard self.code000 == object.code000 else { return false }
           guard self.translate000 == object.translate000 else { return false }
           guard self.whisper000 == object.whisper000 else { return false }

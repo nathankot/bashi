@@ -32,6 +32,7 @@ actor AppController {
     var pushToTalkShortcutTask: Task<Void, Error>? = nil
     var transcriptionUpdatingTask: Task<Void, Error>? = nil
     var pasteboardContextTask: Task<Void, Error>? = nil
+    var commandProcessingTask: Task<Void, Error>? = nil
 
     init(state: AppState,
         popover: NSPopover,
@@ -109,7 +110,7 @@ actor AppController {
                     if newChangeCount > lastChangeCount,
                         case let .NeedsInput(
                             messages: _,
-                            type: .Question(onAnswer: callback)
+                            type: .Question(onAnswer: callback, _)
                         ) = await state.state,
                         let text = strings.first as? String {
                         logger.info("found new string value in the Pasteboard, using as text context")
@@ -147,7 +148,7 @@ actor AppController {
             let bestTranscription = try await audioRecordingController.stopRecording()
             let state = await state.state
             switch state {
-            case let .NeedsInput(messages: _, type: .Question(onAnswer: onAnswer)):
+            case let .NeedsInput(messages: _, type: .Question(onAnswer: onAnswer, _)):
                 guard let bestTranscription = bestTranscription else {
                     throw AppError.NoTranscriptionFound
                 }
@@ -174,8 +175,9 @@ actor AppController {
         }
     }
 
-    nonisolated func makeRequest(_ request: String) {
-        Task {
+    func makeRequest(_ request: String) {
+        commandProcessingTask?.cancel()
+        commandProcessingTask = Task {
             // Spin up a new task so that we do not block the app controller:
             await commandsController.process(initialRequest: request)
         }
@@ -187,7 +189,8 @@ actor AppController {
             transcriptionUpdatingTask = nil
             _ = try? await audioRecordingController.stopRecording()
             isRecording = false
-            try await state.transition(newState: .Idle)
+            commandProcessingTask?.cancel()
+            try await state.cancelAndIdle()
         } catch {
             await state.handleError(error)
         }

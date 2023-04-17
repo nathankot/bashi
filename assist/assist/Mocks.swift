@@ -53,16 +53,6 @@
                     throw ErrorType.expectedStringArg
                 },
                 AnonymousCommand(
-                    name: "mock_display",
-                    cost: .Low,
-                    description: "display a message to the user",
-                    args: [.init(type: .string, name: "message")],
-                    returnType: .void
-                ) { api, ctx, args in
-                    await api.respond(message: args.first?.string ?? "<could not get message>")
-                    return .init(.void)
-                },
-                AnonymousCommand(
                     name: "mock_wrong_return_type",
                     cost: .Low,
                     description: "do some thing",

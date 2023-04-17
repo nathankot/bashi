@@ -70,7 +70,7 @@ public final class AppState: ObservableObject {
 
         public enum InputType {
             case Confirm
-            case Question(onAnswer: (String) -> Void)
+            case Question(onAnswer: (String) -> Void, onCancel: () -> Void = { })
         }
     }
     
@@ -154,6 +154,14 @@ public final class AppState: ObservableObject {
         isRequestTextFieldFocused = b
     }
     
+    public func cancelAndIdle() async throws {
+        // Ensure any cancellation handlers are called first:
+        if case let .NeedsInput(_, type: .Question(_, onCancel)) = state {
+            onCancel()
+        }
+        try await transition(newState: .Idle)
+    }
+    
     public func transition<R>(
         newState: State,
         closure: (() async -> Void) async throws -> R = { doTransition in await doTransition() }
@@ -173,23 +181,6 @@ public final class AppState: ObservableObject {
                     logger.debug("transitioned to state: \(String(describing: self.state))")
                 #endif
             })
-        }
-    }
-
-    public func transitionAndWaitforStateCallback<R>(
-        makeNewState: @escaping (@escaping (R) -> Void) -> AppState.State
-    ) async throws -> R {
-        return try await withCheckedThrowingContinuation { continuation in
-            Task {
-                do {
-                    try await transition(
-                        newState: makeNewState({ r in
-                            continuation.resume(with: .success(r)) })
-                    )
-                } catch {
-                    continuation.resume(with: .failure(error))
-                }
-            }
         }
     }
 

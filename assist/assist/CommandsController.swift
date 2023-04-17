@@ -12,7 +12,7 @@ import BashiPlugin
 
 public actor CommandsController {
 
-    public typealias RunModel = (ModelsAssist001Input) async throws -> ModelsAssist001Output
+    public typealias RunModel = (ModelsAssist002Input) async throws -> ModelsAssist002Output
 
     let state: AppState
     let pluginsController: PluginsController
@@ -36,21 +36,35 @@ public actor CommandsController {
             messageFn: { response, type in
                 messages.append(.init(id: messages.count, message: response, type: type))
             },
-            askFn: { question in
-                messages.append(.init(id: messages.count, message: question, type: .modelResponse))
-                let response = try await self.state.transitionAndWaitforStateCallback { callback in
-                    .NeedsInput(
-                        messages: messages,
-                        type: .Question(onAnswer: callback)
-                    )
+            askFn: {
+                let response = try await withCheckedThrowingContinuation { continuation in
+                    Task {
+                        do {
+                            try await self.state.transition(newState: .NeedsInput(
+                                messages: messages,
+                                type: .Question(
+                                    onAnswer: { userMessage in continuation.resume(with: .success(userMessage)) },
+                                    onCancel: { continuation.resume(with: .success("")) }
+                                )))
+                        } catch {
+                            continuation.resume(with: .failure(error))
+                        }
+                    }
                 }
-                messages.append(.init(id: messages.count, message: response.count > 280 ? response.prefix(280) + " [truncated]" : response, type: .userResponse))
+                if response.count > 0 {
+                    messages.append(.init(
+                        id: messages.count,
+                        message: response.count > 280 ? response.prefix(280) + " [truncated]" : response,
+                        type: .userResponse))
+                }
                 return response
             })
 
         do {
             interpreterLoop: while true {
-                let input = ModelsAssist001Input(
+                try Task.checkCancellation()
+                
+                let input = ModelsAssist002Input(
                     request: request,
                     resolvedCommands: resolvedCommands)
 
@@ -62,79 +76,72 @@ public actor CommandsController {
                 // After the first model run, request should always be nil to indicate that
                 // subsequent model runs are for the same request.
                 request = nil
+                let resultPending = response.result
 
-                switch response.result {
+                let commandContext = Context.from(request: initialRequest)
 
-                case .resultPendingCommands(let resultPending):
-                    let commandContext = Context.from(request: initialRequest)
-
-                    for c in resultPending.pendingCommands {
-                        guard case let .commandParsed(pendingCommand) = c else {
-                            throw AppError.Internal("expected all pendingCommands to be unresolved")
-                        }
-                        let commandName = pendingCommand.name
-                        guard let commandDef = await pluginsController.lookup(command: commandName) else {
-                            throw AppError.CommandNotFound(name: commandName)
-                        }
-                        let args = pendingCommand.args.map { BashiValue(from: $0) }
-                        if args.count != commandDef.args.count ||
-                            zip(args, commandDef.args)
-                            .contains(where: { (serverArg, clientArg) in
-                                serverArg.type != clientArg.type
-                            }) {
-                            throw AppError.CommandMismatchArgs(
-                                name: commandName,
-                                error: """
+                for c in resultPending.pendingCommands {
+                    guard case let .commandParsed(pendingCommand) = c else {
+                        throw AppError.Internal("expected all pendingCommands to be unresolved")
+                    }
+                    let commandName = pendingCommand.name
+                    guard let commandDef = await pluginsController.lookup(command: commandName) else {
+                        throw AppError.CommandNotFound(name: commandName)
+                    }
+                    let args = pendingCommand.args.map { BashiValue(from: $0) }
+                    if args.count != commandDef.args.count ||
+                        zip(args, commandDef.args)
+                        .contains(where: { (serverArg, clientArg) in
+                            serverArg.type != clientArg.type
+                        }) {
+                        throw AppError.CommandMismatchArgs(
+                            name: commandName,
+                            error: """
                             client expects \(commandDef.args.count) args, server gave \(args.count)
                             client args: \(commandDef.args.map{$0.type.asString()})
                             server gave: \(args.map{$0.type.asString()})
                             """)
-                        }
-
-                        logger.debug("running command: \(commandName)")
-                        let result = try await commandDef.run(
-                            api: pluginAPI,
-                            context: commandContext,
-                            args: args)
-                        if result.type != commandDef.returnType {
-                            throw AppError.CommandMismatchResult(
-                                name: commandName,
-                                expected: commandDef.returnType.asString(),
-                                actual: result.type.asString())
-                        }
-
-                        resolvedCommands.updateValue(result.toAPIValue(), forKey: pendingCommand.id)
                     }
-                    // After running the commands, start the loop again.
-                    continue interpreterLoop
 
-                case .resultFinished(let resultFinished):
-                    if let lastValue = resultFinished.results.reversed().compactMap({ (v) -> String? in
-                        switch v {
-                        case .stringValue(let s): return s.value
-                        case .numberValue(let n): return "\(n)"
-                        case .booleanValue(let b): return b.value ? "True" : "False"
-                        default: return nil
-                        }
-                    }).first {
-                        await pluginAPI.messageFn(lastValue, .modelResponse)
+                    logger.debug("running command: \(commandName)")
+                    try Task.checkCancellation()
+                    let result = try await commandDef.run(
+                        api: pluginAPI,
+                        context: commandContext,
+                        args: args)
+                    if result.type != commandDef.returnType {
+                        throw AppError.CommandMismatchResult(
+                            name: commandName,
+                            expected: commandDef.returnType.asString(),
+                            actual: result.type.asString())
                     }
-                    try await state.transition(newState: .Finished(messages: messages))
-                    return
+
+                    resolvedCommands.updateValue(result.toAPIValue(), forKey: pendingCommand.id)
                 }
+                // After running the commands, start the loop again.
+                continue interpreterLoop
+
             }
         } catch {
-            await state.handleError(error)
+            switch error {
+            case is CancellationError:
+                // Exit gracefully on cancellation.
+                // The AppController is responsible for cleaning up AppState.
+                logger.debug("interpreter loop cancellation, exiting gracefully")
+                return
+            default:
+                await state.handleError(error)
+            }
         }
     }
 
     class PluginAPI: BashiPluginAPI {
-        
+
         let messageFn: (String, MessageType) async -> Void
-        let askFn: (String) async throws -> String
+        let askFn: () async throws -> String
 
         init(messageFn: @escaping (String, MessageType) async -> Void,
-            askFn: @escaping (String) async throws -> String) {
+            askFn: @escaping () async throws -> String) {
             self.messageFn = messageFn
             self.askFn = askFn
         }
@@ -146,9 +153,9 @@ public actor CommandsController {
         public func indicateCommandResult(message: String) async {
             return await messageFn(message, .sideEffectResult)
         }
-        
-        public func ask(question: String) async throws -> String {
-            return try await askFn(question)
+
+        public func ask() async throws -> String {
+            return try await askFn()
         }
 
         public func storeTextInPasteboard(text: String) async throws {
@@ -160,48 +167,20 @@ public actor CommandsController {
 
     static let builtinCommands = [
         AnonymousCommand(
-            name: "sendResponse",
+            name: "respond",
             cost: .Low,
-            description: "return response for original question/request back to the user",
+            description: "send a message to the user, the return value is the users response",
             args: [.init(type: .string, name: "answer")],
-            returnType: .void
-        ) { api, ctx, args in
-            let result = args.first?.string ?? ""
-            if result.count < 280 {
-                await api.respond(message: result)
-            } else {
-                try await api.storeTextInPasteboard(text: result)
-                await api.indicateCommandResult(message: "The result has been copied to your clipboard")
-            }
-            return .init(.void)
-        },
-        AnonymousCommand(
-            name: "writeResponse",
-            cost: .Low,
-            description: "help user write response for original question/request",
-            args: [.init(type: .string, name: "answer")],
-            returnType: .void
-        ) { api, ctx, args in
-            let result = args.first?.string ?? ""
-            if result.count < 280 {
-                await api.respond(message: result)
-            } else {
-                try await api.storeTextInPasteboard(text: result)
-                await api.indicateCommandResult(message: "The result has been copied to your clipboard")
-            }
-            return .init(.void)
-        },
-        AnonymousCommand(
-            name: "getInput",
-            cost: .Low,
-            description: "ask user to question/request or for input additional input",
-            args: [.init(type: .string, name: "question asking for required information")],
             returnType: .string
         ) { api, ctx, args in
-            guard let question = args.first?.string else {
-                throw AppError.Internal("expected first argument to be a string")
+            let result = args.first?.string ?? ""
+            if result.count < 280 {
+                await api.respond(message: result)
+            } else {
+                try await api.storeTextInPasteboard(text: result)
+                await api.indicateCommandResult(message: "The result has been copied to your clipboard")
             }
-            let response = try await api.ask(question: question)
+            let response = try await api.ask()
             return .init(.string(response))
         },
     ]
@@ -233,6 +212,8 @@ extension BashiValue {
             self.init(.string(v.value))
         case .voidValue:
             self.init(.void)
+        case .errorValue(let e):
+            self.init(from: .errorValue(e))
         }
     }
 

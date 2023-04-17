@@ -59,14 +59,15 @@ struct ContentView: View {
                         self.requestTextFieldFocus = v
                     })
                         .onSubmit {
-                        controller?.makeRequest(requestTextfieldValue)
+                        let request = requestTextfieldValue
+                        Task { await self.controller?.makeRequest(request) }
                         requestTextfieldValue = ""
                     }
                 case .AwaitingRequest:
                     let s = state.currentTranscription ?? ""
                     MessageListView(messages: [
-                        .init(id: 0, message: s + " ...", type: .transcribing)
-                    ])
+                            .init(id: 0, message: s + " ...", type: .transcribing)
+                        ])
                     Spacer()
                     if let k = pushToTalkShortcut {
                         Text("Press \(k.description) again to finish talking")
@@ -77,11 +78,11 @@ struct ContentView: View {
                 case let .Processing(messages):
                     MessageListView(messages: messages)
                     Text("Processing...").font(.callout).foregroundColor(.gray)
-                case let .NeedsInput(messages: messages, type: .Question(onAnswer)):
+                case let .NeedsInput(messages: messages, type: .Question(onAnswer, _)):
                     if let s = state.currentTranscription {
                         MessageListView(messages: messages + [
-                            .init(id: messages.count, message: s + " ...", type: .transcribing)
-                        ])
+                                .init(id: messages.count, message: s + " ...", type: .transcribing)
+                            ])
                         Spacer()
                         if let k = pushToTalkShortcut {
                             Text("Press \(k.description) again to finish talking")
@@ -95,13 +96,13 @@ struct ContentView: View {
                             TextField("Enter response", text: $requestTextfieldValue)
                                 .focused($requestTextFieldFocus)
                                 .onChange(of: requestTextFieldFocus, perform: { v in
-                                    state.update(requestTextFieldFocus: v)
-                                }).onReceive(state.$isRequestTextFieldFocused) { v in
-                                    self.requestTextFieldFocus = v
-                                }.onSubmit {
-                                    onAnswer(requestTextfieldValue)
-                                    requestTextfieldValue = ""
-                                }
+                                state.update(requestTextFieldFocus: v)
+                            }).onReceive(state.$isRequestTextFieldFocused) { v in
+                                self.requestTextFieldFocus = v
+                            }.onSubmit {
+                                onAnswer(requestTextfieldValue)
+                                requestTextfieldValue = ""
+                            }
                             Button("Cancel", action: cancelRequest)
                         }
                         if let k = pushToTalkShortcut {
@@ -158,11 +159,11 @@ struct MessageListView: View {
                         MessageView(message: $0).id($0.id)
                     }
                 }
-                .onAppear { proxy.scrollTo(messages.last?.id, anchor: .bottom) }
-                .onChange(of: messages.count, perform: { _ in proxy.scrollTo(messages.last?.id)})
+                    .onAppear { proxy.scrollTo(messages.last?.id, anchor: .bottom) }
+                    .onChange(of: messages.count, perform: { _ in proxy.scrollTo(messages.last?.id) })
             }
         }
-        .frame(maxHeight: .infinity)
+            .frame(maxHeight: .infinity)
     }
 }
 
@@ -198,36 +199,36 @@ struct ContentView_Previews: PreviewProvider {
         ContentView(state: AppState(
             accountNumber: "123",
             state: .Processing(messages: [
-                .init(id: 0, message: "please help me", type: .request)
-            ])))
-        .previewDisplayName("Processing initial request")
+                    .init(id: 0, message: "please help me", type: .request)
+                ])))
+            .previewDisplayName("Processing initial request")
         ContentView(state: AppState(
             accountNumber: "123",
             state: .NeedsInput(messages: [
-                .init(id: 0, message: "please help me", type: .request),
-                .init(id: 1, message: "provide the text input", type: .modelResponse)
-            ], type: .Question(onAnswer: { _ in }))))
-        .previewDisplayName("Needs text input")
+                    .init(id: 0, message: "please help me", type: .request),
+                    .init(id: 1, message: "provide the text input", type: .modelResponse)
+                ], type: .Question(onAnswer: { _ in }))))
+            .previewDisplayName("Needs text input")
         ContentView(state: AppState(
             accountNumber: "123",
             state: .NeedsInput(messages: [
-                .init(id: 0, message: "please help me", type: .request),
-                .init(id: 1, message: "provide the text input", type: .modelResponse)
-            ], type: .Question(onAnswer: { _ in })),
+                    .init(id: 0, message: "please help me", type: .request),
+                    .init(id: 1, message: "provide the text input", type: .modelResponse)
+                ], type: .Question(onAnswer: { _ in })),
             currentTranscription: "some answer being transcribed"
-        ))
-        .previewDisplayName("Needs text input - transcribing")
+            ))
+            .previewDisplayName("Needs text input - transcribing")
         ContentView(state: AppState(
             accountNumber: "123",
             state: .Finished(messages: [
-                .init(id: 0, message: "please help me", type: .request),
-                .init(id: 1, message: "please provide some input", type: .modelResponse),
-                .init(id: 2, message: "okay here is input A Nullam ullamcorper auctor sapien, nec vulputate nisl aliquam non. Nam nec mauris nulla. Proin tempor, lacus sit amet condimentum sollicitudin, ligula ligula sodales dui, vel faucibus tellus nibh egestas turpis.", type: .userResponse),
-                .init(id: 3, message: "please provide some content", type: .modelResponse),
-                .init(id: 4, message: "The result has been copied to your clipboard", type: .sideEffectResult)
-            ])
-        ))
-        .previewDisplayName("Finished")
+                    .init(id: 0, message: "please help me", type: .request),
+                    .init(id: 1, message: "please provide some input", type: .modelResponse),
+                    .init(id: 2, message: "okay here is input A Nullam ullamcorper auctor sapien, nec vulputate nisl aliquam non. Nam nec mauris nulla. Proin tempor, lacus sit amet condimentum sollicitudin, ligula ligula sodales dui, vel faucibus tellus nibh egestas turpis.", type: .userResponse),
+                    .init(id: 3, message: "please provide some content", type: .modelResponse),
+                    .init(id: 4, message: "The result has been copied to your clipboard", type: .sideEffectResult)
+                ])
+            ))
+            .previewDisplayName("Finished")
     }
 }
 

@@ -4,7 +4,7 @@ import Foundation
 @objc public protocol BashiPluginAPI {
     @objc func indicateCommandResult(message: String) async
     @objc func respond(message: String) async
-    @objc func ask(question: String) async throws -> String
+    @objc func ask() async throws -> String
     @objc func storeTextInPasteboard(text: String) async throws
 }
 

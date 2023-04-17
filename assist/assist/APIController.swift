@@ -23,10 +23,10 @@ public actor APIController {
         self.pluginsController = pluginsController
     }
 
-    public func assist(input: ModelsAssist001Input) async throws -> ModelsAssist001Output {
+    public func assist(input: ModelsAssist002Input) async throws -> ModelsAssist002Output {
         #if DEBUG
         // App can be live mocked like so:
-        // return ModelsAssist001Output.init()
+        // return ModelsAssist002Output.init()
         #endif
 
         var session = await state.session
@@ -39,7 +39,7 @@ public actor APIController {
             throw AppError.Internal("did not expect session to be nil")
         }
         let apiClient = await makeApiClient()
-        let request = BashiClient.PostSessionAssist001.Request(
+        let request = BashiClient.PostSessionAssist002.Request(
             body: input,
             options: .init(sessionID: session.sessionId))
 
@@ -99,8 +99,8 @@ public actor APIController {
         let request = BashiClient.PostSessions.Request(
             body: .init(
                 modelConfigurations: .init(
-                    assist001: .init(
-                        model: .assist001,
+                    assist002: .init(
+                        model: .assist002,
                         commands: commandDefinitions
                             .mapValues { $0.def.toAPIRepresentation() }
                     )),

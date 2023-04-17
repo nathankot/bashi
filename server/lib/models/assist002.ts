@@ -514,7 +514,12 @@ Known functions are declared below. Unknown functions MUST NOT be used. Pay atte
   const commandSet = makeCommandSet(
     filterUnnecessary(
       request + " " + resolvedActions.map((g) => `${g.action} ${g.result}`),
-      commands
+      commands,
+      {
+        editText: true,
+        editCode: true,
+        generateCode: true,
+      }
     )
   ).join("\n");
 

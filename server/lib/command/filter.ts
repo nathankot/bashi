@@ -174,12 +174,16 @@ export function parseWordsFromRequest(request: string): Record<string, true> {
 
 export function filterUnnecessary(
   request: string,
-  commandSet: CommandSet
+  commandSet: CommandSet,
+  commandsToSkip: Record<string, true> = {}
 ): CommandSet {
   const result: CommandSet = {};
   const words = parseWordsFromRequest(request);
   commandLoop: for (const [k, c] of Object.entries(commandSet)) {
     if ("disable" in c && c.disable === true) {
+      continue commandLoop;
+    }
+    if (k in commandsToSkip && commandsToSkip[k] === true) {
       continue commandLoop;
     }
     if (c.triggerTokens == null || c.triggerTokens.length === 0) {

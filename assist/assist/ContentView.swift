@@ -129,7 +129,7 @@ struct ContentView: View {
             }
         }
             .padding()
-            .frame(maxWidth: 800, minHeight: 300, maxHeight: 1600)
+            .frame(minWidth: 300, maxWidth: 800, minHeight: 300, maxHeight: 1600)
     }
 
     func cancelRequest() {
